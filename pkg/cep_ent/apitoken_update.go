@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/apitoken"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -141,6 +142,21 @@ func (atu *ApiTokenUpdate) SetNillableStatus(ets *enums.ApiTokenStatus) *ApiToke
 	return atu
 }
 
+// AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by IDs.
+func (atu *ApiTokenUpdate) AddInvokeModelOrderIDs(ids ...int64) *ApiTokenUpdate {
+	atu.mutation.AddInvokeModelOrderIDs(ids...)
+	return atu
+}
+
+// AddInvokeModelOrders adds the "invoke_model_orders" edges to the InvokeModelOrder entity.
+func (atu *ApiTokenUpdate) AddInvokeModelOrders(i ...*InvokeModelOrder) *ApiTokenUpdate {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return atu.AddInvokeModelOrderIDs(ids...)
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (atu *ApiTokenUpdate) SetUser(u *User) *ApiTokenUpdate {
 	return atu.SetUserID(u.ID)
@@ -149,6 +165,27 @@ func (atu *ApiTokenUpdate) SetUser(u *User) *ApiTokenUpdate {
 // Mutation returns the ApiTokenMutation object of the builder.
 func (atu *ApiTokenUpdate) Mutation() *ApiTokenMutation {
 	return atu.mutation
+}
+
+// ClearInvokeModelOrders clears all "invoke_model_orders" edges to the InvokeModelOrder entity.
+func (atu *ApiTokenUpdate) ClearInvokeModelOrders() *ApiTokenUpdate {
+	atu.mutation.ClearInvokeModelOrders()
+	return atu
+}
+
+// RemoveInvokeModelOrderIDs removes the "invoke_model_orders" edge to InvokeModelOrder entities by IDs.
+func (atu *ApiTokenUpdate) RemoveInvokeModelOrderIDs(ids ...int64) *ApiTokenUpdate {
+	atu.mutation.RemoveInvokeModelOrderIDs(ids...)
+	return atu
+}
+
+// RemoveInvokeModelOrders removes "invoke_model_orders" edges to InvokeModelOrder entities.
+func (atu *ApiTokenUpdate) RemoveInvokeModelOrders(i ...*InvokeModelOrder) *ApiTokenUpdate {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return atu.RemoveInvokeModelOrderIDs(ids...)
 }
 
 // ClearUser clears the "user" edge to the User entity.
@@ -250,6 +287,51 @@ func (atu *ApiTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := atu.mutation.Status(); ok {
 		_spec.SetField(apitoken.FieldStatus, field.TypeEnum, value)
+	}
+	if atu.mutation.InvokeModelOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   apitoken.InvokeModelOrdersTable,
+			Columns: []string{apitoken.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := atu.mutation.RemovedInvokeModelOrdersIDs(); len(nodes) > 0 && !atu.mutation.InvokeModelOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   apitoken.InvokeModelOrdersTable,
+			Columns: []string{apitoken.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := atu.mutation.InvokeModelOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   apitoken.InvokeModelOrdersTable,
+			Columns: []string{apitoken.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if atu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -412,6 +494,21 @@ func (atuo *ApiTokenUpdateOne) SetNillableStatus(ets *enums.ApiTokenStatus) *Api
 	return atuo
 }
 
+// AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by IDs.
+func (atuo *ApiTokenUpdateOne) AddInvokeModelOrderIDs(ids ...int64) *ApiTokenUpdateOne {
+	atuo.mutation.AddInvokeModelOrderIDs(ids...)
+	return atuo
+}
+
+// AddInvokeModelOrders adds the "invoke_model_orders" edges to the InvokeModelOrder entity.
+func (atuo *ApiTokenUpdateOne) AddInvokeModelOrders(i ...*InvokeModelOrder) *ApiTokenUpdateOne {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return atuo.AddInvokeModelOrderIDs(ids...)
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (atuo *ApiTokenUpdateOne) SetUser(u *User) *ApiTokenUpdateOne {
 	return atuo.SetUserID(u.ID)
@@ -420,6 +517,27 @@ func (atuo *ApiTokenUpdateOne) SetUser(u *User) *ApiTokenUpdateOne {
 // Mutation returns the ApiTokenMutation object of the builder.
 func (atuo *ApiTokenUpdateOne) Mutation() *ApiTokenMutation {
 	return atuo.mutation
+}
+
+// ClearInvokeModelOrders clears all "invoke_model_orders" edges to the InvokeModelOrder entity.
+func (atuo *ApiTokenUpdateOne) ClearInvokeModelOrders() *ApiTokenUpdateOne {
+	atuo.mutation.ClearInvokeModelOrders()
+	return atuo
+}
+
+// RemoveInvokeModelOrderIDs removes the "invoke_model_orders" edge to InvokeModelOrder entities by IDs.
+func (atuo *ApiTokenUpdateOne) RemoveInvokeModelOrderIDs(ids ...int64) *ApiTokenUpdateOne {
+	atuo.mutation.RemoveInvokeModelOrderIDs(ids...)
+	return atuo
+}
+
+// RemoveInvokeModelOrders removes "invoke_model_orders" edges to InvokeModelOrder entities.
+func (atuo *ApiTokenUpdateOne) RemoveInvokeModelOrders(i ...*InvokeModelOrder) *ApiTokenUpdateOne {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return atuo.RemoveInvokeModelOrderIDs(ids...)
 }
 
 // ClearUser clears the "user" edge to the User entity.
@@ -551,6 +669,51 @@ func (atuo *ApiTokenUpdateOne) sqlSave(ctx context.Context) (_node *ApiToken, er
 	}
 	if value, ok := atuo.mutation.Status(); ok {
 		_spec.SetField(apitoken.FieldStatus, field.TypeEnum, value)
+	}
+	if atuo.mutation.InvokeModelOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   apitoken.InvokeModelOrdersTable,
+			Columns: []string{apitoken.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := atuo.mutation.RemovedInvokeModelOrdersIDs(); len(nodes) > 0 && !atuo.mutation.InvokeModelOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   apitoken.InvokeModelOrdersTable,
+			Columns: []string{apitoken.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := atuo.mutation.InvokeModelOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   apitoken.InvokeModelOrdersTable,
+			Columns: []string{apitoken.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if atuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

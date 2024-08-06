@@ -70,6 +70,8 @@ type Tx struct {
 	InputLog *InputLogClient
 	// Invite is the client for interacting with the Invite builders.
 	Invite *InviteClient
+	// InvokeModelOrder is the client for interacting with the InvokeModelOrder builders.
+	InvokeModelOrder *InvokeModelOrderClient
 	// LoginRecord is the client for interacting with the LoginRecord builders.
 	LoginRecord *LoginRecordClient
 	// Lotto is the client for interacting with the Lotto builders.
@@ -316,6 +318,7 @@ func (tx *Tx) init() {
 	tx.IncomeManage = NewIncomeManageClient(tx.config)
 	tx.InputLog = NewInputLogClient(tx.config)
 	tx.Invite = NewInviteClient(tx.config)
+	tx.InvokeModelOrder = NewInvokeModelOrderClient(tx.config)
 	tx.LoginRecord = NewLoginRecordClient(tx.config)
 	tx.Lotto = NewLottoClient(tx.config)
 	tx.LottoChanceRule = NewLottoChanceRuleClient(tx.config)

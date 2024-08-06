@@ -180,11 +180,13 @@ type UserEdges struct {
 	APITokens []*ApiToken `json:"api_tokens,omitempty"`
 	// StarModel holds the value of the star_model edge.
 	StarModel []*Model `json:"star_model,omitempty"`
+	// InvokeModelOrders holds the value of the invoke_model_orders edge.
+	InvokeModelOrders []*InvokeModelOrder `json:"invoke_model_orders,omitempty"`
 	// ModelStar holds the value of the model_star edge.
 	ModelStar []*UserModel `json:"model_star,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [51]bool
+	loadedTypes [52]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -657,10 +659,19 @@ func (e UserEdges) StarModelOrErr() ([]*Model, error) {
 	return nil, &NotLoadedError{edge: "star_model"}
 }
 
+// InvokeModelOrdersOrErr returns the InvokeModelOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) InvokeModelOrdersOrErr() ([]*InvokeModelOrder, error) {
+	if e.loadedTypes[50] {
+		return e.InvokeModelOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "invoke_model_orders"}
+}
+
 // ModelStarOrErr returns the ModelStar value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) ModelStarOrErr() ([]*UserModel, error) {
-	if e.loadedTypes[50] {
+	if e.loadedTypes[51] {
 		return e.ModelStar, nil
 	}
 	return nil, &NotLoadedError{edge: "model_star"}
@@ -1112,6 +1123,11 @@ func (u *User) QueryAPITokens() *ApiTokenQuery {
 // QueryStarModel queries the "star_model" edge of the User entity.
 func (u *User) QueryStarModel() *ModelQuery {
 	return NewUserClient(u.config).QueryStarModel(u)
+}
+
+// QueryInvokeModelOrders queries the "invoke_model_orders" edge of the User entity.
+func (u *User) QueryInvokeModelOrders() *InvokeModelOrderQuery {
+	return NewUserClient(u.config).QueryInvokeModelOrders(u)
 }
 
 // QueryModelStar queries the "model_star" edge of the User entity.

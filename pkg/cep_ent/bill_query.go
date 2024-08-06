@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
@@ -22,18 +23,19 @@ import (
 // BillQuery is the builder for querying Bill entities.
 type BillQuery struct {
 	config
-	ctx               *QueryContext
-	order             []bill.OrderOption
-	inters            []Interceptor
-	predicates        []predicate.Bill
-	withSourceUser    *UserQuery
-	withTargetUser    *UserQuery
-	withTransferOrder *TransferOrderQuery
-	withMissionOrder  *MissionOrderQuery
-	withInvite        *InviteQuery
-	withSymbol        *SymbolQuery
-	withTargetSymbol  *SymbolQuery
-	modifiers         []func(*sql.Selector)
+	ctx                  *QueryContext
+	order                []bill.OrderOption
+	inters               []Interceptor
+	predicates           []predicate.Bill
+	withSourceUser       *UserQuery
+	withTargetUser       *UserQuery
+	withTransferOrder    *TransferOrderQuery
+	withMissionOrder     *MissionOrderQuery
+	withInvokeModelOrder *InvokeModelOrderQuery
+	withInvite           *InviteQuery
+	withSymbol           *SymbolQuery
+	withTargetSymbol     *SymbolQuery
+	modifiers            []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -151,6 +153,28 @@ func (bq *BillQuery) QueryMissionOrder() *MissionOrderQuery {
 			sqlgraph.From(bill.Table, bill.FieldID, selector),
 			sqlgraph.To(missionorder.Table, missionorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, bill.MissionOrderTable, bill.MissionOrderColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryInvokeModelOrder chains the current query on the "invoke_model_order" edge.
+func (bq *BillQuery) QueryInvokeModelOrder() *InvokeModelOrderQuery {
+	query := (&InvokeModelOrderClient{config: bq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := bq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := bq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(bill.Table, bill.FieldID, selector),
+			sqlgraph.To(invokemodelorder.Table, invokemodelorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, bill.InvokeModelOrderTable, bill.InvokeModelOrderColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
 		return fromU, nil
@@ -411,18 +435,19 @@ func (bq *BillQuery) Clone() *BillQuery {
 		return nil
 	}
 	return &BillQuery{
-		config:            bq.config,
-		ctx:               bq.ctx.Clone(),
-		order:             append([]bill.OrderOption{}, bq.order...),
-		inters:            append([]Interceptor{}, bq.inters...),
-		predicates:        append([]predicate.Bill{}, bq.predicates...),
-		withSourceUser:    bq.withSourceUser.Clone(),
-		withTargetUser:    bq.withTargetUser.Clone(),
-		withTransferOrder: bq.withTransferOrder.Clone(),
-		withMissionOrder:  bq.withMissionOrder.Clone(),
-		withInvite:        bq.withInvite.Clone(),
-		withSymbol:        bq.withSymbol.Clone(),
-		withTargetSymbol:  bq.withTargetSymbol.Clone(),
+		config:               bq.config,
+		ctx:                  bq.ctx.Clone(),
+		order:                append([]bill.OrderOption{}, bq.order...),
+		inters:               append([]Interceptor{}, bq.inters...),
+		predicates:           append([]predicate.Bill{}, bq.predicates...),
+		withSourceUser:       bq.withSourceUser.Clone(),
+		withTargetUser:       bq.withTargetUser.Clone(),
+		withTransferOrder:    bq.withTransferOrder.Clone(),
+		withMissionOrder:     bq.withMissionOrder.Clone(),
+		withInvokeModelOrder: bq.withInvokeModelOrder.Clone(),
+		withInvite:           bq.withInvite.Clone(),
+		withSymbol:           bq.withSymbol.Clone(),
+		withTargetSymbol:     bq.withTargetSymbol.Clone(),
 		// clone intermediate query.
 		sql:  bq.sql.Clone(),
 		path: bq.path,
@@ -470,6 +495,17 @@ func (bq *BillQuery) WithMissionOrder(opts ...func(*MissionOrderQuery)) *BillQue
 		opt(query)
 	}
 	bq.withMissionOrder = query
+	return bq
+}
+
+// WithInvokeModelOrder tells the query-builder to eager-load the nodes that are connected to
+// the "invoke_model_order" edge. The optional arguments are used to configure the query builder of the edge.
+func (bq *BillQuery) WithInvokeModelOrder(opts ...func(*InvokeModelOrderQuery)) *BillQuery {
+	query := (&InvokeModelOrderClient{config: bq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	bq.withInvokeModelOrder = query
 	return bq
 }
 
@@ -584,11 +620,12 @@ func (bq *BillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bill, e
 	var (
 		nodes       = []*Bill{}
 		_spec       = bq.querySpec()
-		loadedTypes = [7]bool{
+		loadedTypes = [8]bool{
 			bq.withSourceUser != nil,
 			bq.withTargetUser != nil,
 			bq.withTransferOrder != nil,
 			bq.withMissionOrder != nil,
+			bq.withInvokeModelOrder != nil,
 			bq.withInvite != nil,
 			bq.withSymbol != nil,
 			bq.withTargetSymbol != nil,
@@ -636,6 +673,12 @@ func (bq *BillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bill, e
 	if query := bq.withMissionOrder; query != nil {
 		if err := bq.loadMissionOrder(ctx, query, nodes, nil,
 			func(n *Bill, e *MissionOrder) { n.Edges.MissionOrder = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := bq.withInvokeModelOrder; query != nil {
+		if err := bq.loadInvokeModelOrder(ctx, query, nodes, nil,
+			func(n *Bill, e *InvokeModelOrder) { n.Edges.InvokeModelOrder = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -761,6 +804,35 @@ func (bq *BillQuery) loadMissionOrder(ctx context.Context, query *MissionOrderQu
 		return nil
 	}
 	query.Where(missionorder.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "order_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (bq *BillQuery) loadInvokeModelOrder(ctx context.Context, query *InvokeModelOrderQuery, nodes []*Bill, init func(*Bill), assign func(*Bill, *InvokeModelOrder)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*Bill)
+	for i := range nodes {
+		fk := nodes[i].OrderID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(invokemodelorder.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -902,6 +974,9 @@ func (bq *BillQuery) querySpec() *sqlgraph.QuerySpec {
 			_spec.Node.AddColumnOnce(bill.FieldOrderID)
 		}
 		if bq.withMissionOrder != nil {
+			_spec.Node.AddColumnOnce(bill.FieldOrderID)
+		}
+		if bq.withInvokeModelOrder != nil {
 			_spec.Node.AddColumnOnce(bill.FieldOrderID)
 		}
 		if bq.withInvite != nil {

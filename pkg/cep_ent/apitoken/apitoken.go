@@ -34,10 +34,19 @@ const (
 	FieldToken = "token"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// EdgeInvokeModelOrders holds the string denoting the invoke_model_orders edge name in mutations.
+	EdgeInvokeModelOrders = "invoke_model_orders"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// Table holds the table name of the apitoken in the database.
 	Table = "api_tokens"
+	// InvokeModelOrdersTable is the table that holds the invoke_model_orders relation/edge.
+	InvokeModelOrdersTable = "invoke_model_orders"
+	// InvokeModelOrdersInverseTable is the table name for the InvokeModelOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "invokemodelorder" package.
+	InvokeModelOrdersInverseTable = "invoke_model_orders"
+	// InvokeModelOrdersColumn is the table column denoting the invoke_model_orders relation/edge.
+	InvokeModelOrdersColumn = "api_token_id"
 	// UserTable is the table that holds the user relation/edge.
 	UserTable = "api_tokens"
 	// UserInverseTable is the table name for the User entity.
@@ -157,11 +166,32 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
+// ByInvokeModelOrdersCount orders the results by invoke_model_orders count.
+func ByInvokeModelOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newInvokeModelOrdersStep(), opts...)
+	}
+}
+
+// ByInvokeModelOrders orders the results by invoke_model_orders terms.
+func ByInvokeModelOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newInvokeModelOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByUserField orders the results by user field.
 func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
 	}
+}
+func newInvokeModelOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(InvokeModelOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, InvokeModelOrdersTable, InvokeModelOrdersColumn),
+	)
 }
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(

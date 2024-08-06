@@ -115,6 +115,9 @@ type InputLog func(*sql.Selector)
 // Invite is the predicate function for invite builders.
 type Invite func(*sql.Selector)
 
+// InvokeModelOrder is the predicate function for invokemodelorder builders.
+type InvokeModelOrder func(*sql.Selector)
+
 // LoginRecord is the predicate function for loginrecord builders.
 type LoginRecord func(*sql.Selector)
 

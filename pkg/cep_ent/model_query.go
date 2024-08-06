@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
@@ -21,14 +22,15 @@ import (
 // ModelQuery is the builder for querying Model entities.
 type ModelQuery struct {
 	config
-	ctx             *QueryContext
-	order           []model.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.Model
-	withModelPrices *ModelPriceQuery
-	withStarUser    *UserQuery
-	withStarModel   *UserModelQuery
-	modifiers       []func(*sql.Selector)
+	ctx                   *QueryContext
+	order                 []model.OrderOption
+	inters                []Interceptor
+	predicates            []predicate.Model
+	withModelPrices       *ModelPriceQuery
+	withStarUser          *UserQuery
+	withInvokeModelOrders *InvokeModelOrderQuery
+	withStarModel         *UserModelQuery
+	modifiers             []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -102,6 +104,28 @@ func (mq *ModelQuery) QueryStarUser() *UserQuery {
 			sqlgraph.From(model.Table, model.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, model.StarUserTable, model.StarUserPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryInvokeModelOrders chains the current query on the "invoke_model_orders" edge.
+func (mq *ModelQuery) QueryInvokeModelOrders() *InvokeModelOrderQuery {
+	query := (&InvokeModelOrderClient{config: mq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(model.Table, model.FieldID, selector),
+			sqlgraph.To(invokemodelorder.Table, invokemodelorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, model.InvokeModelOrdersTable, model.InvokeModelOrdersColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil
@@ -318,14 +342,15 @@ func (mq *ModelQuery) Clone() *ModelQuery {
 		return nil
 	}
 	return &ModelQuery{
-		config:          mq.config,
-		ctx:             mq.ctx.Clone(),
-		order:           append([]model.OrderOption{}, mq.order...),
-		inters:          append([]Interceptor{}, mq.inters...),
-		predicates:      append([]predicate.Model{}, mq.predicates...),
-		withModelPrices: mq.withModelPrices.Clone(),
-		withStarUser:    mq.withStarUser.Clone(),
-		withStarModel:   mq.withStarModel.Clone(),
+		config:                mq.config,
+		ctx:                   mq.ctx.Clone(),
+		order:                 append([]model.OrderOption{}, mq.order...),
+		inters:                append([]Interceptor{}, mq.inters...),
+		predicates:            append([]predicate.Model{}, mq.predicates...),
+		withModelPrices:       mq.withModelPrices.Clone(),
+		withStarUser:          mq.withStarUser.Clone(),
+		withInvokeModelOrders: mq.withInvokeModelOrders.Clone(),
+		withStarModel:         mq.withStarModel.Clone(),
 		// clone intermediate query.
 		sql:  mq.sql.Clone(),
 		path: mq.path,
@@ -351,6 +376,17 @@ func (mq *ModelQuery) WithStarUser(opts ...func(*UserQuery)) *ModelQuery {
 		opt(query)
 	}
 	mq.withStarUser = query
+	return mq
+}
+
+// WithInvokeModelOrders tells the query-builder to eager-load the nodes that are connected to
+// the "invoke_model_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *ModelQuery) WithInvokeModelOrders(opts ...func(*InvokeModelOrderQuery)) *ModelQuery {
+	query := (&InvokeModelOrderClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withInvokeModelOrders = query
 	return mq
 }
 
@@ -443,9 +479,10 @@ func (mq *ModelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Model,
 	var (
 		nodes       = []*Model{}
 		_spec       = mq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			mq.withModelPrices != nil,
 			mq.withStarUser != nil,
+			mq.withInvokeModelOrders != nil,
 			mq.withStarModel != nil,
 		}
 	)
@@ -481,6 +518,13 @@ func (mq *ModelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Model,
 		if err := mq.loadStarUser(ctx, query, nodes,
 			func(n *Model) { n.Edges.StarUser = []*User{} },
 			func(n *Model, e *User) { n.Edges.StarUser = append(n.Edges.StarUser, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := mq.withInvokeModelOrders; query != nil {
+		if err := mq.loadInvokeModelOrders(ctx, query, nodes,
+			func(n *Model) { n.Edges.InvokeModelOrders = []*InvokeModelOrder{} },
+			func(n *Model, e *InvokeModelOrder) { n.Edges.InvokeModelOrders = append(n.Edges.InvokeModelOrders, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -582,6 +626,36 @@ func (mq *ModelQuery) loadStarUser(ctx context.Context, query *UserQuery, nodes 
 		for kn := range nodes {
 			assign(kn, n)
 		}
+	}
+	return nil
+}
+func (mq *ModelQuery) loadInvokeModelOrders(ctx context.Context, query *InvokeModelOrderQuery, nodes []*Model, init func(*Model), assign func(*Model, *InvokeModelOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Model)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(invokemodelorder.FieldModelID)
+	}
+	query.Where(predicate.InvokeModelOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(model.InvokeModelOrdersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ModelID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "model_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

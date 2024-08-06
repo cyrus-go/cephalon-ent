@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/apitoken"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -154,6 +155,21 @@ func (atc *ApiTokenCreate) SetNillableID(i *int64) *ApiTokenCreate {
 		atc.SetID(*i)
 	}
 	return atc
+}
+
+// AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by IDs.
+func (atc *ApiTokenCreate) AddInvokeModelOrderIDs(ids ...int64) *ApiTokenCreate {
+	atc.mutation.AddInvokeModelOrderIDs(ids...)
+	return atc
+}
+
+// AddInvokeModelOrders adds the "invoke_model_orders" edges to the InvokeModelOrder entity.
+func (atc *ApiTokenCreate) AddInvokeModelOrders(i ...*InvokeModelOrder) *ApiTokenCreate {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return atc.AddInvokeModelOrderIDs(ids...)
 }
 
 // SetUser sets the "user" edge to the User entity.
@@ -335,6 +351,22 @@ func (atc *ApiTokenCreate) createSpec() (*ApiToken, *sqlgraph.CreateSpec) {
 	if value, ok := atc.mutation.Status(); ok {
 		_spec.SetField(apitoken.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
+	}
+	if nodes := atc.mutation.InvokeModelOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   apitoken.InvokeModelOrdersTable,
+			Columns: []string{apitoken.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := atc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

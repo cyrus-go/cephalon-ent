@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
@@ -368,6 +369,25 @@ func (bc *BillCreate) SetNillableMissionOrderID(id *int64) *BillCreate {
 // SetMissionOrder sets the "mission_order" edge to the MissionOrder entity.
 func (bc *BillCreate) SetMissionOrder(m *MissionOrder) *BillCreate {
 	return bc.SetMissionOrderID(m.ID)
+}
+
+// SetInvokeModelOrderID sets the "invoke_model_order" edge to the InvokeModelOrder entity by ID.
+func (bc *BillCreate) SetInvokeModelOrderID(id int64) *BillCreate {
+	bc.mutation.SetInvokeModelOrderID(id)
+	return bc
+}
+
+// SetNillableInvokeModelOrderID sets the "invoke_model_order" edge to the InvokeModelOrder entity by ID if the given value is not nil.
+func (bc *BillCreate) SetNillableInvokeModelOrderID(id *int64) *BillCreate {
+	if id != nil {
+		bc = bc.SetInvokeModelOrderID(*id)
+	}
+	return bc
+}
+
+// SetInvokeModelOrder sets the "invoke_model_order" edge to the InvokeModelOrder entity.
+func (bc *BillCreate) SetInvokeModelOrder(i *InvokeModelOrder) *BillCreate {
+	return bc.SetInvokeModelOrderID(i.ID)
 }
 
 // SetInvite sets the "invite" edge to the Invite entity.
@@ -739,6 +759,23 @@ func (bc *BillCreate) createSpec() (*Bill, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.OrderID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := bc.mutation.InvokeModelOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.InvokeModelOrderTable,
+			Columns: []string{bill.InvokeModelOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

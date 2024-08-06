@@ -64,6 +64,8 @@ const (
 	EdgeTransferOrder = "transfer_order"
 	// EdgeMissionOrder holds the string denoting the mission_order edge name in mutations.
 	EdgeMissionOrder = "mission_order"
+	// EdgeInvokeModelOrder holds the string denoting the invoke_model_order edge name in mutations.
+	EdgeInvokeModelOrder = "invoke_model_order"
 	// EdgeInvite holds the string denoting the invite edge name in mutations.
 	EdgeInvite = "invite"
 	// EdgeSymbol holds the string denoting the symbol edge name in mutations.
@@ -100,6 +102,13 @@ const (
 	MissionOrderInverseTable = "mission_orders"
 	// MissionOrderColumn is the table column denoting the mission_order relation/edge.
 	MissionOrderColumn = "order_id"
+	// InvokeModelOrderTable is the table that holds the invoke_model_order relation/edge.
+	InvokeModelOrderTable = "bills"
+	// InvokeModelOrderInverseTable is the table name for the InvokeModelOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "invokemodelorder" package.
+	InvokeModelOrderInverseTable = "invoke_model_orders"
+	// InvokeModelOrderColumn is the table column denoting the invoke_model_order relation/edge.
+	InvokeModelOrderColumn = "order_id"
 	// InviteTable is the table that holds the invite relation/edge.
 	InviteTable = "bills"
 	// InviteInverseTable is the table name for the Invite entity.
@@ -361,6 +370,13 @@ func ByMissionOrderField(field string, opts ...sql.OrderTermOption) OrderOption 
 	}
 }
 
+// ByInvokeModelOrderField orders the results by invoke_model_order field.
+func ByInvokeModelOrderField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newInvokeModelOrderStep(), sql.OrderByField(field, opts...))
+	}
+}
+
 // ByInviteField orders the results by invite field.
 func ByInviteField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -407,6 +423,13 @@ func newMissionOrderStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionOrderInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, MissionOrderTable, MissionOrderColumn),
+	)
+}
+func newInvokeModelOrderStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(InvokeModelOrderInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, InvokeModelOrderTable, InvokeModelOrderColumn),
 	)
 }
 func newInviteStep() *sqlgraph.Step {

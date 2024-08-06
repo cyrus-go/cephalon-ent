@@ -4,6 +4,7 @@ package cep_ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -11,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/apitoken"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
@@ -18,12 +20,13 @@ import (
 // ApiTokenQuery is the builder for querying ApiToken entities.
 type ApiTokenQuery struct {
 	config
-	ctx        *QueryContext
-	order      []apitoken.OrderOption
-	inters     []Interceptor
-	predicates []predicate.ApiToken
-	withUser   *UserQuery
-	modifiers  []func(*sql.Selector)
+	ctx                   *QueryContext
+	order                 []apitoken.OrderOption
+	inters                []Interceptor
+	predicates            []predicate.ApiToken
+	withInvokeModelOrders *InvokeModelOrderQuery
+	withUser              *UserQuery
+	modifiers             []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -58,6 +61,28 @@ func (atq *ApiTokenQuery) Unique(unique bool) *ApiTokenQuery {
 func (atq *ApiTokenQuery) Order(o ...apitoken.OrderOption) *ApiTokenQuery {
 	atq.order = append(atq.order, o...)
 	return atq
+}
+
+// QueryInvokeModelOrders chains the current query on the "invoke_model_orders" edge.
+func (atq *ApiTokenQuery) QueryInvokeModelOrders() *InvokeModelOrderQuery {
+	query := (&InvokeModelOrderClient{config: atq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := atq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := atq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(apitoken.Table, apitoken.FieldID, selector),
+			sqlgraph.To(invokemodelorder.Table, invokemodelorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, apitoken.InvokeModelOrdersTable, apitoken.InvokeModelOrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(atq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // QueryUser chains the current query on the "user" edge.
@@ -269,16 +294,28 @@ func (atq *ApiTokenQuery) Clone() *ApiTokenQuery {
 		return nil
 	}
 	return &ApiTokenQuery{
-		config:     atq.config,
-		ctx:        atq.ctx.Clone(),
-		order:      append([]apitoken.OrderOption{}, atq.order...),
-		inters:     append([]Interceptor{}, atq.inters...),
-		predicates: append([]predicate.ApiToken{}, atq.predicates...),
-		withUser:   atq.withUser.Clone(),
+		config:                atq.config,
+		ctx:                   atq.ctx.Clone(),
+		order:                 append([]apitoken.OrderOption{}, atq.order...),
+		inters:                append([]Interceptor{}, atq.inters...),
+		predicates:            append([]predicate.ApiToken{}, atq.predicates...),
+		withInvokeModelOrders: atq.withInvokeModelOrders.Clone(),
+		withUser:              atq.withUser.Clone(),
 		// clone intermediate query.
 		sql:  atq.sql.Clone(),
 		path: atq.path,
 	}
+}
+
+// WithInvokeModelOrders tells the query-builder to eager-load the nodes that are connected to
+// the "invoke_model_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (atq *ApiTokenQuery) WithInvokeModelOrders(opts ...func(*InvokeModelOrderQuery)) *ApiTokenQuery {
+	query := (&InvokeModelOrderClient{config: atq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	atq.withInvokeModelOrders = query
+	return atq
 }
 
 // WithUser tells the query-builder to eager-load the nodes that are connected to
@@ -370,7 +407,8 @@ func (atq *ApiTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ap
 	var (
 		nodes       = []*ApiToken{}
 		_spec       = atq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
+			atq.withInvokeModelOrders != nil,
 			atq.withUser != nil,
 		}
 	)
@@ -395,6 +433,15 @@ func (atq *ApiTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ap
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := atq.withInvokeModelOrders; query != nil {
+		if err := atq.loadInvokeModelOrders(ctx, query, nodes,
+			func(n *ApiToken) { n.Edges.InvokeModelOrders = []*InvokeModelOrder{} },
+			func(n *ApiToken, e *InvokeModelOrder) {
+				n.Edges.InvokeModelOrders = append(n.Edges.InvokeModelOrders, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
 	if query := atq.withUser; query != nil {
 		if err := atq.loadUser(ctx, query, nodes, nil,
 			func(n *ApiToken, e *User) { n.Edges.User = e }); err != nil {
@@ -404,6 +451,36 @@ func (atq *ApiTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ap
 	return nodes, nil
 }
 
+func (atq *ApiTokenQuery) loadInvokeModelOrders(ctx context.Context, query *InvokeModelOrderQuery, nodes []*ApiToken, init func(*ApiToken), assign func(*ApiToken, *InvokeModelOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*ApiToken)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(invokemodelorder.FieldAPITokenID)
+	}
+	query.Where(predicate.InvokeModelOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(apitoken.InvokeModelOrdersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.APITokenID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "api_token_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 func (atq *ApiTokenQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*ApiToken, init func(*ApiToken), assign func(*ApiToken, *User)) error {
 	ids := make([]int64, 0, len(nodes))
 	nodeids := make(map[int64][]*ApiToken)

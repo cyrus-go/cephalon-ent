@@ -55,11 +55,13 @@ type ModelEdges struct {
 	ModelPrices []*ModelPrice `json:"model_prices,omitempty"`
 	// StarUser holds the value of the star_user edge.
 	StarUser []*User `json:"star_user,omitempty"`
+	// InvokeModelOrders holds the value of the invoke_model_orders edge.
+	InvokeModelOrders []*InvokeModelOrder `json:"invoke_model_orders,omitempty"`
 	// StarModel holds the value of the star_model edge.
 	StarModel []*UserModel `json:"star_model,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // ModelPricesOrErr returns the ModelPrices value or an error if the edge
@@ -80,10 +82,19 @@ func (e ModelEdges) StarUserOrErr() ([]*User, error) {
 	return nil, &NotLoadedError{edge: "star_user"}
 }
 
+// InvokeModelOrdersOrErr returns the InvokeModelOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e ModelEdges) InvokeModelOrdersOrErr() ([]*InvokeModelOrder, error) {
+	if e.loadedTypes[2] {
+		return e.InvokeModelOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "invoke_model_orders"}
+}
+
 // StarModelOrErr returns the StarModel value or an error if the edge
 // was not loaded in eager-loading.
 func (e ModelEdges) StarModelOrErr() ([]*UserModel, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.StarModel, nil
 	}
 	return nil, &NotLoadedError{edge: "star_model"}
@@ -216,6 +227,11 @@ func (m *Model) QueryModelPrices() *ModelPriceQuery {
 // QueryStarUser queries the "star_user" edge of the Model entity.
 func (m *Model) QueryStarUser() *UserQuery {
 	return NewModelClient(m.config).QueryStarUser(m)
+}
+
+// QueryInvokeModelOrders queries the "invoke_model_orders" edge of the Model entity.
+func (m *Model) QueryInvokeModelOrders() *InvokeModelOrderQuery {
+	return NewModelClient(m.config).QueryInvokeModelOrders(m)
 }
 
 // QueryStarModel queries the "star_model" edge of the Model entity.

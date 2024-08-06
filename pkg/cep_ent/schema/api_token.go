@@ -25,7 +25,7 @@ func (ApiToken) Fields() []ent.Field {
 // Edges of the Token.
 func (ApiToken) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("call_model_orders", InvokeModelOrder.Type),
+		edge.To("invoke_model_orders", InvokeModelOrder.Type),
 		edge.From("user", User.Type).Ref("api_tokens").Field("user_id").Unique().Required(),
 	}
 }

@@ -357,6 +357,18 @@ func (f InviteFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.InviteMutation", m)
 }
 
+// The InvokeModelOrderFunc type is an adapter to allow the use of ordinary
+// function as InvokeModelOrder mutator.
+type InvokeModelOrderFunc func(context.Context, *cep_ent.InvokeModelOrderMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f InvokeModelOrderFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.InvokeModelOrderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.InvokeModelOrderMutation", m)
+}
+
 // The LoginRecordFunc type is an adapter to allow the use of ordinary
 // function as LoginRecord mutator.
 type LoginRecordFunc func(context.Context, *cep_ent.LoginRecordMutation) (cep_ent.Value, error)

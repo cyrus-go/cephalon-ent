@@ -2511,6 +2511,29 @@ func HasStarModelWith(preds ...predicate.Model) predicate.User {
 	})
 }
 
+// HasInvokeModelOrders applies the HasEdge predicate on the "invoke_model_orders" edge.
+func HasInvokeModelOrders() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, InvokeModelOrdersTable, InvokeModelOrdersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasInvokeModelOrdersWith applies the HasEdge predicate on the "invoke_model_orders" edge with a given conditions (other predicates).
+func HasInvokeModelOrdersWith(preds ...predicate.InvokeModelOrder) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newInvokeModelOrdersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasModelStar applies the HasEdge predicate on the "model_star" edge.
 func HasModelStar() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

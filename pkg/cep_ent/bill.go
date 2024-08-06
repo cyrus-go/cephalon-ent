@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
@@ -80,6 +81,8 @@ type BillEdges struct {
 	TransferOrder *TransferOrder `json:"transfer_order,omitempty"`
 	// MissionOrder holds the value of the mission_order edge.
 	MissionOrder *MissionOrder `json:"mission_order,omitempty"`
+	// InvokeModelOrder holds the value of the invoke_model_order edge.
+	InvokeModelOrder *InvokeModelOrder `json:"invoke_model_order,omitempty"`
 	// Invite holds the value of the invite edge.
 	Invite *Invite `json:"invite,omitempty"`
 	// Symbol holds the value of the symbol edge.
@@ -88,7 +91,7 @@ type BillEdges struct {
 	TargetSymbol *Symbol `json:"target_symbol,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [8]bool
 }
 
 // SourceUserOrErr returns the SourceUser value or an error if the edge
@@ -143,10 +146,23 @@ func (e BillEdges) MissionOrderOrErr() (*MissionOrder, error) {
 	return nil, &NotLoadedError{edge: "mission_order"}
 }
 
+// InvokeModelOrderOrErr returns the InvokeModelOrder value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e BillEdges) InvokeModelOrderOrErr() (*InvokeModelOrder, error) {
+	if e.loadedTypes[4] {
+		if e.InvokeModelOrder == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: invokemodelorder.Label}
+		}
+		return e.InvokeModelOrder, nil
+	}
+	return nil, &NotLoadedError{edge: "invoke_model_order"}
+}
+
 // InviteOrErr returns the Invite value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e BillEdges) InviteOrErr() (*Invite, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		if e.Invite == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: invite.Label}
@@ -159,7 +175,7 @@ func (e BillEdges) InviteOrErr() (*Invite, error) {
 // SymbolOrErr returns the Symbol value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e BillEdges) SymbolOrErr() (*Symbol, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		if e.Symbol == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: symbol.Label}
@@ -172,7 +188,7 @@ func (e BillEdges) SymbolOrErr() (*Symbol, error) {
 // TargetSymbolOrErr returns the TargetSymbol value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e BillEdges) TargetSymbolOrErr() (*Symbol, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		if e.TargetSymbol == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: symbol.Label}
@@ -365,6 +381,11 @@ func (b *Bill) QueryTransferOrder() *TransferOrderQuery {
 // QueryMissionOrder queries the "mission_order" edge of the Bill entity.
 func (b *Bill) QueryMissionOrder() *MissionOrderQuery {
 	return NewBillClient(b.config).QueryMissionOrder(b)
+}
+
+// QueryInvokeModelOrder queries the "invoke_model_order" edge of the Bill entity.
+func (b *Bill) QueryInvokeModelOrder() *InvokeModelOrderQuery {
+	return NewBillClient(b.config).QueryInvokeModelOrder(b)
 }
 
 // QueryInvite queries the "invite" edge of the Bill entity.

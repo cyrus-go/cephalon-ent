@@ -25,6 +25,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
@@ -112,6 +113,7 @@ type UserQuery struct {
 	withMissionFailedFeedbacks *MissionFailedFeedbackQuery
 	withAPITokens              *ApiTokenQuery
 	withStarModel              *ModelQuery
+	withInvokeModelOrders      *InvokeModelOrderQuery
 	withModelStar              *UserModelQuery
 	modifiers                  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -1250,6 +1252,28 @@ func (uq *UserQuery) QueryStarModel() *ModelQuery {
 	return query
 }
 
+// QueryInvokeModelOrders chains the current query on the "invoke_model_orders" edge.
+func (uq *UserQuery) QueryInvokeModelOrders() *InvokeModelOrderQuery {
+	query := (&InvokeModelOrderClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(invokemodelorder.Table, invokemodelorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.InvokeModelOrdersTable, user.InvokeModelOrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // QueryModelStar chains the current query on the "model_star" edge.
 func (uq *UserQuery) QueryModelStar() *UserModelQuery {
 	query := (&UserModelClient{config: uq.config}).Query()
@@ -1514,6 +1538,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withMissionFailedFeedbacks: uq.withMissionFailedFeedbacks.Clone(),
 		withAPITokens:              uq.withAPITokens.Clone(),
 		withStarModel:              uq.withStarModel.Clone(),
+		withInvokeModelOrders:      uq.withInvokeModelOrders.Clone(),
 		withModelStar:              uq.withModelStar.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
@@ -2071,6 +2096,17 @@ func (uq *UserQuery) WithStarModel(opts ...func(*ModelQuery)) *UserQuery {
 	return uq
 }
 
+// WithInvokeModelOrders tells the query-builder to eager-load the nodes that are connected to
+// the "invoke_model_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithInvokeModelOrders(opts ...func(*InvokeModelOrderQuery)) *UserQuery {
+	query := (&InvokeModelOrderClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withInvokeModelOrders = query
+	return uq
+}
+
 // WithModelStar tells the query-builder to eager-load the nodes that are connected to
 // the "model_star" edge. The optional arguments are used to configure the query builder of the edge.
 func (uq *UserQuery) WithModelStar(opts ...func(*UserModelQuery)) *UserQuery {
@@ -2160,7 +2196,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [51]bool{
+		loadedTypes = [52]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -2211,6 +2247,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withMissionFailedFeedbacks != nil,
 			uq.withAPITokens != nil,
 			uq.withStarModel != nil,
+			uq.withInvokeModelOrders != nil,
 			uq.withModelStar != nil,
 		}
 	)
@@ -2595,6 +2632,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadStarModel(ctx, query, nodes,
 			func(n *User) { n.Edges.StarModel = []*Model{} },
 			func(n *User, e *Model) { n.Edges.StarModel = append(n.Edges.StarModel, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withInvokeModelOrders; query != nil {
+		if err := uq.loadInvokeModelOrders(ctx, query, nodes,
+			func(n *User) { n.Edges.InvokeModelOrders = []*InvokeModelOrder{} },
+			func(n *User, e *InvokeModelOrder) { n.Edges.InvokeModelOrders = append(n.Edges.InvokeModelOrders, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -4127,6 +4171,36 @@ func (uq *UserQuery) loadStarModel(ctx context.Context, query *ModelQuery, nodes
 		for kn := range nodes {
 			assign(kn, n)
 		}
+	}
+	return nil
+}
+func (uq *UserQuery) loadInvokeModelOrders(ctx context.Context, query *InvokeModelOrderQuery, nodes []*User, init func(*User), assign func(*User, *InvokeModelOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(invokemodelorder.FieldUserID)
+	}
+	query.Where(predicate.InvokeModelOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.InvokeModelOrdersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

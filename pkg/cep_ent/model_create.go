@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -236,6 +237,21 @@ func (mc *ModelCreate) AddStarUser(u ...*User) *ModelCreate {
 		ids[i] = u[i].ID
 	}
 	return mc.AddStarUserIDs(ids...)
+}
+
+// AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by IDs.
+func (mc *ModelCreate) AddInvokeModelOrderIDs(ids ...int64) *ModelCreate {
+	mc.mutation.AddInvokeModelOrderIDs(ids...)
+	return mc
+}
+
+// AddInvokeModelOrders adds the "invoke_model_orders" edges to the InvokeModelOrder entity.
+func (mc *ModelCreate) AddInvokeModelOrders(i ...*InvokeModelOrder) *ModelCreate {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return mc.AddInvokeModelOrderIDs(ids...)
 }
 
 // AddStarModelIDs adds the "star_model" edge to the UserModel entity by IDs.
@@ -507,6 +523,22 @@ func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
 		edge.Target.Fields = specE.Fields
 		if specE.ID.Value != nil {
 			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.InvokeModelOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.InvokeModelOrdersTable,
+			Columns: []string{model.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}

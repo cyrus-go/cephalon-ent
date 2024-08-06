@@ -933,6 +933,29 @@ func HasMissionOrderWith(preds ...predicate.MissionOrder) predicate.Bill {
 	})
 }
 
+// HasInvokeModelOrder applies the HasEdge predicate on the "invoke_model_order" edge.
+func HasInvokeModelOrder() predicate.Bill {
+	return predicate.Bill(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, InvokeModelOrderTable, InvokeModelOrderColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasInvokeModelOrderWith applies the HasEdge predicate on the "invoke_model_order" edge with a given conditions (other predicates).
+func HasInvokeModelOrderWith(preds ...predicate.InvokeModelOrder) predicate.Bill {
+	return predicate.Bill(func(s *sql.Selector) {
+		step := newInvokeModelOrderStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasInvite applies the HasEdge predicate on the "invite" edge.
 func HasInvite() predicate.Bill {
 	return predicate.Bill(func(s *sql.Selector) {

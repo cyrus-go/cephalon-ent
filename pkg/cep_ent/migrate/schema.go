@@ -153,6 +153,12 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 			{
+				Symbol:     "bills_invoke_model_orders_bills",
+				Columns:    []*schema.Column{BillsColumns[16]},
+				RefColumns: []*schema.Column{InvokeModelOrdersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
 				Symbol:     "bills_mission_orders_bills",
 				Columns:    []*schema.Column{BillsColumns[16]},
 				RefColumns: []*schema.Column{MissionOrdersColumns[0]},
@@ -1195,6 +1201,50 @@ var (
 				Name:    "invite_campaign_id",
 				Unique:  false,
 				Columns: []*schema.Column{InvitesColumns[11]},
+			},
+		},
+	}
+	// InvokeModelOrdersColumns holds the columns for the "invoke_model_orders" table.
+	InvokeModelOrdersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "invoke_type", Type: field.TypeEnum, Comment: "调用类型", Enums: []string{"unknown", "language"}, Default: "unknown"},
+		{Name: "invoke_times", Type: field.TypeInt, Comment: "调用次数", Default: 0},
+		{Name: "input_token_cost", Type: field.TypeInt, Comment: "输入token消耗", Default: 0},
+		{Name: "output_token_cost", Type: field.TypeInt, Comment: "输出token消耗", Default: 0},
+		{Name: "input_cep_cost", Type: field.TypeInt, Comment: "输入cep消耗", Default: 0},
+		{Name: "output_cep_cost", Type: field.TypeInt, Comment: "输出cep消耗", Default: 0},
+		{Name: "api_token_id", Type: field.TypeInt64, Comment: "API Token ID"},
+		{Name: "model_id", Type: field.TypeInt64, Comment: "模型ID"},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
+	}
+	// InvokeModelOrdersTable holds the schema information for the "invoke_model_orders" table.
+	InvokeModelOrdersTable = &schema.Table{
+		Name:       "invoke_model_orders",
+		Columns:    InvokeModelOrdersColumns,
+		PrimaryKey: []*schema.Column{InvokeModelOrdersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "invoke_model_orders_api_tokens_invoke_model_orders",
+				Columns:    []*schema.Column{InvokeModelOrdersColumns[12]},
+				RefColumns: []*schema.Column{APITokensColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "invoke_model_orders_models_invoke_model_orders",
+				Columns:    []*schema.Column{InvokeModelOrdersColumns[13]},
+				RefColumns: []*schema.Column{ModelsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "invoke_model_orders_users_invoke_model_orders",
+				Columns:    []*schema.Column{InvokeModelOrdersColumns[14]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
@@ -3070,6 +3120,7 @@ var (
 		IncomeManagesTable,
 		InputLogsTable,
 		InvitesTable,
+		InvokeModelOrdersTable,
 		LoginRecordsTable,
 		LottosTable,
 		LottoChanceRulesTable,
@@ -3125,12 +3176,13 @@ func init() {
 	ArtworkLikesTable.ForeignKeys[1].RefTable = UsersTable
 	ArtworkLikesTable.Annotation = &entsql.Annotation{}
 	BillsTable.ForeignKeys[0].RefTable = InvitesTable
-	BillsTable.ForeignKeys[1].RefTable = MissionOrdersTable
-	BillsTable.ForeignKeys[2].RefTable = SymbolsTable
+	BillsTable.ForeignKeys[1].RefTable = InvokeModelOrdersTable
+	BillsTable.ForeignKeys[2].RefTable = MissionOrdersTable
 	BillsTable.ForeignKeys[3].RefTable = SymbolsTable
-	BillsTable.ForeignKeys[4].RefTable = TransferOrdersTable
-	BillsTable.ForeignKeys[5].RefTable = UsersTable
+	BillsTable.ForeignKeys[4].RefTable = SymbolsTable
+	BillsTable.ForeignKeys[5].RefTable = TransferOrdersTable
 	BillsTable.ForeignKeys[6].RefTable = UsersTable
+	BillsTable.ForeignKeys[7].RefTable = UsersTable
 	BillsTable.Annotation = &entsql.Annotation{}
 	CdkInfosTable.ForeignKeys[0].RefTable = UsersTable
 	CdkInfosTable.ForeignKeys[1].RefTable = UsersTable
@@ -3194,6 +3246,10 @@ func init() {
 	InvitesTable.ForeignKeys[0].RefTable = CampaignsTable
 	InvitesTable.ForeignKeys[1].RefTable = UsersTable
 	InvitesTable.Annotation = &entsql.Annotation{}
+	InvokeModelOrdersTable.ForeignKeys[0].RefTable = APITokensTable
+	InvokeModelOrdersTable.ForeignKeys[1].RefTable = ModelsTable
+	InvokeModelOrdersTable.ForeignKeys[2].RefTable = UsersTable
+	InvokeModelOrdersTable.Annotation = &entsql.Annotation{}
 	LoginRecordsTable.ForeignKeys[0].RefTable = UsersTable
 	LoginRecordsTable.Annotation = &entsql.Annotation{}
 	LottosTable.Annotation = &entsql.Annotation{}

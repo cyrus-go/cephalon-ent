@@ -40,6 +40,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottochancerule"
@@ -125,6 +126,7 @@ const (
 	TypeIncomeManage          = "IncomeManage"
 	TypeInputLog              = "InputLog"
 	TypeInvite                = "Invite"
+	TypeInvokeModelOrder      = "InvokeModelOrder"
 	TypeLoginRecord           = "LoginRecord"
 	TypeLotto                 = "Lotto"
 	TypeLottoChanceRule       = "LottoChanceRule"
@@ -173,25 +175,28 @@ const (
 // ApiTokenMutation represents an operation that mutates the ApiToken nodes in the graph.
 type ApiTokenMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int64
-	created_by    *int64
-	addcreated_by *int64
-	updated_by    *int64
-	addupdated_by *int64
-	created_at    *time.Time
-	updated_at    *time.Time
-	deleted_at    *time.Time
-	name          *string
-	token         *string
-	status        *enums.ApiTokenStatus
-	clearedFields map[string]struct{}
-	user          *int64
-	cleareduser   bool
-	done          bool
-	oldValue      func(context.Context) (*ApiToken, error)
-	predicates    []predicate.ApiToken
+	op                         Op
+	typ                        string
+	id                         *int64
+	created_by                 *int64
+	addcreated_by              *int64
+	updated_by                 *int64
+	addupdated_by              *int64
+	created_at                 *time.Time
+	updated_at                 *time.Time
+	deleted_at                 *time.Time
+	name                       *string
+	token                      *string
+	status                     *enums.ApiTokenStatus
+	clearedFields              map[string]struct{}
+	invoke_model_orders        map[int64]struct{}
+	removedinvoke_model_orders map[int64]struct{}
+	clearedinvoke_model_orders bool
+	user                       *int64
+	cleareduser                bool
+	done                       bool
+	oldValue                   func(context.Context) (*ApiToken, error)
+	predicates                 []predicate.ApiToken
 }
 
 var _ ent.Mutation = (*ApiTokenMutation)(nil)
@@ -662,6 +667,60 @@ func (m *ApiTokenMutation) ResetStatus() {
 	m.status = nil
 }
 
+// AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by ids.
+func (m *ApiTokenMutation) AddInvokeModelOrderIDs(ids ...int64) {
+	if m.invoke_model_orders == nil {
+		m.invoke_model_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.invoke_model_orders[ids[i]] = struct{}{}
+	}
+}
+
+// ClearInvokeModelOrders clears the "invoke_model_orders" edge to the InvokeModelOrder entity.
+func (m *ApiTokenMutation) ClearInvokeModelOrders() {
+	m.clearedinvoke_model_orders = true
+}
+
+// InvokeModelOrdersCleared reports if the "invoke_model_orders" edge to the InvokeModelOrder entity was cleared.
+func (m *ApiTokenMutation) InvokeModelOrdersCleared() bool {
+	return m.clearedinvoke_model_orders
+}
+
+// RemoveInvokeModelOrderIDs removes the "invoke_model_orders" edge to the InvokeModelOrder entity by IDs.
+func (m *ApiTokenMutation) RemoveInvokeModelOrderIDs(ids ...int64) {
+	if m.removedinvoke_model_orders == nil {
+		m.removedinvoke_model_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.invoke_model_orders, ids[i])
+		m.removedinvoke_model_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedInvokeModelOrders returns the removed IDs of the "invoke_model_orders" edge to the InvokeModelOrder entity.
+func (m *ApiTokenMutation) RemovedInvokeModelOrdersIDs() (ids []int64) {
+	for id := range m.removedinvoke_model_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// InvokeModelOrdersIDs returns the "invoke_model_orders" edge IDs in the mutation.
+func (m *ApiTokenMutation) InvokeModelOrdersIDs() (ids []int64) {
+	for id := range m.invoke_model_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetInvokeModelOrders resets all changes to the "invoke_model_orders" edge.
+func (m *ApiTokenMutation) ResetInvokeModelOrders() {
+	m.invoke_model_orders = nil
+	m.clearedinvoke_model_orders = false
+	m.removedinvoke_model_orders = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *ApiTokenMutation) ClearUser() {
 	m.cleareduser = true
@@ -985,7 +1044,10 @@ func (m *ApiTokenMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ApiTokenMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.invoke_model_orders != nil {
+		edges = append(edges, apitoken.EdgeInvokeModelOrders)
+	}
 	if m.user != nil {
 		edges = append(edges, apitoken.EdgeUser)
 	}
@@ -996,6 +1058,12 @@ func (m *ApiTokenMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *ApiTokenMutation) AddedIDs(name string) []ent.Value {
 	switch name {
+	case apitoken.EdgeInvokeModelOrders:
+		ids := make([]ent.Value, 0, len(m.invoke_model_orders))
+		for id := range m.invoke_model_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	case apitoken.EdgeUser:
 		if id := m.user; id != nil {
 			return []ent.Value{*id}
@@ -1006,19 +1074,33 @@ func (m *ApiTokenMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ApiTokenMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.removedinvoke_model_orders != nil {
+		edges = append(edges, apitoken.EdgeInvokeModelOrders)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *ApiTokenMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case apitoken.EdgeInvokeModelOrders:
+		ids := make([]ent.Value, 0, len(m.removedinvoke_model_orders))
+		for id := range m.removedinvoke_model_orders {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ApiTokenMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.clearedinvoke_model_orders {
+		edges = append(edges, apitoken.EdgeInvokeModelOrders)
+	}
 	if m.cleareduser {
 		edges = append(edges, apitoken.EdgeUser)
 	}
@@ -1029,6 +1111,8 @@ func (m *ApiTokenMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *ApiTokenMutation) EdgeCleared(name string) bool {
 	switch name {
+	case apitoken.EdgeInvokeModelOrders:
+		return m.clearedinvoke_model_orders
 	case apitoken.EdgeUser:
 		return m.cleareduser
 	}
@@ -1050,6 +1134,9 @@ func (m *ApiTokenMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *ApiTokenMutation) ResetEdge(name string) error {
 	switch name {
+	case apitoken.EdgeInvokeModelOrders:
+		m.ResetInvokeModelOrders()
+		return nil
 	case apitoken.EdgeUser:
 		m.ResetUser()
 		return nil
@@ -2890,49 +2977,51 @@ func (m *ArtworkLikeMutation) ResetEdge(name string) error {
 // BillMutation represents an operation that mutates the Bill nodes in the graph.
 type BillMutation struct {
 	config
-	op                      Op
-	typ                     string
-	id                      *int64
-	created_by              *int64
-	addcreated_by           *int64
-	updated_by              *int64
-	addupdated_by           *int64
-	created_at              *time.Time
-	updated_at              *time.Time
-	deleted_at              *time.Time
-	_type                   *enums.BillType
-	way                     *enums.BillWay
-	profit_symbol_id        *int64
-	addprofit_symbol_id     *int64
-	amount                  *int64
-	addamount               *int64
-	target_before_amount    *int64
-	addtarget_before_amount *int64
-	target_after_amount     *int64
-	addtarget_after_amount  *int64
-	source_before_amount    *int64
-	addsource_before_amount *int64
-	source_after_amount     *int64
-	addsource_after_amount  *int64
-	serial_number           *string
-	clearedFields           map[string]struct{}
-	source_user             *int64
-	clearedsource_user      bool
-	target_user             *int64
-	clearedtarget_user      bool
-	transfer_order          *int64
-	clearedtransfer_order   bool
-	mission_order           *int64
-	clearedmission_order    bool
-	invite                  *int64
-	clearedinvite           bool
-	symbol                  *int64
-	clearedsymbol           bool
-	target_symbol           *int64
-	clearedtarget_symbol    bool
-	done                    bool
-	oldValue                func(context.Context) (*Bill, error)
-	predicates              []predicate.Bill
+	op                        Op
+	typ                       string
+	id                        *int64
+	created_by                *int64
+	addcreated_by             *int64
+	updated_by                *int64
+	addupdated_by             *int64
+	created_at                *time.Time
+	updated_at                *time.Time
+	deleted_at                *time.Time
+	_type                     *enums.BillType
+	way                       *enums.BillWay
+	profit_symbol_id          *int64
+	addprofit_symbol_id       *int64
+	amount                    *int64
+	addamount                 *int64
+	target_before_amount      *int64
+	addtarget_before_amount   *int64
+	target_after_amount       *int64
+	addtarget_after_amount    *int64
+	source_before_amount      *int64
+	addsource_before_amount   *int64
+	source_after_amount       *int64
+	addsource_after_amount    *int64
+	serial_number             *string
+	clearedFields             map[string]struct{}
+	source_user               *int64
+	clearedsource_user        bool
+	target_user               *int64
+	clearedtarget_user        bool
+	transfer_order            *int64
+	clearedtransfer_order     bool
+	mission_order             *int64
+	clearedmission_order      bool
+	invoke_model_order        *int64
+	clearedinvoke_model_order bool
+	invite                    *int64
+	clearedinvite             bool
+	symbol                    *int64
+	clearedsymbol             bool
+	target_symbol             *int64
+	clearedtarget_symbol      bool
+	done                      bool
+	oldValue                  func(context.Context) (*Bill, error)
+	predicates                []predicate.Bill
 }
 
 var _ ent.Mutation = (*BillMutation)(nil)
@@ -4066,6 +4155,46 @@ func (m *BillMutation) ResetMissionOrder() {
 	m.clearedmission_order = false
 }
 
+// SetInvokeModelOrderID sets the "invoke_model_order" edge to the InvokeModelOrder entity by id.
+func (m *BillMutation) SetInvokeModelOrderID(id int64) {
+	m.invoke_model_order = &id
+}
+
+// ClearInvokeModelOrder clears the "invoke_model_order" edge to the InvokeModelOrder entity.
+func (m *BillMutation) ClearInvokeModelOrder() {
+	m.clearedinvoke_model_order = true
+	m.clearedFields[bill.FieldOrderID] = struct{}{}
+}
+
+// InvokeModelOrderCleared reports if the "invoke_model_order" edge to the InvokeModelOrder entity was cleared.
+func (m *BillMutation) InvokeModelOrderCleared() bool {
+	return m.OrderIDCleared() || m.clearedinvoke_model_order
+}
+
+// InvokeModelOrderID returns the "invoke_model_order" edge ID in the mutation.
+func (m *BillMutation) InvokeModelOrderID() (id int64, exists bool) {
+	if m.invoke_model_order != nil {
+		return *m.invoke_model_order, true
+	}
+	return
+}
+
+// InvokeModelOrderIDs returns the "invoke_model_order" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// InvokeModelOrderID instead. It exists only for internal usage by the builders.
+func (m *BillMutation) InvokeModelOrderIDs() (ids []int64) {
+	if id := m.invoke_model_order; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetInvokeModelOrder resets all changes to the "invoke_model_order" edge.
+func (m *BillMutation) ResetInvokeModelOrder() {
+	m.invoke_model_order = nil
+	m.clearedinvoke_model_order = false
+}
+
 // ClearInvite clears the "invite" edge to the Invite entity.
 func (m *BillMutation) ClearInvite() {
 	m.clearedinvite = true
@@ -4711,7 +4840,7 @@ func (m *BillMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *BillMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.source_user != nil {
 		edges = append(edges, bill.EdgeSourceUser)
 	}
@@ -4723,6 +4852,9 @@ func (m *BillMutation) AddedEdges() []string {
 	}
 	if m.mission_order != nil {
 		edges = append(edges, bill.EdgeMissionOrder)
+	}
+	if m.invoke_model_order != nil {
+		edges = append(edges, bill.EdgeInvokeModelOrder)
 	}
 	if m.invite != nil {
 		edges = append(edges, bill.EdgeInvite)
@@ -4756,6 +4888,10 @@ func (m *BillMutation) AddedIDs(name string) []ent.Value {
 		if id := m.mission_order; id != nil {
 			return []ent.Value{*id}
 		}
+	case bill.EdgeInvokeModelOrder:
+		if id := m.invoke_model_order; id != nil {
+			return []ent.Value{*id}
+		}
 	case bill.EdgeInvite:
 		if id := m.invite; id != nil {
 			return []ent.Value{*id}
@@ -4774,7 +4910,7 @@ func (m *BillMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *BillMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	return edges
 }
 
@@ -4786,7 +4922,7 @@ func (m *BillMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *BillMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.clearedsource_user {
 		edges = append(edges, bill.EdgeSourceUser)
 	}
@@ -4798,6 +4934,9 @@ func (m *BillMutation) ClearedEdges() []string {
 	}
 	if m.clearedmission_order {
 		edges = append(edges, bill.EdgeMissionOrder)
+	}
+	if m.clearedinvoke_model_order {
+		edges = append(edges, bill.EdgeInvokeModelOrder)
 	}
 	if m.clearedinvite {
 		edges = append(edges, bill.EdgeInvite)
@@ -4823,6 +4962,8 @@ func (m *BillMutation) EdgeCleared(name string) bool {
 		return m.clearedtransfer_order
 	case bill.EdgeMissionOrder:
 		return m.clearedmission_order
+	case bill.EdgeInvokeModelOrder:
+		return m.clearedinvoke_model_order
 	case bill.EdgeInvite:
 		return m.clearedinvite
 	case bill.EdgeSymbol:
@@ -4848,6 +4989,9 @@ func (m *BillMutation) ClearEdge(name string) error {
 		return nil
 	case bill.EdgeMissionOrder:
 		m.ClearMissionOrder()
+		return nil
+	case bill.EdgeInvokeModelOrder:
+		m.ClearInvokeModelOrder()
 		return nil
 	case bill.EdgeInvite:
 		m.ClearInvite()
@@ -4877,6 +5021,9 @@ func (m *BillMutation) ResetEdge(name string) error {
 		return nil
 	case bill.EdgeMissionOrder:
 		m.ResetMissionOrder()
+		return nil
+	case bill.EdgeInvokeModelOrder:
+		m.ResetInvokeModelOrder()
 		return nil
 	case bill.EdgeInvite:
 		m.ResetInvite()
@@ -36327,6 +36474,1505 @@ func (m *InviteMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Invite edge %s", name)
 }
 
+// InvokeModelOrderMutation represents an operation that mutates the InvokeModelOrder nodes in the graph.
+type InvokeModelOrderMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int64
+	created_by           *int64
+	addcreated_by        *int64
+	updated_by           *int64
+	addupdated_by        *int64
+	created_at           *time.Time
+	updated_at           *time.Time
+	deleted_at           *time.Time
+	invoke_type          *enums.Model
+	invoke_times         *int
+	addinvoke_times      *int
+	input_token_cost     *int
+	addinput_token_cost  *int
+	output_token_cost    *int
+	addoutput_token_cost *int
+	input_cep_cost       *int
+	addinput_cep_cost    *int
+	output_cep_cost      *int
+	addoutput_cep_cost   *int
+	clearedFields        map[string]struct{}
+	bills                map[int64]struct{}
+	removedbills         map[int64]struct{}
+	clearedbills         bool
+	user                 *int64
+	cleareduser          bool
+	model                *int64
+	clearedmodel         bool
+	api_token            *int64
+	clearedapi_token     bool
+	done                 bool
+	oldValue             func(context.Context) (*InvokeModelOrder, error)
+	predicates           []predicate.InvokeModelOrder
+}
+
+var _ ent.Mutation = (*InvokeModelOrderMutation)(nil)
+
+// invokemodelorderOption allows management of the mutation configuration using functional options.
+type invokemodelorderOption func(*InvokeModelOrderMutation)
+
+// newInvokeModelOrderMutation creates new mutation for the InvokeModelOrder entity.
+func newInvokeModelOrderMutation(c config, op Op, opts ...invokemodelorderOption) *InvokeModelOrderMutation {
+	m := &InvokeModelOrderMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeInvokeModelOrder,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withInvokeModelOrderID sets the ID field of the mutation.
+func withInvokeModelOrderID(id int64) invokemodelorderOption {
+	return func(m *InvokeModelOrderMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *InvokeModelOrder
+		)
+		m.oldValue = func(ctx context.Context) (*InvokeModelOrder, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().InvokeModelOrder.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withInvokeModelOrder sets the old InvokeModelOrder of the mutation.
+func withInvokeModelOrder(node *InvokeModelOrder) invokemodelorderOption {
+	return func(m *InvokeModelOrderMutation) {
+		m.oldValue = func(context.Context) (*InvokeModelOrder, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m InvokeModelOrderMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m InvokeModelOrderMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of InvokeModelOrder entities.
+func (m *InvokeModelOrderMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *InvokeModelOrderMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *InvokeModelOrderMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().InvokeModelOrder.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *InvokeModelOrderMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *InvokeModelOrderMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *InvokeModelOrderMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *InvokeModelOrderMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *InvokeModelOrderMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *InvokeModelOrderMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *InvokeModelOrderMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *InvokeModelOrderMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *InvokeModelOrderMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *InvokeModelOrderMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *InvokeModelOrderMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *InvokeModelOrderMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *InvokeModelOrderMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *InvokeModelOrderMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *InvokeModelOrderMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *InvokeModelOrderMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *InvokeModelOrderMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *InvokeModelOrderMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *InvokeModelOrderMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *InvokeModelOrderMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *InvokeModelOrderMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *InvokeModelOrderMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetModelID sets the "model_id" field.
+func (m *InvokeModelOrderMutation) SetModelID(i int64) {
+	m.model = &i
+}
+
+// ModelID returns the value of the "model_id" field in the mutation.
+func (m *InvokeModelOrderMutation) ModelID() (r int64, exists bool) {
+	v := m.model
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldModelID returns the old "model_id" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldModelID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldModelID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldModelID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldModelID: %w", err)
+	}
+	return oldValue.ModelID, nil
+}
+
+// ResetModelID resets all changes to the "model_id" field.
+func (m *InvokeModelOrderMutation) ResetModelID() {
+	m.model = nil
+}
+
+// SetAPITokenID sets the "api_token_id" field.
+func (m *InvokeModelOrderMutation) SetAPITokenID(i int64) {
+	m.api_token = &i
+}
+
+// APITokenID returns the value of the "api_token_id" field in the mutation.
+func (m *InvokeModelOrderMutation) APITokenID() (r int64, exists bool) {
+	v := m.api_token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAPITokenID returns the old "api_token_id" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldAPITokenID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAPITokenID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAPITokenID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAPITokenID: %w", err)
+	}
+	return oldValue.APITokenID, nil
+}
+
+// ResetAPITokenID resets all changes to the "api_token_id" field.
+func (m *InvokeModelOrderMutation) ResetAPITokenID() {
+	m.api_token = nil
+}
+
+// SetInvokeType sets the "invoke_type" field.
+func (m *InvokeModelOrderMutation) SetInvokeType(e enums.Model) {
+	m.invoke_type = &e
+}
+
+// InvokeType returns the value of the "invoke_type" field in the mutation.
+func (m *InvokeModelOrderMutation) InvokeType() (r enums.Model, exists bool) {
+	v := m.invoke_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInvokeType returns the old "invoke_type" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldInvokeType(ctx context.Context) (v enums.Model, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInvokeType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInvokeType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInvokeType: %w", err)
+	}
+	return oldValue.InvokeType, nil
+}
+
+// ResetInvokeType resets all changes to the "invoke_type" field.
+func (m *InvokeModelOrderMutation) ResetInvokeType() {
+	m.invoke_type = nil
+}
+
+// SetInvokeTimes sets the "invoke_times" field.
+func (m *InvokeModelOrderMutation) SetInvokeTimes(i int) {
+	m.invoke_times = &i
+	m.addinvoke_times = nil
+}
+
+// InvokeTimes returns the value of the "invoke_times" field in the mutation.
+func (m *InvokeModelOrderMutation) InvokeTimes() (r int, exists bool) {
+	v := m.invoke_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInvokeTimes returns the old "invoke_times" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldInvokeTimes(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInvokeTimes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInvokeTimes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInvokeTimes: %w", err)
+	}
+	return oldValue.InvokeTimes, nil
+}
+
+// AddInvokeTimes adds i to the "invoke_times" field.
+func (m *InvokeModelOrderMutation) AddInvokeTimes(i int) {
+	if m.addinvoke_times != nil {
+		*m.addinvoke_times += i
+	} else {
+		m.addinvoke_times = &i
+	}
+}
+
+// AddedInvokeTimes returns the value that was added to the "invoke_times" field in this mutation.
+func (m *InvokeModelOrderMutation) AddedInvokeTimes() (r int, exists bool) {
+	v := m.addinvoke_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetInvokeTimes resets all changes to the "invoke_times" field.
+func (m *InvokeModelOrderMutation) ResetInvokeTimes() {
+	m.invoke_times = nil
+	m.addinvoke_times = nil
+}
+
+// SetInputTokenCost sets the "input_token_cost" field.
+func (m *InvokeModelOrderMutation) SetInputTokenCost(i int) {
+	m.input_token_cost = &i
+	m.addinput_token_cost = nil
+}
+
+// InputTokenCost returns the value of the "input_token_cost" field in the mutation.
+func (m *InvokeModelOrderMutation) InputTokenCost() (r int, exists bool) {
+	v := m.input_token_cost
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInputTokenCost returns the old "input_token_cost" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldInputTokenCost(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInputTokenCost is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInputTokenCost requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInputTokenCost: %w", err)
+	}
+	return oldValue.InputTokenCost, nil
+}
+
+// AddInputTokenCost adds i to the "input_token_cost" field.
+func (m *InvokeModelOrderMutation) AddInputTokenCost(i int) {
+	if m.addinput_token_cost != nil {
+		*m.addinput_token_cost += i
+	} else {
+		m.addinput_token_cost = &i
+	}
+}
+
+// AddedInputTokenCost returns the value that was added to the "input_token_cost" field in this mutation.
+func (m *InvokeModelOrderMutation) AddedInputTokenCost() (r int, exists bool) {
+	v := m.addinput_token_cost
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetInputTokenCost resets all changes to the "input_token_cost" field.
+func (m *InvokeModelOrderMutation) ResetInputTokenCost() {
+	m.input_token_cost = nil
+	m.addinput_token_cost = nil
+}
+
+// SetOutputTokenCost sets the "output_token_cost" field.
+func (m *InvokeModelOrderMutation) SetOutputTokenCost(i int) {
+	m.output_token_cost = &i
+	m.addoutput_token_cost = nil
+}
+
+// OutputTokenCost returns the value of the "output_token_cost" field in the mutation.
+func (m *InvokeModelOrderMutation) OutputTokenCost() (r int, exists bool) {
+	v := m.output_token_cost
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOutputTokenCost returns the old "output_token_cost" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldOutputTokenCost(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOutputTokenCost is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOutputTokenCost requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOutputTokenCost: %w", err)
+	}
+	return oldValue.OutputTokenCost, nil
+}
+
+// AddOutputTokenCost adds i to the "output_token_cost" field.
+func (m *InvokeModelOrderMutation) AddOutputTokenCost(i int) {
+	if m.addoutput_token_cost != nil {
+		*m.addoutput_token_cost += i
+	} else {
+		m.addoutput_token_cost = &i
+	}
+}
+
+// AddedOutputTokenCost returns the value that was added to the "output_token_cost" field in this mutation.
+func (m *InvokeModelOrderMutation) AddedOutputTokenCost() (r int, exists bool) {
+	v := m.addoutput_token_cost
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetOutputTokenCost resets all changes to the "output_token_cost" field.
+func (m *InvokeModelOrderMutation) ResetOutputTokenCost() {
+	m.output_token_cost = nil
+	m.addoutput_token_cost = nil
+}
+
+// SetInputCepCost sets the "input_cep_cost" field.
+func (m *InvokeModelOrderMutation) SetInputCepCost(i int) {
+	m.input_cep_cost = &i
+	m.addinput_cep_cost = nil
+}
+
+// InputCepCost returns the value of the "input_cep_cost" field in the mutation.
+func (m *InvokeModelOrderMutation) InputCepCost() (r int, exists bool) {
+	v := m.input_cep_cost
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInputCepCost returns the old "input_cep_cost" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldInputCepCost(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInputCepCost is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInputCepCost requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInputCepCost: %w", err)
+	}
+	return oldValue.InputCepCost, nil
+}
+
+// AddInputCepCost adds i to the "input_cep_cost" field.
+func (m *InvokeModelOrderMutation) AddInputCepCost(i int) {
+	if m.addinput_cep_cost != nil {
+		*m.addinput_cep_cost += i
+	} else {
+		m.addinput_cep_cost = &i
+	}
+}
+
+// AddedInputCepCost returns the value that was added to the "input_cep_cost" field in this mutation.
+func (m *InvokeModelOrderMutation) AddedInputCepCost() (r int, exists bool) {
+	v := m.addinput_cep_cost
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetInputCepCost resets all changes to the "input_cep_cost" field.
+func (m *InvokeModelOrderMutation) ResetInputCepCost() {
+	m.input_cep_cost = nil
+	m.addinput_cep_cost = nil
+}
+
+// SetOutputCepCost sets the "output_cep_cost" field.
+func (m *InvokeModelOrderMutation) SetOutputCepCost(i int) {
+	m.output_cep_cost = &i
+	m.addoutput_cep_cost = nil
+}
+
+// OutputCepCost returns the value of the "output_cep_cost" field in the mutation.
+func (m *InvokeModelOrderMutation) OutputCepCost() (r int, exists bool) {
+	v := m.output_cep_cost
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOutputCepCost returns the old "output_cep_cost" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldOutputCepCost(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOutputCepCost is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOutputCepCost requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOutputCepCost: %w", err)
+	}
+	return oldValue.OutputCepCost, nil
+}
+
+// AddOutputCepCost adds i to the "output_cep_cost" field.
+func (m *InvokeModelOrderMutation) AddOutputCepCost(i int) {
+	if m.addoutput_cep_cost != nil {
+		*m.addoutput_cep_cost += i
+	} else {
+		m.addoutput_cep_cost = &i
+	}
+}
+
+// AddedOutputCepCost returns the value that was added to the "output_cep_cost" field in this mutation.
+func (m *InvokeModelOrderMutation) AddedOutputCepCost() (r int, exists bool) {
+	v := m.addoutput_cep_cost
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetOutputCepCost resets all changes to the "output_cep_cost" field.
+func (m *InvokeModelOrderMutation) ResetOutputCepCost() {
+	m.output_cep_cost = nil
+	m.addoutput_cep_cost = nil
+}
+
+// AddBillIDs adds the "bills" edge to the Bill entity by ids.
+func (m *InvokeModelOrderMutation) AddBillIDs(ids ...int64) {
+	if m.bills == nil {
+		m.bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.bills[ids[i]] = struct{}{}
+	}
+}
+
+// ClearBills clears the "bills" edge to the Bill entity.
+func (m *InvokeModelOrderMutation) ClearBills() {
+	m.clearedbills = true
+}
+
+// BillsCleared reports if the "bills" edge to the Bill entity was cleared.
+func (m *InvokeModelOrderMutation) BillsCleared() bool {
+	return m.clearedbills
+}
+
+// RemoveBillIDs removes the "bills" edge to the Bill entity by IDs.
+func (m *InvokeModelOrderMutation) RemoveBillIDs(ids ...int64) {
+	if m.removedbills == nil {
+		m.removedbills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.bills, ids[i])
+		m.removedbills[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedBills returns the removed IDs of the "bills" edge to the Bill entity.
+func (m *InvokeModelOrderMutation) RemovedBillsIDs() (ids []int64) {
+	for id := range m.removedbills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// BillsIDs returns the "bills" edge IDs in the mutation.
+func (m *InvokeModelOrderMutation) BillsIDs() (ids []int64) {
+	for id := range m.bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetBills resets all changes to the "bills" edge.
+func (m *InvokeModelOrderMutation) ResetBills() {
+	m.bills = nil
+	m.clearedbills = false
+	m.removedbills = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *InvokeModelOrderMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[invokemodelorder.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *InvokeModelOrderMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *InvokeModelOrderMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *InvokeModelOrderMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// ClearModel clears the "model" edge to the Model entity.
+func (m *InvokeModelOrderMutation) ClearModel() {
+	m.clearedmodel = true
+	m.clearedFields[invokemodelorder.FieldModelID] = struct{}{}
+}
+
+// ModelCleared reports if the "model" edge to the Model entity was cleared.
+func (m *InvokeModelOrderMutation) ModelCleared() bool {
+	return m.clearedmodel
+}
+
+// ModelIDs returns the "model" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ModelID instead. It exists only for internal usage by the builders.
+func (m *InvokeModelOrderMutation) ModelIDs() (ids []int64) {
+	if id := m.model; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetModel resets all changes to the "model" edge.
+func (m *InvokeModelOrderMutation) ResetModel() {
+	m.model = nil
+	m.clearedmodel = false
+}
+
+// ClearAPIToken clears the "api_token" edge to the ApiToken entity.
+func (m *InvokeModelOrderMutation) ClearAPIToken() {
+	m.clearedapi_token = true
+	m.clearedFields[invokemodelorder.FieldAPITokenID] = struct{}{}
+}
+
+// APITokenCleared reports if the "api_token" edge to the ApiToken entity was cleared.
+func (m *InvokeModelOrderMutation) APITokenCleared() bool {
+	return m.clearedapi_token
+}
+
+// APITokenIDs returns the "api_token" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// APITokenID instead. It exists only for internal usage by the builders.
+func (m *InvokeModelOrderMutation) APITokenIDs() (ids []int64) {
+	if id := m.api_token; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAPIToken resets all changes to the "api_token" edge.
+func (m *InvokeModelOrderMutation) ResetAPIToken() {
+	m.api_token = nil
+	m.clearedapi_token = false
+}
+
+// Where appends a list predicates to the InvokeModelOrderMutation builder.
+func (m *InvokeModelOrderMutation) Where(ps ...predicate.InvokeModelOrder) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the InvokeModelOrderMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *InvokeModelOrderMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.InvokeModelOrder, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *InvokeModelOrderMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *InvokeModelOrderMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (InvokeModelOrder).
+func (m *InvokeModelOrderMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *InvokeModelOrderMutation) Fields() []string {
+	fields := make([]string, 0, 14)
+	if m.created_by != nil {
+		fields = append(fields, invokemodelorder.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, invokemodelorder.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, invokemodelorder.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, invokemodelorder.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, invokemodelorder.FieldDeletedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, invokemodelorder.FieldUserID)
+	}
+	if m.model != nil {
+		fields = append(fields, invokemodelorder.FieldModelID)
+	}
+	if m.api_token != nil {
+		fields = append(fields, invokemodelorder.FieldAPITokenID)
+	}
+	if m.invoke_type != nil {
+		fields = append(fields, invokemodelorder.FieldInvokeType)
+	}
+	if m.invoke_times != nil {
+		fields = append(fields, invokemodelorder.FieldInvokeTimes)
+	}
+	if m.input_token_cost != nil {
+		fields = append(fields, invokemodelorder.FieldInputTokenCost)
+	}
+	if m.output_token_cost != nil {
+		fields = append(fields, invokemodelorder.FieldOutputTokenCost)
+	}
+	if m.input_cep_cost != nil {
+		fields = append(fields, invokemodelorder.FieldInputCepCost)
+	}
+	if m.output_cep_cost != nil {
+		fields = append(fields, invokemodelorder.FieldOutputCepCost)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *InvokeModelOrderMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case invokemodelorder.FieldCreatedBy:
+		return m.CreatedBy()
+	case invokemodelorder.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case invokemodelorder.FieldCreatedAt:
+		return m.CreatedAt()
+	case invokemodelorder.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case invokemodelorder.FieldDeletedAt:
+		return m.DeletedAt()
+	case invokemodelorder.FieldUserID:
+		return m.UserID()
+	case invokemodelorder.FieldModelID:
+		return m.ModelID()
+	case invokemodelorder.FieldAPITokenID:
+		return m.APITokenID()
+	case invokemodelorder.FieldInvokeType:
+		return m.InvokeType()
+	case invokemodelorder.FieldInvokeTimes:
+		return m.InvokeTimes()
+	case invokemodelorder.FieldInputTokenCost:
+		return m.InputTokenCost()
+	case invokemodelorder.FieldOutputTokenCost:
+		return m.OutputTokenCost()
+	case invokemodelorder.FieldInputCepCost:
+		return m.InputCepCost()
+	case invokemodelorder.FieldOutputCepCost:
+		return m.OutputCepCost()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *InvokeModelOrderMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case invokemodelorder.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case invokemodelorder.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case invokemodelorder.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case invokemodelorder.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case invokemodelorder.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case invokemodelorder.FieldUserID:
+		return m.OldUserID(ctx)
+	case invokemodelorder.FieldModelID:
+		return m.OldModelID(ctx)
+	case invokemodelorder.FieldAPITokenID:
+		return m.OldAPITokenID(ctx)
+	case invokemodelorder.FieldInvokeType:
+		return m.OldInvokeType(ctx)
+	case invokemodelorder.FieldInvokeTimes:
+		return m.OldInvokeTimes(ctx)
+	case invokemodelorder.FieldInputTokenCost:
+		return m.OldInputTokenCost(ctx)
+	case invokemodelorder.FieldOutputTokenCost:
+		return m.OldOutputTokenCost(ctx)
+	case invokemodelorder.FieldInputCepCost:
+		return m.OldInputCepCost(ctx)
+	case invokemodelorder.FieldOutputCepCost:
+		return m.OldOutputCepCost(ctx)
+	}
+	return nil, fmt.Errorf("unknown InvokeModelOrder field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *InvokeModelOrderMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case invokemodelorder.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case invokemodelorder.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case invokemodelorder.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case invokemodelorder.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case invokemodelorder.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case invokemodelorder.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case invokemodelorder.FieldModelID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetModelID(v)
+		return nil
+	case invokemodelorder.FieldAPITokenID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAPITokenID(v)
+		return nil
+	case invokemodelorder.FieldInvokeType:
+		v, ok := value.(enums.Model)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInvokeType(v)
+		return nil
+	case invokemodelorder.FieldInvokeTimes:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInvokeTimes(v)
+		return nil
+	case invokemodelorder.FieldInputTokenCost:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInputTokenCost(v)
+		return nil
+	case invokemodelorder.FieldOutputTokenCost:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOutputTokenCost(v)
+		return nil
+	case invokemodelorder.FieldInputCepCost:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInputCepCost(v)
+		return nil
+	case invokemodelorder.FieldOutputCepCost:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOutputCepCost(v)
+		return nil
+	}
+	return fmt.Errorf("unknown InvokeModelOrder field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *InvokeModelOrderMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, invokemodelorder.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, invokemodelorder.FieldUpdatedBy)
+	}
+	if m.addinvoke_times != nil {
+		fields = append(fields, invokemodelorder.FieldInvokeTimes)
+	}
+	if m.addinput_token_cost != nil {
+		fields = append(fields, invokemodelorder.FieldInputTokenCost)
+	}
+	if m.addoutput_token_cost != nil {
+		fields = append(fields, invokemodelorder.FieldOutputTokenCost)
+	}
+	if m.addinput_cep_cost != nil {
+		fields = append(fields, invokemodelorder.FieldInputCepCost)
+	}
+	if m.addoutput_cep_cost != nil {
+		fields = append(fields, invokemodelorder.FieldOutputCepCost)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *InvokeModelOrderMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case invokemodelorder.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case invokemodelorder.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case invokemodelorder.FieldInvokeTimes:
+		return m.AddedInvokeTimes()
+	case invokemodelorder.FieldInputTokenCost:
+		return m.AddedInputTokenCost()
+	case invokemodelorder.FieldOutputTokenCost:
+		return m.AddedOutputTokenCost()
+	case invokemodelorder.FieldInputCepCost:
+		return m.AddedInputCepCost()
+	case invokemodelorder.FieldOutputCepCost:
+		return m.AddedOutputCepCost()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *InvokeModelOrderMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case invokemodelorder.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case invokemodelorder.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case invokemodelorder.FieldInvokeTimes:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddInvokeTimes(v)
+		return nil
+	case invokemodelorder.FieldInputTokenCost:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddInputTokenCost(v)
+		return nil
+	case invokemodelorder.FieldOutputTokenCost:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddOutputTokenCost(v)
+		return nil
+	case invokemodelorder.FieldInputCepCost:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddInputCepCost(v)
+		return nil
+	case invokemodelorder.FieldOutputCepCost:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddOutputCepCost(v)
+		return nil
+	}
+	return fmt.Errorf("unknown InvokeModelOrder numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *InvokeModelOrderMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *InvokeModelOrderMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *InvokeModelOrderMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown InvokeModelOrder nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *InvokeModelOrderMutation) ResetField(name string) error {
+	switch name {
+	case invokemodelorder.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case invokemodelorder.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case invokemodelorder.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case invokemodelorder.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case invokemodelorder.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case invokemodelorder.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case invokemodelorder.FieldModelID:
+		m.ResetModelID()
+		return nil
+	case invokemodelorder.FieldAPITokenID:
+		m.ResetAPITokenID()
+		return nil
+	case invokemodelorder.FieldInvokeType:
+		m.ResetInvokeType()
+		return nil
+	case invokemodelorder.FieldInvokeTimes:
+		m.ResetInvokeTimes()
+		return nil
+	case invokemodelorder.FieldInputTokenCost:
+		m.ResetInputTokenCost()
+		return nil
+	case invokemodelorder.FieldOutputTokenCost:
+		m.ResetOutputTokenCost()
+		return nil
+	case invokemodelorder.FieldInputCepCost:
+		m.ResetInputCepCost()
+		return nil
+	case invokemodelorder.FieldOutputCepCost:
+		m.ResetOutputCepCost()
+		return nil
+	}
+	return fmt.Errorf("unknown InvokeModelOrder field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *InvokeModelOrderMutation) AddedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.bills != nil {
+		edges = append(edges, invokemodelorder.EdgeBills)
+	}
+	if m.user != nil {
+		edges = append(edges, invokemodelorder.EdgeUser)
+	}
+	if m.model != nil {
+		edges = append(edges, invokemodelorder.EdgeModel)
+	}
+	if m.api_token != nil {
+		edges = append(edges, invokemodelorder.EdgeAPIToken)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *InvokeModelOrderMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case invokemodelorder.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.bills))
+		for id := range m.bills {
+			ids = append(ids, id)
+		}
+		return ids
+	case invokemodelorder.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	case invokemodelorder.EdgeModel:
+		if id := m.model; id != nil {
+			return []ent.Value{*id}
+		}
+	case invokemodelorder.EdgeAPIToken:
+		if id := m.api_token; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *InvokeModelOrderMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.removedbills != nil {
+		edges = append(edges, invokemodelorder.EdgeBills)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *InvokeModelOrderMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case invokemodelorder.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.removedbills))
+		for id := range m.removedbills {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *InvokeModelOrderMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.clearedbills {
+		edges = append(edges, invokemodelorder.EdgeBills)
+	}
+	if m.cleareduser {
+		edges = append(edges, invokemodelorder.EdgeUser)
+	}
+	if m.clearedmodel {
+		edges = append(edges, invokemodelorder.EdgeModel)
+	}
+	if m.clearedapi_token {
+		edges = append(edges, invokemodelorder.EdgeAPIToken)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *InvokeModelOrderMutation) EdgeCleared(name string) bool {
+	switch name {
+	case invokemodelorder.EdgeBills:
+		return m.clearedbills
+	case invokemodelorder.EdgeUser:
+		return m.cleareduser
+	case invokemodelorder.EdgeModel:
+		return m.clearedmodel
+	case invokemodelorder.EdgeAPIToken:
+		return m.clearedapi_token
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *InvokeModelOrderMutation) ClearEdge(name string) error {
+	switch name {
+	case invokemodelorder.EdgeUser:
+		m.ClearUser()
+		return nil
+	case invokemodelorder.EdgeModel:
+		m.ClearModel()
+		return nil
+	case invokemodelorder.EdgeAPIToken:
+		m.ClearAPIToken()
+		return nil
+	}
+	return fmt.Errorf("unknown InvokeModelOrder unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *InvokeModelOrderMutation) ResetEdge(name string) error {
+	switch name {
+	case invokemodelorder.EdgeBills:
+		m.ResetBills()
+		return nil
+	case invokemodelorder.EdgeUser:
+		m.ResetUser()
+		return nil
+	case invokemodelorder.EdgeModel:
+		m.ResetModel()
+		return nil
+	case invokemodelorder.EdgeAPIToken:
+		m.ResetAPIToken()
+		return nil
+	}
+	return fmt.Errorf("unknown InvokeModelOrder edge %s", name)
+}
+
 // LoginRecordMutation represents an operation that mutates the LoginRecord nodes in the graph.
 type LoginRecordMutation struct {
 	config
@@ -61574,37 +63220,40 @@ func (m *MissionProductionMutation) ResetEdge(name string) error {
 // ModelMutation represents an operation that mutates the Model nodes in the graph.
 type ModelMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int64
-	created_by          *int64
-	addcreated_by       *int64
-	updated_by          *int64
-	addupdated_by       *int64
-	created_at          *time.Time
-	updated_at          *time.Time
-	deleted_at          *time.Time
-	name                *string
-	author              *string
-	description         *string
-	model_type          *enums.Model
-	model_status        *enums.ModelStatus
-	is_official         *bool
-	total_usage         *int
-	addtotal_usage      *int
-	clearedFields       map[string]struct{}
-	model_prices        map[int64]struct{}
-	removedmodel_prices map[int64]struct{}
-	clearedmodel_prices bool
-	star_user           map[int64]struct{}
-	removedstar_user    map[int64]struct{}
-	clearedstar_user    bool
-	star_model          map[int64]struct{}
-	removedstar_model   map[int64]struct{}
-	clearedstar_model   bool
-	done                bool
-	oldValue            func(context.Context) (*Model, error)
-	predicates          []predicate.Model
+	op                         Op
+	typ                        string
+	id                         *int64
+	created_by                 *int64
+	addcreated_by              *int64
+	updated_by                 *int64
+	addupdated_by              *int64
+	created_at                 *time.Time
+	updated_at                 *time.Time
+	deleted_at                 *time.Time
+	name                       *string
+	author                     *string
+	description                *string
+	model_type                 *enums.Model
+	model_status               *enums.ModelStatus
+	is_official                *bool
+	total_usage                *int
+	addtotal_usage             *int
+	clearedFields              map[string]struct{}
+	model_prices               map[int64]struct{}
+	removedmodel_prices        map[int64]struct{}
+	clearedmodel_prices        bool
+	star_user                  map[int64]struct{}
+	removedstar_user           map[int64]struct{}
+	clearedstar_user           bool
+	invoke_model_orders        map[int64]struct{}
+	removedinvoke_model_orders map[int64]struct{}
+	clearedinvoke_model_orders bool
+	star_model                 map[int64]struct{}
+	removedstar_model          map[int64]struct{}
+	clearedstar_model          bool
+	done                       bool
+	oldValue                   func(context.Context) (*Model, error)
+	predicates                 []predicate.Model
 }
 
 var _ ent.Mutation = (*ModelMutation)(nil)
@@ -62311,6 +63960,60 @@ func (m *ModelMutation) ResetStarUser() {
 	m.removedstar_user = nil
 }
 
+// AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by ids.
+func (m *ModelMutation) AddInvokeModelOrderIDs(ids ...int64) {
+	if m.invoke_model_orders == nil {
+		m.invoke_model_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.invoke_model_orders[ids[i]] = struct{}{}
+	}
+}
+
+// ClearInvokeModelOrders clears the "invoke_model_orders" edge to the InvokeModelOrder entity.
+func (m *ModelMutation) ClearInvokeModelOrders() {
+	m.clearedinvoke_model_orders = true
+}
+
+// InvokeModelOrdersCleared reports if the "invoke_model_orders" edge to the InvokeModelOrder entity was cleared.
+func (m *ModelMutation) InvokeModelOrdersCleared() bool {
+	return m.clearedinvoke_model_orders
+}
+
+// RemoveInvokeModelOrderIDs removes the "invoke_model_orders" edge to the InvokeModelOrder entity by IDs.
+func (m *ModelMutation) RemoveInvokeModelOrderIDs(ids ...int64) {
+	if m.removedinvoke_model_orders == nil {
+		m.removedinvoke_model_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.invoke_model_orders, ids[i])
+		m.removedinvoke_model_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedInvokeModelOrders returns the removed IDs of the "invoke_model_orders" edge to the InvokeModelOrder entity.
+func (m *ModelMutation) RemovedInvokeModelOrdersIDs() (ids []int64) {
+	for id := range m.removedinvoke_model_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// InvokeModelOrdersIDs returns the "invoke_model_orders" edge IDs in the mutation.
+func (m *ModelMutation) InvokeModelOrdersIDs() (ids []int64) {
+	for id := range m.invoke_model_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetInvokeModelOrders resets all changes to the "invoke_model_orders" edge.
+func (m *ModelMutation) ResetInvokeModelOrders() {
+	m.invoke_model_orders = nil
+	m.clearedinvoke_model_orders = false
+	m.removedinvoke_model_orders = nil
+}
+
 // AddStarModelIDs adds the "star_model" edge to the UserModel entity by ids.
 func (m *ModelMutation) AddStarModelIDs(ids ...int64) {
 	if m.star_model == nil {
@@ -62724,12 +64427,15 @@ func (m *ModelMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ModelMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.model_prices != nil {
 		edges = append(edges, model.EdgeModelPrices)
 	}
 	if m.star_user != nil {
 		edges = append(edges, model.EdgeStarUser)
+	}
+	if m.invoke_model_orders != nil {
+		edges = append(edges, model.EdgeInvokeModelOrders)
 	}
 	if m.star_model != nil {
 		edges = append(edges, model.EdgeStarModel)
@@ -62753,6 +64459,12 @@ func (m *ModelMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case model.EdgeInvokeModelOrders:
+		ids := make([]ent.Value, 0, len(m.invoke_model_orders))
+		for id := range m.invoke_model_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	case model.EdgeStarModel:
 		ids := make([]ent.Value, 0, len(m.star_model))
 		for id := range m.star_model {
@@ -62765,12 +64477,15 @@ func (m *ModelMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ModelMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedmodel_prices != nil {
 		edges = append(edges, model.EdgeModelPrices)
 	}
 	if m.removedstar_user != nil {
 		edges = append(edges, model.EdgeStarUser)
+	}
+	if m.removedinvoke_model_orders != nil {
+		edges = append(edges, model.EdgeInvokeModelOrders)
 	}
 	if m.removedstar_model != nil {
 		edges = append(edges, model.EdgeStarModel)
@@ -62794,6 +64509,12 @@ func (m *ModelMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case model.EdgeInvokeModelOrders:
+		ids := make([]ent.Value, 0, len(m.removedinvoke_model_orders))
+		for id := range m.removedinvoke_model_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	case model.EdgeStarModel:
 		ids := make([]ent.Value, 0, len(m.removedstar_model))
 		for id := range m.removedstar_model {
@@ -62806,12 +64527,15 @@ func (m *ModelMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ModelMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedmodel_prices {
 		edges = append(edges, model.EdgeModelPrices)
 	}
 	if m.clearedstar_user {
 		edges = append(edges, model.EdgeStarUser)
+	}
+	if m.clearedinvoke_model_orders {
+		edges = append(edges, model.EdgeInvokeModelOrders)
 	}
 	if m.clearedstar_model {
 		edges = append(edges, model.EdgeStarModel)
@@ -62827,6 +64551,8 @@ func (m *ModelMutation) EdgeCleared(name string) bool {
 		return m.clearedmodel_prices
 	case model.EdgeStarUser:
 		return m.clearedstar_user
+	case model.EdgeInvokeModelOrders:
+		return m.clearedinvoke_model_orders
 	case model.EdgeStarModel:
 		return m.clearedstar_model
 	}
@@ -62850,6 +64576,9 @@ func (m *ModelMutation) ResetEdge(name string) error {
 		return nil
 	case model.EdgeStarUser:
 		m.ResetStarUser()
+		return nil
+	case model.EdgeInvokeModelOrders:
+		m.ResetInvokeModelOrders()
 		return nil
 	case model.EdgeStarModel:
 		m.ResetStarModel()
@@ -82635,6 +84364,9 @@ type UserMutation struct {
 	star_model                      map[int64]struct{}
 	removedstar_model               map[int64]struct{}
 	clearedstar_model               bool
+	invoke_model_orders             map[int64]struct{}
+	removedinvoke_model_orders      map[int64]struct{}
+	clearedinvoke_model_orders      bool
 	model_star                      map[int64]struct{}
 	removedmodel_star               map[int64]struct{}
 	clearedmodel_star               bool
@@ -86321,6 +88053,60 @@ func (m *UserMutation) ResetStarModel() {
 	m.removedstar_model = nil
 }
 
+// AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by ids.
+func (m *UserMutation) AddInvokeModelOrderIDs(ids ...int64) {
+	if m.invoke_model_orders == nil {
+		m.invoke_model_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.invoke_model_orders[ids[i]] = struct{}{}
+	}
+}
+
+// ClearInvokeModelOrders clears the "invoke_model_orders" edge to the InvokeModelOrder entity.
+func (m *UserMutation) ClearInvokeModelOrders() {
+	m.clearedinvoke_model_orders = true
+}
+
+// InvokeModelOrdersCleared reports if the "invoke_model_orders" edge to the InvokeModelOrder entity was cleared.
+func (m *UserMutation) InvokeModelOrdersCleared() bool {
+	return m.clearedinvoke_model_orders
+}
+
+// RemoveInvokeModelOrderIDs removes the "invoke_model_orders" edge to the InvokeModelOrder entity by IDs.
+func (m *UserMutation) RemoveInvokeModelOrderIDs(ids ...int64) {
+	if m.removedinvoke_model_orders == nil {
+		m.removedinvoke_model_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.invoke_model_orders, ids[i])
+		m.removedinvoke_model_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedInvokeModelOrders returns the removed IDs of the "invoke_model_orders" edge to the InvokeModelOrder entity.
+func (m *UserMutation) RemovedInvokeModelOrdersIDs() (ids []int64) {
+	for id := range m.removedinvoke_model_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// InvokeModelOrdersIDs returns the "invoke_model_orders" edge IDs in the mutation.
+func (m *UserMutation) InvokeModelOrdersIDs() (ids []int64) {
+	for id := range m.invoke_model_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetInvokeModelOrders resets all changes to the "invoke_model_orders" edge.
+func (m *UserMutation) ResetInvokeModelOrders() {
+	m.invoke_model_orders = nil
+	m.clearedinvoke_model_orders = false
+	m.removedinvoke_model_orders = nil
+}
+
 // AddModelStarIDs adds the "model_star" edge to the UserModel entity by ids.
 func (m *UserMutation) AddModelStarIDs(ids ...int64) {
 	if m.model_star == nil {
@@ -86964,7 +88750,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 51)
+	edges := make([]string, 0, 52)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -87114,6 +88900,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.star_model != nil {
 		edges = append(edges, user.EdgeStarModel)
+	}
+	if m.invoke_model_orders != nil {
+		edges = append(edges, user.EdgeInvokeModelOrders)
 	}
 	if m.model_star != nil {
 		edges = append(edges, user.EdgeModelStar)
@@ -87415,6 +89204,12 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeInvokeModelOrders:
+		ids := make([]ent.Value, 0, len(m.invoke_model_orders))
+		for id := range m.invoke_model_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	case user.EdgeModelStar:
 		ids := make([]ent.Value, 0, len(m.model_star))
 		for id := range m.model_star {
@@ -87427,7 +89222,7 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 51)
+	edges := make([]string, 0, 52)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -87562,6 +89357,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedstar_model != nil {
 		edges = append(edges, user.EdgeStarModel)
+	}
+	if m.removedinvoke_model_orders != nil {
+		edges = append(edges, user.EdgeInvokeModelOrders)
 	}
 	if m.removedmodel_star != nil {
 		edges = append(edges, user.EdgeModelStar)
@@ -87843,6 +89641,12 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeInvokeModelOrders:
+		ids := make([]ent.Value, 0, len(m.removedinvoke_model_orders))
+		for id := range m.removedinvoke_model_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	case user.EdgeModelStar:
 		ids := make([]ent.Value, 0, len(m.removedmodel_star))
 		for id := range m.removedmodel_star {
@@ -87855,7 +89659,7 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 51)
+	edges := make([]string, 0, 52)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -88006,6 +89810,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedstar_model {
 		edges = append(edges, user.EdgeStarModel)
 	}
+	if m.clearedinvoke_model_orders {
+		edges = append(edges, user.EdgeInvokeModelOrders)
+	}
 	if m.clearedmodel_star {
 		edges = append(edges, user.EdgeModelStar)
 	}
@@ -88116,6 +89923,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedapi_tokens
 	case user.EdgeStarModel:
 		return m.clearedstar_model
+	case user.EdgeInvokeModelOrders:
+		return m.clearedinvoke_model_orders
 	case user.EdgeModelStar:
 		return m.clearedmodel_star
 	}
@@ -88298,6 +90107,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeStarModel:
 		m.ResetStarModel()
+		return nil
+	case user.EdgeInvokeModelOrders:
+		m.ResetInvokeModelOrders()
 		return nil
 	case user.EdgeModelStar:
 		m.ResetModelStar()

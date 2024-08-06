@@ -166,6 +166,8 @@ const (
 	EdgeAPITokens = "api_tokens"
 	// EdgeStarModel holds the string denoting the star_model edge name in mutations.
 	EdgeStarModel = "star_model"
+	// EdgeInvokeModelOrders holds the string denoting the invoke_model_orders edge name in mutations.
+	EdgeInvokeModelOrders = "invoke_model_orders"
 	// EdgeModelStar holds the string denoting the model_star edge name in mutations.
 	EdgeModelStar = "model_star"
 	// Table holds the table name of the user in the database.
@@ -506,6 +508,13 @@ const (
 	// StarModelInverseTable is the table name for the Model entity.
 	// It exists in this package in order to avoid circular dependency with the "model" package.
 	StarModelInverseTable = "models"
+	// InvokeModelOrdersTable is the table that holds the invoke_model_orders relation/edge.
+	InvokeModelOrdersTable = "invoke_model_orders"
+	// InvokeModelOrdersInverseTable is the table name for the InvokeModelOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "invokemodelorder" package.
+	InvokeModelOrdersInverseTable = "invoke_model_orders"
+	// InvokeModelOrdersColumn is the table column denoting the invoke_model_orders relation/edge.
+	InvokeModelOrdersColumn = "user_id"
 	// ModelStarTable is the table that holds the model_star relation/edge.
 	ModelStarTable = "user_models"
 	// ModelStarInverseTable is the table name for the UserModel entity.
@@ -1436,6 +1445,20 @@ func ByStarModel(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByInvokeModelOrdersCount orders the results by invoke_model_orders count.
+func ByInvokeModelOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newInvokeModelOrdersStep(), opts...)
+	}
+}
+
+// ByInvokeModelOrders orders the results by invoke_model_orders terms.
+func ByInvokeModelOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newInvokeModelOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByModelStarCount orders the results by model_star count.
 func ByModelStarCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -1797,6 +1820,13 @@ func newStarModelStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(StarModelInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, StarModelTable, StarModelPrimaryKey...),
+	)
+}
+func newInvokeModelOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(InvokeModelOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, InvokeModelOrdersTable, InvokeModelOrdersColumn),
 	)
 }
 func newModelStarStep() *sqlgraph.Step {

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
@@ -230,6 +231,21 @@ func (mu *ModelUpdate) AddStarUser(u ...*User) *ModelUpdate {
 	return mu.AddStarUserIDs(ids...)
 }
 
+// AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by IDs.
+func (mu *ModelUpdate) AddInvokeModelOrderIDs(ids ...int64) *ModelUpdate {
+	mu.mutation.AddInvokeModelOrderIDs(ids...)
+	return mu
+}
+
+// AddInvokeModelOrders adds the "invoke_model_orders" edges to the InvokeModelOrder entity.
+func (mu *ModelUpdate) AddInvokeModelOrders(i ...*InvokeModelOrder) *ModelUpdate {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return mu.AddInvokeModelOrderIDs(ids...)
+}
+
 // AddStarModelIDs adds the "star_model" edge to the UserModel entity by IDs.
 func (mu *ModelUpdate) AddStarModelIDs(ids ...int64) *ModelUpdate {
 	mu.mutation.AddStarModelIDs(ids...)
@@ -290,6 +306,27 @@ func (mu *ModelUpdate) RemoveStarUser(u ...*User) *ModelUpdate {
 		ids[i] = u[i].ID
 	}
 	return mu.RemoveStarUserIDs(ids...)
+}
+
+// ClearInvokeModelOrders clears all "invoke_model_orders" edges to the InvokeModelOrder entity.
+func (mu *ModelUpdate) ClearInvokeModelOrders() *ModelUpdate {
+	mu.mutation.ClearInvokeModelOrders()
+	return mu
+}
+
+// RemoveInvokeModelOrderIDs removes the "invoke_model_orders" edge to InvokeModelOrder entities by IDs.
+func (mu *ModelUpdate) RemoveInvokeModelOrderIDs(ids ...int64) *ModelUpdate {
+	mu.mutation.RemoveInvokeModelOrderIDs(ids...)
+	return mu
+}
+
+// RemoveInvokeModelOrders removes "invoke_model_orders" edges to InvokeModelOrder entities.
+func (mu *ModelUpdate) RemoveInvokeModelOrders(i ...*InvokeModelOrder) *ModelUpdate {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return mu.RemoveInvokeModelOrderIDs(ids...)
 }
 
 // ClearStarModel clears all "star_model" edges to the UserModel entity.
@@ -532,6 +569,51 @@ func (mu *ModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge.Target.Fields = specE.Fields
 		if specE.ID.Value != nil {
 			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mu.mutation.InvokeModelOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.InvokeModelOrdersTable,
+			Columns: []string{model.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.RemovedInvokeModelOrdersIDs(); len(nodes) > 0 && !mu.mutation.InvokeModelOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.InvokeModelOrdersTable,
+			Columns: []string{model.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.InvokeModelOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.InvokeModelOrdersTable,
+			Columns: []string{model.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
@@ -799,6 +881,21 @@ func (muo *ModelUpdateOne) AddStarUser(u ...*User) *ModelUpdateOne {
 	return muo.AddStarUserIDs(ids...)
 }
 
+// AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by IDs.
+func (muo *ModelUpdateOne) AddInvokeModelOrderIDs(ids ...int64) *ModelUpdateOne {
+	muo.mutation.AddInvokeModelOrderIDs(ids...)
+	return muo
+}
+
+// AddInvokeModelOrders adds the "invoke_model_orders" edges to the InvokeModelOrder entity.
+func (muo *ModelUpdateOne) AddInvokeModelOrders(i ...*InvokeModelOrder) *ModelUpdateOne {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return muo.AddInvokeModelOrderIDs(ids...)
+}
+
 // AddStarModelIDs adds the "star_model" edge to the UserModel entity by IDs.
 func (muo *ModelUpdateOne) AddStarModelIDs(ids ...int64) *ModelUpdateOne {
 	muo.mutation.AddStarModelIDs(ids...)
@@ -859,6 +956,27 @@ func (muo *ModelUpdateOne) RemoveStarUser(u ...*User) *ModelUpdateOne {
 		ids[i] = u[i].ID
 	}
 	return muo.RemoveStarUserIDs(ids...)
+}
+
+// ClearInvokeModelOrders clears all "invoke_model_orders" edges to the InvokeModelOrder entity.
+func (muo *ModelUpdateOne) ClearInvokeModelOrders() *ModelUpdateOne {
+	muo.mutation.ClearInvokeModelOrders()
+	return muo
+}
+
+// RemoveInvokeModelOrderIDs removes the "invoke_model_orders" edge to InvokeModelOrder entities by IDs.
+func (muo *ModelUpdateOne) RemoveInvokeModelOrderIDs(ids ...int64) *ModelUpdateOne {
+	muo.mutation.RemoveInvokeModelOrderIDs(ids...)
+	return muo
+}
+
+// RemoveInvokeModelOrders removes "invoke_model_orders" edges to InvokeModelOrder entities.
+func (muo *ModelUpdateOne) RemoveInvokeModelOrders(i ...*InvokeModelOrder) *ModelUpdateOne {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return muo.RemoveInvokeModelOrderIDs(ids...)
 }
 
 // ClearStarModel clears all "star_model" edges to the UserModel entity.
@@ -1131,6 +1249,51 @@ func (muo *ModelUpdateOne) sqlSave(ctx context.Context) (_node *Model, err error
 		edge.Target.Fields = specE.Fields
 		if specE.ID.Value != nil {
 			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.InvokeModelOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.InvokeModelOrdersTable,
+			Columns: []string{model.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.RemovedInvokeModelOrdersIDs(); len(nodes) > 0 && !muo.mutation.InvokeModelOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.InvokeModelOrdersTable,
+			Columns: []string{model.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.InvokeModelOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.InvokeModelOrdersTable,
+			Columns: []string{model.InvokeModelOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}

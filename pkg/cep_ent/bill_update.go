@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
@@ -403,6 +404,25 @@ func (bu *BillUpdate) SetMissionOrder(m *MissionOrder) *BillUpdate {
 	return bu.SetMissionOrderID(m.ID)
 }
 
+// SetInvokeModelOrderID sets the "invoke_model_order" edge to the InvokeModelOrder entity by ID.
+func (bu *BillUpdate) SetInvokeModelOrderID(id int64) *BillUpdate {
+	bu.mutation.SetInvokeModelOrderID(id)
+	return bu
+}
+
+// SetNillableInvokeModelOrderID sets the "invoke_model_order" edge to the InvokeModelOrder entity by ID if the given value is not nil.
+func (bu *BillUpdate) SetNillableInvokeModelOrderID(id *int64) *BillUpdate {
+	if id != nil {
+		bu = bu.SetInvokeModelOrderID(*id)
+	}
+	return bu
+}
+
+// SetInvokeModelOrder sets the "invoke_model_order" edge to the InvokeModelOrder entity.
+func (bu *BillUpdate) SetInvokeModelOrder(i *InvokeModelOrder) *BillUpdate {
+	return bu.SetInvokeModelOrderID(i.ID)
+}
+
 // SetInvite sets the "invite" edge to the Invite entity.
 func (bu *BillUpdate) SetInvite(i *Invite) *BillUpdate {
 	return bu.SetInviteID(i.ID)
@@ -444,6 +464,12 @@ func (bu *BillUpdate) ClearTransferOrder() *BillUpdate {
 // ClearMissionOrder clears the "mission_order" edge to the MissionOrder entity.
 func (bu *BillUpdate) ClearMissionOrder() *BillUpdate {
 	bu.mutation.ClearMissionOrder()
+	return bu
+}
+
+// ClearInvokeModelOrder clears the "invoke_model_order" edge to the InvokeModelOrder entity.
+func (bu *BillUpdate) ClearInvokeModelOrder() *BillUpdate {
+	bu.mutation.ClearInvokeModelOrder()
 	return bu
 }
 
@@ -721,6 +747,35 @@ func (bu *BillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if bu.mutation.InvokeModelOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.InvokeModelOrderTable,
+			Columns: []string{bill.InvokeModelOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.InvokeModelOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.InvokeModelOrderTable,
+			Columns: []string{bill.InvokeModelOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1205,6 +1260,25 @@ func (buo *BillUpdateOne) SetMissionOrder(m *MissionOrder) *BillUpdateOne {
 	return buo.SetMissionOrderID(m.ID)
 }
 
+// SetInvokeModelOrderID sets the "invoke_model_order" edge to the InvokeModelOrder entity by ID.
+func (buo *BillUpdateOne) SetInvokeModelOrderID(id int64) *BillUpdateOne {
+	buo.mutation.SetInvokeModelOrderID(id)
+	return buo
+}
+
+// SetNillableInvokeModelOrderID sets the "invoke_model_order" edge to the InvokeModelOrder entity by ID if the given value is not nil.
+func (buo *BillUpdateOne) SetNillableInvokeModelOrderID(id *int64) *BillUpdateOne {
+	if id != nil {
+		buo = buo.SetInvokeModelOrderID(*id)
+	}
+	return buo
+}
+
+// SetInvokeModelOrder sets the "invoke_model_order" edge to the InvokeModelOrder entity.
+func (buo *BillUpdateOne) SetInvokeModelOrder(i *InvokeModelOrder) *BillUpdateOne {
+	return buo.SetInvokeModelOrderID(i.ID)
+}
+
 // SetInvite sets the "invite" edge to the Invite entity.
 func (buo *BillUpdateOne) SetInvite(i *Invite) *BillUpdateOne {
 	return buo.SetInviteID(i.ID)
@@ -1246,6 +1320,12 @@ func (buo *BillUpdateOne) ClearTransferOrder() *BillUpdateOne {
 // ClearMissionOrder clears the "mission_order" edge to the MissionOrder entity.
 func (buo *BillUpdateOne) ClearMissionOrder() *BillUpdateOne {
 	buo.mutation.ClearMissionOrder()
+	return buo
+}
+
+// ClearInvokeModelOrder clears the "invoke_model_order" edge to the InvokeModelOrder entity.
+func (buo *BillUpdateOne) ClearInvokeModelOrder() *BillUpdateOne {
+	buo.mutation.ClearInvokeModelOrder()
 	return buo
 }
 
@@ -1553,6 +1633,35 @@ func (buo *BillUpdateOne) sqlSave(ctx context.Context) (_node *Bill, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if buo.mutation.InvokeModelOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.InvokeModelOrderTable,
+			Columns: []string{bill.InvokeModelOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.InvokeModelOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.InvokeModelOrderTable,
+			Columns: []string{bill.InvokeModelOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

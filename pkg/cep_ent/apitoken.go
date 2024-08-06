@@ -46,17 +46,28 @@ type ApiToken struct {
 
 // ApiTokenEdges holds the relations/edges for other nodes in the graph.
 type ApiTokenEdges struct {
+	// InvokeModelOrders holds the value of the invoke_model_orders edge.
+	InvokeModelOrders []*InvokeModelOrder `json:"invoke_model_orders,omitempty"`
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
+}
+
+// InvokeModelOrdersOrErr returns the InvokeModelOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e ApiTokenEdges) InvokeModelOrdersOrErr() ([]*InvokeModelOrder, error) {
+	if e.loadedTypes[0] {
+		return e.InvokeModelOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "invoke_model_orders"}
 }
 
 // UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e ApiTokenEdges) UserOrErr() (*User, error) {
-	if e.loadedTypes[0] {
+	if e.loadedTypes[1] {
 		if e.User == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: user.Label}
@@ -163,6 +174,11 @@ func (at *ApiToken) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (at *ApiToken) Value(name string) (ent.Value, error) {
 	return at.selectValues.Get(name)
+}
+
+// QueryInvokeModelOrders queries the "invoke_model_orders" edge of the ApiToken entity.
+func (at *ApiToken) QueryInvokeModelOrders() *InvokeModelOrderQuery {
+	return NewApiTokenClient(at.config).QueryInvokeModelOrders(at)
 }
 
 // QueryUser queries the "user" edge of the ApiToken entity.

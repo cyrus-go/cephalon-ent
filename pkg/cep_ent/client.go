@@ -44,6 +44,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottochancerule"
@@ -152,6 +153,8 @@ type Client struct {
 	InputLog *InputLogClient
 	// Invite is the client for interacting with the Invite builders.
 	Invite *InviteClient
+	// InvokeModelOrder is the client for interacting with the InvokeModelOrder builders.
+	InvokeModelOrder *InvokeModelOrderClient
 	// LoginRecord is the client for interacting with the LoginRecord builders.
 	LoginRecord *LoginRecordClient
 	// Lotto is the client for interacting with the Lotto builders.
@@ -280,6 +283,7 @@ func (c *Client) init() {
 	c.IncomeManage = NewIncomeManageClient(c.config)
 	c.InputLog = NewInputLogClient(c.config)
 	c.Invite = NewInviteClient(c.config)
+	c.InvokeModelOrder = NewInvokeModelOrderClient(c.config)
 	c.LoginRecord = NewLoginRecordClient(c.config)
 	c.Lotto = NewLottoClient(c.config)
 	c.LottoChanceRule = NewLottoChanceRuleClient(c.config)
@@ -437,6 +441,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		IncomeManage:          NewIncomeManageClient(cfg),
 		InputLog:              NewInputLogClient(cfg),
 		Invite:                NewInviteClient(cfg),
+		InvokeModelOrder:      NewInvokeModelOrderClient(cfg),
 		LoginRecord:           NewLoginRecordClient(cfg),
 		Lotto:                 NewLottoClient(cfg),
 		LottoChanceRule:       NewLottoChanceRuleClient(cfg),
@@ -528,6 +533,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		IncomeManage:          NewIncomeManageClient(cfg),
 		InputLog:              NewInputLogClient(cfg),
 		Invite:                NewInviteClient(cfg),
+		InvokeModelOrder:      NewInvokeModelOrderClient(cfg),
 		LoginRecord:           NewLoginRecordClient(cfg),
 		Lotto:                 NewLottoClient(cfg),
 		LottoChanceRule:       NewLottoChanceRuleClient(cfg),
@@ -605,9 +611,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.DeviceGpuMission, c.DeviceOfflineRecord, c.DeviceRebootTime, c.DeviceState,
 		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.ExtraService,
 		c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu,
-		c.HmacKeyPair, c.IncomeManage, c.InputLog, c.Invite, c.LoginRecord, c.Lotto,
-		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
-		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
+		c.HmacKeyPair, c.IncomeManage, c.InputLog, c.Invite, c.InvokeModelOrder,
+		c.LoginRecord, c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize,
+		c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
 		c.MissionProduction, c.Model, c.ModelPrice, c.OutputLog, c.PlatformAccount,
@@ -630,9 +636,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.DeviceGpuMission, c.DeviceOfflineRecord, c.DeviceRebootTime, c.DeviceState,
 		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.ExtraService,
 		c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu,
-		c.HmacKeyPair, c.IncomeManage, c.InputLog, c.Invite, c.LoginRecord, c.Lotto,
-		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
-		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
+		c.HmacKeyPair, c.IncomeManage, c.InputLog, c.Invite, c.InvokeModelOrder,
+		c.LoginRecord, c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize,
+		c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
 		c.MissionProduction, c.Model, c.ModelPrice, c.OutputLog, c.PlatformAccount,
@@ -707,6 +713,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.InputLog.mutate(ctx, m)
 	case *InviteMutation:
 		return c.Invite.mutate(ctx, m)
+	case *InvokeModelOrderMutation:
+		return c.InvokeModelOrder.mutate(ctx, m)
 	case *LoginRecordMutation:
 		return c.LoginRecord.mutate(ctx, m)
 	case *LottoMutation:
@@ -904,6 +912,22 @@ func (c *ApiTokenClient) GetX(ctx context.Context, id int64) *ApiToken {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryInvokeModelOrders queries the invoke_model_orders edge of a ApiToken.
+func (c *ApiTokenClient) QueryInvokeModelOrders(at *ApiToken) *InvokeModelOrderQuery {
+	query := (&InvokeModelOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := at.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(apitoken.Table, apitoken.FieldID, id),
+			sqlgraph.To(invokemodelorder.Table, invokemodelorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, apitoken.InvokeModelOrdersTable, apitoken.InvokeModelOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(at.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // QueryUser queries the user edge of a ApiToken.
@@ -1442,6 +1466,22 @@ func (c *BillClient) QueryMissionOrder(b *Bill) *MissionOrderQuery {
 			sqlgraph.From(bill.Table, bill.FieldID, id),
 			sqlgraph.To(missionorder.Table, missionorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, bill.MissionOrderTable, bill.MissionOrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInvokeModelOrder queries the invoke_model_order edge of a Bill.
+func (c *BillClient) QueryInvokeModelOrder(b *Bill) *InvokeModelOrderQuery {
+	query := (&InvokeModelOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(bill.Table, bill.FieldID, id),
+			sqlgraph.To(invokemodelorder.Table, invokemodelorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, bill.InvokeModelOrderTable, bill.InvokeModelOrderColumn),
 		)
 		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
 		return fromV, nil
@@ -5791,6 +5831,203 @@ func (c *InviteClient) mutate(ctx context.Context, m *InviteMutation) (Value, er
 	}
 }
 
+// InvokeModelOrderClient is a client for the InvokeModelOrder schema.
+type InvokeModelOrderClient struct {
+	config
+}
+
+// NewInvokeModelOrderClient returns a client for the InvokeModelOrder from the given config.
+func NewInvokeModelOrderClient(c config) *InvokeModelOrderClient {
+	return &InvokeModelOrderClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `invokemodelorder.Hooks(f(g(h())))`.
+func (c *InvokeModelOrderClient) Use(hooks ...Hook) {
+	c.hooks.InvokeModelOrder = append(c.hooks.InvokeModelOrder, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `invokemodelorder.Intercept(f(g(h())))`.
+func (c *InvokeModelOrderClient) Intercept(interceptors ...Interceptor) {
+	c.inters.InvokeModelOrder = append(c.inters.InvokeModelOrder, interceptors...)
+}
+
+// Create returns a builder for creating a InvokeModelOrder entity.
+func (c *InvokeModelOrderClient) Create() *InvokeModelOrderCreate {
+	mutation := newInvokeModelOrderMutation(c.config, OpCreate)
+	return &InvokeModelOrderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of InvokeModelOrder entities.
+func (c *InvokeModelOrderClient) CreateBulk(builders ...*InvokeModelOrderCreate) *InvokeModelOrderCreateBulk {
+	return &InvokeModelOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *InvokeModelOrderClient) MapCreateBulk(slice any, setFunc func(*InvokeModelOrderCreate, int)) *InvokeModelOrderCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &InvokeModelOrderCreateBulk{err: fmt.Errorf("calling to InvokeModelOrderClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*InvokeModelOrderCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &InvokeModelOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for InvokeModelOrder.
+func (c *InvokeModelOrderClient) Update() *InvokeModelOrderUpdate {
+	mutation := newInvokeModelOrderMutation(c.config, OpUpdate)
+	return &InvokeModelOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InvokeModelOrderClient) UpdateOne(imo *InvokeModelOrder) *InvokeModelOrderUpdateOne {
+	mutation := newInvokeModelOrderMutation(c.config, OpUpdateOne, withInvokeModelOrder(imo))
+	return &InvokeModelOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InvokeModelOrderClient) UpdateOneID(id int64) *InvokeModelOrderUpdateOne {
+	mutation := newInvokeModelOrderMutation(c.config, OpUpdateOne, withInvokeModelOrderID(id))
+	return &InvokeModelOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for InvokeModelOrder.
+func (c *InvokeModelOrderClient) Delete() *InvokeModelOrderDelete {
+	mutation := newInvokeModelOrderMutation(c.config, OpDelete)
+	return &InvokeModelOrderDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InvokeModelOrderClient) DeleteOne(imo *InvokeModelOrder) *InvokeModelOrderDeleteOne {
+	return c.DeleteOneID(imo.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InvokeModelOrderClient) DeleteOneID(id int64) *InvokeModelOrderDeleteOne {
+	builder := c.Delete().Where(invokemodelorder.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InvokeModelOrderDeleteOne{builder}
+}
+
+// Query returns a query builder for InvokeModelOrder.
+func (c *InvokeModelOrderClient) Query() *InvokeModelOrderQuery {
+	return &InvokeModelOrderQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeInvokeModelOrder},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a InvokeModelOrder entity by its id.
+func (c *InvokeModelOrderClient) Get(ctx context.Context, id int64) (*InvokeModelOrder, error) {
+	return c.Query().Where(invokemodelorder.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InvokeModelOrderClient) GetX(ctx context.Context, id int64) *InvokeModelOrder {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryBills queries the bills edge of a InvokeModelOrder.
+func (c *InvokeModelOrderClient) QueryBills(imo *InvokeModelOrder) *BillQuery {
+	query := (&BillClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := imo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invokemodelorder.Table, invokemodelorder.FieldID, id),
+			sqlgraph.To(bill.Table, bill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, invokemodelorder.BillsTable, invokemodelorder.BillsColumn),
+		)
+		fromV = sqlgraph.Neighbors(imo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUser queries the user edge of a InvokeModelOrder.
+func (c *InvokeModelOrderClient) QueryUser(imo *InvokeModelOrder) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := imo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invokemodelorder.Table, invokemodelorder.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, invokemodelorder.UserTable, invokemodelorder.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(imo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryModel queries the model edge of a InvokeModelOrder.
+func (c *InvokeModelOrderClient) QueryModel(imo *InvokeModelOrder) *ModelQuery {
+	query := (&ModelClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := imo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invokemodelorder.Table, invokemodelorder.FieldID, id),
+			sqlgraph.To(model.Table, model.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, invokemodelorder.ModelTable, invokemodelorder.ModelColumn),
+		)
+		fromV = sqlgraph.Neighbors(imo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAPIToken queries the api_token edge of a InvokeModelOrder.
+func (c *InvokeModelOrderClient) QueryAPIToken(imo *InvokeModelOrder) *ApiTokenQuery {
+	query := (&ApiTokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := imo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invokemodelorder.Table, invokemodelorder.FieldID, id),
+			sqlgraph.To(apitoken.Table, apitoken.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, invokemodelorder.APITokenTable, invokemodelorder.APITokenColumn),
+		)
+		fromV = sqlgraph.Neighbors(imo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *InvokeModelOrderClient) Hooks() []Hook {
+	return c.hooks.InvokeModelOrder
+}
+
+// Interceptors returns the client interceptors.
+func (c *InvokeModelOrderClient) Interceptors() []Interceptor {
+	return c.inters.InvokeModelOrder
+}
+
+func (c *InvokeModelOrderClient) mutate(ctx context.Context, m *InvokeModelOrderMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InvokeModelOrderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InvokeModelOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InvokeModelOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InvokeModelOrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown InvokeModelOrder mutation op: %q", m.Op())
+	}
+}
+
 // LoginRecordClient is a client for the LoginRecord schema.
 type LoginRecordClient struct {
 	config
@@ -9390,6 +9627,22 @@ func (c *ModelClient) QueryStarUser(m *Model) *UserQuery {
 			sqlgraph.From(model.Table, model.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, model.StarUserTable, model.StarUserPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInvokeModelOrders queries the invoke_model_orders edge of a Model.
+func (c *ModelClient) QueryInvokeModelOrders(m *Model) *InvokeModelOrderQuery {
+	query := (&InvokeModelOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(model.Table, model.FieldID, id),
+			sqlgraph.To(invokemodelorder.Table, invokemodelorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, model.InvokeModelOrdersTable, model.InvokeModelOrdersColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
@@ -13066,6 +13319,22 @@ func (c *UserClient) QueryStarModel(u *User) *ModelQuery {
 	return query
 }
 
+// QueryInvokeModelOrders queries the invoke_model_orders edge of a User.
+func (c *UserClient) QueryInvokeModelOrders(u *User) *InvokeModelOrderQuery {
+	query := (&InvokeModelOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(invokemodelorder.Table, invokemodelorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.InvokeModelOrdersTable, user.InvokeModelOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryModelStar queries the model_star edge of a User.
 func (c *UserClient) QueryModelStar(u *User) *UserModelQuery {
 	query := (&UserModelClient{config: c.config}).Query()
@@ -14270,15 +14539,16 @@ type (
 		DeviceOfflineRecord, DeviceRebootTime, DeviceState, EarnBill, EnumCondition,
 		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
 		FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, IncomeManage, InputLog, Invite,
-		LoginRecord, Lotto, LottoChanceRule, LottoGetCountRecord, LottoPrize,
-		LottoRecord, LottoUserCount, Mission, MissionBatch, MissionCategory,
-		MissionConsumeOrder, MissionExtraService, MissionFailedFeedback,
-		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
-		MissionProduction, Model, ModelPrice, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
-		RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol,
-		TransferOrder, TroubleDeduct, User, UserDevice, UserModel, VXAccount, VXSocial,
-		Wallet, WithdrawAccount, WithdrawRecord []ent.Hook
+		InvokeModelOrder, LoginRecord, Lotto, LottoChanceRule, LottoGetCountRecord,
+		LottoPrize, LottoRecord, LottoUserCount, Mission, MissionBatch,
+		MissionCategory, MissionConsumeOrder, MissionExtraService,
+		MissionFailedFeedback, MissionKeyPair, MissionKind, MissionOrder,
+		MissionProduceOrder, MissionProduction, Model, ModelPrice, OutputLog,
+		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
+		RechargeOrder, RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion,
+		SurveyResponse, Symbol, TransferOrder, TroubleDeduct, User, UserDevice,
+		UserModel, VXAccount, VXSocial, Wallet, WithdrawAccount,
+		WithdrawRecord []ent.Hook
 	}
 	inters struct {
 		ApiToken, Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder,
@@ -14286,14 +14556,15 @@ type (
 		DeviceOfflineRecord, DeviceRebootTime, DeviceState, EarnBill, EnumCondition,
 		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
 		FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, IncomeManage, InputLog, Invite,
-		LoginRecord, Lotto, LottoChanceRule, LottoGetCountRecord, LottoPrize,
-		LottoRecord, LottoUserCount, Mission, MissionBatch, MissionCategory,
-		MissionConsumeOrder, MissionExtraService, MissionFailedFeedback,
-		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
-		MissionProduction, Model, ModelPrice, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
-		RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol,
-		TransferOrder, TroubleDeduct, User, UserDevice, UserModel, VXAccount, VXSocial,
-		Wallet, WithdrawAccount, WithdrawRecord []ent.Interceptor
+		InvokeModelOrder, LoginRecord, Lotto, LottoChanceRule, LottoGetCountRecord,
+		LottoPrize, LottoRecord, LottoUserCount, Mission, MissionBatch,
+		MissionCategory, MissionConsumeOrder, MissionExtraService,
+		MissionFailedFeedback, MissionKeyPair, MissionKind, MissionOrder,
+		MissionProduceOrder, MissionProduction, Model, ModelPrice, OutputLog,
+		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
+		RechargeOrder, RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion,
+		SurveyResponse, Symbol, TransferOrder, TroubleDeduct, User, UserDevice,
+		UserModel, VXAccount, VXSocial, Wallet, WithdrawAccount,
+		WithdrawRecord []ent.Interceptor
 	}
 )
