@@ -1,22 +1,22 @@
 package enums
 
-type Invoke_type string
+type InvokeType string
 
 const (
 	UnKnownInvokeType Model = "unknown"
 	ApiInvokeType     Model = "api"
-	ChatInvokeType    Model = "web"
+	WebInvokeType     Model = "web"
 )
 
-func (obj Invoke_type) Values() []string {
+func (obj InvokeType) Values() []string {
 	return []string{
-		string(UnknownModel),
+		string(UnKnownInvokeType),
 		string(ApiInvokeType),
-		string(ChatInvokeType),
+		string(WebInvokeType),
 	}
 }
 
-func (obj Invoke_type) Ptr() *Invoke_type {
+func (obj InvokeType) Ptr() *InvokeType {
 	if obj != "" {
 		return &obj
 	} else {

@@ -42,6 +42,7 @@ func (Bill) Edges() []ent.Edge {
 		edge.From("target_user", User.Type).Ref("income_bills").Field("target_user_id").Unique().Required(),
 		edge.From("transfer_order", TransferOrder.Type).Ref("bills").Field("order_id").Unique(),
 		edge.From("mission_order", MissionOrder.Type).Ref("bills").Field("order_id").Unique(),
+		edge.From("invoke_model_order", InvokeModelOrder.Type).Ref("bills").Field("order_id").Unique(),
 		edge.From("invite", Invite.Type).Ref("bills").Field("invite_id").Unique().Required(),
 		edge.From("symbol", Symbol.Type).Ref("bills").Field("symbol_id").Unique().Required(),
 		edge.From("target_symbol", Symbol.Type).Ref("income_bills").Field("target_symbol_id").Unique().Required(),
