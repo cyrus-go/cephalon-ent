@@ -9,6 +9,7 @@ const (
 	CloseWayExpired          CloseWay = "expired"
 	CloseWayAdmin            CloseWay = "admin"
 	CloseWaySystemMonitor    CloseWay = "system_monitor"
+	CloseWayTimedShutdown    CloseWay = "timed_shutdown"
 )
 
 func (CloseWay) Values() []string {
@@ -19,6 +20,7 @@ func (CloseWay) Values() []string {
 		string(CloseWayExpired),
 		string(CloseWayAdmin),
 		string(CloseWaySystemMonitor),
+		string(CloseWayTimedShutdown),
 	}
 }
 
