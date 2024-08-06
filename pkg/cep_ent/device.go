@@ -70,6 +70,8 @@ type Device struct {
 	Stability enums.DeviceStabilityType `json:"stability"`
 	// 设备版本
 	Version string `json:"version"`
+	// 故障信息
+	Fault enums.DeviceFaultType `json:"fault"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges        DeviceEdges `json:"edges"`
@@ -230,7 +232,7 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory:
 			values[i] = new(sql.NullInt64)
-		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability, device.FieldVersion:
+		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability, device.FieldVersion, device.FieldFault:
 			values[i] = new(sql.NullString)
 		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -407,6 +409,12 @@ func (d *Device) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				d.Version = value.String
 			}
+		case device.FieldFault:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field fault", values[i])
+			} else if value.Valid {
+				d.Fault = enums.DeviceFaultType(value.String)
+			}
 		default:
 			d.selectValues.Set(columns[i], values[i])
 		}
@@ -577,6 +585,9 @@ func (d *Device) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("version=")
 	builder.WriteString(d.Version)
+	builder.WriteString(", ")
+	builder.WriteString("fault=")
+	builder.WriteString(fmt.Sprintf("%v", d.Fault))
 	builder.WriteByte(')')
 	return builder.String()
 }

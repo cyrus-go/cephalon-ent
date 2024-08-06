@@ -13610,6 +13610,7 @@ type DeviceMutation struct {
 	addcpu_temperature              *float64
 	stability                       *enums.DeviceStabilityType
 	version                         *string
+	fault                           *enums.DeviceFaultType
 	clearedFields                   map[string]struct{}
 	user                            *int64
 	cleareduser                     bool
@@ -14848,6 +14849,42 @@ func (m *DeviceMutation) ResetVersion() {
 	m.version = nil
 }
 
+// SetFault sets the "fault" field.
+func (m *DeviceMutation) SetFault(eft enums.DeviceFaultType) {
+	m.fault = &eft
+}
+
+// Fault returns the value of the "fault" field in the mutation.
+func (m *DeviceMutation) Fault() (r enums.DeviceFaultType, exists bool) {
+	v := m.fault
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFault returns the old "fault" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldFault(ctx context.Context) (v enums.DeviceFaultType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFault is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFault requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFault: %w", err)
+	}
+	return oldValue.Fault, nil
+}
+
+// ResetFault resets all changes to the "fault" field.
+func (m *DeviceMutation) ResetFault() {
+	m.fault = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *DeviceMutation) ClearUser() {
 	m.cleareduser = true
@@ -15503,7 +15540,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 25)
+	fields := make([]string, 0, 26)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -15579,6 +15616,9 @@ func (m *DeviceMutation) Fields() []string {
 	if m.version != nil {
 		fields = append(fields, device.FieldVersion)
 	}
+	if m.fault != nil {
+		fields = append(fields, device.FieldFault)
+	}
 	return fields
 }
 
@@ -15637,6 +15677,8 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.Stability()
 	case device.FieldVersion:
 		return m.Version()
+	case device.FieldFault:
+		return m.Fault()
 	}
 	return nil, false
 }
@@ -15696,6 +15738,8 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldStability(ctx)
 	case device.FieldVersion:
 		return m.OldVersion(ctx)
+	case device.FieldFault:
+		return m.OldFault(ctx)
 	}
 	return nil, fmt.Errorf("unknown Device field %s", name)
 }
@@ -15879,6 +15923,13 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetVersion(v)
+		return nil
+	case device.FieldFault:
+		v, ok := value.(enums.DeviceFaultType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFault(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
@@ -16123,6 +16174,9 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldVersion:
 		m.ResetVersion()
+		return nil
+	case device.FieldFault:
+		m.ResetFault()
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)

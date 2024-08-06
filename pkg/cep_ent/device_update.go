@@ -431,6 +431,20 @@ func (du *DeviceUpdate) SetNillableVersion(s *string) *DeviceUpdate {
 	return du
 }
 
+// SetFault sets the "fault" field.
+func (du *DeviceUpdate) SetFault(eft enums.DeviceFaultType) *DeviceUpdate {
+	du.mutation.SetFault(eft)
+	return du
+}
+
+// SetNillableFault sets the "fault" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableFault(eft *enums.DeviceFaultType) *DeviceUpdate {
+	if eft != nil {
+		du.SetFault(*eft)
+	}
+	return du
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (du *DeviceUpdate) SetUser(u *User) *DeviceUpdate {
 	return du.SetUserID(u.ID)
@@ -906,6 +920,11 @@ func (du *DeviceUpdate) check() error {
 			return &ValidationError{Name: "stability", err: fmt.Errorf(`cep_ent: validator failed for field "Device.stability": %w`, err)}
 		}
 	}
+	if v, ok := du.mutation.Fault(); ok {
+		if err := device.FaultValidator(v); err != nil {
+			return &ValidationError{Name: "fault", err: fmt.Errorf(`cep_ent: validator failed for field "Device.fault": %w`, err)}
+		}
+	}
 	if _, ok := du.mutation.UserID(); du.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Device.user"`)
 	}
@@ -1032,6 +1051,9 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.Version(); ok {
 		_spec.SetField(device.FieldVersion, field.TypeString, value)
+	}
+	if value, ok := du.mutation.Fault(); ok {
+		_spec.SetField(device.FieldFault, field.TypeEnum, value)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1968,6 +1990,20 @@ func (duo *DeviceUpdateOne) SetNillableVersion(s *string) *DeviceUpdateOne {
 	return duo
 }
 
+// SetFault sets the "fault" field.
+func (duo *DeviceUpdateOne) SetFault(eft enums.DeviceFaultType) *DeviceUpdateOne {
+	duo.mutation.SetFault(eft)
+	return duo
+}
+
+// SetNillableFault sets the "fault" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableFault(eft *enums.DeviceFaultType) *DeviceUpdateOne {
+	if eft != nil {
+		duo.SetFault(*eft)
+	}
+	return duo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (duo *DeviceUpdateOne) SetUser(u *User) *DeviceUpdateOne {
 	return duo.SetUserID(u.ID)
@@ -2456,6 +2492,11 @@ func (duo *DeviceUpdateOne) check() error {
 			return &ValidationError{Name: "stability", err: fmt.Errorf(`cep_ent: validator failed for field "Device.stability": %w`, err)}
 		}
 	}
+	if v, ok := duo.mutation.Fault(); ok {
+		if err := device.FaultValidator(v); err != nil {
+			return &ValidationError{Name: "fault", err: fmt.Errorf(`cep_ent: validator failed for field "Device.fault": %w`, err)}
+		}
+	}
 	if _, ok := duo.mutation.UserID(); duo.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Device.user"`)
 	}
@@ -2599,6 +2640,9 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if value, ok := duo.mutation.Version(); ok {
 		_spec.SetField(device.FieldVersion, field.TypeString, value)
+	}
+	if value, ok := duo.mutation.Fault(); ok {
+		_spec.SetField(device.FieldFault, field.TypeEnum, value)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

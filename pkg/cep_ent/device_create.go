@@ -377,6 +377,20 @@ func (dc *DeviceCreate) SetNillableVersion(s *string) *DeviceCreate {
 	return dc
 }
 
+// SetFault sets the "fault" field.
+func (dc *DeviceCreate) SetFault(eft enums.DeviceFaultType) *DeviceCreate {
+	dc.mutation.SetFault(eft)
+	return dc
+}
+
+// SetNillableFault sets the "fault" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableFault(eft *enums.DeviceFaultType) *DeviceCreate {
+	if eft != nil {
+		dc.SetFault(*eft)
+	}
+	return dc
+}
+
 // SetID sets the "id" field.
 func (dc *DeviceCreate) SetID(i int64) *DeviceCreate {
 	dc.mutation.SetID(i)
@@ -692,6 +706,10 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultVersion
 		dc.mutation.SetVersion(v)
 	}
+	if _, ok := dc.mutation.Fault(); !ok {
+		v := device.DefaultFault
+		dc.mutation.SetFault(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := device.DefaultID()
 		dc.mutation.SetID(v)
@@ -796,6 +814,14 @@ func (dc *DeviceCreate) check() error {
 	}
 	if _, ok := dc.mutation.Version(); !ok {
 		return &ValidationError{Name: "version", err: errors.New(`cep_ent: missing required field "Device.version"`)}
+	}
+	if _, ok := dc.mutation.Fault(); !ok {
+		return &ValidationError{Name: "fault", err: errors.New(`cep_ent: missing required field "Device.fault"`)}
+	}
+	if v, ok := dc.mutation.Fault(); ok {
+		if err := device.FaultValidator(v); err != nil {
+			return &ValidationError{Name: "fault", err: fmt.Errorf(`cep_ent: validator failed for field "Device.fault": %w`, err)}
+		}
 	}
 	if _, ok := dc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "Device.user"`)}
@@ -935,6 +961,10 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	if value, ok := dc.mutation.Version(); ok {
 		_spec.SetField(device.FieldVersion, field.TypeString, value)
 		_node.Version = value
+	}
+	if value, ok := dc.mutation.Fault(); ok {
+		_spec.SetField(device.FieldFault, field.TypeEnum, value)
+		_node.Fault = value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1529,6 +1559,18 @@ func (u *DeviceUpsert) UpdateVersion() *DeviceUpsert {
 	return u
 }
 
+// SetFault sets the "fault" field.
+func (u *DeviceUpsert) SetFault(v enums.DeviceFaultType) *DeviceUpsert {
+	u.Set(device.FieldFault, v)
+	return u
+}
+
+// UpdateFault sets the "fault" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateFault() *DeviceUpsert {
+	u.SetExcluded(device.FieldFault)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1983,6 +2025,20 @@ func (u *DeviceUpsertOne) SetVersion(v string) *DeviceUpsertOne {
 func (u *DeviceUpsertOne) UpdateVersion() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateVersion()
+	})
+}
+
+// SetFault sets the "fault" field.
+func (u *DeviceUpsertOne) SetFault(v enums.DeviceFaultType) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetFault(v)
+	})
+}
+
+// UpdateFault sets the "fault" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateFault() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateFault()
 	})
 }
 
@@ -2609,6 +2665,20 @@ func (u *DeviceUpsertBulk) SetVersion(v string) *DeviceUpsertBulk {
 func (u *DeviceUpsertBulk) UpdateVersion() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateVersion()
+	})
+}
+
+// SetFault sets the "fault" field.
+func (u *DeviceUpsertBulk) SetFault(v enums.DeviceFaultType) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetFault(v)
+	})
+}
+
+// UpdateFault sets the "fault" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateFault() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateFault()
 	})
 }
 

@@ -67,6 +67,8 @@ const (
 	FieldStability = "stability"
 	// FieldVersion holds the string denoting the version field in the database.
 	FieldVersion = "version"
+	// FieldFault holds the string denoting the fault field in the database.
+	FieldFault = "fault"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
@@ -207,6 +209,7 @@ var Columns = []string{
 	FieldCPUTemperature,
 	FieldStability,
 	FieldVersion,
+	FieldFault,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -343,6 +346,18 @@ func StabilityValidator(s enums.DeviceStabilityType) error {
 	}
 }
 
+const DefaultFault enums.DeviceFaultType = "ok"
+
+// FaultValidator is a validator for the "fault" field enum values. It is called by the builders before save.
+func FaultValidator(f enums.DeviceFaultType) error {
+	switch f {
+	case "ok", "drive_abnormal", "no_disk", "task_failure", "recover":
+		return nil
+	default:
+		return fmt.Errorf("device: invalid enum value for fault field: %q", f)
+	}
+}
+
 // OrderOption defines the ordering options for the Device queries.
 type OrderOption func(*sql.Selector)
 
@@ -474,6 +489,11 @@ func ByStability(opts ...sql.OrderTermOption) OrderOption {
 // ByVersion orders the results by the version field.
 func ByVersion(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldVersion, opts...).ToFunc()
+}
+
+// ByFault orders the results by the fault field.
+func ByFault(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFault, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

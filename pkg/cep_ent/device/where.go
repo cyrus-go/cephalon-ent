@@ -1136,6 +1136,36 @@ func VersionContainsFold(v string) predicate.Device {
 	return predicate.Device(sql.FieldContainsFold(FieldVersion, v))
 }
 
+// FaultEQ applies the EQ predicate on the "fault" field.
+func FaultEQ(v enums.DeviceFaultType) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldEQ(FieldFault, vc))
+}
+
+// FaultNEQ applies the NEQ predicate on the "fault" field.
+func FaultNEQ(v enums.DeviceFaultType) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldNEQ(FieldFault, vc))
+}
+
+// FaultIn applies the In predicate on the "fault" field.
+func FaultIn(vs ...enums.DeviceFaultType) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldIn(FieldFault, v...))
+}
+
+// FaultNotIn applies the NotIn predicate on the "fault" field.
+func FaultNotIn(vs ...enums.DeviceFaultType) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldNotIn(FieldFault, v...))
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
