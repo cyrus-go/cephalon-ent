@@ -221,6 +221,11 @@ func OldMissionID(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldOldMissionID, v))
 }
 
+// TimedShutdown applies equality check predicate on the "timed_shutdown" field. It's identical to TimedShutdownEQ.
+func TimedShutdown(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldTimedShutdown, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldCreatedBy, v))
@@ -2034,6 +2039,56 @@ func OldMissionIDIn(vs ...int64) predicate.Mission {
 // OldMissionIDNotIn applies the NotIn predicate on the "old_mission_id" field.
 func OldMissionIDNotIn(vs ...int64) predicate.Mission {
 	return predicate.Mission(sql.FieldNotIn(FieldOldMissionID, vs...))
+}
+
+// TimedShutdownEQ applies the EQ predicate on the "timed_shutdown" field.
+func TimedShutdownEQ(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldTimedShutdown, v))
+}
+
+// TimedShutdownNEQ applies the NEQ predicate on the "timed_shutdown" field.
+func TimedShutdownNEQ(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldTimedShutdown, v))
+}
+
+// TimedShutdownIn applies the In predicate on the "timed_shutdown" field.
+func TimedShutdownIn(vs ...time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldTimedShutdown, vs...))
+}
+
+// TimedShutdownNotIn applies the NotIn predicate on the "timed_shutdown" field.
+func TimedShutdownNotIn(vs ...time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldTimedShutdown, vs...))
+}
+
+// TimedShutdownGT applies the GT predicate on the "timed_shutdown" field.
+func TimedShutdownGT(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldTimedShutdown, v))
+}
+
+// TimedShutdownGTE applies the GTE predicate on the "timed_shutdown" field.
+func TimedShutdownGTE(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldTimedShutdown, v))
+}
+
+// TimedShutdownLT applies the LT predicate on the "timed_shutdown" field.
+func TimedShutdownLT(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldTimedShutdown, v))
+}
+
+// TimedShutdownLTE applies the LTE predicate on the "timed_shutdown" field.
+func TimedShutdownLTE(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldTimedShutdown, v))
+}
+
+// TimedShutdownIsNil applies the IsNil predicate on the "timed_shutdown" field.
+func TimedShutdownIsNil() predicate.Mission {
+	return predicate.Mission(sql.FieldIsNull(FieldTimedShutdown))
+}
+
+// TimedShutdownNotNil applies the NotNil predicate on the "timed_shutdown" field.
+func TimedShutdownNotNil() predicate.Mission {
+	return predicate.Mission(sql.FieldNotNull(FieldTimedShutdown))
 }
 
 // HasMissionKind applies the HasEdge predicate on the "mission_kind" edge.

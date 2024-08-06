@@ -2135,6 +2135,10 @@ func init() {
 	missionDescOldMissionID := missionFields[37].Descriptor()
 	// mission.DefaultOldMissionID holds the default value on creation for the old_mission_id field.
 	mission.DefaultOldMissionID = missionDescOldMissionID.Default.(int64)
+	// missionDescTimedShutdown is the schema descriptor for timed_shutdown field.
+	missionDescTimedShutdown := missionFields[38].Descriptor()
+	// mission.DefaultTimedShutdown holds the default value on creation for the timed_shutdown field.
+	mission.DefaultTimedShutdown = missionDescTimedShutdown.Default.(time.Time)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.

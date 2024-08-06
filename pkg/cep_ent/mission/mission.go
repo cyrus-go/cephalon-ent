@@ -103,6 +103,8 @@ const (
 	FieldUseAuth = "use_auth"
 	// FieldOldMissionID holds the string denoting the old_mission_id field in the database.
 	FieldOldMissionID = "old_mission_id"
+	// FieldTimedShutdown holds the string denoting the timed_shutdown field in the database.
+	FieldTimedShutdown = "timed_shutdown"
 	// EdgeMissionKind holds the string denoting the mission_kind edge name in mutations.
 	EdgeMissionKind = "mission_kind"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -291,6 +293,7 @@ var Columns = []string{
 	FieldRemark,
 	FieldUseAuth,
 	FieldOldMissionID,
+	FieldTimedShutdown,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "missions"
@@ -379,6 +382,8 @@ var (
 	DefaultUseAuth bool
 	// DefaultOldMissionID holds the default value on creation for the "old_mission_id" field.
 	DefaultOldMissionID int64
+	// DefaultTimedShutdown holds the default value on creation for the "timed_shutdown" field.
+	DefaultTimedShutdown time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Mission fields.
@@ -683,6 +688,11 @@ func ByUseAuth(opts ...sql.OrderTermOption) OrderOption {
 // ByOldMissionID orders the results by the old_mission_id field.
 func ByOldMissionID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOldMissionID, opts...).ToFunc()
+}
+
+// ByTimedShutdown orders the results by the timed_shutdown field.
+func ByTimedShutdown(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTimedShutdown, opts...).ToFunc()
 }
 
 // ByMissionKindField orders the results by mission_kind field.

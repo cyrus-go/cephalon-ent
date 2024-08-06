@@ -43793,6 +43793,7 @@ type MissionMutation struct {
 	addwarning_times               *int64
 	remark                         *string
 	use_auth                       *bool
+	timed_shutdown                 *time.Time
 	clearedFields                  map[string]struct{}
 	mission_kind                   *int64
 	clearedmission_kind            bool
@@ -45725,6 +45726,55 @@ func (m *MissionMutation) ResetOldMissionID() {
 	m.old_mission = nil
 }
 
+// SetTimedShutdown sets the "timed_shutdown" field.
+func (m *MissionMutation) SetTimedShutdown(t time.Time) {
+	m.timed_shutdown = &t
+}
+
+// TimedShutdown returns the value of the "timed_shutdown" field in the mutation.
+func (m *MissionMutation) TimedShutdown() (r time.Time, exists bool) {
+	v := m.timed_shutdown
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimedShutdown returns the old "timed_shutdown" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldTimedShutdown(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTimedShutdown is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTimedShutdown requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimedShutdown: %w", err)
+	}
+	return oldValue.TimedShutdown, nil
+}
+
+// ClearTimedShutdown clears the value of the "timed_shutdown" field.
+func (m *MissionMutation) ClearTimedShutdown() {
+	m.timed_shutdown = nil
+	m.clearedFields[mission.FieldTimedShutdown] = struct{}{}
+}
+
+// TimedShutdownCleared returns if the "timed_shutdown" field was cleared in this mutation.
+func (m *MissionMutation) TimedShutdownCleared() bool {
+	_, ok := m.clearedFields[mission.FieldTimedShutdown]
+	return ok
+}
+
+// ResetTimedShutdown resets all changes to the "timed_shutdown" field.
+func (m *MissionMutation) ResetTimedShutdown() {
+	m.timed_shutdown = nil
+	delete(m.clearedFields, mission.FieldTimedShutdown)
+}
+
 // ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
 func (m *MissionMutation) ClearMissionKind() {
 	m.clearedmission_kind = true
@@ -46458,7 +46508,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 43)
+	fields := make([]string, 0, 44)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -46588,6 +46638,9 @@ func (m *MissionMutation) Fields() []string {
 	if m.old_mission != nil {
 		fields = append(fields, mission.FieldOldMissionID)
 	}
+	if m.timed_shutdown != nil {
+		fields = append(fields, mission.FieldTimedShutdown)
+	}
 	return fields
 }
 
@@ -46682,6 +46735,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.UseAuth()
 	case mission.FieldOldMissionID:
 		return m.OldMissionID()
+	case mission.FieldTimedShutdown:
+		return m.TimedShutdown()
 	}
 	return nil, false
 }
@@ -46777,6 +46832,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldUseAuth(ctx)
 	case mission.FieldOldMissionID:
 		return m.OldOldMissionID(ctx)
+	case mission.FieldTimedShutdown:
+		return m.OldTimedShutdown(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -47087,6 +47144,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOldMissionID(v)
 		return nil
+	case mission.FieldTimedShutdown:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimedShutdown(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
@@ -47207,6 +47271,9 @@ func (m *MissionMutation) ClearedFields() []string {
 	if m.FieldCleared(mission.FieldClosedAt) {
 		fields = append(fields, mission.FieldClosedAt)
 	}
+	if m.FieldCleared(mission.FieldTimedShutdown) {
+		fields = append(fields, mission.FieldTimedShutdown)
+	}
 	return fields
 }
 
@@ -47247,6 +47314,9 @@ func (m *MissionMutation) ClearField(name string) error {
 		return nil
 	case mission.FieldClosedAt:
 		m.ClearClosedAt()
+		return nil
+	case mission.FieldTimedShutdown:
+		m.ClearTimedShutdown()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission nullable field %s", name)
@@ -47384,6 +47454,9 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldOldMissionID:
 		m.ResetOldMissionID()
+		return nil
+	case mission.FieldTimedShutdown:
+		m.ResetTimedShutdown()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)

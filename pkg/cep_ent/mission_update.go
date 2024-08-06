@@ -688,6 +688,26 @@ func (mu *MissionUpdate) SetNillableOldMissionID(i *int64) *MissionUpdate {
 	return mu
 }
 
+// SetTimedShutdown sets the "timed_shutdown" field.
+func (mu *MissionUpdate) SetTimedShutdown(t time.Time) *MissionUpdate {
+	mu.mutation.SetTimedShutdown(t)
+	return mu
+}
+
+// SetNillableTimedShutdown sets the "timed_shutdown" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableTimedShutdown(t *time.Time) *MissionUpdate {
+	if t != nil {
+		mu.SetTimedShutdown(*t)
+	}
+	return mu
+}
+
+// ClearTimedShutdown clears the value of the "timed_shutdown" field.
+func (mu *MissionUpdate) ClearTimedShutdown() *MissionUpdate {
+	mu.mutation.ClearTimedShutdown()
+	return mu
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (mu *MissionUpdate) SetMissionKind(m *MissionKind) *MissionUpdate {
 	return mu.SetMissionKindID(m.ID)
@@ -1396,6 +1416,12 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.UseAuth(); ok {
 		_spec.SetField(mission.FieldUseAuth, field.TypeBool, value)
+	}
+	if value, ok := mu.mutation.TimedShutdown(); ok {
+		_spec.SetField(mission.FieldTimedShutdown, field.TypeTime, value)
+	}
+	if mu.mutation.TimedShutdownCleared() {
+		_spec.ClearField(mission.FieldTimedShutdown, field.TypeTime)
 	}
 	if mu.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2670,6 +2696,26 @@ func (muo *MissionUpdateOne) SetNillableOldMissionID(i *int64) *MissionUpdateOne
 	return muo
 }
 
+// SetTimedShutdown sets the "timed_shutdown" field.
+func (muo *MissionUpdateOne) SetTimedShutdown(t time.Time) *MissionUpdateOne {
+	muo.mutation.SetTimedShutdown(t)
+	return muo
+}
+
+// SetNillableTimedShutdown sets the "timed_shutdown" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableTimedShutdown(t *time.Time) *MissionUpdateOne {
+	if t != nil {
+		muo.SetTimedShutdown(*t)
+	}
+	return muo
+}
+
+// ClearTimedShutdown clears the value of the "timed_shutdown" field.
+func (muo *MissionUpdateOne) ClearTimedShutdown() *MissionUpdateOne {
+	muo.mutation.ClearTimedShutdown()
+	return muo
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (muo *MissionUpdateOne) SetMissionKind(m *MissionKind) *MissionUpdateOne {
 	return muo.SetMissionKindID(m.ID)
@@ -3408,6 +3454,12 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if value, ok := muo.mutation.UseAuth(); ok {
 		_spec.SetField(mission.FieldUseAuth, field.TypeBool, value)
+	}
+	if value, ok := muo.mutation.TimedShutdown(); ok {
+		_spec.SetField(mission.FieldTimedShutdown, field.TypeTime, value)
+	}
+	if muo.mutation.TimedShutdownCleared() {
+		_spec.ClearField(mission.FieldTimedShutdown, field.TypeTime)
 	}
 	if muo.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{

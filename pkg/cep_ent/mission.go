@@ -112,6 +112,8 @@ type Mission struct {
 	UseAuth bool `json:"use_auth"`
 	// 外键，重新开机的旧应用 ID
 	OldMissionID int64 `json:"old_mission_id,string"`
+	// 任务定时关机时间
+	TimedShutdown *time.Time `json:"timed_shutdown"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges                  MissionEdges `json:"edges"`
@@ -343,7 +345,7 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword, mission.FieldCloseWay, mission.FieldRemark:
 			values[i] = new(sql.NullString)
-		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt, mission.FieldStartedAt, mission.FieldFinishedAt, mission.FieldExpiredAt, mission.FieldFreeAt, mission.FieldClosedAt:
+		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt, mission.FieldStartedAt, mission.FieldFinishedAt, mission.FieldExpiredAt, mission.FieldFreeAt, mission.FieldClosedAt, mission.FieldTimedShutdown:
 			values[i] = new(sql.NullTime)
 		case mission.FieldWhiteDeviceIds:
 			values[i] = mission.ValueScanner.WhiteDeviceIds.ScanValue()
@@ -637,6 +639,13 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.OldMissionID = value.Int64
 			}
+		case mission.FieldTimedShutdown:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field timed_shutdown", values[i])
+			} else if value.Valid {
+				m.TimedShutdown = new(time.Time)
+				*m.TimedShutdown = value.Time
+			}
 		case mission.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field extra_service_missions", value)
@@ -896,6 +905,11 @@ func (m *Mission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("old_mission_id=")
 	builder.WriteString(fmt.Sprintf("%v", m.OldMissionID))
+	builder.WriteString(", ")
+	if v := m.TimedShutdown; v != nil {
+		builder.WriteString("timed_shutdown=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

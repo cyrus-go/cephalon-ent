@@ -607,6 +607,20 @@ func (mc *MissionCreate) SetNillableOldMissionID(i *int64) *MissionCreate {
 	return mc
 }
 
+// SetTimedShutdown sets the "timed_shutdown" field.
+func (mc *MissionCreate) SetTimedShutdown(t time.Time) *MissionCreate {
+	mc.mutation.SetTimedShutdown(t)
+	return mc
+}
+
+// SetNillableTimedShutdown sets the "timed_shutdown" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableTimedShutdown(t *time.Time) *MissionCreate {
+	if t != nil {
+		mc.SetTimedShutdown(*t)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -1006,6 +1020,10 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultOldMissionID
 		mc.mutation.SetOldMissionID(v)
 	}
+	if _, ok := mc.mutation.TimedShutdown(); !ok {
+		v := mission.DefaultTimedShutdown
+		mc.mutation.SetTimedShutdown(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -1361,6 +1379,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 	if value, ok := mc.mutation.UseAuth(); ok {
 		_spec.SetField(mission.FieldUseAuth, field.TypeBool, value)
 		_node.UseAuth = value
+	}
+	if value, ok := mc.mutation.TimedShutdown(); ok {
+		_spec.SetField(mission.FieldTimedShutdown, field.TypeTime, value)
+		_node.TimedShutdown = &value
 	}
 	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -2263,6 +2285,24 @@ func (u *MissionUpsert) UpdateOldMissionID() *MissionUpsert {
 	return u
 }
 
+// SetTimedShutdown sets the "timed_shutdown" field.
+func (u *MissionUpsert) SetTimedShutdown(v time.Time) *MissionUpsert {
+	u.Set(mission.FieldTimedShutdown, v)
+	return u
+}
+
+// UpdateTimedShutdown sets the "timed_shutdown" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateTimedShutdown() *MissionUpsert {
+	u.SetExcluded(mission.FieldTimedShutdown)
+	return u
+}
+
+// ClearTimedShutdown clears the value of the "timed_shutdown" field.
+func (u *MissionUpsert) ClearTimedShutdown() *MissionUpsert {
+	u.SetNull(mission.FieldTimedShutdown)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2997,6 +3037,27 @@ func (u *MissionUpsertOne) SetOldMissionID(v int64) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdateOldMissionID() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateOldMissionID()
+	})
+}
+
+// SetTimedShutdown sets the "timed_shutdown" field.
+func (u *MissionUpsertOne) SetTimedShutdown(v time.Time) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetTimedShutdown(v)
+	})
+}
+
+// UpdateTimedShutdown sets the "timed_shutdown" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateTimedShutdown() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateTimedShutdown()
+	})
+}
+
+// ClearTimedShutdown clears the value of the "timed_shutdown" field.
+func (u *MissionUpsertOne) ClearTimedShutdown() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearTimedShutdown()
 	})
 }
 
@@ -3903,6 +3964,27 @@ func (u *MissionUpsertBulk) SetOldMissionID(v int64) *MissionUpsertBulk {
 func (u *MissionUpsertBulk) UpdateOldMissionID() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateOldMissionID()
+	})
+}
+
+// SetTimedShutdown sets the "timed_shutdown" field.
+func (u *MissionUpsertBulk) SetTimedShutdown(v time.Time) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetTimedShutdown(v)
+	})
+}
+
+// UpdateTimedShutdown sets the "timed_shutdown" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateTimedShutdown() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateTimedShutdown()
+	})
+}
+
+// ClearTimedShutdown clears the value of the "timed_shutdown" field.
+func (u *MissionUpsertBulk) ClearTimedShutdown() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearTimedShutdown()
 	})
 }
 

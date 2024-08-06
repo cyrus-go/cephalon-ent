@@ -1477,6 +1477,7 @@ var (
 		{Name: "warning_times", Type: field.TypeInt64, Comment: "预警次数，任务运行时间超过一定时间会发送预警消息", Default: 0},
 		{Name: "remark", Type: field.TypeString, Comment: "备注信息", Default: ""},
 		{Name: "use_auth", Type: field.TypeBool, Comment: "是否需要使用鉴权（应用开启后需要账号密码登陆验证）", Default: false},
+		{Name: "timed_shutdown", Type: field.TypeTime, Nullable: true, Comment: "任务定时关机时间"},
 		{Name: "extra_service_missions", Type: field.TypeInt64, Nullable: true},
 		{Name: "key_pair_id", Type: field.TypeInt64, Comment: "任务创建者的密钥对 ID", Default: 0},
 		{Name: "old_mission_id", Type: field.TypeInt64, Nullable: true, Comment: "外键，重新开机的旧应用 ID", Default: 0},
@@ -1493,37 +1494,37 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "missions_extra_services_missions",
-				Columns:    []*schema.Column{MissionsColumns[39]},
+				Columns:    []*schema.Column{MissionsColumns[40]},
 				RefColumns: []*schema.Column{ExtraServicesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "missions_hmac_key_pairs_created_missions",
-				Columns:    []*schema.Column{MissionsColumns[40]},
+				Columns:    []*schema.Column{MissionsColumns[41]},
 				RefColumns: []*schema.Column{HmacKeyPairsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "missions_missions_reboot_missions",
-				Columns:    []*schema.Column{MissionsColumns[41]},
+				Columns:    []*schema.Column{MissionsColumns[42]},
 				RefColumns: []*schema.Column{MissionsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "missions_mission_batches_missions",
-				Columns:    []*schema.Column{MissionsColumns[42]},
+				Columns:    []*schema.Column{MissionsColumns[43]},
 				RefColumns: []*schema.Column{MissionBatchesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "missions_mission_kinds_missions",
-				Columns:    []*schema.Column{MissionsColumns[43]},
+				Columns:    []*schema.Column{MissionsColumns[44]},
 				RefColumns: []*schema.Column{MissionKindsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "missions_users_missions",
-				Columns:    []*schema.Column{MissionsColumns[44]},
+				Columns:    []*schema.Column{MissionsColumns[45]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -1532,17 +1533,17 @@ var (
 			{
 				Name:    "mission_mission_kind_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionsColumns[43]},
+				Columns: []*schema.Column{MissionsColumns[44]},
 			},
 			{
 				Name:    "mission_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionsColumns[44]},
+				Columns: []*schema.Column{MissionsColumns[45]},
 			},
 			{
 				Name:    "mission_mission_batch_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionsColumns[42]},
+				Columns: []*schema.Column{MissionsColumns[43]},
 			},
 		},
 	}
