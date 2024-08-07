@@ -69,6 +69,8 @@ const (
 	FieldVersion = "version"
 	// FieldFault holds the string denoting the fault field in the database.
 	FieldFault = "fault"
+	// FieldRank holds the string denoting the rank field in the database.
+	FieldRank = "rank"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
@@ -210,6 +212,7 @@ var Columns = []string{
 	FieldStability,
 	FieldVersion,
 	FieldFault,
+	FieldRank,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -358,6 +361,18 @@ func FaultValidator(f enums.DeviceFaultType) error {
 	}
 }
 
+const DefaultRank enums.DeviceRankType = "normal"
+
+// RankValidator is a validator for the "rank" field enum values. It is called by the builders before save.
+func RankValidator(r enums.DeviceRankType) error {
+	switch r {
+	case "blask", "normal":
+		return nil
+	default:
+		return fmt.Errorf("device: invalid enum value for rank field: %q", r)
+	}
+}
+
 // OrderOption defines the ordering options for the Device queries.
 type OrderOption func(*sql.Selector)
 
@@ -494,6 +509,11 @@ func ByVersion(opts ...sql.OrderTermOption) OrderOption {
 // ByFault orders the results by the fault field.
 func ByFault(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldFault, opts...).ToFunc()
+}
+
+// ByRank orders the results by the rank field.
+func ByRank(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRank, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

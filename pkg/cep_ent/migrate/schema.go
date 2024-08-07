@@ -534,6 +534,7 @@ var (
 		{Name: "stability", Type: field.TypeEnum, Comment: "设备稳定性", Enums: []string{"great", "good", "ok", "bad"}, Default: "good"},
 		{Name: "version", Type: field.TypeString, Comment: "设备版本", Default: "无版本号"},
 		{Name: "fault", Type: field.TypeEnum, Comment: "故障信息", Enums: []string{"ok", "drive_abnormal", "no_disk", "task_failure", "recover"}, Default: "ok"},
+		{Name: "rank", Type: field.TypeEnum, Comment: "设备等级(目前阶段就是黑名单)", Enums: []string{"blask", "normal"}, Default: "normal"},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
@@ -545,7 +546,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "devices_users_devices",
-				Columns:    []*schema.Column{DevicesColumns[26]},
+				Columns:    []*schema.Column{DevicesColumns[27]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -554,7 +555,7 @@ var (
 			{
 				Name:    "device_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{DevicesColumns[26]},
+				Columns: []*schema.Column{DevicesColumns[27]},
 			},
 		},
 	}

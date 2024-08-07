@@ -38,6 +38,7 @@ func (Device) Fields() []ent.Field {
 		field.Enum("stability").GoType(enums.DeviceStabilityTypeGood).StructTag(`json:"stability"`).Default(string(enums.DeviceStabilityTypeGood)).Comment("设备稳定性"),
 		field.String("version").StructTag(`json:"version"`).Default("无版本号").Comment("设备版本"),
 		field.Enum("fault").GoType(enums.DeviceFaultTypeOK).StructTag(`json:"fault"`).Default(string(enums.DeviceFaultTypeOK)).Comment("故障信息"),
+		field.Enum("rank").GoType(enums.DeviceRankTypeNormal).StructTag(`json:"rank"`).Default(string(enums.DeviceRankTypeNormal)).Comment("设备等级(目前阶段就是黑名单)"),
 	}
 }
 

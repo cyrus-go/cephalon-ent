@@ -391,6 +391,20 @@ func (dc *DeviceCreate) SetNillableFault(eft *enums.DeviceFaultType) *DeviceCrea
 	return dc
 }
 
+// SetRank sets the "rank" field.
+func (dc *DeviceCreate) SetRank(ert enums.DeviceRankType) *DeviceCreate {
+	dc.mutation.SetRank(ert)
+	return dc
+}
+
+// SetNillableRank sets the "rank" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableRank(ert *enums.DeviceRankType) *DeviceCreate {
+	if ert != nil {
+		dc.SetRank(*ert)
+	}
+	return dc
+}
+
 // SetID sets the "id" field.
 func (dc *DeviceCreate) SetID(i int64) *DeviceCreate {
 	dc.mutation.SetID(i)
@@ -710,6 +724,10 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultFault
 		dc.mutation.SetFault(v)
 	}
+	if _, ok := dc.mutation.Rank(); !ok {
+		v := device.DefaultRank
+		dc.mutation.SetRank(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := device.DefaultID()
 		dc.mutation.SetID(v)
@@ -821,6 +839,14 @@ func (dc *DeviceCreate) check() error {
 	if v, ok := dc.mutation.Fault(); ok {
 		if err := device.FaultValidator(v); err != nil {
 			return &ValidationError{Name: "fault", err: fmt.Errorf(`cep_ent: validator failed for field "Device.fault": %w`, err)}
+		}
+	}
+	if _, ok := dc.mutation.Rank(); !ok {
+		return &ValidationError{Name: "rank", err: errors.New(`cep_ent: missing required field "Device.rank"`)}
+	}
+	if v, ok := dc.mutation.Rank(); ok {
+		if err := device.RankValidator(v); err != nil {
+			return &ValidationError{Name: "rank", err: fmt.Errorf(`cep_ent: validator failed for field "Device.rank": %w`, err)}
 		}
 	}
 	if _, ok := dc.mutation.UserID(); !ok {
@@ -965,6 +991,10 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	if value, ok := dc.mutation.Fault(); ok {
 		_spec.SetField(device.FieldFault, field.TypeEnum, value)
 		_node.Fault = value
+	}
+	if value, ok := dc.mutation.Rank(); ok {
+		_spec.SetField(device.FieldRank, field.TypeEnum, value)
+		_node.Rank = value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1571,6 +1601,18 @@ func (u *DeviceUpsert) UpdateFault() *DeviceUpsert {
 	return u
 }
 
+// SetRank sets the "rank" field.
+func (u *DeviceUpsert) SetRank(v enums.DeviceRankType) *DeviceUpsert {
+	u.Set(device.FieldRank, v)
+	return u
+}
+
+// UpdateRank sets the "rank" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateRank() *DeviceUpsert {
+	u.SetExcluded(device.FieldRank)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2039,6 +2081,20 @@ func (u *DeviceUpsertOne) SetFault(v enums.DeviceFaultType) *DeviceUpsertOne {
 func (u *DeviceUpsertOne) UpdateFault() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateFault()
+	})
+}
+
+// SetRank sets the "rank" field.
+func (u *DeviceUpsertOne) SetRank(v enums.DeviceRankType) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetRank(v)
+	})
+}
+
+// UpdateRank sets the "rank" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateRank() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateRank()
 	})
 }
 
@@ -2679,6 +2735,20 @@ func (u *DeviceUpsertBulk) SetFault(v enums.DeviceFaultType) *DeviceUpsertBulk {
 func (u *DeviceUpsertBulk) UpdateFault() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateFault()
+	})
+}
+
+// SetRank sets the "rank" field.
+func (u *DeviceUpsertBulk) SetRank(v enums.DeviceRankType) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetRank(v)
+	})
+}
+
+// UpdateRank sets the "rank" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateRank() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateRank()
 	})
 }
 

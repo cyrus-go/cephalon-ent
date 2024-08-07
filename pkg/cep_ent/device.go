@@ -72,6 +72,8 @@ type Device struct {
 	Version string `json:"version"`
 	// 故障信息
 	Fault enums.DeviceFaultType `json:"fault"`
+	// 设备等级(目前阶段就是黑名单)
+	Rank enums.DeviceRankType `json:"rank"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges        DeviceEdges `json:"edges"`
@@ -232,7 +234,7 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory:
 			values[i] = new(sql.NullInt64)
-		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability, device.FieldVersion, device.FieldFault:
+		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability, device.FieldVersion, device.FieldFault, device.FieldRank:
 			values[i] = new(sql.NullString)
 		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -415,6 +417,12 @@ func (d *Device) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				d.Fault = enums.DeviceFaultType(value.String)
 			}
+		case device.FieldRank:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field rank", values[i])
+			} else if value.Valid {
+				d.Rank = enums.DeviceRankType(value.String)
+			}
 		default:
 			d.selectValues.Set(columns[i], values[i])
 		}
@@ -588,6 +596,9 @@ func (d *Device) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("fault=")
 	builder.WriteString(fmt.Sprintf("%v", d.Fault))
+	builder.WriteString(", ")
+	builder.WriteString("rank=")
+	builder.WriteString(fmt.Sprintf("%v", d.Rank))
 	builder.WriteByte(')')
 	return builder.String()
 }

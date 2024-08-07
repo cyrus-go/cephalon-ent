@@ -13758,6 +13758,7 @@ type DeviceMutation struct {
 	stability                       *enums.DeviceStabilityType
 	version                         *string
 	fault                           *enums.DeviceFaultType
+	rank                            *enums.DeviceRankType
 	clearedFields                   map[string]struct{}
 	user                            *int64
 	cleareduser                     bool
@@ -15032,6 +15033,42 @@ func (m *DeviceMutation) ResetFault() {
 	m.fault = nil
 }
 
+// SetRank sets the "rank" field.
+func (m *DeviceMutation) SetRank(ert enums.DeviceRankType) {
+	m.rank = &ert
+}
+
+// Rank returns the value of the "rank" field in the mutation.
+func (m *DeviceMutation) Rank() (r enums.DeviceRankType, exists bool) {
+	v := m.rank
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRank returns the old "rank" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldRank(ctx context.Context) (v enums.DeviceRankType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRank is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRank requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRank: %w", err)
+	}
+	return oldValue.Rank, nil
+}
+
+// ResetRank resets all changes to the "rank" field.
+func (m *DeviceMutation) ResetRank() {
+	m.rank = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *DeviceMutation) ClearUser() {
 	m.cleareduser = true
@@ -15687,7 +15724,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 26)
+	fields := make([]string, 0, 27)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -15766,6 +15803,9 @@ func (m *DeviceMutation) Fields() []string {
 	if m.fault != nil {
 		fields = append(fields, device.FieldFault)
 	}
+	if m.rank != nil {
+		fields = append(fields, device.FieldRank)
+	}
 	return fields
 }
 
@@ -15826,6 +15866,8 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.Version()
 	case device.FieldFault:
 		return m.Fault()
+	case device.FieldRank:
+		return m.Rank()
 	}
 	return nil, false
 }
@@ -15887,6 +15929,8 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldVersion(ctx)
 	case device.FieldFault:
 		return m.OldFault(ctx)
+	case device.FieldRank:
+		return m.OldRank(ctx)
 	}
 	return nil, fmt.Errorf("unknown Device field %s", name)
 }
@@ -16077,6 +16121,13 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetFault(v)
+		return nil
+	case device.FieldRank:
+		v, ok := value.(enums.DeviceRankType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRank(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
@@ -16324,6 +16375,9 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldFault:
 		m.ResetFault()
+		return nil
+	case device.FieldRank:
+		m.ResetRank()
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)

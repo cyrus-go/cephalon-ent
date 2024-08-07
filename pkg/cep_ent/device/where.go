@@ -1166,6 +1166,36 @@ func FaultNotIn(vs ...enums.DeviceFaultType) predicate.Device {
 	return predicate.Device(sql.FieldNotIn(FieldFault, v...))
 }
 
+// RankEQ applies the EQ predicate on the "rank" field.
+func RankEQ(v enums.DeviceRankType) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldEQ(FieldRank, vc))
+}
+
+// RankNEQ applies the NEQ predicate on the "rank" field.
+func RankNEQ(v enums.DeviceRankType) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldNEQ(FieldRank, vc))
+}
+
+// RankIn applies the In predicate on the "rank" field.
+func RankIn(vs ...enums.DeviceRankType) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldIn(FieldRank, v...))
+}
+
+// RankNotIn applies the NotIn predicate on the "rank" field.
+func RankNotIn(vs ...enums.DeviceRankType) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldNotIn(FieldRank, v...))
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
