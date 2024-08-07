@@ -100,15 +100,15 @@ func (mpu *ModelPriceUpdate) SetModelID(i int64) *ModelPriceUpdate {
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (mpu *ModelPriceUpdate) SetInvokeType(e enums.Model) *ModelPriceUpdate {
-	mpu.mutation.SetInvokeType(e)
+func (mpu *ModelPriceUpdate) SetInvokeType(et enums.InvokeType) *ModelPriceUpdate {
+	mpu.mutation.SetInvokeType(et)
 	return mpu
 }
 
 // SetNillableInvokeType sets the "invoke_type" field if the given value is not nil.
-func (mpu *ModelPriceUpdate) SetNillableInvokeType(e *enums.Model) *ModelPriceUpdate {
-	if e != nil {
-		mpu.SetInvokeType(*e)
+func (mpu *ModelPriceUpdate) SetNillableInvokeType(et *enums.InvokeType) *ModelPriceUpdate {
+	if et != nil {
+		mpu.SetInvokeType(*et)
 	}
 	return mpu
 }
@@ -467,15 +467,15 @@ func (mpuo *ModelPriceUpdateOne) SetModelID(i int64) *ModelPriceUpdateOne {
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (mpuo *ModelPriceUpdateOne) SetInvokeType(e enums.Model) *ModelPriceUpdateOne {
-	mpuo.mutation.SetInvokeType(e)
+func (mpuo *ModelPriceUpdateOne) SetInvokeType(et enums.InvokeType) *ModelPriceUpdateOne {
+	mpuo.mutation.SetInvokeType(et)
 	return mpuo
 }
 
 // SetNillableInvokeType sets the "invoke_type" field if the given value is not nil.
-func (mpuo *ModelPriceUpdateOne) SetNillableInvokeType(e *enums.Model) *ModelPriceUpdateOne {
-	if e != nil {
-		mpuo.SetInvokeType(*e)
+func (mpuo *ModelPriceUpdateOne) SetNillableInvokeType(et *enums.InvokeType) *ModelPriceUpdateOne {
+	if et != nil {
+		mpuo.SetInvokeType(*et)
 	}
 	return mpuo
 }

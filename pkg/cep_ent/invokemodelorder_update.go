@@ -115,15 +115,15 @@ func (imou *InvokeModelOrderUpdate) SetAPITokenID(i int64) *InvokeModelOrderUpda
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (imou *InvokeModelOrderUpdate) SetInvokeType(e enums.Model) *InvokeModelOrderUpdate {
-	imou.mutation.SetInvokeType(e)
+func (imou *InvokeModelOrderUpdate) SetInvokeType(et enums.InvokeType) *InvokeModelOrderUpdate {
+	imou.mutation.SetInvokeType(et)
 	return imou
 }
 
 // SetNillableInvokeType sets the "invoke_type" field if the given value is not nil.
-func (imou *InvokeModelOrderUpdate) SetNillableInvokeType(e *enums.Model) *InvokeModelOrderUpdate {
-	if e != nil {
-		imou.SetInvokeType(*e)
+func (imou *InvokeModelOrderUpdate) SetNillableInvokeType(et *enums.InvokeType) *InvokeModelOrderUpdate {
+	if et != nil {
+		imou.SetInvokeType(*et)
 	}
 	return imou
 }
@@ -666,15 +666,15 @@ func (imouo *InvokeModelOrderUpdateOne) SetAPITokenID(i int64) *InvokeModelOrder
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (imouo *InvokeModelOrderUpdateOne) SetInvokeType(e enums.Model) *InvokeModelOrderUpdateOne {
-	imouo.mutation.SetInvokeType(e)
+func (imouo *InvokeModelOrderUpdateOne) SetInvokeType(et enums.InvokeType) *InvokeModelOrderUpdateOne {
+	imouo.mutation.SetInvokeType(et)
 	return imouo
 }
 
 // SetNillableInvokeType sets the "invoke_type" field if the given value is not nil.
-func (imouo *InvokeModelOrderUpdateOne) SetNillableInvokeType(e *enums.Model) *InvokeModelOrderUpdateOne {
-	if e != nil {
-		imouo.SetInvokeType(*e)
+func (imouo *InvokeModelOrderUpdateOne) SetNillableInvokeType(et *enums.InvokeType) *InvokeModelOrderUpdateOne {
+	if et != nil {
+		imouo.SetInvokeType(*et)
 	}
 	return imouo
 }

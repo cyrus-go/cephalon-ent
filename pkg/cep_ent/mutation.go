@@ -36487,7 +36487,7 @@ type InvokeModelOrderMutation struct {
 	created_at           *time.Time
 	updated_at           *time.Time
 	deleted_at           *time.Time
-	invoke_type          *enums.Model
+	invoke_type          *enums.InvokeType
 	invoke_times         *int
 	addinvoke_times      *int
 	input_token_cost     *int
@@ -36946,12 +36946,12 @@ func (m *InvokeModelOrderMutation) ResetAPITokenID() {
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (m *InvokeModelOrderMutation) SetInvokeType(e enums.Model) {
-	m.invoke_type = &e
+func (m *InvokeModelOrderMutation) SetInvokeType(et enums.InvokeType) {
+	m.invoke_type = &et
 }
 
 // InvokeType returns the value of the "invoke_type" field in the mutation.
-func (m *InvokeModelOrderMutation) InvokeType() (r enums.Model, exists bool) {
+func (m *InvokeModelOrderMutation) InvokeType() (r enums.InvokeType, exists bool) {
 	v := m.invoke_type
 	if v == nil {
 		return
@@ -36962,7 +36962,7 @@ func (m *InvokeModelOrderMutation) InvokeType() (r enums.Model, exists bool) {
 // OldInvokeType returns the old "invoke_type" field's value of the InvokeModelOrder entity.
 // If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *InvokeModelOrderMutation) OldInvokeType(ctx context.Context) (v enums.Model, err error) {
+func (m *InvokeModelOrderMutation) OldInvokeType(ctx context.Context) (v enums.InvokeType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldInvokeType is only allowed on UpdateOne operations")
 	}
@@ -37612,7 +37612,7 @@ func (m *InvokeModelOrderMutation) SetField(name string, value ent.Value) error 
 		m.SetAPITokenID(v)
 		return nil
 	case invokemodelorder.FieldInvokeType:
-		v, ok := value.(enums.Model)
+		v, ok := value.(enums.InvokeType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -64600,7 +64600,7 @@ type ModelPriceMutation struct {
 	created_at            *time.Time
 	updated_at            *time.Time
 	deleted_at            *time.Time
-	invoke_type           *enums.Model
+	invoke_type           *enums.InvokeType
 	gpu_version           *enums.GpuVersion
 	input_gpu_price       *int
 	addinput_gpu_price    *int
@@ -64979,12 +64979,12 @@ func (m *ModelPriceMutation) ResetModelID() {
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (m *ModelPriceMutation) SetInvokeType(e enums.Model) {
-	m.invoke_type = &e
+func (m *ModelPriceMutation) SetInvokeType(et enums.InvokeType) {
+	m.invoke_type = &et
 }
 
 // InvokeType returns the value of the "invoke_type" field in the mutation.
-func (m *ModelPriceMutation) InvokeType() (r enums.Model, exists bool) {
+func (m *ModelPriceMutation) InvokeType() (r enums.InvokeType, exists bool) {
 	v := m.invoke_type
 	if v == nil {
 		return
@@ -64995,7 +64995,7 @@ func (m *ModelPriceMutation) InvokeType() (r enums.Model, exists bool) {
 // OldInvokeType returns the old "invoke_type" field's value of the ModelPrice entity.
 // If the ModelPrice object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelPriceMutation) OldInvokeType(ctx context.Context) (v enums.Model, err error) {
+func (m *ModelPriceMutation) OldInvokeType(ctx context.Context) (v enums.InvokeType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldInvokeType is only allowed on UpdateOne operations")
 	}
@@ -65489,7 +65489,7 @@ func (m *ModelPriceMutation) SetField(name string, value ent.Value) error {
 		m.SetModelID(v)
 		return nil
 	case modelprice.FieldInvokeType:
-		v, ok := value.(enums.Model)
+		v, ok := value.(enums.InvokeType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

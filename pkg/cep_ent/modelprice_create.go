@@ -101,15 +101,15 @@ func (mpc *ModelPriceCreate) SetModelID(i int64) *ModelPriceCreate {
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (mpc *ModelPriceCreate) SetInvokeType(e enums.Model) *ModelPriceCreate {
-	mpc.mutation.SetInvokeType(e)
+func (mpc *ModelPriceCreate) SetInvokeType(et enums.InvokeType) *ModelPriceCreate {
+	mpc.mutation.SetInvokeType(et)
 	return mpc
 }
 
 // SetNillableInvokeType sets the "invoke_type" field if the given value is not nil.
-func (mpc *ModelPriceCreate) SetNillableInvokeType(e *enums.Model) *ModelPriceCreate {
-	if e != nil {
-		mpc.SetInvokeType(*e)
+func (mpc *ModelPriceCreate) SetNillableInvokeType(et *enums.InvokeType) *ModelPriceCreate {
+	if et != nil {
+		mpc.SetInvokeType(*et)
 	}
 	return mpc
 }
@@ -558,7 +558,7 @@ func (u *ModelPriceUpsert) UpdateModelID() *ModelPriceUpsert {
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (u *ModelPriceUpsert) SetInvokeType(v enums.Model) *ModelPriceUpsert {
+func (u *ModelPriceUpsert) SetInvokeType(v enums.InvokeType) *ModelPriceUpsert {
 	u.Set(modelprice.FieldInvokeType, v)
 	return u
 }
@@ -789,7 +789,7 @@ func (u *ModelPriceUpsertOne) UpdateModelID() *ModelPriceUpsertOne {
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (u *ModelPriceUpsertOne) SetInvokeType(v enums.Model) *ModelPriceUpsertOne {
+func (u *ModelPriceUpsertOne) SetInvokeType(v enums.InvokeType) *ModelPriceUpsertOne {
 	return u.Update(func(s *ModelPriceUpsert) {
 		s.SetInvokeType(v)
 	})
@@ -1202,7 +1202,7 @@ func (u *ModelPriceUpsertBulk) UpdateModelID() *ModelPriceUpsertBulk {
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (u *ModelPriceUpsertBulk) SetInvokeType(v enums.Model) *ModelPriceUpsertBulk {
+func (u *ModelPriceUpsertBulk) SetInvokeType(v enums.InvokeType) *ModelPriceUpsertBulk {
 	return u.Update(func(s *ModelPriceUpsert) {
 		s.SetInvokeType(v)
 	})

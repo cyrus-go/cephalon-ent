@@ -33,7 +33,7 @@ type ModelPrice struct {
 	// 模型ID
 	ModelID int64 `json:"model_id,string"`
 	// 调用类型
-	InvokeType enums.Model `json:"invoke_type"`
+	InvokeType enums.InvokeType `json:"invoke_type"`
 	// GPU 版本
 	GpuVersion enums.GpuVersion `json:"gpu_version"`
 	// 输入算力价格
@@ -144,7 +144,7 @@ func (mp *ModelPrice) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field invoke_type", values[i])
 			} else if value.Valid {
-				mp.InvokeType = enums.Model(value.String)
+				mp.InvokeType = enums.InvokeType(value.String)
 			}
 		case modelprice.FieldGpuVersion:
 			if value, ok := values[i].(*sql.NullString); !ok {

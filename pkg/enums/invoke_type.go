@@ -3,9 +3,9 @@ package enums
 type InvokeType string
 
 const (
-	UnKnownInvokeType Model = "unknown"
-	ApiInvokeType     Model = "api"
-	WebInvokeType     Model = "web"
+	UnKnownInvokeType InvokeType = "unknown"
+	ApiInvokeType     InvokeType = "api"
+	WebInvokeType     InvokeType = "web"
 )
 
 func (obj InvokeType) Values() []string {

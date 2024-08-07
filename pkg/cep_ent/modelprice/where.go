@@ -327,19 +327,19 @@ func ModelIDNotIn(vs ...int64) predicate.ModelPrice {
 }
 
 // InvokeTypeEQ applies the EQ predicate on the "invoke_type" field.
-func InvokeTypeEQ(v enums.Model) predicate.ModelPrice {
+func InvokeTypeEQ(v enums.InvokeType) predicate.ModelPrice {
 	vc := v
 	return predicate.ModelPrice(sql.FieldEQ(FieldInvokeType, vc))
 }
 
 // InvokeTypeNEQ applies the NEQ predicate on the "invoke_type" field.
-func InvokeTypeNEQ(v enums.Model) predicate.ModelPrice {
+func InvokeTypeNEQ(v enums.InvokeType) predicate.ModelPrice {
 	vc := v
 	return predicate.ModelPrice(sql.FieldNEQ(FieldInvokeType, vc))
 }
 
 // InvokeTypeIn applies the In predicate on the "invoke_type" field.
-func InvokeTypeIn(vs ...enums.Model) predicate.ModelPrice {
+func InvokeTypeIn(vs ...enums.InvokeType) predicate.ModelPrice {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -348,7 +348,7 @@ func InvokeTypeIn(vs ...enums.Model) predicate.ModelPrice {
 }
 
 // InvokeTypeNotIn applies the NotIn predicate on the "invoke_type" field.
-func InvokeTypeNotIn(vs ...enums.Model) predicate.ModelPrice {
+func InvokeTypeNotIn(vs ...enums.InvokeType) predicate.ModelPrice {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]

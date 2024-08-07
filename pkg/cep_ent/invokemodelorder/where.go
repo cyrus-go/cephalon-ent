@@ -382,19 +382,19 @@ func APITokenIDNotIn(vs ...int64) predicate.InvokeModelOrder {
 }
 
 // InvokeTypeEQ applies the EQ predicate on the "invoke_type" field.
-func InvokeTypeEQ(v enums.Model) predicate.InvokeModelOrder {
+func InvokeTypeEQ(v enums.InvokeType) predicate.InvokeModelOrder {
 	vc := v
 	return predicate.InvokeModelOrder(sql.FieldEQ(FieldInvokeType, vc))
 }
 
 // InvokeTypeNEQ applies the NEQ predicate on the "invoke_type" field.
-func InvokeTypeNEQ(v enums.Model) predicate.InvokeModelOrder {
+func InvokeTypeNEQ(v enums.InvokeType) predicate.InvokeModelOrder {
 	vc := v
 	return predicate.InvokeModelOrder(sql.FieldNEQ(FieldInvokeType, vc))
 }
 
 // InvokeTypeIn applies the In predicate on the "invoke_type" field.
-func InvokeTypeIn(vs ...enums.Model) predicate.InvokeModelOrder {
+func InvokeTypeIn(vs ...enums.InvokeType) predicate.InvokeModelOrder {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -403,7 +403,7 @@ func InvokeTypeIn(vs ...enums.Model) predicate.InvokeModelOrder {
 }
 
 // InvokeTypeNotIn applies the NotIn predicate on the "invoke_type" field.
-func InvokeTypeNotIn(vs ...enums.Model) predicate.InvokeModelOrder {
+func InvokeTypeNotIn(vs ...enums.InvokeType) predicate.InvokeModelOrder {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]

@@ -39,7 +39,7 @@ type InvokeModelOrder struct {
 	// API Token ID
 	APITokenID int64 `json:"api_token"`
 	// 调用类型
-	InvokeType enums.Model `json:"invoke_type"`
+	InvokeType enums.InvokeType `json:"invoke_type"`
 	// 调用次数
 	InvokeTimes int `json:"invoke_times"`
 	// 输入token消耗
@@ -203,7 +203,7 @@ func (imo *InvokeModelOrder) assignValues(columns []string, values []any) error 
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field invoke_type", values[i])
 			} else if value.Valid {
-				imo.InvokeType = enums.Model(value.String)
+				imo.InvokeType = enums.InvokeType(value.String)
 			}
 		case invokemodelorder.FieldInvokeTimes:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

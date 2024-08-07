@@ -116,15 +116,15 @@ func (imoc *InvokeModelOrderCreate) SetAPITokenID(i int64) *InvokeModelOrderCrea
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (imoc *InvokeModelOrderCreate) SetInvokeType(e enums.Model) *InvokeModelOrderCreate {
-	imoc.mutation.SetInvokeType(e)
+func (imoc *InvokeModelOrderCreate) SetInvokeType(et enums.InvokeType) *InvokeModelOrderCreate {
+	imoc.mutation.SetInvokeType(et)
 	return imoc
 }
 
 // SetNillableInvokeType sets the "invoke_type" field if the given value is not nil.
-func (imoc *InvokeModelOrderCreate) SetNillableInvokeType(e *enums.Model) *InvokeModelOrderCreate {
-	if e != nil {
-		imoc.SetInvokeType(*e)
+func (imoc *InvokeModelOrderCreate) SetNillableInvokeType(et *enums.InvokeType) *InvokeModelOrderCreate {
+	if et != nil {
+		imoc.SetInvokeType(*et)
 	}
 	return imoc
 }
@@ -679,7 +679,7 @@ func (u *InvokeModelOrderUpsert) UpdateAPITokenID() *InvokeModelOrderUpsert {
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (u *InvokeModelOrderUpsert) SetInvokeType(v enums.Model) *InvokeModelOrderUpsert {
+func (u *InvokeModelOrderUpsert) SetInvokeType(v enums.InvokeType) *InvokeModelOrderUpsert {
 	u.Set(invokemodelorder.FieldInvokeType, v)
 	return u
 }
@@ -944,7 +944,7 @@ func (u *InvokeModelOrderUpsertOne) UpdateAPITokenID() *InvokeModelOrderUpsertOn
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (u *InvokeModelOrderUpsertOne) SetInvokeType(v enums.Model) *InvokeModelOrderUpsertOne {
+func (u *InvokeModelOrderUpsertOne) SetInvokeType(v enums.InvokeType) *InvokeModelOrderUpsertOne {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.SetInvokeType(v)
 	})
@@ -1392,7 +1392,7 @@ func (u *InvokeModelOrderUpsertBulk) UpdateAPITokenID() *InvokeModelOrderUpsertB
 }
 
 // SetInvokeType sets the "invoke_type" field.
-func (u *InvokeModelOrderUpsertBulk) SetInvokeType(v enums.Model) *InvokeModelOrderUpsertBulk {
+func (u *InvokeModelOrderUpsertBulk) SetInvokeType(v enums.InvokeType) *InvokeModelOrderUpsertBulk {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.SetInvokeType(v)
 	})

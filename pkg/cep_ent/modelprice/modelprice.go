@@ -105,12 +105,12 @@ var (
 	DefaultID func() int64
 )
 
-const DefaultInvokeType enums.Model = "unknown"
+const DefaultInvokeType enums.InvokeType = "unknown"
 
 // InvokeTypeValidator is a validator for the "invoke_type" field enum values. It is called by the builders before save.
-func InvokeTypeValidator(it enums.Model) error {
+func InvokeTypeValidator(it enums.InvokeType) error {
 	switch it {
-	case "unknown", "language":
+	case "unknown", "api", "web":
 		return nil
 	default:
 		return fmt.Errorf("modelprice: invalid enum value for invoke_type field: %q", it)
