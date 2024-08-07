@@ -19,6 +19,7 @@ const (
 	BillTypeIncomeManage   BillType = "income_manage" // 收益管理
 	BillTypeIllegal        BillType = "illegal"       // 违规操作
 	BillTypeSurvey         BillType = "survey"        // 问卷调查
+	BillTypeCompensate     BillType = "compensate"    // 补偿
 )
 
 func (BillType) Values() []string {
@@ -39,6 +40,7 @@ func (BillType) Values() []string {
 		string(BillTypeIncomeManage),
 		string(BillTypeIllegal),
 		string(BillTypeSurvey),
+		string(BillTypeCompensate),
 	}
 }
 
