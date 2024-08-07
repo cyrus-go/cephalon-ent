@@ -3,7 +3,7 @@ package enums
 type DeviceRankType string
 
 const (
-	DeviceRankTypeBlack  DeviceRankType = "blask"  //黑名单
+	DeviceRankTypeBlack  DeviceRankType = "black"  //黑名单
 	DeviceRankTypeNormal DeviceRankType = "normal" //正常
 )
 

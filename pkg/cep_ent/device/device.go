@@ -366,7 +366,7 @@ const DefaultRank enums.DeviceRankType = "normal"
 // RankValidator is a validator for the "rank" field enum values. It is called by the builders before save.
 func RankValidator(r enums.DeviceRankType) error {
 	switch r {
-	case "blask", "normal":
+	case "black", "normal":
 		return nil
 	default:
 		return fmt.Errorf("device: invalid enum value for rank field: %q", r)
