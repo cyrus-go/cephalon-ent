@@ -38,6 +38,7 @@ const (
 	MissionCategoryComfyuiWu     MissionCategory = "COMFYUI_WU"
 	MissionCategoryComfyuiLiu    MissionCategory = "COMFYUI_LIU"
 	MissionCategoryComfyuiLi     MissionCategory = "COMFYUI_LI"
+	MissionCategoryComfyuiNenly  MissionCategory = "COMFYUI_NENLY"
 	MissionCategoryWaiting       MissionCategory = "WAITING"
 )
 
@@ -78,6 +79,7 @@ func (obj MissionCategory) Values() []string {
 		string(MissionCategoryComfyuiWu),
 		string(MissionCategoryComfyuiLiu),
 		string(MissionCategoryComfyuiLi),
+		string(MissionCategoryComfyuiNenly),
 		string(MissionCategoryWaiting),
 	}
 }
