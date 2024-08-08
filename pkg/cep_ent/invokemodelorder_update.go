@@ -150,14 +150,14 @@ func (imou *InvokeModelOrderUpdate) AddInvokeTimes(i int) *InvokeModelOrderUpdat
 }
 
 // SetInputTokenCost sets the "input_token_cost" field.
-func (imou *InvokeModelOrderUpdate) SetInputTokenCost(i int) *InvokeModelOrderUpdate {
+func (imou *InvokeModelOrderUpdate) SetInputTokenCost(i int64) *InvokeModelOrderUpdate {
 	imou.mutation.ResetInputTokenCost()
 	imou.mutation.SetInputTokenCost(i)
 	return imou
 }
 
 // SetNillableInputTokenCost sets the "input_token_cost" field if the given value is not nil.
-func (imou *InvokeModelOrderUpdate) SetNillableInputTokenCost(i *int) *InvokeModelOrderUpdate {
+func (imou *InvokeModelOrderUpdate) SetNillableInputTokenCost(i *int64) *InvokeModelOrderUpdate {
 	if i != nil {
 		imou.SetInputTokenCost(*i)
 	}
@@ -165,20 +165,20 @@ func (imou *InvokeModelOrderUpdate) SetNillableInputTokenCost(i *int) *InvokeMod
 }
 
 // AddInputTokenCost adds i to the "input_token_cost" field.
-func (imou *InvokeModelOrderUpdate) AddInputTokenCost(i int) *InvokeModelOrderUpdate {
+func (imou *InvokeModelOrderUpdate) AddInputTokenCost(i int64) *InvokeModelOrderUpdate {
 	imou.mutation.AddInputTokenCost(i)
 	return imou
 }
 
 // SetOutputTokenCost sets the "output_token_cost" field.
-func (imou *InvokeModelOrderUpdate) SetOutputTokenCost(i int) *InvokeModelOrderUpdate {
+func (imou *InvokeModelOrderUpdate) SetOutputTokenCost(i int64) *InvokeModelOrderUpdate {
 	imou.mutation.ResetOutputTokenCost()
 	imou.mutation.SetOutputTokenCost(i)
 	return imou
 }
 
 // SetNillableOutputTokenCost sets the "output_token_cost" field if the given value is not nil.
-func (imou *InvokeModelOrderUpdate) SetNillableOutputTokenCost(i *int) *InvokeModelOrderUpdate {
+func (imou *InvokeModelOrderUpdate) SetNillableOutputTokenCost(i *int64) *InvokeModelOrderUpdate {
 	if i != nil {
 		imou.SetOutputTokenCost(*i)
 	}
@@ -186,20 +186,20 @@ func (imou *InvokeModelOrderUpdate) SetNillableOutputTokenCost(i *int) *InvokeMo
 }
 
 // AddOutputTokenCost adds i to the "output_token_cost" field.
-func (imou *InvokeModelOrderUpdate) AddOutputTokenCost(i int) *InvokeModelOrderUpdate {
+func (imou *InvokeModelOrderUpdate) AddOutputTokenCost(i int64) *InvokeModelOrderUpdate {
 	imou.mutation.AddOutputTokenCost(i)
 	return imou
 }
 
 // SetInputCepCost sets the "input_cep_cost" field.
-func (imou *InvokeModelOrderUpdate) SetInputCepCost(i int) *InvokeModelOrderUpdate {
+func (imou *InvokeModelOrderUpdate) SetInputCepCost(i int64) *InvokeModelOrderUpdate {
 	imou.mutation.ResetInputCepCost()
 	imou.mutation.SetInputCepCost(i)
 	return imou
 }
 
 // SetNillableInputCepCost sets the "input_cep_cost" field if the given value is not nil.
-func (imou *InvokeModelOrderUpdate) SetNillableInputCepCost(i *int) *InvokeModelOrderUpdate {
+func (imou *InvokeModelOrderUpdate) SetNillableInputCepCost(i *int64) *InvokeModelOrderUpdate {
 	if i != nil {
 		imou.SetInputCepCost(*i)
 	}
@@ -207,20 +207,20 @@ func (imou *InvokeModelOrderUpdate) SetNillableInputCepCost(i *int) *InvokeModel
 }
 
 // AddInputCepCost adds i to the "input_cep_cost" field.
-func (imou *InvokeModelOrderUpdate) AddInputCepCost(i int) *InvokeModelOrderUpdate {
+func (imou *InvokeModelOrderUpdate) AddInputCepCost(i int64) *InvokeModelOrderUpdate {
 	imou.mutation.AddInputCepCost(i)
 	return imou
 }
 
 // SetOutputCepCost sets the "output_cep_cost" field.
-func (imou *InvokeModelOrderUpdate) SetOutputCepCost(i int) *InvokeModelOrderUpdate {
+func (imou *InvokeModelOrderUpdate) SetOutputCepCost(i int64) *InvokeModelOrderUpdate {
 	imou.mutation.ResetOutputCepCost()
 	imou.mutation.SetOutputCepCost(i)
 	return imou
 }
 
 // SetNillableOutputCepCost sets the "output_cep_cost" field if the given value is not nil.
-func (imou *InvokeModelOrderUpdate) SetNillableOutputCepCost(i *int) *InvokeModelOrderUpdate {
+func (imou *InvokeModelOrderUpdate) SetNillableOutputCepCost(i *int64) *InvokeModelOrderUpdate {
 	if i != nil {
 		imou.SetOutputCepCost(*i)
 	}
@@ -228,7 +228,7 @@ func (imou *InvokeModelOrderUpdate) SetNillableOutputCepCost(i *int) *InvokeMode
 }
 
 // AddOutputCepCost adds i to the "output_cep_cost" field.
-func (imou *InvokeModelOrderUpdate) AddOutputCepCost(i int) *InvokeModelOrderUpdate {
+func (imou *InvokeModelOrderUpdate) AddOutputCepCost(i int64) *InvokeModelOrderUpdate {
 	imou.mutation.AddOutputCepCost(i)
 	return imou
 }
@@ -408,28 +408,28 @@ func (imou *InvokeModelOrderUpdate) sqlSave(ctx context.Context) (n int, err err
 		_spec.AddField(invokemodelorder.FieldInvokeTimes, field.TypeInt, value)
 	}
 	if value, ok := imou.mutation.InputTokenCost(); ok {
-		_spec.SetField(invokemodelorder.FieldInputTokenCost, field.TypeInt, value)
+		_spec.SetField(invokemodelorder.FieldInputTokenCost, field.TypeInt64, value)
 	}
 	if value, ok := imou.mutation.AddedInputTokenCost(); ok {
-		_spec.AddField(invokemodelorder.FieldInputTokenCost, field.TypeInt, value)
+		_spec.AddField(invokemodelorder.FieldInputTokenCost, field.TypeInt64, value)
 	}
 	if value, ok := imou.mutation.OutputTokenCost(); ok {
-		_spec.SetField(invokemodelorder.FieldOutputTokenCost, field.TypeInt, value)
+		_spec.SetField(invokemodelorder.FieldOutputTokenCost, field.TypeInt64, value)
 	}
 	if value, ok := imou.mutation.AddedOutputTokenCost(); ok {
-		_spec.AddField(invokemodelorder.FieldOutputTokenCost, field.TypeInt, value)
+		_spec.AddField(invokemodelorder.FieldOutputTokenCost, field.TypeInt64, value)
 	}
 	if value, ok := imou.mutation.InputCepCost(); ok {
-		_spec.SetField(invokemodelorder.FieldInputCepCost, field.TypeInt, value)
+		_spec.SetField(invokemodelorder.FieldInputCepCost, field.TypeInt64, value)
 	}
 	if value, ok := imou.mutation.AddedInputCepCost(); ok {
-		_spec.AddField(invokemodelorder.FieldInputCepCost, field.TypeInt, value)
+		_spec.AddField(invokemodelorder.FieldInputCepCost, field.TypeInt64, value)
 	}
 	if value, ok := imou.mutation.OutputCepCost(); ok {
-		_spec.SetField(invokemodelorder.FieldOutputCepCost, field.TypeInt, value)
+		_spec.SetField(invokemodelorder.FieldOutputCepCost, field.TypeInt64, value)
 	}
 	if value, ok := imou.mutation.AddedOutputCepCost(); ok {
-		_spec.AddField(invokemodelorder.FieldOutputCepCost, field.TypeInt, value)
+		_spec.AddField(invokemodelorder.FieldOutputCepCost, field.TypeInt64, value)
 	}
 	if imou.mutation.BillsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -701,14 +701,14 @@ func (imouo *InvokeModelOrderUpdateOne) AddInvokeTimes(i int) *InvokeModelOrderU
 }
 
 // SetInputTokenCost sets the "input_token_cost" field.
-func (imouo *InvokeModelOrderUpdateOne) SetInputTokenCost(i int) *InvokeModelOrderUpdateOne {
+func (imouo *InvokeModelOrderUpdateOne) SetInputTokenCost(i int64) *InvokeModelOrderUpdateOne {
 	imouo.mutation.ResetInputTokenCost()
 	imouo.mutation.SetInputTokenCost(i)
 	return imouo
 }
 
 // SetNillableInputTokenCost sets the "input_token_cost" field if the given value is not nil.
-func (imouo *InvokeModelOrderUpdateOne) SetNillableInputTokenCost(i *int) *InvokeModelOrderUpdateOne {
+func (imouo *InvokeModelOrderUpdateOne) SetNillableInputTokenCost(i *int64) *InvokeModelOrderUpdateOne {
 	if i != nil {
 		imouo.SetInputTokenCost(*i)
 	}
@@ -716,20 +716,20 @@ func (imouo *InvokeModelOrderUpdateOne) SetNillableInputTokenCost(i *int) *Invok
 }
 
 // AddInputTokenCost adds i to the "input_token_cost" field.
-func (imouo *InvokeModelOrderUpdateOne) AddInputTokenCost(i int) *InvokeModelOrderUpdateOne {
+func (imouo *InvokeModelOrderUpdateOne) AddInputTokenCost(i int64) *InvokeModelOrderUpdateOne {
 	imouo.mutation.AddInputTokenCost(i)
 	return imouo
 }
 
 // SetOutputTokenCost sets the "output_token_cost" field.
-func (imouo *InvokeModelOrderUpdateOne) SetOutputTokenCost(i int) *InvokeModelOrderUpdateOne {
+func (imouo *InvokeModelOrderUpdateOne) SetOutputTokenCost(i int64) *InvokeModelOrderUpdateOne {
 	imouo.mutation.ResetOutputTokenCost()
 	imouo.mutation.SetOutputTokenCost(i)
 	return imouo
 }
 
 // SetNillableOutputTokenCost sets the "output_token_cost" field if the given value is not nil.
-func (imouo *InvokeModelOrderUpdateOne) SetNillableOutputTokenCost(i *int) *InvokeModelOrderUpdateOne {
+func (imouo *InvokeModelOrderUpdateOne) SetNillableOutputTokenCost(i *int64) *InvokeModelOrderUpdateOne {
 	if i != nil {
 		imouo.SetOutputTokenCost(*i)
 	}
@@ -737,20 +737,20 @@ func (imouo *InvokeModelOrderUpdateOne) SetNillableOutputTokenCost(i *int) *Invo
 }
 
 // AddOutputTokenCost adds i to the "output_token_cost" field.
-func (imouo *InvokeModelOrderUpdateOne) AddOutputTokenCost(i int) *InvokeModelOrderUpdateOne {
+func (imouo *InvokeModelOrderUpdateOne) AddOutputTokenCost(i int64) *InvokeModelOrderUpdateOne {
 	imouo.mutation.AddOutputTokenCost(i)
 	return imouo
 }
 
 // SetInputCepCost sets the "input_cep_cost" field.
-func (imouo *InvokeModelOrderUpdateOne) SetInputCepCost(i int) *InvokeModelOrderUpdateOne {
+func (imouo *InvokeModelOrderUpdateOne) SetInputCepCost(i int64) *InvokeModelOrderUpdateOne {
 	imouo.mutation.ResetInputCepCost()
 	imouo.mutation.SetInputCepCost(i)
 	return imouo
 }
 
 // SetNillableInputCepCost sets the "input_cep_cost" field if the given value is not nil.
-func (imouo *InvokeModelOrderUpdateOne) SetNillableInputCepCost(i *int) *InvokeModelOrderUpdateOne {
+func (imouo *InvokeModelOrderUpdateOne) SetNillableInputCepCost(i *int64) *InvokeModelOrderUpdateOne {
 	if i != nil {
 		imouo.SetInputCepCost(*i)
 	}
@@ -758,20 +758,20 @@ func (imouo *InvokeModelOrderUpdateOne) SetNillableInputCepCost(i *int) *InvokeM
 }
 
 // AddInputCepCost adds i to the "input_cep_cost" field.
-func (imouo *InvokeModelOrderUpdateOne) AddInputCepCost(i int) *InvokeModelOrderUpdateOne {
+func (imouo *InvokeModelOrderUpdateOne) AddInputCepCost(i int64) *InvokeModelOrderUpdateOne {
 	imouo.mutation.AddInputCepCost(i)
 	return imouo
 }
 
 // SetOutputCepCost sets the "output_cep_cost" field.
-func (imouo *InvokeModelOrderUpdateOne) SetOutputCepCost(i int) *InvokeModelOrderUpdateOne {
+func (imouo *InvokeModelOrderUpdateOne) SetOutputCepCost(i int64) *InvokeModelOrderUpdateOne {
 	imouo.mutation.ResetOutputCepCost()
 	imouo.mutation.SetOutputCepCost(i)
 	return imouo
 }
 
 // SetNillableOutputCepCost sets the "output_cep_cost" field if the given value is not nil.
-func (imouo *InvokeModelOrderUpdateOne) SetNillableOutputCepCost(i *int) *InvokeModelOrderUpdateOne {
+func (imouo *InvokeModelOrderUpdateOne) SetNillableOutputCepCost(i *int64) *InvokeModelOrderUpdateOne {
 	if i != nil {
 		imouo.SetOutputCepCost(*i)
 	}
@@ -779,7 +779,7 @@ func (imouo *InvokeModelOrderUpdateOne) SetNillableOutputCepCost(i *int) *Invoke
 }
 
 // AddOutputCepCost adds i to the "output_cep_cost" field.
-func (imouo *InvokeModelOrderUpdateOne) AddOutputCepCost(i int) *InvokeModelOrderUpdateOne {
+func (imouo *InvokeModelOrderUpdateOne) AddOutputCepCost(i int64) *InvokeModelOrderUpdateOne {
 	imouo.mutation.AddOutputCepCost(i)
 	return imouo
 }
@@ -989,28 +989,28 @@ func (imouo *InvokeModelOrderUpdateOne) sqlSave(ctx context.Context) (_node *Inv
 		_spec.AddField(invokemodelorder.FieldInvokeTimes, field.TypeInt, value)
 	}
 	if value, ok := imouo.mutation.InputTokenCost(); ok {
-		_spec.SetField(invokemodelorder.FieldInputTokenCost, field.TypeInt, value)
+		_spec.SetField(invokemodelorder.FieldInputTokenCost, field.TypeInt64, value)
 	}
 	if value, ok := imouo.mutation.AddedInputTokenCost(); ok {
-		_spec.AddField(invokemodelorder.FieldInputTokenCost, field.TypeInt, value)
+		_spec.AddField(invokemodelorder.FieldInputTokenCost, field.TypeInt64, value)
 	}
 	if value, ok := imouo.mutation.OutputTokenCost(); ok {
-		_spec.SetField(invokemodelorder.FieldOutputTokenCost, field.TypeInt, value)
+		_spec.SetField(invokemodelorder.FieldOutputTokenCost, field.TypeInt64, value)
 	}
 	if value, ok := imouo.mutation.AddedOutputTokenCost(); ok {
-		_spec.AddField(invokemodelorder.FieldOutputTokenCost, field.TypeInt, value)
+		_spec.AddField(invokemodelorder.FieldOutputTokenCost, field.TypeInt64, value)
 	}
 	if value, ok := imouo.mutation.InputCepCost(); ok {
-		_spec.SetField(invokemodelorder.FieldInputCepCost, field.TypeInt, value)
+		_spec.SetField(invokemodelorder.FieldInputCepCost, field.TypeInt64, value)
 	}
 	if value, ok := imouo.mutation.AddedInputCepCost(); ok {
-		_spec.AddField(invokemodelorder.FieldInputCepCost, field.TypeInt, value)
+		_spec.AddField(invokemodelorder.FieldInputCepCost, field.TypeInt64, value)
 	}
 	if value, ok := imouo.mutation.OutputCepCost(); ok {
-		_spec.SetField(invokemodelorder.FieldOutputCepCost, field.TypeInt, value)
+		_spec.SetField(invokemodelorder.FieldOutputCepCost, field.TypeInt64, value)
 	}
 	if value, ok := imouo.mutation.AddedOutputCepCost(); ok {
-		_spec.AddField(invokemodelorder.FieldOutputCepCost, field.TypeInt, value)
+		_spec.AddField(invokemodelorder.FieldOutputCepCost, field.TypeInt64, value)
 	}
 	if imouo.mutation.BillsCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -144,13 +144,13 @@ func (imoc *InvokeModelOrderCreate) SetNillableInvokeTimes(i *int) *InvokeModelO
 }
 
 // SetInputTokenCost sets the "input_token_cost" field.
-func (imoc *InvokeModelOrderCreate) SetInputTokenCost(i int) *InvokeModelOrderCreate {
+func (imoc *InvokeModelOrderCreate) SetInputTokenCost(i int64) *InvokeModelOrderCreate {
 	imoc.mutation.SetInputTokenCost(i)
 	return imoc
 }
 
 // SetNillableInputTokenCost sets the "input_token_cost" field if the given value is not nil.
-func (imoc *InvokeModelOrderCreate) SetNillableInputTokenCost(i *int) *InvokeModelOrderCreate {
+func (imoc *InvokeModelOrderCreate) SetNillableInputTokenCost(i *int64) *InvokeModelOrderCreate {
 	if i != nil {
 		imoc.SetInputTokenCost(*i)
 	}
@@ -158,13 +158,13 @@ func (imoc *InvokeModelOrderCreate) SetNillableInputTokenCost(i *int) *InvokeMod
 }
 
 // SetOutputTokenCost sets the "output_token_cost" field.
-func (imoc *InvokeModelOrderCreate) SetOutputTokenCost(i int) *InvokeModelOrderCreate {
+func (imoc *InvokeModelOrderCreate) SetOutputTokenCost(i int64) *InvokeModelOrderCreate {
 	imoc.mutation.SetOutputTokenCost(i)
 	return imoc
 }
 
 // SetNillableOutputTokenCost sets the "output_token_cost" field if the given value is not nil.
-func (imoc *InvokeModelOrderCreate) SetNillableOutputTokenCost(i *int) *InvokeModelOrderCreate {
+func (imoc *InvokeModelOrderCreate) SetNillableOutputTokenCost(i *int64) *InvokeModelOrderCreate {
 	if i != nil {
 		imoc.SetOutputTokenCost(*i)
 	}
@@ -172,13 +172,13 @@ func (imoc *InvokeModelOrderCreate) SetNillableOutputTokenCost(i *int) *InvokeMo
 }
 
 // SetInputCepCost sets the "input_cep_cost" field.
-func (imoc *InvokeModelOrderCreate) SetInputCepCost(i int) *InvokeModelOrderCreate {
+func (imoc *InvokeModelOrderCreate) SetInputCepCost(i int64) *InvokeModelOrderCreate {
 	imoc.mutation.SetInputCepCost(i)
 	return imoc
 }
 
 // SetNillableInputCepCost sets the "input_cep_cost" field if the given value is not nil.
-func (imoc *InvokeModelOrderCreate) SetNillableInputCepCost(i *int) *InvokeModelOrderCreate {
+func (imoc *InvokeModelOrderCreate) SetNillableInputCepCost(i *int64) *InvokeModelOrderCreate {
 	if i != nil {
 		imoc.SetInputCepCost(*i)
 	}
@@ -186,13 +186,13 @@ func (imoc *InvokeModelOrderCreate) SetNillableInputCepCost(i *int) *InvokeModel
 }
 
 // SetOutputCepCost sets the "output_cep_cost" field.
-func (imoc *InvokeModelOrderCreate) SetOutputCepCost(i int) *InvokeModelOrderCreate {
+func (imoc *InvokeModelOrderCreate) SetOutputCepCost(i int64) *InvokeModelOrderCreate {
 	imoc.mutation.SetOutputCepCost(i)
 	return imoc
 }
 
 // SetNillableOutputCepCost sets the "output_cep_cost" field if the given value is not nil.
-func (imoc *InvokeModelOrderCreate) SetNillableOutputCepCost(i *int) *InvokeModelOrderCreate {
+func (imoc *InvokeModelOrderCreate) SetNillableOutputCepCost(i *int64) *InvokeModelOrderCreate {
 	if i != nil {
 		imoc.SetOutputCepCost(*i)
 	}
@@ -448,19 +448,19 @@ func (imoc *InvokeModelOrderCreate) createSpec() (*InvokeModelOrder, *sqlgraph.C
 		_node.InvokeTimes = value
 	}
 	if value, ok := imoc.mutation.InputTokenCost(); ok {
-		_spec.SetField(invokemodelorder.FieldInputTokenCost, field.TypeInt, value)
+		_spec.SetField(invokemodelorder.FieldInputTokenCost, field.TypeInt64, value)
 		_node.InputTokenCost = value
 	}
 	if value, ok := imoc.mutation.OutputTokenCost(); ok {
-		_spec.SetField(invokemodelorder.FieldOutputTokenCost, field.TypeInt, value)
+		_spec.SetField(invokemodelorder.FieldOutputTokenCost, field.TypeInt64, value)
 		_node.OutputTokenCost = value
 	}
 	if value, ok := imoc.mutation.InputCepCost(); ok {
-		_spec.SetField(invokemodelorder.FieldInputCepCost, field.TypeInt, value)
+		_spec.SetField(invokemodelorder.FieldInputCepCost, field.TypeInt64, value)
 		_node.InputCepCost = value
 	}
 	if value, ok := imoc.mutation.OutputCepCost(); ok {
-		_spec.SetField(invokemodelorder.FieldOutputCepCost, field.TypeInt, value)
+		_spec.SetField(invokemodelorder.FieldOutputCepCost, field.TypeInt64, value)
 		_node.OutputCepCost = value
 	}
 	if nodes := imoc.mutation.BillsIDs(); len(nodes) > 0 {
@@ -709,7 +709,7 @@ func (u *InvokeModelOrderUpsert) AddInvokeTimes(v int) *InvokeModelOrderUpsert {
 }
 
 // SetInputTokenCost sets the "input_token_cost" field.
-func (u *InvokeModelOrderUpsert) SetInputTokenCost(v int) *InvokeModelOrderUpsert {
+func (u *InvokeModelOrderUpsert) SetInputTokenCost(v int64) *InvokeModelOrderUpsert {
 	u.Set(invokemodelorder.FieldInputTokenCost, v)
 	return u
 }
@@ -721,13 +721,13 @@ func (u *InvokeModelOrderUpsert) UpdateInputTokenCost() *InvokeModelOrderUpsert 
 }
 
 // AddInputTokenCost adds v to the "input_token_cost" field.
-func (u *InvokeModelOrderUpsert) AddInputTokenCost(v int) *InvokeModelOrderUpsert {
+func (u *InvokeModelOrderUpsert) AddInputTokenCost(v int64) *InvokeModelOrderUpsert {
 	u.Add(invokemodelorder.FieldInputTokenCost, v)
 	return u
 }
 
 // SetOutputTokenCost sets the "output_token_cost" field.
-func (u *InvokeModelOrderUpsert) SetOutputTokenCost(v int) *InvokeModelOrderUpsert {
+func (u *InvokeModelOrderUpsert) SetOutputTokenCost(v int64) *InvokeModelOrderUpsert {
 	u.Set(invokemodelorder.FieldOutputTokenCost, v)
 	return u
 }
@@ -739,13 +739,13 @@ func (u *InvokeModelOrderUpsert) UpdateOutputTokenCost() *InvokeModelOrderUpsert
 }
 
 // AddOutputTokenCost adds v to the "output_token_cost" field.
-func (u *InvokeModelOrderUpsert) AddOutputTokenCost(v int) *InvokeModelOrderUpsert {
+func (u *InvokeModelOrderUpsert) AddOutputTokenCost(v int64) *InvokeModelOrderUpsert {
 	u.Add(invokemodelorder.FieldOutputTokenCost, v)
 	return u
 }
 
 // SetInputCepCost sets the "input_cep_cost" field.
-func (u *InvokeModelOrderUpsert) SetInputCepCost(v int) *InvokeModelOrderUpsert {
+func (u *InvokeModelOrderUpsert) SetInputCepCost(v int64) *InvokeModelOrderUpsert {
 	u.Set(invokemodelorder.FieldInputCepCost, v)
 	return u
 }
@@ -757,13 +757,13 @@ func (u *InvokeModelOrderUpsert) UpdateInputCepCost() *InvokeModelOrderUpsert {
 }
 
 // AddInputCepCost adds v to the "input_cep_cost" field.
-func (u *InvokeModelOrderUpsert) AddInputCepCost(v int) *InvokeModelOrderUpsert {
+func (u *InvokeModelOrderUpsert) AddInputCepCost(v int64) *InvokeModelOrderUpsert {
 	u.Add(invokemodelorder.FieldInputCepCost, v)
 	return u
 }
 
 // SetOutputCepCost sets the "output_cep_cost" field.
-func (u *InvokeModelOrderUpsert) SetOutputCepCost(v int) *InvokeModelOrderUpsert {
+func (u *InvokeModelOrderUpsert) SetOutputCepCost(v int64) *InvokeModelOrderUpsert {
 	u.Set(invokemodelorder.FieldOutputCepCost, v)
 	return u
 }
@@ -775,7 +775,7 @@ func (u *InvokeModelOrderUpsert) UpdateOutputCepCost() *InvokeModelOrderUpsert {
 }
 
 // AddOutputCepCost adds v to the "output_cep_cost" field.
-func (u *InvokeModelOrderUpsert) AddOutputCepCost(v int) *InvokeModelOrderUpsert {
+func (u *InvokeModelOrderUpsert) AddOutputCepCost(v int64) *InvokeModelOrderUpsert {
 	u.Add(invokemodelorder.FieldOutputCepCost, v)
 	return u
 }
@@ -979,14 +979,14 @@ func (u *InvokeModelOrderUpsertOne) UpdateInvokeTimes() *InvokeModelOrderUpsertO
 }
 
 // SetInputTokenCost sets the "input_token_cost" field.
-func (u *InvokeModelOrderUpsertOne) SetInputTokenCost(v int) *InvokeModelOrderUpsertOne {
+func (u *InvokeModelOrderUpsertOne) SetInputTokenCost(v int64) *InvokeModelOrderUpsertOne {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.SetInputTokenCost(v)
 	})
 }
 
 // AddInputTokenCost adds v to the "input_token_cost" field.
-func (u *InvokeModelOrderUpsertOne) AddInputTokenCost(v int) *InvokeModelOrderUpsertOne {
+func (u *InvokeModelOrderUpsertOne) AddInputTokenCost(v int64) *InvokeModelOrderUpsertOne {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.AddInputTokenCost(v)
 	})
@@ -1000,14 +1000,14 @@ func (u *InvokeModelOrderUpsertOne) UpdateInputTokenCost() *InvokeModelOrderUpse
 }
 
 // SetOutputTokenCost sets the "output_token_cost" field.
-func (u *InvokeModelOrderUpsertOne) SetOutputTokenCost(v int) *InvokeModelOrderUpsertOne {
+func (u *InvokeModelOrderUpsertOne) SetOutputTokenCost(v int64) *InvokeModelOrderUpsertOne {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.SetOutputTokenCost(v)
 	})
 }
 
 // AddOutputTokenCost adds v to the "output_token_cost" field.
-func (u *InvokeModelOrderUpsertOne) AddOutputTokenCost(v int) *InvokeModelOrderUpsertOne {
+func (u *InvokeModelOrderUpsertOne) AddOutputTokenCost(v int64) *InvokeModelOrderUpsertOne {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.AddOutputTokenCost(v)
 	})
@@ -1021,14 +1021,14 @@ func (u *InvokeModelOrderUpsertOne) UpdateOutputTokenCost() *InvokeModelOrderUps
 }
 
 // SetInputCepCost sets the "input_cep_cost" field.
-func (u *InvokeModelOrderUpsertOne) SetInputCepCost(v int) *InvokeModelOrderUpsertOne {
+func (u *InvokeModelOrderUpsertOne) SetInputCepCost(v int64) *InvokeModelOrderUpsertOne {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.SetInputCepCost(v)
 	})
 }
 
 // AddInputCepCost adds v to the "input_cep_cost" field.
-func (u *InvokeModelOrderUpsertOne) AddInputCepCost(v int) *InvokeModelOrderUpsertOne {
+func (u *InvokeModelOrderUpsertOne) AddInputCepCost(v int64) *InvokeModelOrderUpsertOne {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.AddInputCepCost(v)
 	})
@@ -1042,14 +1042,14 @@ func (u *InvokeModelOrderUpsertOne) UpdateInputCepCost() *InvokeModelOrderUpsert
 }
 
 // SetOutputCepCost sets the "output_cep_cost" field.
-func (u *InvokeModelOrderUpsertOne) SetOutputCepCost(v int) *InvokeModelOrderUpsertOne {
+func (u *InvokeModelOrderUpsertOne) SetOutputCepCost(v int64) *InvokeModelOrderUpsertOne {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.SetOutputCepCost(v)
 	})
 }
 
 // AddOutputCepCost adds v to the "output_cep_cost" field.
-func (u *InvokeModelOrderUpsertOne) AddOutputCepCost(v int) *InvokeModelOrderUpsertOne {
+func (u *InvokeModelOrderUpsertOne) AddOutputCepCost(v int64) *InvokeModelOrderUpsertOne {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.AddOutputCepCost(v)
 	})
@@ -1427,14 +1427,14 @@ func (u *InvokeModelOrderUpsertBulk) UpdateInvokeTimes() *InvokeModelOrderUpsert
 }
 
 // SetInputTokenCost sets the "input_token_cost" field.
-func (u *InvokeModelOrderUpsertBulk) SetInputTokenCost(v int) *InvokeModelOrderUpsertBulk {
+func (u *InvokeModelOrderUpsertBulk) SetInputTokenCost(v int64) *InvokeModelOrderUpsertBulk {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.SetInputTokenCost(v)
 	})
 }
 
 // AddInputTokenCost adds v to the "input_token_cost" field.
-func (u *InvokeModelOrderUpsertBulk) AddInputTokenCost(v int) *InvokeModelOrderUpsertBulk {
+func (u *InvokeModelOrderUpsertBulk) AddInputTokenCost(v int64) *InvokeModelOrderUpsertBulk {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.AddInputTokenCost(v)
 	})
@@ -1448,14 +1448,14 @@ func (u *InvokeModelOrderUpsertBulk) UpdateInputTokenCost() *InvokeModelOrderUps
 }
 
 // SetOutputTokenCost sets the "output_token_cost" field.
-func (u *InvokeModelOrderUpsertBulk) SetOutputTokenCost(v int) *InvokeModelOrderUpsertBulk {
+func (u *InvokeModelOrderUpsertBulk) SetOutputTokenCost(v int64) *InvokeModelOrderUpsertBulk {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.SetOutputTokenCost(v)
 	})
 }
 
 // AddOutputTokenCost adds v to the "output_token_cost" field.
-func (u *InvokeModelOrderUpsertBulk) AddOutputTokenCost(v int) *InvokeModelOrderUpsertBulk {
+func (u *InvokeModelOrderUpsertBulk) AddOutputTokenCost(v int64) *InvokeModelOrderUpsertBulk {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.AddOutputTokenCost(v)
 	})
@@ -1469,14 +1469,14 @@ func (u *InvokeModelOrderUpsertBulk) UpdateOutputTokenCost() *InvokeModelOrderUp
 }
 
 // SetInputCepCost sets the "input_cep_cost" field.
-func (u *InvokeModelOrderUpsertBulk) SetInputCepCost(v int) *InvokeModelOrderUpsertBulk {
+func (u *InvokeModelOrderUpsertBulk) SetInputCepCost(v int64) *InvokeModelOrderUpsertBulk {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.SetInputCepCost(v)
 	})
 }
 
 // AddInputCepCost adds v to the "input_cep_cost" field.
-func (u *InvokeModelOrderUpsertBulk) AddInputCepCost(v int) *InvokeModelOrderUpsertBulk {
+func (u *InvokeModelOrderUpsertBulk) AddInputCepCost(v int64) *InvokeModelOrderUpsertBulk {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.AddInputCepCost(v)
 	})
@@ -1490,14 +1490,14 @@ func (u *InvokeModelOrderUpsertBulk) UpdateInputCepCost() *InvokeModelOrderUpser
 }
 
 // SetOutputCepCost sets the "output_cep_cost" field.
-func (u *InvokeModelOrderUpsertBulk) SetOutputCepCost(v int) *InvokeModelOrderUpsertBulk {
+func (u *InvokeModelOrderUpsertBulk) SetOutputCepCost(v int64) *InvokeModelOrderUpsertBulk {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.SetOutputCepCost(v)
 	})
 }
 
 // AddOutputCepCost adds v to the "output_cep_cost" field.
-func (u *InvokeModelOrderUpsertBulk) AddOutputCepCost(v int) *InvokeModelOrderUpsertBulk {
+func (u *InvokeModelOrderUpsertBulk) AddOutputCepCost(v int64) *InvokeModelOrderUpsertBulk {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.AddOutputCepCost(v)
 	})

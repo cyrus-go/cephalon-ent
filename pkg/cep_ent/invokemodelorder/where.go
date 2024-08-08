@@ -102,22 +102,22 @@ func InvokeTimes(v int) predicate.InvokeModelOrder {
 }
 
 // InputTokenCost applies equality check predicate on the "input_token_cost" field. It's identical to InputTokenCostEQ.
-func InputTokenCost(v int) predicate.InvokeModelOrder {
+func InputTokenCost(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldEQ(FieldInputTokenCost, v))
 }
 
 // OutputTokenCost applies equality check predicate on the "output_token_cost" field. It's identical to OutputTokenCostEQ.
-func OutputTokenCost(v int) predicate.InvokeModelOrder {
+func OutputTokenCost(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldEQ(FieldOutputTokenCost, v))
 }
 
 // InputCepCost applies equality check predicate on the "input_cep_cost" field. It's identical to InputCepCostEQ.
-func InputCepCost(v int) predicate.InvokeModelOrder {
+func InputCepCost(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldEQ(FieldInputCepCost, v))
 }
 
 // OutputCepCost applies equality check predicate on the "output_cep_cost" field. It's identical to OutputCepCostEQ.
-func OutputCepCost(v int) predicate.InvokeModelOrder {
+func OutputCepCost(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldEQ(FieldOutputCepCost, v))
 }
 
@@ -452,162 +452,162 @@ func InvokeTimesLTE(v int) predicate.InvokeModelOrder {
 }
 
 // InputTokenCostEQ applies the EQ predicate on the "input_token_cost" field.
-func InputTokenCostEQ(v int) predicate.InvokeModelOrder {
+func InputTokenCostEQ(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldEQ(FieldInputTokenCost, v))
 }
 
 // InputTokenCostNEQ applies the NEQ predicate on the "input_token_cost" field.
-func InputTokenCostNEQ(v int) predicate.InvokeModelOrder {
+func InputTokenCostNEQ(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldNEQ(FieldInputTokenCost, v))
 }
 
 // InputTokenCostIn applies the In predicate on the "input_token_cost" field.
-func InputTokenCostIn(vs ...int) predicate.InvokeModelOrder {
+func InputTokenCostIn(vs ...int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldIn(FieldInputTokenCost, vs...))
 }
 
 // InputTokenCostNotIn applies the NotIn predicate on the "input_token_cost" field.
-func InputTokenCostNotIn(vs ...int) predicate.InvokeModelOrder {
+func InputTokenCostNotIn(vs ...int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldNotIn(FieldInputTokenCost, vs...))
 }
 
 // InputTokenCostGT applies the GT predicate on the "input_token_cost" field.
-func InputTokenCostGT(v int) predicate.InvokeModelOrder {
+func InputTokenCostGT(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldGT(FieldInputTokenCost, v))
 }
 
 // InputTokenCostGTE applies the GTE predicate on the "input_token_cost" field.
-func InputTokenCostGTE(v int) predicate.InvokeModelOrder {
+func InputTokenCostGTE(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldGTE(FieldInputTokenCost, v))
 }
 
 // InputTokenCostLT applies the LT predicate on the "input_token_cost" field.
-func InputTokenCostLT(v int) predicate.InvokeModelOrder {
+func InputTokenCostLT(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldLT(FieldInputTokenCost, v))
 }
 
 // InputTokenCostLTE applies the LTE predicate on the "input_token_cost" field.
-func InputTokenCostLTE(v int) predicate.InvokeModelOrder {
+func InputTokenCostLTE(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldLTE(FieldInputTokenCost, v))
 }
 
 // OutputTokenCostEQ applies the EQ predicate on the "output_token_cost" field.
-func OutputTokenCostEQ(v int) predicate.InvokeModelOrder {
+func OutputTokenCostEQ(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldEQ(FieldOutputTokenCost, v))
 }
 
 // OutputTokenCostNEQ applies the NEQ predicate on the "output_token_cost" field.
-func OutputTokenCostNEQ(v int) predicate.InvokeModelOrder {
+func OutputTokenCostNEQ(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldNEQ(FieldOutputTokenCost, v))
 }
 
 // OutputTokenCostIn applies the In predicate on the "output_token_cost" field.
-func OutputTokenCostIn(vs ...int) predicate.InvokeModelOrder {
+func OutputTokenCostIn(vs ...int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldIn(FieldOutputTokenCost, vs...))
 }
 
 // OutputTokenCostNotIn applies the NotIn predicate on the "output_token_cost" field.
-func OutputTokenCostNotIn(vs ...int) predicate.InvokeModelOrder {
+func OutputTokenCostNotIn(vs ...int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldNotIn(FieldOutputTokenCost, vs...))
 }
 
 // OutputTokenCostGT applies the GT predicate on the "output_token_cost" field.
-func OutputTokenCostGT(v int) predicate.InvokeModelOrder {
+func OutputTokenCostGT(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldGT(FieldOutputTokenCost, v))
 }
 
 // OutputTokenCostGTE applies the GTE predicate on the "output_token_cost" field.
-func OutputTokenCostGTE(v int) predicate.InvokeModelOrder {
+func OutputTokenCostGTE(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldGTE(FieldOutputTokenCost, v))
 }
 
 // OutputTokenCostLT applies the LT predicate on the "output_token_cost" field.
-func OutputTokenCostLT(v int) predicate.InvokeModelOrder {
+func OutputTokenCostLT(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldLT(FieldOutputTokenCost, v))
 }
 
 // OutputTokenCostLTE applies the LTE predicate on the "output_token_cost" field.
-func OutputTokenCostLTE(v int) predicate.InvokeModelOrder {
+func OutputTokenCostLTE(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldLTE(FieldOutputTokenCost, v))
 }
 
 // InputCepCostEQ applies the EQ predicate on the "input_cep_cost" field.
-func InputCepCostEQ(v int) predicate.InvokeModelOrder {
+func InputCepCostEQ(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldEQ(FieldInputCepCost, v))
 }
 
 // InputCepCostNEQ applies the NEQ predicate on the "input_cep_cost" field.
-func InputCepCostNEQ(v int) predicate.InvokeModelOrder {
+func InputCepCostNEQ(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldNEQ(FieldInputCepCost, v))
 }
 
 // InputCepCostIn applies the In predicate on the "input_cep_cost" field.
-func InputCepCostIn(vs ...int) predicate.InvokeModelOrder {
+func InputCepCostIn(vs ...int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldIn(FieldInputCepCost, vs...))
 }
 
 // InputCepCostNotIn applies the NotIn predicate on the "input_cep_cost" field.
-func InputCepCostNotIn(vs ...int) predicate.InvokeModelOrder {
+func InputCepCostNotIn(vs ...int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldNotIn(FieldInputCepCost, vs...))
 }
 
 // InputCepCostGT applies the GT predicate on the "input_cep_cost" field.
-func InputCepCostGT(v int) predicate.InvokeModelOrder {
+func InputCepCostGT(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldGT(FieldInputCepCost, v))
 }
 
 // InputCepCostGTE applies the GTE predicate on the "input_cep_cost" field.
-func InputCepCostGTE(v int) predicate.InvokeModelOrder {
+func InputCepCostGTE(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldGTE(FieldInputCepCost, v))
 }
 
 // InputCepCostLT applies the LT predicate on the "input_cep_cost" field.
-func InputCepCostLT(v int) predicate.InvokeModelOrder {
+func InputCepCostLT(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldLT(FieldInputCepCost, v))
 }
 
 // InputCepCostLTE applies the LTE predicate on the "input_cep_cost" field.
-func InputCepCostLTE(v int) predicate.InvokeModelOrder {
+func InputCepCostLTE(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldLTE(FieldInputCepCost, v))
 }
 
 // OutputCepCostEQ applies the EQ predicate on the "output_cep_cost" field.
-func OutputCepCostEQ(v int) predicate.InvokeModelOrder {
+func OutputCepCostEQ(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldEQ(FieldOutputCepCost, v))
 }
 
 // OutputCepCostNEQ applies the NEQ predicate on the "output_cep_cost" field.
-func OutputCepCostNEQ(v int) predicate.InvokeModelOrder {
+func OutputCepCostNEQ(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldNEQ(FieldOutputCepCost, v))
 }
 
 // OutputCepCostIn applies the In predicate on the "output_cep_cost" field.
-func OutputCepCostIn(vs ...int) predicate.InvokeModelOrder {
+func OutputCepCostIn(vs ...int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldIn(FieldOutputCepCost, vs...))
 }
 
 // OutputCepCostNotIn applies the NotIn predicate on the "output_cep_cost" field.
-func OutputCepCostNotIn(vs ...int) predicate.InvokeModelOrder {
+func OutputCepCostNotIn(vs ...int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldNotIn(FieldOutputCepCost, vs...))
 }
 
 // OutputCepCostGT applies the GT predicate on the "output_cep_cost" field.
-func OutputCepCostGT(v int) predicate.InvokeModelOrder {
+func OutputCepCostGT(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldGT(FieldOutputCepCost, v))
 }
 
 // OutputCepCostGTE applies the GTE predicate on the "output_cep_cost" field.
-func OutputCepCostGTE(v int) predicate.InvokeModelOrder {
+func OutputCepCostGTE(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldGTE(FieldOutputCepCost, v))
 }
 
 // OutputCepCostLT applies the LT predicate on the "output_cep_cost" field.
-func OutputCepCostLT(v int) predicate.InvokeModelOrder {
+func OutputCepCostLT(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldLT(FieldOutputCepCost, v))
 }
 
 // OutputCepCostLTE applies the LTE predicate on the "output_cep_cost" field.
-func OutputCepCostLTE(v int) predicate.InvokeModelOrder {
+func OutputCepCostLTE(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldLTE(FieldOutputCepCost, v))
 }
 

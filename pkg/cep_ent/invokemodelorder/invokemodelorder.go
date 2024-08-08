@@ -129,13 +129,13 @@ var (
 	// DefaultInvokeTimes holds the default value on creation for the "invoke_times" field.
 	DefaultInvokeTimes int
 	// DefaultInputTokenCost holds the default value on creation for the "input_token_cost" field.
-	DefaultInputTokenCost int
+	DefaultInputTokenCost int64
 	// DefaultOutputTokenCost holds the default value on creation for the "output_token_cost" field.
-	DefaultOutputTokenCost int
+	DefaultOutputTokenCost int64
 	// DefaultInputCepCost holds the default value on creation for the "input_cep_cost" field.
-	DefaultInputCepCost int
+	DefaultInputCepCost int64
 	// DefaultOutputCepCost holds the default value on creation for the "output_cep_cost" field.
-	DefaultOutputCepCost int
+	DefaultOutputCepCost int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )

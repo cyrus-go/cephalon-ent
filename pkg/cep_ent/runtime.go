@@ -1708,19 +1708,19 @@ func init() {
 	// invokemodelorderDescInputTokenCost is the schema descriptor for input_token_cost field.
 	invokemodelorderDescInputTokenCost := invokemodelorderFields[5].Descriptor()
 	// invokemodelorder.DefaultInputTokenCost holds the default value on creation for the input_token_cost field.
-	invokemodelorder.DefaultInputTokenCost = invokemodelorderDescInputTokenCost.Default.(int)
+	invokemodelorder.DefaultInputTokenCost = invokemodelorderDescInputTokenCost.Default.(int64)
 	// invokemodelorderDescOutputTokenCost is the schema descriptor for output_token_cost field.
 	invokemodelorderDescOutputTokenCost := invokemodelorderFields[6].Descriptor()
 	// invokemodelorder.DefaultOutputTokenCost holds the default value on creation for the output_token_cost field.
-	invokemodelorder.DefaultOutputTokenCost = invokemodelorderDescOutputTokenCost.Default.(int)
+	invokemodelorder.DefaultOutputTokenCost = invokemodelorderDescOutputTokenCost.Default.(int64)
 	// invokemodelorderDescInputCepCost is the schema descriptor for input_cep_cost field.
 	invokemodelorderDescInputCepCost := invokemodelorderFields[7].Descriptor()
 	// invokemodelorder.DefaultInputCepCost holds the default value on creation for the input_cep_cost field.
-	invokemodelorder.DefaultInputCepCost = invokemodelorderDescInputCepCost.Default.(int)
+	invokemodelorder.DefaultInputCepCost = invokemodelorderDescInputCepCost.Default.(int64)
 	// invokemodelorderDescOutputCepCost is the schema descriptor for output_cep_cost field.
 	invokemodelorderDescOutputCepCost := invokemodelorderFields[8].Descriptor()
 	// invokemodelorder.DefaultOutputCepCost holds the default value on creation for the output_cep_cost field.
-	invokemodelorder.DefaultOutputCepCost = invokemodelorderDescOutputCepCost.Default.(int)
+	invokemodelorder.DefaultOutputCepCost = invokemodelorderDescOutputCepCost.Default.(int64)
 	// invokemodelorderDescID is the schema descriptor for id field.
 	invokemodelorderDescID := invokemodelorderMixinFields0[0].Descriptor()
 	// invokemodelorder.DefaultID holds the default value on creation for the id field.

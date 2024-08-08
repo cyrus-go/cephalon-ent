@@ -36544,14 +36544,14 @@ type InvokeModelOrderMutation struct {
 	invoke_type          *enums.InvokeType
 	invoke_times         *int
 	addinvoke_times      *int
-	input_token_cost     *int
-	addinput_token_cost  *int
-	output_token_cost    *int
-	addoutput_token_cost *int
-	input_cep_cost       *int
-	addinput_cep_cost    *int
-	output_cep_cost      *int
-	addoutput_cep_cost   *int
+	input_token_cost     *int64
+	addinput_token_cost  *int64
+	output_token_cost    *int64
+	addoutput_token_cost *int64
+	input_cep_cost       *int64
+	addinput_cep_cost    *int64
+	output_cep_cost      *int64
+	addoutput_cep_cost   *int64
 	clearedFields        map[string]struct{}
 	bills                map[int64]struct{}
 	removedbills         map[int64]struct{}
@@ -37092,13 +37092,13 @@ func (m *InvokeModelOrderMutation) ResetInvokeTimes() {
 }
 
 // SetInputTokenCost sets the "input_token_cost" field.
-func (m *InvokeModelOrderMutation) SetInputTokenCost(i int) {
+func (m *InvokeModelOrderMutation) SetInputTokenCost(i int64) {
 	m.input_token_cost = &i
 	m.addinput_token_cost = nil
 }
 
 // InputTokenCost returns the value of the "input_token_cost" field in the mutation.
-func (m *InvokeModelOrderMutation) InputTokenCost() (r int, exists bool) {
+func (m *InvokeModelOrderMutation) InputTokenCost() (r int64, exists bool) {
 	v := m.input_token_cost
 	if v == nil {
 		return
@@ -37109,7 +37109,7 @@ func (m *InvokeModelOrderMutation) InputTokenCost() (r int, exists bool) {
 // OldInputTokenCost returns the old "input_token_cost" field's value of the InvokeModelOrder entity.
 // If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *InvokeModelOrderMutation) OldInputTokenCost(ctx context.Context) (v int, err error) {
+func (m *InvokeModelOrderMutation) OldInputTokenCost(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldInputTokenCost is only allowed on UpdateOne operations")
 	}
@@ -37124,7 +37124,7 @@ func (m *InvokeModelOrderMutation) OldInputTokenCost(ctx context.Context) (v int
 }
 
 // AddInputTokenCost adds i to the "input_token_cost" field.
-func (m *InvokeModelOrderMutation) AddInputTokenCost(i int) {
+func (m *InvokeModelOrderMutation) AddInputTokenCost(i int64) {
 	if m.addinput_token_cost != nil {
 		*m.addinput_token_cost += i
 	} else {
@@ -37133,7 +37133,7 @@ func (m *InvokeModelOrderMutation) AddInputTokenCost(i int) {
 }
 
 // AddedInputTokenCost returns the value that was added to the "input_token_cost" field in this mutation.
-func (m *InvokeModelOrderMutation) AddedInputTokenCost() (r int, exists bool) {
+func (m *InvokeModelOrderMutation) AddedInputTokenCost() (r int64, exists bool) {
 	v := m.addinput_token_cost
 	if v == nil {
 		return
@@ -37148,13 +37148,13 @@ func (m *InvokeModelOrderMutation) ResetInputTokenCost() {
 }
 
 // SetOutputTokenCost sets the "output_token_cost" field.
-func (m *InvokeModelOrderMutation) SetOutputTokenCost(i int) {
+func (m *InvokeModelOrderMutation) SetOutputTokenCost(i int64) {
 	m.output_token_cost = &i
 	m.addoutput_token_cost = nil
 }
 
 // OutputTokenCost returns the value of the "output_token_cost" field in the mutation.
-func (m *InvokeModelOrderMutation) OutputTokenCost() (r int, exists bool) {
+func (m *InvokeModelOrderMutation) OutputTokenCost() (r int64, exists bool) {
 	v := m.output_token_cost
 	if v == nil {
 		return
@@ -37165,7 +37165,7 @@ func (m *InvokeModelOrderMutation) OutputTokenCost() (r int, exists bool) {
 // OldOutputTokenCost returns the old "output_token_cost" field's value of the InvokeModelOrder entity.
 // If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *InvokeModelOrderMutation) OldOutputTokenCost(ctx context.Context) (v int, err error) {
+func (m *InvokeModelOrderMutation) OldOutputTokenCost(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldOutputTokenCost is only allowed on UpdateOne operations")
 	}
@@ -37180,7 +37180,7 @@ func (m *InvokeModelOrderMutation) OldOutputTokenCost(ctx context.Context) (v in
 }
 
 // AddOutputTokenCost adds i to the "output_token_cost" field.
-func (m *InvokeModelOrderMutation) AddOutputTokenCost(i int) {
+func (m *InvokeModelOrderMutation) AddOutputTokenCost(i int64) {
 	if m.addoutput_token_cost != nil {
 		*m.addoutput_token_cost += i
 	} else {
@@ -37189,7 +37189,7 @@ func (m *InvokeModelOrderMutation) AddOutputTokenCost(i int) {
 }
 
 // AddedOutputTokenCost returns the value that was added to the "output_token_cost" field in this mutation.
-func (m *InvokeModelOrderMutation) AddedOutputTokenCost() (r int, exists bool) {
+func (m *InvokeModelOrderMutation) AddedOutputTokenCost() (r int64, exists bool) {
 	v := m.addoutput_token_cost
 	if v == nil {
 		return
@@ -37204,13 +37204,13 @@ func (m *InvokeModelOrderMutation) ResetOutputTokenCost() {
 }
 
 // SetInputCepCost sets the "input_cep_cost" field.
-func (m *InvokeModelOrderMutation) SetInputCepCost(i int) {
+func (m *InvokeModelOrderMutation) SetInputCepCost(i int64) {
 	m.input_cep_cost = &i
 	m.addinput_cep_cost = nil
 }
 
 // InputCepCost returns the value of the "input_cep_cost" field in the mutation.
-func (m *InvokeModelOrderMutation) InputCepCost() (r int, exists bool) {
+func (m *InvokeModelOrderMutation) InputCepCost() (r int64, exists bool) {
 	v := m.input_cep_cost
 	if v == nil {
 		return
@@ -37221,7 +37221,7 @@ func (m *InvokeModelOrderMutation) InputCepCost() (r int, exists bool) {
 // OldInputCepCost returns the old "input_cep_cost" field's value of the InvokeModelOrder entity.
 // If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *InvokeModelOrderMutation) OldInputCepCost(ctx context.Context) (v int, err error) {
+func (m *InvokeModelOrderMutation) OldInputCepCost(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldInputCepCost is only allowed on UpdateOne operations")
 	}
@@ -37236,7 +37236,7 @@ func (m *InvokeModelOrderMutation) OldInputCepCost(ctx context.Context) (v int, 
 }
 
 // AddInputCepCost adds i to the "input_cep_cost" field.
-func (m *InvokeModelOrderMutation) AddInputCepCost(i int) {
+func (m *InvokeModelOrderMutation) AddInputCepCost(i int64) {
 	if m.addinput_cep_cost != nil {
 		*m.addinput_cep_cost += i
 	} else {
@@ -37245,7 +37245,7 @@ func (m *InvokeModelOrderMutation) AddInputCepCost(i int) {
 }
 
 // AddedInputCepCost returns the value that was added to the "input_cep_cost" field in this mutation.
-func (m *InvokeModelOrderMutation) AddedInputCepCost() (r int, exists bool) {
+func (m *InvokeModelOrderMutation) AddedInputCepCost() (r int64, exists bool) {
 	v := m.addinput_cep_cost
 	if v == nil {
 		return
@@ -37260,13 +37260,13 @@ func (m *InvokeModelOrderMutation) ResetInputCepCost() {
 }
 
 // SetOutputCepCost sets the "output_cep_cost" field.
-func (m *InvokeModelOrderMutation) SetOutputCepCost(i int) {
+func (m *InvokeModelOrderMutation) SetOutputCepCost(i int64) {
 	m.output_cep_cost = &i
 	m.addoutput_cep_cost = nil
 }
 
 // OutputCepCost returns the value of the "output_cep_cost" field in the mutation.
-func (m *InvokeModelOrderMutation) OutputCepCost() (r int, exists bool) {
+func (m *InvokeModelOrderMutation) OutputCepCost() (r int64, exists bool) {
 	v := m.output_cep_cost
 	if v == nil {
 		return
@@ -37277,7 +37277,7 @@ func (m *InvokeModelOrderMutation) OutputCepCost() (r int, exists bool) {
 // OldOutputCepCost returns the old "output_cep_cost" field's value of the InvokeModelOrder entity.
 // If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *InvokeModelOrderMutation) OldOutputCepCost(ctx context.Context) (v int, err error) {
+func (m *InvokeModelOrderMutation) OldOutputCepCost(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldOutputCepCost is only allowed on UpdateOne operations")
 	}
@@ -37292,7 +37292,7 @@ func (m *InvokeModelOrderMutation) OldOutputCepCost(ctx context.Context) (v int,
 }
 
 // AddOutputCepCost adds i to the "output_cep_cost" field.
-func (m *InvokeModelOrderMutation) AddOutputCepCost(i int) {
+func (m *InvokeModelOrderMutation) AddOutputCepCost(i int64) {
 	if m.addoutput_cep_cost != nil {
 		*m.addoutput_cep_cost += i
 	} else {
@@ -37301,7 +37301,7 @@ func (m *InvokeModelOrderMutation) AddOutputCepCost(i int) {
 }
 
 // AddedOutputCepCost returns the value that was added to the "output_cep_cost" field in this mutation.
-func (m *InvokeModelOrderMutation) AddedOutputCepCost() (r int, exists bool) {
+func (m *InvokeModelOrderMutation) AddedOutputCepCost() (r int64, exists bool) {
 	v := m.addoutput_cep_cost
 	if v == nil {
 		return
@@ -37680,28 +37680,28 @@ func (m *InvokeModelOrderMutation) SetField(name string, value ent.Value) error 
 		m.SetInvokeTimes(v)
 		return nil
 	case invokemodelorder.FieldInputTokenCost:
-		v, ok := value.(int)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetInputTokenCost(v)
 		return nil
 	case invokemodelorder.FieldOutputTokenCost:
-		v, ok := value.(int)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOutputTokenCost(v)
 		return nil
 	case invokemodelorder.FieldInputCepCost:
-		v, ok := value.(int)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetInputCepCost(v)
 		return nil
 	case invokemodelorder.FieldOutputCepCost:
-		v, ok := value.(int)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -37789,28 +37789,28 @@ func (m *InvokeModelOrderMutation) AddField(name string, value ent.Value) error 
 		m.AddInvokeTimes(v)
 		return nil
 	case invokemodelorder.FieldInputTokenCost:
-		v, ok := value.(int)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddInputTokenCost(v)
 		return nil
 	case invokemodelorder.FieldOutputTokenCost:
-		v, ok := value.(int)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddOutputTokenCost(v)
 		return nil
 	case invokemodelorder.FieldInputCepCost:
-		v, ok := value.(int)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddInputCepCost(v)
 		return nil
 	case invokemodelorder.FieldOutputCepCost:
-		v, ok := value.(int)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

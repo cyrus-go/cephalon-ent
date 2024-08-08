@@ -43,13 +43,13 @@ type InvokeModelOrder struct {
 	// 调用次数
 	InvokeTimes int `json:"invoke_times"`
 	// 输入token消耗
-	InputTokenCost int `json:"input_token_cost"`
+	InputTokenCost int64 `json:"input_token_cost"`
 	// 输出token消耗
-	OutputTokenCost int `json:"output_token_cost"`
+	OutputTokenCost int64 `json:"output_token_cost"`
 	// 输入cep消耗
-	InputCepCost int `json:"input_cep_cost"`
+	InputCepCost int64 `json:"input_cep_cost"`
 	// 输出cep消耗
-	OutputCepCost int `json:"output_cep_cost"`
+	OutputCepCost int64 `json:"output_cep_cost"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the InvokeModelOrderQuery when eager-loading is set.
 	Edges        InvokeModelOrderEdges `json:"edges"`
@@ -215,25 +215,25 @@ func (imo *InvokeModelOrder) assignValues(columns []string, values []any) error 
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field input_token_cost", values[i])
 			} else if value.Valid {
-				imo.InputTokenCost = int(value.Int64)
+				imo.InputTokenCost = value.Int64
 			}
 		case invokemodelorder.FieldOutputTokenCost:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field output_token_cost", values[i])
 			} else if value.Valid {
-				imo.OutputTokenCost = int(value.Int64)
+				imo.OutputTokenCost = value.Int64
 			}
 		case invokemodelorder.FieldInputCepCost:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field input_cep_cost", values[i])
 			} else if value.Valid {
-				imo.InputCepCost = int(value.Int64)
+				imo.InputCepCost = value.Int64
 			}
 		case invokemodelorder.FieldOutputCepCost:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field output_cep_cost", values[i])
 			} else if value.Valid {
-				imo.OutputCepCost = int(value.Int64)
+				imo.OutputCepCost = value.Int64
 			}
 		default:
 			imo.selectValues.Set(columns[i], values[i])
