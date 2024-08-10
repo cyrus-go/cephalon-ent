@@ -22,6 +22,7 @@ func (ModelPrice) Fields() []ent.Field {
 		field.Int("output_gpu_price").Default(0).StructTag(`json:"output_gpu_price"`).Comment("输出算力价格"),
 		field.Int("input_model_price").Default(0).StructTag(`json:"input_model_price"`).Comment("输入模型使用价格"),
 		field.Int("output_model_price").Default(0).StructTag(`json:"output_model_price"`).Comment("输出模型使用价格"),
+		field.Int64("token_per_cep").Default(0).StructTag(`json:"token_per_cep"`).Comment("上面cep价格对应的token数量"),
 	}
 }
 

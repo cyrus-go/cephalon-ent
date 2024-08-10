@@ -184,6 +184,20 @@ func (mpc *ModelPriceCreate) SetNillableOutputModelPrice(i *int) *ModelPriceCrea
 	return mpc
 }
 
+// SetTokenPerCep sets the "token_per_cep" field.
+func (mpc *ModelPriceCreate) SetTokenPerCep(i int64) *ModelPriceCreate {
+	mpc.mutation.SetTokenPerCep(i)
+	return mpc
+}
+
+// SetNillableTokenPerCep sets the "token_per_cep" field if the given value is not nil.
+func (mpc *ModelPriceCreate) SetNillableTokenPerCep(i *int64) *ModelPriceCreate {
+	if i != nil {
+		mpc.SetTokenPerCep(*i)
+	}
+	return mpc
+}
+
 // SetID sets the "id" field.
 func (mpc *ModelPriceCreate) SetID(i int64) *ModelPriceCreate {
 	mpc.mutation.SetID(i)
@@ -282,6 +296,10 @@ func (mpc *ModelPriceCreate) defaults() {
 		v := modelprice.DefaultOutputModelPrice
 		mpc.mutation.SetOutputModelPrice(v)
 	}
+	if _, ok := mpc.mutation.TokenPerCep(); !ok {
+		v := modelprice.DefaultTokenPerCep
+		mpc.mutation.SetTokenPerCep(v)
+	}
 	if _, ok := mpc.mutation.ID(); !ok {
 		v := modelprice.DefaultID()
 		mpc.mutation.SetID(v)
@@ -335,6 +353,9 @@ func (mpc *ModelPriceCreate) check() error {
 	}
 	if _, ok := mpc.mutation.OutputModelPrice(); !ok {
 		return &ValidationError{Name: "output_model_price", err: errors.New(`cep_ent: missing required field "ModelPrice.output_model_price"`)}
+	}
+	if _, ok := mpc.mutation.TokenPerCep(); !ok {
+		return &ValidationError{Name: "token_per_cep", err: errors.New(`cep_ent: missing required field "ModelPrice.token_per_cep"`)}
 	}
 	if _, ok := mpc.mutation.ModelID(); !ok {
 		return &ValidationError{Name: "model", err: errors.New(`cep_ent: missing required edge "ModelPrice.model"`)}
@@ -415,6 +436,10 @@ func (mpc *ModelPriceCreate) createSpec() (*ModelPrice, *sqlgraph.CreateSpec) {
 	if value, ok := mpc.mutation.OutputModelPrice(); ok {
 		_spec.SetField(modelprice.FieldOutputModelPrice, field.TypeInt, value)
 		_node.OutputModelPrice = value
+	}
+	if value, ok := mpc.mutation.TokenPerCep(); ok {
+		_spec.SetField(modelprice.FieldTokenPerCep, field.TypeInt64, value)
+		_node.TokenPerCep = value
 	}
 	if nodes := mpc.mutation.ModelIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -650,6 +675,24 @@ func (u *ModelPriceUpsert) UpdateOutputModelPrice() *ModelPriceUpsert {
 // AddOutputModelPrice adds v to the "output_model_price" field.
 func (u *ModelPriceUpsert) AddOutputModelPrice(v int) *ModelPriceUpsert {
 	u.Add(modelprice.FieldOutputModelPrice, v)
+	return u
+}
+
+// SetTokenPerCep sets the "token_per_cep" field.
+func (u *ModelPriceUpsert) SetTokenPerCep(v int64) *ModelPriceUpsert {
+	u.Set(modelprice.FieldTokenPerCep, v)
+	return u
+}
+
+// UpdateTokenPerCep sets the "token_per_cep" field to the value that was provided on create.
+func (u *ModelPriceUpsert) UpdateTokenPerCep() *ModelPriceUpsert {
+	u.SetExcluded(modelprice.FieldTokenPerCep)
+	return u
+}
+
+// AddTokenPerCep adds v to the "token_per_cep" field.
+func (u *ModelPriceUpsert) AddTokenPerCep(v int64) *ModelPriceUpsert {
+	u.Add(modelprice.FieldTokenPerCep, v)
 	return u
 }
 
@@ -897,6 +940,27 @@ func (u *ModelPriceUpsertOne) AddOutputModelPrice(v int) *ModelPriceUpsertOne {
 func (u *ModelPriceUpsertOne) UpdateOutputModelPrice() *ModelPriceUpsertOne {
 	return u.Update(func(s *ModelPriceUpsert) {
 		s.UpdateOutputModelPrice()
+	})
+}
+
+// SetTokenPerCep sets the "token_per_cep" field.
+func (u *ModelPriceUpsertOne) SetTokenPerCep(v int64) *ModelPriceUpsertOne {
+	return u.Update(func(s *ModelPriceUpsert) {
+		s.SetTokenPerCep(v)
+	})
+}
+
+// AddTokenPerCep adds v to the "token_per_cep" field.
+func (u *ModelPriceUpsertOne) AddTokenPerCep(v int64) *ModelPriceUpsertOne {
+	return u.Update(func(s *ModelPriceUpsert) {
+		s.AddTokenPerCep(v)
+	})
+}
+
+// UpdateTokenPerCep sets the "token_per_cep" field to the value that was provided on create.
+func (u *ModelPriceUpsertOne) UpdateTokenPerCep() *ModelPriceUpsertOne {
+	return u.Update(func(s *ModelPriceUpsert) {
+		s.UpdateTokenPerCep()
 	})
 }
 
@@ -1310,6 +1374,27 @@ func (u *ModelPriceUpsertBulk) AddOutputModelPrice(v int) *ModelPriceUpsertBulk 
 func (u *ModelPriceUpsertBulk) UpdateOutputModelPrice() *ModelPriceUpsertBulk {
 	return u.Update(func(s *ModelPriceUpsert) {
 		s.UpdateOutputModelPrice()
+	})
+}
+
+// SetTokenPerCep sets the "token_per_cep" field.
+func (u *ModelPriceUpsertBulk) SetTokenPerCep(v int64) *ModelPriceUpsertBulk {
+	return u.Update(func(s *ModelPriceUpsert) {
+		s.SetTokenPerCep(v)
+	})
+}
+
+// AddTokenPerCep adds v to the "token_per_cep" field.
+func (u *ModelPriceUpsertBulk) AddTokenPerCep(v int64) *ModelPriceUpsertBulk {
+	return u.Update(func(s *ModelPriceUpsert) {
+		s.AddTokenPerCep(v)
+	})
+}
+
+// UpdateTokenPerCep sets the "token_per_cep" field to the value that was provided on create.
+func (u *ModelPriceUpsertBulk) UpdateTokenPerCep() *ModelPriceUpsertBulk {
+	return u.Update(func(s *ModelPriceUpsert) {
+		s.UpdateTokenPerCep()
 	})
 }
 

@@ -2847,6 +2847,10 @@ func init() {
 	modelpriceDescOutputModelPrice := modelpriceFields[6].Descriptor()
 	// modelprice.DefaultOutputModelPrice holds the default value on creation for the output_model_price field.
 	modelprice.DefaultOutputModelPrice = modelpriceDescOutputModelPrice.Default.(int)
+	// modelpriceDescTokenPerCep is the schema descriptor for token_per_cep field.
+	modelpriceDescTokenPerCep := modelpriceFields[7].Descriptor()
+	// modelprice.DefaultTokenPerCep holds the default value on creation for the token_per_cep field.
+	modelprice.DefaultTokenPerCep = modelpriceDescTokenPerCep.Default.(int64)
 	// modelpriceDescID is the schema descriptor for id field.
 	modelpriceDescID := modelpriceMixinFields0[0].Descriptor()
 	// modelprice.DefaultID holds the default value on creation for the id field.

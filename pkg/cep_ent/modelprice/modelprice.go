@@ -40,6 +40,8 @@ const (
 	FieldInputModelPrice = "input_model_price"
 	// FieldOutputModelPrice holds the string denoting the output_model_price field in the database.
 	FieldOutputModelPrice = "output_model_price"
+	// FieldTokenPerCep holds the string denoting the token_per_cep field in the database.
+	FieldTokenPerCep = "token_per_cep"
 	// EdgeModel holds the string denoting the model edge name in mutations.
 	EdgeModel = "model"
 	// Table holds the table name of the modelprice in the database.
@@ -68,6 +70,7 @@ var Columns = []string{
 	FieldOutputGpuPrice,
 	FieldInputModelPrice,
 	FieldOutputModelPrice,
+	FieldTokenPerCep,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -101,6 +104,8 @@ var (
 	DefaultInputModelPrice int
 	// DefaultOutputModelPrice holds the default value on creation for the "output_model_price" field.
 	DefaultOutputModelPrice int
+	// DefaultTokenPerCep holds the default value on creation for the "token_per_cep" field.
+	DefaultTokenPerCep int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -195,6 +200,11 @@ func ByInputModelPrice(opts ...sql.OrderTermOption) OrderOption {
 // ByOutputModelPrice orders the results by the output_model_price field.
 func ByOutputModelPrice(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOutputModelPrice, opts...).ToFunc()
+}
+
+// ByTokenPerCep orders the results by the token_per_cep field.
+func ByTokenPerCep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTokenPerCep, opts...).ToFunc()
 }
 
 // ByModelField orders the results by model field.

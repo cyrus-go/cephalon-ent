@@ -44,6 +44,8 @@ type ModelPrice struct {
 	InputModelPrice int `json:"input_model_price"`
 	// 输出模型使用价格
 	OutputModelPrice int `json:"output_model_price"`
+	// 上面cep价格对应的token数量
+	TokenPerCep int64 `json:"token_per_cep"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ModelPriceQuery when eager-loading is set.
 	Edges        ModelPriceEdges `json:"edges"`
@@ -77,7 +79,7 @@ func (*ModelPrice) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case modelprice.FieldID, modelprice.FieldCreatedBy, modelprice.FieldUpdatedBy, modelprice.FieldModelID, modelprice.FieldInputGpuPrice, modelprice.FieldOutputGpuPrice, modelprice.FieldInputModelPrice, modelprice.FieldOutputModelPrice:
+		case modelprice.FieldID, modelprice.FieldCreatedBy, modelprice.FieldUpdatedBy, modelprice.FieldModelID, modelprice.FieldInputGpuPrice, modelprice.FieldOutputGpuPrice, modelprice.FieldInputModelPrice, modelprice.FieldOutputModelPrice, modelprice.FieldTokenPerCep:
 			values[i] = new(sql.NullInt64)
 		case modelprice.FieldInvokeType, modelprice.FieldGpuVersion:
 			values[i] = new(sql.NullString)
@@ -176,6 +178,12 @@ func (mp *ModelPrice) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				mp.OutputModelPrice = int(value.Int64)
 			}
+		case modelprice.FieldTokenPerCep:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field token_per_cep", values[i])
+			} else if value.Valid {
+				mp.TokenPerCep = value.Int64
+			}
 		default:
 			mp.selectValues.Set(columns[i], values[i])
 		}
@@ -252,6 +260,9 @@ func (mp *ModelPrice) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("output_model_price=")
 	builder.WriteString(fmt.Sprintf("%v", mp.OutputModelPrice))
+	builder.WriteString(", ")
+	builder.WriteString("token_per_cep=")
+	builder.WriteString(fmt.Sprintf("%v", mp.TokenPerCep))
 	builder.WriteByte(')')
 	return builder.String()
 }

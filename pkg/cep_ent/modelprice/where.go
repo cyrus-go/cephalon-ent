@@ -106,6 +106,11 @@ func OutputModelPrice(v int) predicate.ModelPrice {
 	return predicate.ModelPrice(sql.FieldEQ(FieldOutputModelPrice, v))
 }
 
+// TokenPerCep applies equality check predicate on the "token_per_cep" field. It's identical to TokenPerCepEQ.
+func TokenPerCep(v int64) predicate.ModelPrice {
+	return predicate.ModelPrice(sql.FieldEQ(FieldTokenPerCep, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.ModelPrice {
 	return predicate.ModelPrice(sql.FieldEQ(FieldCreatedBy, v))
@@ -544,6 +549,46 @@ func OutputModelPriceLT(v int) predicate.ModelPrice {
 // OutputModelPriceLTE applies the LTE predicate on the "output_model_price" field.
 func OutputModelPriceLTE(v int) predicate.ModelPrice {
 	return predicate.ModelPrice(sql.FieldLTE(FieldOutputModelPrice, v))
+}
+
+// TokenPerCepEQ applies the EQ predicate on the "token_per_cep" field.
+func TokenPerCepEQ(v int64) predicate.ModelPrice {
+	return predicate.ModelPrice(sql.FieldEQ(FieldTokenPerCep, v))
+}
+
+// TokenPerCepNEQ applies the NEQ predicate on the "token_per_cep" field.
+func TokenPerCepNEQ(v int64) predicate.ModelPrice {
+	return predicate.ModelPrice(sql.FieldNEQ(FieldTokenPerCep, v))
+}
+
+// TokenPerCepIn applies the In predicate on the "token_per_cep" field.
+func TokenPerCepIn(vs ...int64) predicate.ModelPrice {
+	return predicate.ModelPrice(sql.FieldIn(FieldTokenPerCep, vs...))
+}
+
+// TokenPerCepNotIn applies the NotIn predicate on the "token_per_cep" field.
+func TokenPerCepNotIn(vs ...int64) predicate.ModelPrice {
+	return predicate.ModelPrice(sql.FieldNotIn(FieldTokenPerCep, vs...))
+}
+
+// TokenPerCepGT applies the GT predicate on the "token_per_cep" field.
+func TokenPerCepGT(v int64) predicate.ModelPrice {
+	return predicate.ModelPrice(sql.FieldGT(FieldTokenPerCep, v))
+}
+
+// TokenPerCepGTE applies the GTE predicate on the "token_per_cep" field.
+func TokenPerCepGTE(v int64) predicate.ModelPrice {
+	return predicate.ModelPrice(sql.FieldGTE(FieldTokenPerCep, v))
+}
+
+// TokenPerCepLT applies the LT predicate on the "token_per_cep" field.
+func TokenPerCepLT(v int64) predicate.ModelPrice {
+	return predicate.ModelPrice(sql.FieldLT(FieldTokenPerCep, v))
+}
+
+// TokenPerCepLTE applies the LTE predicate on the "token_per_cep" field.
+func TokenPerCepLTE(v int64) predicate.ModelPrice {
+	return predicate.ModelPrice(sql.FieldLTE(FieldTokenPerCep, v))
 }
 
 // HasModel applies the HasEdge predicate on the "model" edge.

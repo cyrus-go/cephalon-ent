@@ -211,6 +211,27 @@ func (mpu *ModelPriceUpdate) AddOutputModelPrice(i int) *ModelPriceUpdate {
 	return mpu
 }
 
+// SetTokenPerCep sets the "token_per_cep" field.
+func (mpu *ModelPriceUpdate) SetTokenPerCep(i int64) *ModelPriceUpdate {
+	mpu.mutation.ResetTokenPerCep()
+	mpu.mutation.SetTokenPerCep(i)
+	return mpu
+}
+
+// SetNillableTokenPerCep sets the "token_per_cep" field if the given value is not nil.
+func (mpu *ModelPriceUpdate) SetNillableTokenPerCep(i *int64) *ModelPriceUpdate {
+	if i != nil {
+		mpu.SetTokenPerCep(*i)
+	}
+	return mpu
+}
+
+// AddTokenPerCep adds i to the "token_per_cep" field.
+func (mpu *ModelPriceUpdate) AddTokenPerCep(i int64) *ModelPriceUpdate {
+	mpu.mutation.AddTokenPerCep(i)
+	return mpu
+}
+
 // SetModel sets the "model" edge to the Model entity.
 func (mpu *ModelPriceUpdate) SetModel(m *Model) *ModelPriceUpdate {
 	return mpu.SetModelID(m.ID)
@@ -346,6 +367,12 @@ func (mpu *ModelPriceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mpu.mutation.AddedOutputModelPrice(); ok {
 		_spec.AddField(modelprice.FieldOutputModelPrice, field.TypeInt, value)
+	}
+	if value, ok := mpu.mutation.TokenPerCep(); ok {
+		_spec.SetField(modelprice.FieldTokenPerCep, field.TypeInt64, value)
+	}
+	if value, ok := mpu.mutation.AddedTokenPerCep(); ok {
+		_spec.AddField(modelprice.FieldTokenPerCep, field.TypeInt64, value)
 	}
 	if mpu.mutation.ModelCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -578,6 +605,27 @@ func (mpuo *ModelPriceUpdateOne) AddOutputModelPrice(i int) *ModelPriceUpdateOne
 	return mpuo
 }
 
+// SetTokenPerCep sets the "token_per_cep" field.
+func (mpuo *ModelPriceUpdateOne) SetTokenPerCep(i int64) *ModelPriceUpdateOne {
+	mpuo.mutation.ResetTokenPerCep()
+	mpuo.mutation.SetTokenPerCep(i)
+	return mpuo
+}
+
+// SetNillableTokenPerCep sets the "token_per_cep" field if the given value is not nil.
+func (mpuo *ModelPriceUpdateOne) SetNillableTokenPerCep(i *int64) *ModelPriceUpdateOne {
+	if i != nil {
+		mpuo.SetTokenPerCep(*i)
+	}
+	return mpuo
+}
+
+// AddTokenPerCep adds i to the "token_per_cep" field.
+func (mpuo *ModelPriceUpdateOne) AddTokenPerCep(i int64) *ModelPriceUpdateOne {
+	mpuo.mutation.AddTokenPerCep(i)
+	return mpuo
+}
+
 // SetModel sets the "model" edge to the Model entity.
 func (mpuo *ModelPriceUpdateOne) SetModel(m *Model) *ModelPriceUpdateOne {
 	return mpuo.SetModelID(m.ID)
@@ -743,6 +791,12 @@ func (mpuo *ModelPriceUpdateOne) sqlSave(ctx context.Context) (_node *ModelPrice
 	}
 	if value, ok := mpuo.mutation.AddedOutputModelPrice(); ok {
 		_spec.AddField(modelprice.FieldOutputModelPrice, field.TypeInt, value)
+	}
+	if value, ok := mpuo.mutation.TokenPerCep(); ok {
+		_spec.SetField(modelprice.FieldTokenPerCep, field.TypeInt64, value)
+	}
+	if value, ok := mpuo.mutation.AddedTokenPerCep(); ok {
+		_spec.AddField(modelprice.FieldTokenPerCep, field.TypeInt64, value)
 	}
 	if mpuo.mutation.ModelCleared() {
 		edge := &sqlgraph.EdgeSpec{

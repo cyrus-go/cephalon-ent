@@ -2138,6 +2138,7 @@ var (
 		{Name: "output_gpu_price", Type: field.TypeInt, Comment: "输出算力价格", Default: 0},
 		{Name: "input_model_price", Type: field.TypeInt, Comment: "输入模型使用价格", Default: 0},
 		{Name: "output_model_price", Type: field.TypeInt, Comment: "输出模型使用价格", Default: 0},
+		{Name: "token_per_cep", Type: field.TypeInt64, Comment: "上面cep价格对应的token数量", Default: 0},
 		{Name: "model_id", Type: field.TypeInt64, Comment: "模型ID"},
 	}
 	// ModelPricesTable holds the schema information for the "model_prices" table.
@@ -2148,7 +2149,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "model_prices_models_model_prices",
-				Columns:    []*schema.Column{ModelPricesColumns[12]},
+				Columns:    []*schema.Column{ModelPricesColumns[13]},
 				RefColumns: []*schema.Column{ModelsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

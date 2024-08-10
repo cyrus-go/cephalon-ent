@@ -64664,6 +64664,8 @@ type ModelPriceMutation struct {
 	addinput_model_price  *int
 	output_model_price    *int
 	addoutput_model_price *int
+	token_per_cep         *int64
+	addtoken_per_cep      *int64
 	clearedFields         map[string]struct{}
 	model                 *int64
 	clearedmodel          bool
@@ -65328,6 +65330,62 @@ func (m *ModelPriceMutation) ResetOutputModelPrice() {
 	m.addoutput_model_price = nil
 }
 
+// SetTokenPerCep sets the "token_per_cep" field.
+func (m *ModelPriceMutation) SetTokenPerCep(i int64) {
+	m.token_per_cep = &i
+	m.addtoken_per_cep = nil
+}
+
+// TokenPerCep returns the value of the "token_per_cep" field in the mutation.
+func (m *ModelPriceMutation) TokenPerCep() (r int64, exists bool) {
+	v := m.token_per_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTokenPerCep returns the old "token_per_cep" field's value of the ModelPrice entity.
+// If the ModelPrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ModelPriceMutation) OldTokenPerCep(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTokenPerCep is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTokenPerCep requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTokenPerCep: %w", err)
+	}
+	return oldValue.TokenPerCep, nil
+}
+
+// AddTokenPerCep adds i to the "token_per_cep" field.
+func (m *ModelPriceMutation) AddTokenPerCep(i int64) {
+	if m.addtoken_per_cep != nil {
+		*m.addtoken_per_cep += i
+	} else {
+		m.addtoken_per_cep = &i
+	}
+}
+
+// AddedTokenPerCep returns the value that was added to the "token_per_cep" field in this mutation.
+func (m *ModelPriceMutation) AddedTokenPerCep() (r int64, exists bool) {
+	v := m.addtoken_per_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTokenPerCep resets all changes to the "token_per_cep" field.
+func (m *ModelPriceMutation) ResetTokenPerCep() {
+	m.token_per_cep = nil
+	m.addtoken_per_cep = nil
+}
+
 // ClearModel clears the "model" edge to the Model entity.
 func (m *ModelPriceMutation) ClearModel() {
 	m.clearedmodel = true
@@ -65389,7 +65447,7 @@ func (m *ModelPriceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ModelPriceMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_by != nil {
 		fields = append(fields, modelprice.FieldCreatedBy)
 	}
@@ -65426,6 +65484,9 @@ func (m *ModelPriceMutation) Fields() []string {
 	if m.output_model_price != nil {
 		fields = append(fields, modelprice.FieldOutputModelPrice)
 	}
+	if m.token_per_cep != nil {
+		fields = append(fields, modelprice.FieldTokenPerCep)
+	}
 	return fields
 }
 
@@ -65458,6 +65519,8 @@ func (m *ModelPriceMutation) Field(name string) (ent.Value, bool) {
 		return m.InputModelPrice()
 	case modelprice.FieldOutputModelPrice:
 		return m.OutputModelPrice()
+	case modelprice.FieldTokenPerCep:
+		return m.TokenPerCep()
 	}
 	return nil, false
 }
@@ -65491,6 +65554,8 @@ func (m *ModelPriceMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldInputModelPrice(ctx)
 	case modelprice.FieldOutputModelPrice:
 		return m.OldOutputModelPrice(ctx)
+	case modelprice.FieldTokenPerCep:
+		return m.OldTokenPerCep(ctx)
 	}
 	return nil, fmt.Errorf("unknown ModelPrice field %s", name)
 }
@@ -65584,6 +65649,13 @@ func (m *ModelPriceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOutputModelPrice(v)
 		return nil
+	case modelprice.FieldTokenPerCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTokenPerCep(v)
+		return nil
 	}
 	return fmt.Errorf("unknown ModelPrice field %s", name)
 }
@@ -65610,6 +65682,9 @@ func (m *ModelPriceMutation) AddedFields() []string {
 	if m.addoutput_model_price != nil {
 		fields = append(fields, modelprice.FieldOutputModelPrice)
 	}
+	if m.addtoken_per_cep != nil {
+		fields = append(fields, modelprice.FieldTokenPerCep)
+	}
 	return fields
 }
 
@@ -65630,6 +65705,8 @@ func (m *ModelPriceMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedInputModelPrice()
 	case modelprice.FieldOutputModelPrice:
 		return m.AddedOutputModelPrice()
+	case modelprice.FieldTokenPerCep:
+		return m.AddedTokenPerCep()
 	}
 	return nil, false
 }
@@ -65680,6 +65757,13 @@ func (m *ModelPriceMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddOutputModelPrice(v)
+		return nil
+	case modelprice.FieldTokenPerCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTokenPerCep(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ModelPrice numeric field %s", name)
@@ -65743,6 +65827,9 @@ func (m *ModelPriceMutation) ResetField(name string) error {
 		return nil
 	case modelprice.FieldOutputModelPrice:
 		m.ResetOutputModelPrice()
+		return nil
+	case modelprice.FieldTokenPerCep:
+		m.ResetTokenPerCep()
 		return nil
 	}
 	return fmt.Errorf("unknown ModelPrice field %s", name)
