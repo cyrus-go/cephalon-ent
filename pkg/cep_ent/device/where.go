@@ -151,6 +151,11 @@ func Version(v string) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldVersion, v))
 }
 
+// FreeGpuNum applies equality check predicate on the "free_gpu_num" field. It's identical to FreeGpuNumEQ.
+func FreeGpuNum(v int) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldFreeGpuNum, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldCreatedBy, v))
@@ -1194,6 +1199,46 @@ func RankNotIn(vs ...enums.DeviceRankType) predicate.Device {
 		v[i] = vs[i]
 	}
 	return predicate.Device(sql.FieldNotIn(FieldRank, v...))
+}
+
+// FreeGpuNumEQ applies the EQ predicate on the "free_gpu_num" field.
+func FreeGpuNumEQ(v int) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldFreeGpuNum, v))
+}
+
+// FreeGpuNumNEQ applies the NEQ predicate on the "free_gpu_num" field.
+func FreeGpuNumNEQ(v int) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldFreeGpuNum, v))
+}
+
+// FreeGpuNumIn applies the In predicate on the "free_gpu_num" field.
+func FreeGpuNumIn(vs ...int) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldFreeGpuNum, vs...))
+}
+
+// FreeGpuNumNotIn applies the NotIn predicate on the "free_gpu_num" field.
+func FreeGpuNumNotIn(vs ...int) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldFreeGpuNum, vs...))
+}
+
+// FreeGpuNumGT applies the GT predicate on the "free_gpu_num" field.
+func FreeGpuNumGT(v int) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldFreeGpuNum, v))
+}
+
+// FreeGpuNumGTE applies the GTE predicate on the "free_gpu_num" field.
+func FreeGpuNumGTE(v int) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldFreeGpuNum, v))
+}
+
+// FreeGpuNumLT applies the LT predicate on the "free_gpu_num" field.
+func FreeGpuNumLT(v int) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldFreeGpuNum, v))
+}
+
+// FreeGpuNumLTE applies the LTE predicate on the "free_gpu_num" field.
+func FreeGpuNumLTE(v int) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldFreeGpuNum, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

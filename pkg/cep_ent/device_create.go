@@ -405,6 +405,20 @@ func (dc *DeviceCreate) SetNillableRank(ert *enums.DeviceRankType) *DeviceCreate
 	return dc
 }
 
+// SetFreeGpuNum sets the "free_gpu_num" field.
+func (dc *DeviceCreate) SetFreeGpuNum(i int) *DeviceCreate {
+	dc.mutation.SetFreeGpuNum(i)
+	return dc
+}
+
+// SetNillableFreeGpuNum sets the "free_gpu_num" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableFreeGpuNum(i *int) *DeviceCreate {
+	if i != nil {
+		dc.SetFreeGpuNum(*i)
+	}
+	return dc
+}
+
 // SetID sets the "id" field.
 func (dc *DeviceCreate) SetID(i int64) *DeviceCreate {
 	dc.mutation.SetID(i)
@@ -728,6 +742,10 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultRank
 		dc.mutation.SetRank(v)
 	}
+	if _, ok := dc.mutation.FreeGpuNum(); !ok {
+		v := device.DefaultFreeGpuNum
+		dc.mutation.SetFreeGpuNum(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := device.DefaultID()
 		dc.mutation.SetID(v)
@@ -848,6 +866,9 @@ func (dc *DeviceCreate) check() error {
 		if err := device.RankValidator(v); err != nil {
 			return &ValidationError{Name: "rank", err: fmt.Errorf(`cep_ent: validator failed for field "Device.rank": %w`, err)}
 		}
+	}
+	if _, ok := dc.mutation.FreeGpuNum(); !ok {
+		return &ValidationError{Name: "free_gpu_num", err: errors.New(`cep_ent: missing required field "Device.free_gpu_num"`)}
 	}
 	if _, ok := dc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "Device.user"`)}
@@ -995,6 +1016,10 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	if value, ok := dc.mutation.Rank(); ok {
 		_spec.SetField(device.FieldRank, field.TypeEnum, value)
 		_node.Rank = value
+	}
+	if value, ok := dc.mutation.FreeGpuNum(); ok {
+		_spec.SetField(device.FieldFreeGpuNum, field.TypeInt, value)
+		_node.FreeGpuNum = value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1613,6 +1638,24 @@ func (u *DeviceUpsert) UpdateRank() *DeviceUpsert {
 	return u
 }
 
+// SetFreeGpuNum sets the "free_gpu_num" field.
+func (u *DeviceUpsert) SetFreeGpuNum(v int) *DeviceUpsert {
+	u.Set(device.FieldFreeGpuNum, v)
+	return u
+}
+
+// UpdateFreeGpuNum sets the "free_gpu_num" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateFreeGpuNum() *DeviceUpsert {
+	u.SetExcluded(device.FieldFreeGpuNum)
+	return u
+}
+
+// AddFreeGpuNum adds v to the "free_gpu_num" field.
+func (u *DeviceUpsert) AddFreeGpuNum(v int) *DeviceUpsert {
+	u.Add(device.FieldFreeGpuNum, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2095,6 +2138,27 @@ func (u *DeviceUpsertOne) SetRank(v enums.DeviceRankType) *DeviceUpsertOne {
 func (u *DeviceUpsertOne) UpdateRank() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateRank()
+	})
+}
+
+// SetFreeGpuNum sets the "free_gpu_num" field.
+func (u *DeviceUpsertOne) SetFreeGpuNum(v int) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetFreeGpuNum(v)
+	})
+}
+
+// AddFreeGpuNum adds v to the "free_gpu_num" field.
+func (u *DeviceUpsertOne) AddFreeGpuNum(v int) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddFreeGpuNum(v)
+	})
+}
+
+// UpdateFreeGpuNum sets the "free_gpu_num" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateFreeGpuNum() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateFreeGpuNum()
 	})
 }
 
@@ -2749,6 +2813,27 @@ func (u *DeviceUpsertBulk) SetRank(v enums.DeviceRankType) *DeviceUpsertBulk {
 func (u *DeviceUpsertBulk) UpdateRank() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateRank()
+	})
+}
+
+// SetFreeGpuNum sets the "free_gpu_num" field.
+func (u *DeviceUpsertBulk) SetFreeGpuNum(v int) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetFreeGpuNum(v)
+	})
+}
+
+// AddFreeGpuNum adds v to the "free_gpu_num" field.
+func (u *DeviceUpsertBulk) AddFreeGpuNum(v int) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddFreeGpuNum(v)
+	})
+}
+
+// UpdateFreeGpuNum sets the "free_gpu_num" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateFreeGpuNum() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateFreeGpuNum()
 	})
 }
 

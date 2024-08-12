@@ -71,6 +71,8 @@ const (
 	FieldFault = "fault"
 	// FieldRank holds the string denoting the rank field in the database.
 	FieldRank = "rank"
+	// FieldFreeGpuNum holds the string denoting the free_gpu_num field in the database.
+	FieldFreeGpuNum = "free_gpu_num"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
@@ -213,6 +215,7 @@ var Columns = []string{
 	FieldVersion,
 	FieldFault,
 	FieldRank,
+	FieldFreeGpuNum,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -266,6 +269,8 @@ var (
 	DefaultCPUTemperature float64
 	// DefaultVersion holds the default value on creation for the "version" field.
 	DefaultVersion string
+	// DefaultFreeGpuNum holds the default value on creation for the "free_gpu_num" field.
+	DefaultFreeGpuNum int
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Device fields.
@@ -514,6 +519,11 @@ func ByFault(opts ...sql.OrderTermOption) OrderOption {
 // ByRank orders the results by the rank field.
 func ByRank(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRank, opts...).ToFunc()
+}
+
+// ByFreeGpuNum orders the results by the free_gpu_num field.
+func ByFreeGpuNum(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFreeGpuNum, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

@@ -459,6 +459,27 @@ func (du *DeviceUpdate) SetNillableRank(ert *enums.DeviceRankType) *DeviceUpdate
 	return du
 }
 
+// SetFreeGpuNum sets the "free_gpu_num" field.
+func (du *DeviceUpdate) SetFreeGpuNum(i int) *DeviceUpdate {
+	du.mutation.ResetFreeGpuNum()
+	du.mutation.SetFreeGpuNum(i)
+	return du
+}
+
+// SetNillableFreeGpuNum sets the "free_gpu_num" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableFreeGpuNum(i *int) *DeviceUpdate {
+	if i != nil {
+		du.SetFreeGpuNum(*i)
+	}
+	return du
+}
+
+// AddFreeGpuNum adds i to the "free_gpu_num" field.
+func (du *DeviceUpdate) AddFreeGpuNum(i int) *DeviceUpdate {
+	du.mutation.AddFreeGpuNum(i)
+	return du
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (du *DeviceUpdate) SetUser(u *User) *DeviceUpdate {
 	return du.SetUserID(u.ID)
@@ -1076,6 +1097,12 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.Rank(); ok {
 		_spec.SetField(device.FieldRank, field.TypeEnum, value)
+	}
+	if value, ok := du.mutation.FreeGpuNum(); ok {
+		_spec.SetField(device.FieldFreeGpuNum, field.TypeInt, value)
+	}
+	if value, ok := du.mutation.AddedFreeGpuNum(); ok {
+		_spec.AddField(device.FieldFreeGpuNum, field.TypeInt, value)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2040,6 +2067,27 @@ func (duo *DeviceUpdateOne) SetNillableRank(ert *enums.DeviceRankType) *DeviceUp
 	return duo
 }
 
+// SetFreeGpuNum sets the "free_gpu_num" field.
+func (duo *DeviceUpdateOne) SetFreeGpuNum(i int) *DeviceUpdateOne {
+	duo.mutation.ResetFreeGpuNum()
+	duo.mutation.SetFreeGpuNum(i)
+	return duo
+}
+
+// SetNillableFreeGpuNum sets the "free_gpu_num" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableFreeGpuNum(i *int) *DeviceUpdateOne {
+	if i != nil {
+		duo.SetFreeGpuNum(*i)
+	}
+	return duo
+}
+
+// AddFreeGpuNum adds i to the "free_gpu_num" field.
+func (duo *DeviceUpdateOne) AddFreeGpuNum(i int) *DeviceUpdateOne {
+	duo.mutation.AddFreeGpuNum(i)
+	return duo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (duo *DeviceUpdateOne) SetUser(u *User) *DeviceUpdateOne {
 	return duo.SetUserID(u.ID)
@@ -2687,6 +2735,12 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if value, ok := duo.mutation.Rank(); ok {
 		_spec.SetField(device.FieldRank, field.TypeEnum, value)
+	}
+	if value, ok := duo.mutation.FreeGpuNum(); ok {
+		_spec.SetField(device.FieldFreeGpuNum, field.TypeInt, value)
+	}
+	if value, ok := duo.mutation.AddedFreeGpuNum(); ok {
+		_spec.AddField(device.FieldFreeGpuNum, field.TypeInt, value)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -13759,6 +13759,8 @@ type DeviceMutation struct {
 	version                         *string
 	fault                           *enums.DeviceFaultType
 	rank                            *enums.DeviceRankType
+	free_gpu_num                    *int
+	addfree_gpu_num                 *int
 	clearedFields                   map[string]struct{}
 	user                            *int64
 	cleareduser                     bool
@@ -15069,6 +15071,62 @@ func (m *DeviceMutation) ResetRank() {
 	m.rank = nil
 }
 
+// SetFreeGpuNum sets the "free_gpu_num" field.
+func (m *DeviceMutation) SetFreeGpuNum(i int) {
+	m.free_gpu_num = &i
+	m.addfree_gpu_num = nil
+}
+
+// FreeGpuNum returns the value of the "free_gpu_num" field in the mutation.
+func (m *DeviceMutation) FreeGpuNum() (r int, exists bool) {
+	v := m.free_gpu_num
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFreeGpuNum returns the old "free_gpu_num" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldFreeGpuNum(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFreeGpuNum is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFreeGpuNum requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFreeGpuNum: %w", err)
+	}
+	return oldValue.FreeGpuNum, nil
+}
+
+// AddFreeGpuNum adds i to the "free_gpu_num" field.
+func (m *DeviceMutation) AddFreeGpuNum(i int) {
+	if m.addfree_gpu_num != nil {
+		*m.addfree_gpu_num += i
+	} else {
+		m.addfree_gpu_num = &i
+	}
+}
+
+// AddedFreeGpuNum returns the value that was added to the "free_gpu_num" field in this mutation.
+func (m *DeviceMutation) AddedFreeGpuNum() (r int, exists bool) {
+	v := m.addfree_gpu_num
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetFreeGpuNum resets all changes to the "free_gpu_num" field.
+func (m *DeviceMutation) ResetFreeGpuNum() {
+	m.free_gpu_num = nil
+	m.addfree_gpu_num = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *DeviceMutation) ClearUser() {
 	m.cleareduser = true
@@ -15724,7 +15782,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 27)
+	fields := make([]string, 0, 28)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -15806,6 +15864,9 @@ func (m *DeviceMutation) Fields() []string {
 	if m.rank != nil {
 		fields = append(fields, device.FieldRank)
 	}
+	if m.free_gpu_num != nil {
+		fields = append(fields, device.FieldFreeGpuNum)
+	}
 	return fields
 }
 
@@ -15868,6 +15929,8 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.Fault()
 	case device.FieldRank:
 		return m.Rank()
+	case device.FieldFreeGpuNum:
+		return m.FreeGpuNum()
 	}
 	return nil, false
 }
@@ -15931,6 +15994,8 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldFault(ctx)
 	case device.FieldRank:
 		return m.OldRank(ctx)
+	case device.FieldFreeGpuNum:
+		return m.OldFreeGpuNum(ctx)
 	}
 	return nil, fmt.Errorf("unknown Device field %s", name)
 }
@@ -16129,6 +16194,13 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRank(v)
 		return nil
+	case device.FieldFreeGpuNum:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFreeGpuNum(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
 }
@@ -16164,6 +16236,9 @@ func (m *DeviceMutation) AddedFields() []string {
 	if m.addcpu_temperature != nil {
 		fields = append(fields, device.FieldCPUTemperature)
 	}
+	if m.addfree_gpu_num != nil {
+		fields = append(fields, device.FieldFreeGpuNum)
+	}
 	return fields
 }
 
@@ -16190,6 +16265,8 @@ func (m *DeviceMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedGpuTemperature()
 	case device.FieldCPUTemperature:
 		return m.AddedCPUTemperature()
+	case device.FieldFreeGpuNum:
+		return m.AddedFreeGpuNum()
 	}
 	return nil, false
 }
@@ -16261,6 +16338,13 @@ func (m *DeviceMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddCPUTemperature(v)
+		return nil
+	case device.FieldFreeGpuNum:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFreeGpuNum(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Device numeric field %s", name)
@@ -16378,6 +16462,9 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldRank:
 		m.ResetRank()
+		return nil
+	case device.FieldFreeGpuNum:
+		m.ResetFreeGpuNum()
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)

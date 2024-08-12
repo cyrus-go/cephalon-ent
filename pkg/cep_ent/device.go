@@ -74,6 +74,8 @@ type Device struct {
 	Fault enums.DeviceFaultType `json:"fault"`
 	// 设备等级(目前阶段就是黑名单)
 	Rank enums.DeviceRankType `json:"rank"`
+	// 空闲GPU数量
+	FreeGpuNum int `json:"free_gpu_num"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges        DeviceEdges `json:"edges"`
@@ -232,7 +234,7 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case device.FieldDisk, device.FieldDelay, device.FieldGpuTemperature, device.FieldCPUTemperature:
 			values[i] = new(sql.NullFloat64)
-		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory:
+		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory, device.FieldFreeGpuNum:
 			values[i] = new(sql.NullInt64)
 		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability, device.FieldVersion, device.FieldFault, device.FieldRank:
 			values[i] = new(sql.NullString)
@@ -423,6 +425,12 @@ func (d *Device) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				d.Rank = enums.DeviceRankType(value.String)
 			}
+		case device.FieldFreeGpuNum:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field free_gpu_num", values[i])
+			} else if value.Valid {
+				d.FreeGpuNum = int(value.Int64)
+			}
 		default:
 			d.selectValues.Set(columns[i], values[i])
 		}
@@ -599,6 +607,9 @@ func (d *Device) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("rank=")
 	builder.WriteString(fmt.Sprintf("%v", d.Rank))
+	builder.WriteString(", ")
+	builder.WriteString("free_gpu_num=")
+	builder.WriteString(fmt.Sprintf("%v", d.FreeGpuNum))
 	builder.WriteByte(')')
 	return builder.String()
 }
