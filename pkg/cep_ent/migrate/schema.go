@@ -1214,6 +1214,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "invoke_type", Type: field.TypeEnum, Comment: "调用类型", Enums: []string{"unknown", "api", "web"}, Default: "unknown"},
+		{Name: "record_time", Type: field.TypeTime, Comment: "记录时间"},
 		{Name: "invoke_times", Type: field.TypeInt, Comment: "调用次数", Default: 0},
 		{Name: "input_token_cost", Type: field.TypeInt64, Comment: "输入token消耗", Default: 0},
 		{Name: "output_token_cost", Type: field.TypeInt64, Comment: "输出token消耗", Default: 0},
@@ -1231,19 +1232,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "invoke_model_orders_api_tokens_invoke_model_orders",
-				Columns:    []*schema.Column{InvokeModelOrdersColumns[12]},
+				Columns:    []*schema.Column{InvokeModelOrdersColumns[13]},
 				RefColumns: []*schema.Column{APITokensColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "invoke_model_orders_models_invoke_model_orders",
-				Columns:    []*schema.Column{InvokeModelOrdersColumns[13]},
+				Columns:    []*schema.Column{InvokeModelOrdersColumns[14]},
 				RefColumns: []*schema.Column{ModelsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "invoke_model_orders_users_invoke_model_orders",
-				Columns:    []*schema.Column{InvokeModelOrdersColumns[14]},
+				Columns:    []*schema.Column{InvokeModelOrdersColumns[15]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

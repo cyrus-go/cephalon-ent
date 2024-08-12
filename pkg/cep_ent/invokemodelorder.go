@@ -40,6 +40,8 @@ type InvokeModelOrder struct {
 	APITokenID int64 `json:"api_token"`
 	// 调用类型
 	InvokeType enums.InvokeType `json:"invoke_type"`
+	// 记录时间
+	RecordTime time.Time `json:"record_time"`
 	// 调用次数
 	InvokeTimes int `json:"invoke_times"`
 	// 输入token消耗
@@ -128,7 +130,7 @@ func (*InvokeModelOrder) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case invokemodelorder.FieldInvokeType:
 			values[i] = new(sql.NullString)
-		case invokemodelorder.FieldCreatedAt, invokemodelorder.FieldUpdatedAt, invokemodelorder.FieldDeletedAt:
+		case invokemodelorder.FieldCreatedAt, invokemodelorder.FieldUpdatedAt, invokemodelorder.FieldDeletedAt, invokemodelorder.FieldRecordTime:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -204,6 +206,12 @@ func (imo *InvokeModelOrder) assignValues(columns []string, values []any) error 
 				return fmt.Errorf("unexpected type %T for field invoke_type", values[i])
 			} else if value.Valid {
 				imo.InvokeType = enums.InvokeType(value.String)
+			}
+		case invokemodelorder.FieldRecordTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field record_time", values[i])
+			} else if value.Valid {
+				imo.RecordTime = value.Time
 			}
 		case invokemodelorder.FieldInvokeTimes:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -317,6 +325,9 @@ func (imo *InvokeModelOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("invoke_type=")
 	builder.WriteString(fmt.Sprintf("%v", imo.InvokeType))
+	builder.WriteString(", ")
+	builder.WriteString("record_time=")
+	builder.WriteString(imo.RecordTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("invoke_times=")
 	builder.WriteString(fmt.Sprintf("%v", imo.InvokeTimes))

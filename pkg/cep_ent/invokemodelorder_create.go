@@ -129,6 +129,12 @@ func (imoc *InvokeModelOrderCreate) SetNillableInvokeType(et *enums.InvokeType) 
 	return imoc
 }
 
+// SetRecordTime sets the "record_time" field.
+func (imoc *InvokeModelOrderCreate) SetRecordTime(t time.Time) *InvokeModelOrderCreate {
+	imoc.mutation.SetRecordTime(t)
+	return imoc
+}
+
 // SetInvokeTimes sets the "invoke_times" field.
 func (imoc *InvokeModelOrderCreate) SetInvokeTimes(i int) *InvokeModelOrderCreate {
 	imoc.mutation.SetInvokeTimes(i)
@@ -362,6 +368,9 @@ func (imoc *InvokeModelOrderCreate) check() error {
 			return &ValidationError{Name: "invoke_type", err: fmt.Errorf(`cep_ent: validator failed for field "InvokeModelOrder.invoke_type": %w`, err)}
 		}
 	}
+	if _, ok := imoc.mutation.RecordTime(); !ok {
+		return &ValidationError{Name: "record_time", err: errors.New(`cep_ent: missing required field "InvokeModelOrder.record_time"`)}
+	}
 	if _, ok := imoc.mutation.InvokeTimes(); !ok {
 		return &ValidationError{Name: "invoke_times", err: errors.New(`cep_ent: missing required field "InvokeModelOrder.invoke_times"`)}
 	}
@@ -442,6 +451,10 @@ func (imoc *InvokeModelOrderCreate) createSpec() (*InvokeModelOrder, *sqlgraph.C
 	if value, ok := imoc.mutation.InvokeType(); ok {
 		_spec.SetField(invokemodelorder.FieldInvokeType, field.TypeEnum, value)
 		_node.InvokeType = value
+	}
+	if value, ok := imoc.mutation.RecordTime(); ok {
+		_spec.SetField(invokemodelorder.FieldRecordTime, field.TypeTime, value)
+		_node.RecordTime = value
 	}
 	if value, ok := imoc.mutation.InvokeTimes(); ok {
 		_spec.SetField(invokemodelorder.FieldInvokeTimes, field.TypeInt, value)
@@ -687,6 +700,18 @@ func (u *InvokeModelOrderUpsert) SetInvokeType(v enums.InvokeType) *InvokeModelO
 // UpdateInvokeType sets the "invoke_type" field to the value that was provided on create.
 func (u *InvokeModelOrderUpsert) UpdateInvokeType() *InvokeModelOrderUpsert {
 	u.SetExcluded(invokemodelorder.FieldInvokeType)
+	return u
+}
+
+// SetRecordTime sets the "record_time" field.
+func (u *InvokeModelOrderUpsert) SetRecordTime(v time.Time) *InvokeModelOrderUpsert {
+	u.Set(invokemodelorder.FieldRecordTime, v)
+	return u
+}
+
+// UpdateRecordTime sets the "record_time" field to the value that was provided on create.
+func (u *InvokeModelOrderUpsert) UpdateRecordTime() *InvokeModelOrderUpsert {
+	u.SetExcluded(invokemodelorder.FieldRecordTime)
 	return u
 }
 
@@ -954,6 +979,20 @@ func (u *InvokeModelOrderUpsertOne) SetInvokeType(v enums.InvokeType) *InvokeMod
 func (u *InvokeModelOrderUpsertOne) UpdateInvokeType() *InvokeModelOrderUpsertOne {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.UpdateInvokeType()
+	})
+}
+
+// SetRecordTime sets the "record_time" field.
+func (u *InvokeModelOrderUpsertOne) SetRecordTime(v time.Time) *InvokeModelOrderUpsertOne {
+	return u.Update(func(s *InvokeModelOrderUpsert) {
+		s.SetRecordTime(v)
+	})
+}
+
+// UpdateRecordTime sets the "record_time" field to the value that was provided on create.
+func (u *InvokeModelOrderUpsertOne) UpdateRecordTime() *InvokeModelOrderUpsertOne {
+	return u.Update(func(s *InvokeModelOrderUpsert) {
+		s.UpdateRecordTime()
 	})
 }
 
@@ -1402,6 +1441,20 @@ func (u *InvokeModelOrderUpsertBulk) SetInvokeType(v enums.InvokeType) *InvokeMo
 func (u *InvokeModelOrderUpsertBulk) UpdateInvokeType() *InvokeModelOrderUpsertBulk {
 	return u.Update(func(s *InvokeModelOrderUpsert) {
 		s.UpdateInvokeType()
+	})
+}
+
+// SetRecordTime sets the "record_time" field.
+func (u *InvokeModelOrderUpsertBulk) SetRecordTime(v time.Time) *InvokeModelOrderUpsertBulk {
+	return u.Update(func(s *InvokeModelOrderUpsert) {
+		s.SetRecordTime(v)
+	})
+}
+
+// UpdateRecordTime sets the "record_time" field to the value that was provided on create.
+func (u *InvokeModelOrderUpsertBulk) UpdateRecordTime() *InvokeModelOrderUpsertBulk {
+	return u.Update(func(s *InvokeModelOrderUpsert) {
+		s.UpdateRecordTime()
 	})
 }
 

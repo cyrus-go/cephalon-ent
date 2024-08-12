@@ -128,6 +128,12 @@ func (imou *InvokeModelOrderUpdate) SetNillableInvokeType(et *enums.InvokeType) 
 	return imou
 }
 
+// SetRecordTime sets the "record_time" field.
+func (imou *InvokeModelOrderUpdate) SetRecordTime(t time.Time) *InvokeModelOrderUpdate {
+	imou.mutation.SetRecordTime(t)
+	return imou
+}
+
 // SetInvokeTimes sets the "invoke_times" field.
 func (imou *InvokeModelOrderUpdate) SetInvokeTimes(i int) *InvokeModelOrderUpdate {
 	imou.mutation.ResetInvokeTimes()
@@ -400,6 +406,9 @@ func (imou *InvokeModelOrderUpdate) sqlSave(ctx context.Context) (n int, err err
 	}
 	if value, ok := imou.mutation.InvokeType(); ok {
 		_spec.SetField(invokemodelorder.FieldInvokeType, field.TypeEnum, value)
+	}
+	if value, ok := imou.mutation.RecordTime(); ok {
+		_spec.SetField(invokemodelorder.FieldRecordTime, field.TypeTime, value)
 	}
 	if value, ok := imou.mutation.InvokeTimes(); ok {
 		_spec.SetField(invokemodelorder.FieldInvokeTimes, field.TypeInt, value)
@@ -676,6 +685,12 @@ func (imouo *InvokeModelOrderUpdateOne) SetNillableInvokeType(et *enums.InvokeTy
 	if et != nil {
 		imouo.SetInvokeType(*et)
 	}
+	return imouo
+}
+
+// SetRecordTime sets the "record_time" field.
+func (imouo *InvokeModelOrderUpdateOne) SetRecordTime(t time.Time) *InvokeModelOrderUpdateOne {
+	imouo.mutation.SetRecordTime(t)
 	return imouo
 }
 
@@ -981,6 +996,9 @@ func (imouo *InvokeModelOrderUpdateOne) sqlSave(ctx context.Context) (_node *Inv
 	}
 	if value, ok := imouo.mutation.InvokeType(); ok {
 		_spec.SetField(invokemodelorder.FieldInvokeType, field.TypeEnum, value)
+	}
+	if value, ok := imouo.mutation.RecordTime(); ok {
+		_spec.SetField(invokemodelorder.FieldRecordTime, field.TypeTime, value)
 	}
 	if value, ok := imouo.mutation.InvokeTimes(); ok {
 		_spec.SetField(invokemodelorder.FieldInvokeTimes, field.TypeInt, value)

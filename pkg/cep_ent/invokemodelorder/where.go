@@ -96,6 +96,11 @@ func APITokenID(v int64) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldEQ(FieldAPITokenID, v))
 }
 
+// RecordTime applies equality check predicate on the "record_time" field. It's identical to RecordTimeEQ.
+func RecordTime(v time.Time) predicate.InvokeModelOrder {
+	return predicate.InvokeModelOrder(sql.FieldEQ(FieldRecordTime, v))
+}
+
 // InvokeTimes applies equality check predicate on the "invoke_times" field. It's identical to InvokeTimesEQ.
 func InvokeTimes(v int) predicate.InvokeModelOrder {
 	return predicate.InvokeModelOrder(sql.FieldEQ(FieldInvokeTimes, v))
@@ -409,6 +414,46 @@ func InvokeTypeNotIn(vs ...enums.InvokeType) predicate.InvokeModelOrder {
 		v[i] = vs[i]
 	}
 	return predicate.InvokeModelOrder(sql.FieldNotIn(FieldInvokeType, v...))
+}
+
+// RecordTimeEQ applies the EQ predicate on the "record_time" field.
+func RecordTimeEQ(v time.Time) predicate.InvokeModelOrder {
+	return predicate.InvokeModelOrder(sql.FieldEQ(FieldRecordTime, v))
+}
+
+// RecordTimeNEQ applies the NEQ predicate on the "record_time" field.
+func RecordTimeNEQ(v time.Time) predicate.InvokeModelOrder {
+	return predicate.InvokeModelOrder(sql.FieldNEQ(FieldRecordTime, v))
+}
+
+// RecordTimeIn applies the In predicate on the "record_time" field.
+func RecordTimeIn(vs ...time.Time) predicate.InvokeModelOrder {
+	return predicate.InvokeModelOrder(sql.FieldIn(FieldRecordTime, vs...))
+}
+
+// RecordTimeNotIn applies the NotIn predicate on the "record_time" field.
+func RecordTimeNotIn(vs ...time.Time) predicate.InvokeModelOrder {
+	return predicate.InvokeModelOrder(sql.FieldNotIn(FieldRecordTime, vs...))
+}
+
+// RecordTimeGT applies the GT predicate on the "record_time" field.
+func RecordTimeGT(v time.Time) predicate.InvokeModelOrder {
+	return predicate.InvokeModelOrder(sql.FieldGT(FieldRecordTime, v))
+}
+
+// RecordTimeGTE applies the GTE predicate on the "record_time" field.
+func RecordTimeGTE(v time.Time) predicate.InvokeModelOrder {
+	return predicate.InvokeModelOrder(sql.FieldGTE(FieldRecordTime, v))
+}
+
+// RecordTimeLT applies the LT predicate on the "record_time" field.
+func RecordTimeLT(v time.Time) predicate.InvokeModelOrder {
+	return predicate.InvokeModelOrder(sql.FieldLT(FieldRecordTime, v))
+}
+
+// RecordTimeLTE applies the LTE predicate on the "record_time" field.
+func RecordTimeLTE(v time.Time) predicate.InvokeModelOrder {
+	return predicate.InvokeModelOrder(sql.FieldLTE(FieldRecordTime, v))
 }
 
 // InvokeTimesEQ applies the EQ predicate on the "invoke_times" field.

@@ -1702,23 +1702,23 @@ func init() {
 	// invokemodelorder.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	invokemodelorder.DefaultDeletedAt = invokemodelorderDescDeletedAt.Default.(time.Time)
 	// invokemodelorderDescInvokeTimes is the schema descriptor for invoke_times field.
-	invokemodelorderDescInvokeTimes := invokemodelorderFields[4].Descriptor()
+	invokemodelorderDescInvokeTimes := invokemodelorderFields[5].Descriptor()
 	// invokemodelorder.DefaultInvokeTimes holds the default value on creation for the invoke_times field.
 	invokemodelorder.DefaultInvokeTimes = invokemodelorderDescInvokeTimes.Default.(int)
 	// invokemodelorderDescInputTokenCost is the schema descriptor for input_token_cost field.
-	invokemodelorderDescInputTokenCost := invokemodelorderFields[5].Descriptor()
+	invokemodelorderDescInputTokenCost := invokemodelorderFields[6].Descriptor()
 	// invokemodelorder.DefaultInputTokenCost holds the default value on creation for the input_token_cost field.
 	invokemodelorder.DefaultInputTokenCost = invokemodelorderDescInputTokenCost.Default.(int64)
 	// invokemodelorderDescOutputTokenCost is the schema descriptor for output_token_cost field.
-	invokemodelorderDescOutputTokenCost := invokemodelorderFields[6].Descriptor()
+	invokemodelorderDescOutputTokenCost := invokemodelorderFields[7].Descriptor()
 	// invokemodelorder.DefaultOutputTokenCost holds the default value on creation for the output_token_cost field.
 	invokemodelorder.DefaultOutputTokenCost = invokemodelorderDescOutputTokenCost.Default.(int64)
 	// invokemodelorderDescInputCepCost is the schema descriptor for input_cep_cost field.
-	invokemodelorderDescInputCepCost := invokemodelorderFields[7].Descriptor()
+	invokemodelorderDescInputCepCost := invokemodelorderFields[8].Descriptor()
 	// invokemodelorder.DefaultInputCepCost holds the default value on creation for the input_cep_cost field.
 	invokemodelorder.DefaultInputCepCost = invokemodelorderDescInputCepCost.Default.(int64)
 	// invokemodelorderDescOutputCepCost is the schema descriptor for output_cep_cost field.
-	invokemodelorderDescOutputCepCost := invokemodelorderFields[8].Descriptor()
+	invokemodelorderDescOutputCepCost := invokemodelorderFields[9].Descriptor()
 	// invokemodelorder.DefaultOutputCepCost holds the default value on creation for the output_cep_cost field.
 	invokemodelorder.DefaultOutputCepCost = invokemodelorderDescOutputCepCost.Default.(int64)
 	// invokemodelorderDescID is the schema descriptor for id field.

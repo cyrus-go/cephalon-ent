@@ -34,6 +34,8 @@ const (
 	FieldAPITokenID = "api_token_id"
 	// FieldInvokeType holds the string denoting the invoke_type field in the database.
 	FieldInvokeType = "invoke_type"
+	// FieldRecordTime holds the string denoting the record_time field in the database.
+	FieldRecordTime = "record_time"
 	// FieldInvokeTimes holds the string denoting the invoke_times field in the database.
 	FieldInvokeTimes = "invoke_times"
 	// FieldInputTokenCost holds the string denoting the input_token_cost field in the database.
@@ -96,6 +98,7 @@ var Columns = []string{
 	FieldModelID,
 	FieldAPITokenID,
 	FieldInvokeType,
+	FieldRecordTime,
 	FieldInvokeTimes,
 	FieldInputTokenCost,
 	FieldOutputTokenCost,
@@ -203,6 +206,11 @@ func ByAPITokenID(opts ...sql.OrderTermOption) OrderOption {
 // ByInvokeType orders the results by the invoke_type field.
 func ByInvokeType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldInvokeType, opts...).ToFunc()
+}
+
+// ByRecordTime orders the results by the record_time field.
+func ByRecordTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRecordTime, opts...).ToFunc()
 }
 
 // ByInvokeTimes orders the results by the invoke_times field.

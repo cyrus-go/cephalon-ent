@@ -36542,6 +36542,7 @@ type InvokeModelOrderMutation struct {
 	updated_at           *time.Time
 	deleted_at           *time.Time
 	invoke_type          *enums.InvokeType
+	record_time          *time.Time
 	invoke_times         *int
 	addinvoke_times      *int
 	input_token_cost     *int64
@@ -37035,6 +37036,42 @@ func (m *InvokeModelOrderMutation) ResetInvokeType() {
 	m.invoke_type = nil
 }
 
+// SetRecordTime sets the "record_time" field.
+func (m *InvokeModelOrderMutation) SetRecordTime(t time.Time) {
+	m.record_time = &t
+}
+
+// RecordTime returns the value of the "record_time" field in the mutation.
+func (m *InvokeModelOrderMutation) RecordTime() (r time.Time, exists bool) {
+	v := m.record_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRecordTime returns the old "record_time" field's value of the InvokeModelOrder entity.
+// If the InvokeModelOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvokeModelOrderMutation) OldRecordTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRecordTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRecordTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRecordTime: %w", err)
+	}
+	return oldValue.RecordTime, nil
+}
+
+// ResetRecordTime resets all changes to the "record_time" field.
+func (m *InvokeModelOrderMutation) ResetRecordTime() {
+	m.record_time = nil
+}
+
 // SetInvokeTimes sets the "invoke_times" field.
 func (m *InvokeModelOrderMutation) SetInvokeTimes(i int) {
 	m.invoke_times = &i
@@ -37484,7 +37521,7 @@ func (m *InvokeModelOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InvokeModelOrderMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_by != nil {
 		fields = append(fields, invokemodelorder.FieldCreatedBy)
 	}
@@ -37511,6 +37548,9 @@ func (m *InvokeModelOrderMutation) Fields() []string {
 	}
 	if m.invoke_type != nil {
 		fields = append(fields, invokemodelorder.FieldInvokeType)
+	}
+	if m.record_time != nil {
+		fields = append(fields, invokemodelorder.FieldRecordTime)
 	}
 	if m.invoke_times != nil {
 		fields = append(fields, invokemodelorder.FieldInvokeTimes)
@@ -37553,6 +37593,8 @@ func (m *InvokeModelOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.APITokenID()
 	case invokemodelorder.FieldInvokeType:
 		return m.InvokeType()
+	case invokemodelorder.FieldRecordTime:
+		return m.RecordTime()
 	case invokemodelorder.FieldInvokeTimes:
 		return m.InvokeTimes()
 	case invokemodelorder.FieldInputTokenCost:
@@ -37590,6 +37632,8 @@ func (m *InvokeModelOrderMutation) OldField(ctx context.Context, name string) (e
 		return m.OldAPITokenID(ctx)
 	case invokemodelorder.FieldInvokeType:
 		return m.OldInvokeType(ctx)
+	case invokemodelorder.FieldRecordTime:
+		return m.OldRecordTime(ctx)
 	case invokemodelorder.FieldInvokeTimes:
 		return m.OldInvokeTimes(ctx)
 	case invokemodelorder.FieldInputTokenCost:
@@ -37671,6 +37715,13 @@ func (m *InvokeModelOrderMutation) SetField(name string, value ent.Value) error 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetInvokeType(v)
+		return nil
+	case invokemodelorder.FieldRecordTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRecordTime(v)
 		return nil
 	case invokemodelorder.FieldInvokeTimes:
 		v, ok := value.(int)
@@ -37869,6 +37920,9 @@ func (m *InvokeModelOrderMutation) ResetField(name string) error {
 		return nil
 	case invokemodelorder.FieldInvokeType:
 		m.ResetInvokeType()
+		return nil
+	case invokemodelorder.FieldRecordTime:
+		m.ResetRecordTime()
 		return nil
 	case invokemodelorder.FieldInvokeTimes:
 		m.ResetInvokeTimes()
