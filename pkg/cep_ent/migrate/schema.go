@@ -535,7 +535,7 @@ var (
 		{Name: "version", Type: field.TypeString, Comment: "设备版本", Default: "无版本号"},
 		{Name: "fault", Type: field.TypeEnum, Comment: "故障信息", Enums: []string{"ok", "drive_abnormal", "no_disk", "task_failure", "recover"}, Default: "ok"},
 		{Name: "rank", Type: field.TypeEnum, Comment: "设备等级(目前阶段就是黑名单)", Enums: []string{"black", "normal"}, Default: "normal"},
-		{Name: "free_gpu_num", Type: field.TypeInt, Comment: "空闲GPU数量", Default: 1},
+		{Name: "free_gpu_num", Type: field.TypeInt, Comment: "空闲GPU数量", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
