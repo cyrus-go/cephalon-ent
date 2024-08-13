@@ -29,6 +29,7 @@ const (
 	MissionCategorySDLang        MissionCategory = "SD_LANG"
 	MissionCategoryComfyuiKe     MissionCategory = "COMFYUI_KE"
 	MissionCategoryChatchat      MissionCategory = "CHATCHAT"
+	MissionCategoryChatTTS       MissionCategory = "CHATTTS"
 	MissionCategoryLora          MissionCategory = "LORA"
 	MissionCategoryFooocusWu     MissionCategory = "FOOOCUS_WU"
 	MissionCategorySvdBack       MissionCategory = "SVD_BACK"
@@ -70,6 +71,7 @@ func (obj MissionCategory) Values() []string {
 		string(MissionCategorySDLang),
 		string(MissionCategoryComfyuiKe),
 		string(MissionCategoryChatchat),
+		string(MissionCategoryChatTTS),
 		string(MissionCategoryLora),
 		string(MissionCategoryFooocusWu),
 		string(MissionCategorySvdBack),
