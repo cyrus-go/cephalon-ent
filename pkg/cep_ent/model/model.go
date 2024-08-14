@@ -42,12 +42,10 @@ const (
 	FieldTotalUsage = "total_usage"
 	// EdgeModelPrices holds the string denoting the model_prices edge name in mutations.
 	EdgeModelPrices = "model_prices"
-	// EdgeStarUser holds the string denoting the star_user edge name in mutations.
-	EdgeStarUser = "star_user"
+	// EdgeUserModels holds the string denoting the user_models edge name in mutations.
+	EdgeUserModels = "user_models"
 	// EdgeInvokeModelOrders holds the string denoting the invoke_model_orders edge name in mutations.
 	EdgeInvokeModelOrders = "invoke_model_orders"
-	// EdgeStarModel holds the string denoting the star_model edge name in mutations.
-	EdgeStarModel = "star_model"
 	// Table holds the table name of the model in the database.
 	Table = "models"
 	// ModelPricesTable is the table that holds the model_prices relation/edge.
@@ -57,11 +55,13 @@ const (
 	ModelPricesInverseTable = "model_prices"
 	// ModelPricesColumn is the table column denoting the model_prices relation/edge.
 	ModelPricesColumn = "model_id"
-	// StarUserTable is the table that holds the star_user relation/edge. The primary key declared below.
-	StarUserTable = "user_models"
-	// StarUserInverseTable is the table name for the User entity.
-	// It exists in this package in order to avoid circular dependency with the "user" package.
-	StarUserInverseTable = "users"
+	// UserModelsTable is the table that holds the user_models relation/edge.
+	UserModelsTable = "user_models"
+	// UserModelsInverseTable is the table name for the UserModel entity.
+	// It exists in this package in order to avoid circular dependency with the "usermodel" package.
+	UserModelsInverseTable = "user_models"
+	// UserModelsColumn is the table column denoting the user_models relation/edge.
+	UserModelsColumn = "model_id"
 	// InvokeModelOrdersTable is the table that holds the invoke_model_orders relation/edge.
 	InvokeModelOrdersTable = "invoke_model_orders"
 	// InvokeModelOrdersInverseTable is the table name for the InvokeModelOrder entity.
@@ -69,13 +69,6 @@ const (
 	InvokeModelOrdersInverseTable = "invoke_model_orders"
 	// InvokeModelOrdersColumn is the table column denoting the invoke_model_orders relation/edge.
 	InvokeModelOrdersColumn = "model_id"
-	// StarModelTable is the table that holds the star_model relation/edge.
-	StarModelTable = "user_models"
-	// StarModelInverseTable is the table name for the UserModel entity.
-	// It exists in this package in order to avoid circular dependency with the "usermodel" package.
-	StarModelInverseTable = "user_models"
-	// StarModelColumn is the table column denoting the star_model relation/edge.
-	StarModelColumn = "model_id"
 )
 
 // Columns holds all SQL columns for model fields.
@@ -94,12 +87,6 @@ var Columns = []string{
 	FieldIsOfficial,
 	FieldTotalUsage,
 }
-
-var (
-	// StarUserPrimaryKey and StarUserColumn2 are the table columns denoting the
-	// primary key for the star_user relation (M2M).
-	StarUserPrimaryKey = []string{"user_id", "model_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -244,17 +231,17 @@ func ByModelPrices(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByStarUserCount orders the results by star_user count.
-func ByStarUserCount(opts ...sql.OrderTermOption) OrderOption {
+// ByUserModelsCount orders the results by user_models count.
+func ByUserModelsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newStarUserStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newUserModelsStep(), opts...)
 	}
 }
 
-// ByStarUser orders the results by star_user terms.
-func ByStarUser(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByUserModels orders the results by user_models terms.
+func ByUserModels(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newStarUserStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newUserModelsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -271,20 +258,6 @@ func ByInvokeModelOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption
 		sqlgraph.OrderByNeighborTerms(s, newInvokeModelOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-
-// ByStarModelCount orders the results by star_model count.
-func ByStarModelCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newStarModelStep(), opts...)
-	}
-}
-
-// ByStarModel orders the results by star_model terms.
-func ByStarModel(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newStarModelStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
 func newModelPricesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -292,11 +265,11 @@ func newModelPricesStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, ModelPricesTable, ModelPricesColumn),
 	)
 }
-func newStarUserStep() *sqlgraph.Step {
+func newUserModelsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(StarUserInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, StarUserTable, StarUserPrimaryKey...),
+		sqlgraph.To(UserModelsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, UserModelsTable, UserModelsColumn),
 	)
 }
 func newInvokeModelOrdersStep() *sqlgraph.Step {
@@ -304,12 +277,5 @@ func newInvokeModelOrdersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(InvokeModelOrdersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, InvokeModelOrdersTable, InvokeModelOrdersColumn),
-	)
-}
-func newStarModelStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(StarModelInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, true, StarModelTable, StarModelColumn),
 	)
 }

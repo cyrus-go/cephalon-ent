@@ -14,7 +14,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invokemodelorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usermodel"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -224,19 +223,19 @@ func (mc *ModelCreate) AddModelPrices(m ...*ModelPrice) *ModelCreate {
 	return mc.AddModelPriceIDs(ids...)
 }
 
-// AddStarUserIDs adds the "star_user" edge to the User entity by IDs.
-func (mc *ModelCreate) AddStarUserIDs(ids ...int64) *ModelCreate {
-	mc.mutation.AddStarUserIDs(ids...)
+// AddUserModelIDs adds the "user_models" edge to the UserModel entity by IDs.
+func (mc *ModelCreate) AddUserModelIDs(ids ...int64) *ModelCreate {
+	mc.mutation.AddUserModelIDs(ids...)
 	return mc
 }
 
-// AddStarUser adds the "star_user" edges to the User entity.
-func (mc *ModelCreate) AddStarUser(u ...*User) *ModelCreate {
+// AddUserModels adds the "user_models" edges to the UserModel entity.
+func (mc *ModelCreate) AddUserModels(u ...*UserModel) *ModelCreate {
 	ids := make([]int64, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
-	return mc.AddStarUserIDs(ids...)
+	return mc.AddUserModelIDs(ids...)
 }
 
 // AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by IDs.
@@ -252,21 +251,6 @@ func (mc *ModelCreate) AddInvokeModelOrders(i ...*InvokeModelOrder) *ModelCreate
 		ids[j] = i[j].ID
 	}
 	return mc.AddInvokeModelOrderIDs(ids...)
-}
-
-// AddStarModelIDs adds the "star_model" edge to the UserModel entity by IDs.
-func (mc *ModelCreate) AddStarModelIDs(ids ...int64) *ModelCreate {
-	mc.mutation.AddStarModelIDs(ids...)
-	return mc
-}
-
-// AddStarModel adds the "star_model" edges to the UserModel entity.
-func (mc *ModelCreate) AddStarModel(u ...*UserModel) *ModelCreate {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return mc.AddStarModelIDs(ids...)
 }
 
 // Mutation returns the ModelMutation object of the builder.
@@ -503,26 +487,19 @@ func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := mc.mutation.StarUserIDs(); len(nodes) > 0 {
+	if nodes := mc.mutation.UserModelsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   model.StarUserTable,
-			Columns: model.StarUserPrimaryKey,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.UserModelsTable,
+			Columns: []string{model.UserModelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		createE := &UserModelCreate{config: mc.config, mutation: newUserModelMutation(mc.config, OpCreate)}
-		createE.defaults()
-		_, specE := createE.createSpec()
-		edge.Target.Fields = specE.Fields
-		if specE.ID.Value != nil {
-			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
@@ -535,22 +512,6 @@ func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := mc.mutation.StarModelIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   model.StarModelTable,
-			Columns: []string{model.StarModelColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

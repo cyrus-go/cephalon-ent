@@ -634,21 +634,21 @@ func HasModelPricesWith(preds ...predicate.ModelPrice) predicate.Model {
 	})
 }
 
-// HasStarUser applies the HasEdge predicate on the "star_user" edge.
-func HasStarUser() predicate.Model {
+// HasUserModels applies the HasEdge predicate on the "user_models" edge.
+func HasUserModels() predicate.Model {
 	return predicate.Model(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, StarUserTable, StarUserPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, UserModelsTable, UserModelsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasStarUserWith applies the HasEdge predicate on the "star_user" edge with a given conditions (other predicates).
-func HasStarUserWith(preds ...predicate.User) predicate.Model {
+// HasUserModelsWith applies the HasEdge predicate on the "user_models" edge with a given conditions (other predicates).
+func HasUserModelsWith(preds ...predicate.UserModel) predicate.Model {
 	return predicate.Model(func(s *sql.Selector) {
-		step := newStarUserStep()
+		step := newUserModelsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -672,29 +672,6 @@ func HasInvokeModelOrders() predicate.Model {
 func HasInvokeModelOrdersWith(preds ...predicate.InvokeModelOrder) predicate.Model {
 	return predicate.Model(func(s *sql.Selector) {
 		step := newInvokeModelOrdersStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasStarModel applies the HasEdge predicate on the "star_model" edge.
-func HasStarModel() predicate.Model {
-	return predicate.Model(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, StarModelTable, StarModelColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasStarModelWith applies the HasEdge predicate on the "star_model" edge with a given conditions (other predicates).
-func HasStarModelWith(preds ...predicate.UserModel) predicate.Model {
-	return predicate.Model(func(s *sql.Selector) {
-		step := newStarModelStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

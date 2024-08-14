@@ -63437,15 +63437,12 @@ type ModelMutation struct {
 	model_prices               map[int64]struct{}
 	removedmodel_prices        map[int64]struct{}
 	clearedmodel_prices        bool
-	star_user                  map[int64]struct{}
-	removedstar_user           map[int64]struct{}
-	clearedstar_user           bool
+	user_models                map[int64]struct{}
+	removeduser_models         map[int64]struct{}
+	cleareduser_models         bool
 	invoke_model_orders        map[int64]struct{}
 	removedinvoke_model_orders map[int64]struct{}
 	clearedinvoke_model_orders bool
-	star_model                 map[int64]struct{}
-	removedstar_model          map[int64]struct{}
-	clearedstar_model          bool
 	done                       bool
 	oldValue                   func(context.Context) (*Model, error)
 	predicates                 []predicate.Model
@@ -64101,58 +64098,58 @@ func (m *ModelMutation) ResetModelPrices() {
 	m.removedmodel_prices = nil
 }
 
-// AddStarUserIDs adds the "star_user" edge to the User entity by ids.
-func (m *ModelMutation) AddStarUserIDs(ids ...int64) {
-	if m.star_user == nil {
-		m.star_user = make(map[int64]struct{})
+// AddUserModelIDs adds the "user_models" edge to the UserModel entity by ids.
+func (m *ModelMutation) AddUserModelIDs(ids ...int64) {
+	if m.user_models == nil {
+		m.user_models = make(map[int64]struct{})
 	}
 	for i := range ids {
-		m.star_user[ids[i]] = struct{}{}
+		m.user_models[ids[i]] = struct{}{}
 	}
 }
 
-// ClearStarUser clears the "star_user" edge to the User entity.
-func (m *ModelMutation) ClearStarUser() {
-	m.clearedstar_user = true
+// ClearUserModels clears the "user_models" edge to the UserModel entity.
+func (m *ModelMutation) ClearUserModels() {
+	m.cleareduser_models = true
 }
 
-// StarUserCleared reports if the "star_user" edge to the User entity was cleared.
-func (m *ModelMutation) StarUserCleared() bool {
-	return m.clearedstar_user
+// UserModelsCleared reports if the "user_models" edge to the UserModel entity was cleared.
+func (m *ModelMutation) UserModelsCleared() bool {
+	return m.cleareduser_models
 }
 
-// RemoveStarUserIDs removes the "star_user" edge to the User entity by IDs.
-func (m *ModelMutation) RemoveStarUserIDs(ids ...int64) {
-	if m.removedstar_user == nil {
-		m.removedstar_user = make(map[int64]struct{})
+// RemoveUserModelIDs removes the "user_models" edge to the UserModel entity by IDs.
+func (m *ModelMutation) RemoveUserModelIDs(ids ...int64) {
+	if m.removeduser_models == nil {
+		m.removeduser_models = make(map[int64]struct{})
 	}
 	for i := range ids {
-		delete(m.star_user, ids[i])
-		m.removedstar_user[ids[i]] = struct{}{}
+		delete(m.user_models, ids[i])
+		m.removeduser_models[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedStarUser returns the removed IDs of the "star_user" edge to the User entity.
-func (m *ModelMutation) RemovedStarUserIDs() (ids []int64) {
-	for id := range m.removedstar_user {
+// RemovedUserModels returns the removed IDs of the "user_models" edge to the UserModel entity.
+func (m *ModelMutation) RemovedUserModelsIDs() (ids []int64) {
+	for id := range m.removeduser_models {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// StarUserIDs returns the "star_user" edge IDs in the mutation.
-func (m *ModelMutation) StarUserIDs() (ids []int64) {
-	for id := range m.star_user {
+// UserModelsIDs returns the "user_models" edge IDs in the mutation.
+func (m *ModelMutation) UserModelsIDs() (ids []int64) {
+	for id := range m.user_models {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetStarUser resets all changes to the "star_user" edge.
-func (m *ModelMutation) ResetStarUser() {
-	m.star_user = nil
-	m.clearedstar_user = false
-	m.removedstar_user = nil
+// ResetUserModels resets all changes to the "user_models" edge.
+func (m *ModelMutation) ResetUserModels() {
+	m.user_models = nil
+	m.cleareduser_models = false
+	m.removeduser_models = nil
 }
 
 // AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by ids.
@@ -64207,60 +64204,6 @@ func (m *ModelMutation) ResetInvokeModelOrders() {
 	m.invoke_model_orders = nil
 	m.clearedinvoke_model_orders = false
 	m.removedinvoke_model_orders = nil
-}
-
-// AddStarModelIDs adds the "star_model" edge to the UserModel entity by ids.
-func (m *ModelMutation) AddStarModelIDs(ids ...int64) {
-	if m.star_model == nil {
-		m.star_model = make(map[int64]struct{})
-	}
-	for i := range ids {
-		m.star_model[ids[i]] = struct{}{}
-	}
-}
-
-// ClearStarModel clears the "star_model" edge to the UserModel entity.
-func (m *ModelMutation) ClearStarModel() {
-	m.clearedstar_model = true
-}
-
-// StarModelCleared reports if the "star_model" edge to the UserModel entity was cleared.
-func (m *ModelMutation) StarModelCleared() bool {
-	return m.clearedstar_model
-}
-
-// RemoveStarModelIDs removes the "star_model" edge to the UserModel entity by IDs.
-func (m *ModelMutation) RemoveStarModelIDs(ids ...int64) {
-	if m.removedstar_model == nil {
-		m.removedstar_model = make(map[int64]struct{})
-	}
-	for i := range ids {
-		delete(m.star_model, ids[i])
-		m.removedstar_model[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedStarModel returns the removed IDs of the "star_model" edge to the UserModel entity.
-func (m *ModelMutation) RemovedStarModelIDs() (ids []int64) {
-	for id := range m.removedstar_model {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// StarModelIDs returns the "star_model" edge IDs in the mutation.
-func (m *ModelMutation) StarModelIDs() (ids []int64) {
-	for id := range m.star_model {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetStarModel resets all changes to the "star_model" edge.
-func (m *ModelMutation) ResetStarModel() {
-	m.star_model = nil
-	m.clearedstar_model = false
-	m.removedstar_model = nil
 }
 
 // Where appends a list predicates to the ModelMutation builder.
@@ -64622,18 +64565,15 @@ func (m *ModelMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ModelMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 3)
 	if m.model_prices != nil {
 		edges = append(edges, model.EdgeModelPrices)
 	}
-	if m.star_user != nil {
-		edges = append(edges, model.EdgeStarUser)
+	if m.user_models != nil {
+		edges = append(edges, model.EdgeUserModels)
 	}
 	if m.invoke_model_orders != nil {
 		edges = append(edges, model.EdgeInvokeModelOrders)
-	}
-	if m.star_model != nil {
-		edges = append(edges, model.EdgeStarModel)
 	}
 	return edges
 }
@@ -64648,9 +64588,9 @@ func (m *ModelMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case model.EdgeStarUser:
-		ids := make([]ent.Value, 0, len(m.star_user))
-		for id := range m.star_user {
+	case model.EdgeUserModels:
+		ids := make([]ent.Value, 0, len(m.user_models))
+		for id := range m.user_models {
 			ids = append(ids, id)
 		}
 		return ids
@@ -64660,30 +64600,21 @@ func (m *ModelMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case model.EdgeStarModel:
-		ids := make([]ent.Value, 0, len(m.star_model))
-		for id := range m.star_model {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ModelMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 3)
 	if m.removedmodel_prices != nil {
 		edges = append(edges, model.EdgeModelPrices)
 	}
-	if m.removedstar_user != nil {
-		edges = append(edges, model.EdgeStarUser)
+	if m.removeduser_models != nil {
+		edges = append(edges, model.EdgeUserModels)
 	}
 	if m.removedinvoke_model_orders != nil {
 		edges = append(edges, model.EdgeInvokeModelOrders)
-	}
-	if m.removedstar_model != nil {
-		edges = append(edges, model.EdgeStarModel)
 	}
 	return edges
 }
@@ -64698,9 +64629,9 @@ func (m *ModelMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case model.EdgeStarUser:
-		ids := make([]ent.Value, 0, len(m.removedstar_user))
-		for id := range m.removedstar_user {
+	case model.EdgeUserModels:
+		ids := make([]ent.Value, 0, len(m.removeduser_models))
+		for id := range m.removeduser_models {
 			ids = append(ids, id)
 		}
 		return ids
@@ -64710,30 +64641,21 @@ func (m *ModelMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case model.EdgeStarModel:
-		ids := make([]ent.Value, 0, len(m.removedstar_model))
-		for id := range m.removedstar_model {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ModelMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 3)
 	if m.clearedmodel_prices {
 		edges = append(edges, model.EdgeModelPrices)
 	}
-	if m.clearedstar_user {
-		edges = append(edges, model.EdgeStarUser)
+	if m.cleareduser_models {
+		edges = append(edges, model.EdgeUserModels)
 	}
 	if m.clearedinvoke_model_orders {
 		edges = append(edges, model.EdgeInvokeModelOrders)
-	}
-	if m.clearedstar_model {
-		edges = append(edges, model.EdgeStarModel)
 	}
 	return edges
 }
@@ -64744,12 +64666,10 @@ func (m *ModelMutation) EdgeCleared(name string) bool {
 	switch name {
 	case model.EdgeModelPrices:
 		return m.clearedmodel_prices
-	case model.EdgeStarUser:
-		return m.clearedstar_user
+	case model.EdgeUserModels:
+		return m.cleareduser_models
 	case model.EdgeInvokeModelOrders:
 		return m.clearedinvoke_model_orders
-	case model.EdgeStarModel:
-		return m.clearedstar_model
 	}
 	return false
 }
@@ -64769,14 +64689,11 @@ func (m *ModelMutation) ResetEdge(name string) error {
 	case model.EdgeModelPrices:
 		m.ResetModelPrices()
 		return nil
-	case model.EdgeStarUser:
-		m.ResetStarUser()
+	case model.EdgeUserModels:
+		m.ResetUserModels()
 		return nil
 	case model.EdgeInvokeModelOrders:
 		m.ResetInvokeModelOrders()
-		return nil
-	case model.EdgeStarModel:
-		m.ResetStarModel()
 		return nil
 	}
 	return fmt.Errorf("unknown Model edge %s", name)
@@ -84643,15 +84560,12 @@ type UserMutation struct {
 	api_tokens                      map[int64]struct{}
 	removedapi_tokens               map[int64]struct{}
 	clearedapi_tokens               bool
-	star_model                      map[int64]struct{}
-	removedstar_model               map[int64]struct{}
-	clearedstar_model               bool
+	user_models                     map[int64]struct{}
+	removeduser_models              map[int64]struct{}
+	cleareduser_models              bool
 	invoke_model_orders             map[int64]struct{}
 	removedinvoke_model_orders      map[int64]struct{}
 	clearedinvoke_model_orders      bool
-	model_star                      map[int64]struct{}
-	removedmodel_star               map[int64]struct{}
-	clearedmodel_star               bool
 	done                            bool
 	oldValue                        func(context.Context) (*User, error)
 	predicates                      []predicate.User
@@ -88281,58 +88195,58 @@ func (m *UserMutation) ResetAPITokens() {
 	m.removedapi_tokens = nil
 }
 
-// AddStarModelIDs adds the "star_model" edge to the Model entity by ids.
-func (m *UserMutation) AddStarModelIDs(ids ...int64) {
-	if m.star_model == nil {
-		m.star_model = make(map[int64]struct{})
+// AddUserModelIDs adds the "user_models" edge to the UserModel entity by ids.
+func (m *UserMutation) AddUserModelIDs(ids ...int64) {
+	if m.user_models == nil {
+		m.user_models = make(map[int64]struct{})
 	}
 	for i := range ids {
-		m.star_model[ids[i]] = struct{}{}
+		m.user_models[ids[i]] = struct{}{}
 	}
 }
 
-// ClearStarModel clears the "star_model" edge to the Model entity.
-func (m *UserMutation) ClearStarModel() {
-	m.clearedstar_model = true
+// ClearUserModels clears the "user_models" edge to the UserModel entity.
+func (m *UserMutation) ClearUserModels() {
+	m.cleareduser_models = true
 }
 
-// StarModelCleared reports if the "star_model" edge to the Model entity was cleared.
-func (m *UserMutation) StarModelCleared() bool {
-	return m.clearedstar_model
+// UserModelsCleared reports if the "user_models" edge to the UserModel entity was cleared.
+func (m *UserMutation) UserModelsCleared() bool {
+	return m.cleareduser_models
 }
 
-// RemoveStarModelIDs removes the "star_model" edge to the Model entity by IDs.
-func (m *UserMutation) RemoveStarModelIDs(ids ...int64) {
-	if m.removedstar_model == nil {
-		m.removedstar_model = make(map[int64]struct{})
+// RemoveUserModelIDs removes the "user_models" edge to the UserModel entity by IDs.
+func (m *UserMutation) RemoveUserModelIDs(ids ...int64) {
+	if m.removeduser_models == nil {
+		m.removeduser_models = make(map[int64]struct{})
 	}
 	for i := range ids {
-		delete(m.star_model, ids[i])
-		m.removedstar_model[ids[i]] = struct{}{}
+		delete(m.user_models, ids[i])
+		m.removeduser_models[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedStarModel returns the removed IDs of the "star_model" edge to the Model entity.
-func (m *UserMutation) RemovedStarModelIDs() (ids []int64) {
-	for id := range m.removedstar_model {
+// RemovedUserModels returns the removed IDs of the "user_models" edge to the UserModel entity.
+func (m *UserMutation) RemovedUserModelsIDs() (ids []int64) {
+	for id := range m.removeduser_models {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// StarModelIDs returns the "star_model" edge IDs in the mutation.
-func (m *UserMutation) StarModelIDs() (ids []int64) {
-	for id := range m.star_model {
+// UserModelsIDs returns the "user_models" edge IDs in the mutation.
+func (m *UserMutation) UserModelsIDs() (ids []int64) {
+	for id := range m.user_models {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetStarModel resets all changes to the "star_model" edge.
-func (m *UserMutation) ResetStarModel() {
-	m.star_model = nil
-	m.clearedstar_model = false
-	m.removedstar_model = nil
+// ResetUserModels resets all changes to the "user_models" edge.
+func (m *UserMutation) ResetUserModels() {
+	m.user_models = nil
+	m.cleareduser_models = false
+	m.removeduser_models = nil
 }
 
 // AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by ids.
@@ -88387,60 +88301,6 @@ func (m *UserMutation) ResetInvokeModelOrders() {
 	m.invoke_model_orders = nil
 	m.clearedinvoke_model_orders = false
 	m.removedinvoke_model_orders = nil
-}
-
-// AddModelStarIDs adds the "model_star" edge to the UserModel entity by ids.
-func (m *UserMutation) AddModelStarIDs(ids ...int64) {
-	if m.model_star == nil {
-		m.model_star = make(map[int64]struct{})
-	}
-	for i := range ids {
-		m.model_star[ids[i]] = struct{}{}
-	}
-}
-
-// ClearModelStar clears the "model_star" edge to the UserModel entity.
-func (m *UserMutation) ClearModelStar() {
-	m.clearedmodel_star = true
-}
-
-// ModelStarCleared reports if the "model_star" edge to the UserModel entity was cleared.
-func (m *UserMutation) ModelStarCleared() bool {
-	return m.clearedmodel_star
-}
-
-// RemoveModelStarIDs removes the "model_star" edge to the UserModel entity by IDs.
-func (m *UserMutation) RemoveModelStarIDs(ids ...int64) {
-	if m.removedmodel_star == nil {
-		m.removedmodel_star = make(map[int64]struct{})
-	}
-	for i := range ids {
-		delete(m.model_star, ids[i])
-		m.removedmodel_star[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedModelStar returns the removed IDs of the "model_star" edge to the UserModel entity.
-func (m *UserMutation) RemovedModelStarIDs() (ids []int64) {
-	for id := range m.removedmodel_star {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ModelStarIDs returns the "model_star" edge IDs in the mutation.
-func (m *UserMutation) ModelStarIDs() (ids []int64) {
-	for id := range m.model_star {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetModelStar resets all changes to the "model_star" edge.
-func (m *UserMutation) ResetModelStar() {
-	m.model_star = nil
-	m.clearedmodel_star = false
-	m.removedmodel_star = nil
 }
 
 // Where appends a list predicates to the UserMutation builder.
@@ -89032,7 +88892,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 52)
+	edges := make([]string, 0, 51)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -89180,14 +89040,11 @@ func (m *UserMutation) AddedEdges() []string {
 	if m.api_tokens != nil {
 		edges = append(edges, user.EdgeAPITokens)
 	}
-	if m.star_model != nil {
-		edges = append(edges, user.EdgeStarModel)
+	if m.user_models != nil {
+		edges = append(edges, user.EdgeUserModels)
 	}
 	if m.invoke_model_orders != nil {
 		edges = append(edges, user.EdgeInvokeModelOrders)
-	}
-	if m.model_star != nil {
-		edges = append(edges, user.EdgeModelStar)
 	}
 	return edges
 }
@@ -89480,9 +89337,9 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeStarModel:
-		ids := make([]ent.Value, 0, len(m.star_model))
-		for id := range m.star_model {
+	case user.EdgeUserModels:
+		ids := make([]ent.Value, 0, len(m.user_models))
+		for id := range m.user_models {
 			ids = append(ids, id)
 		}
 		return ids
@@ -89492,19 +89349,13 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeModelStar:
-		ids := make([]ent.Value, 0, len(m.model_star))
-		for id := range m.model_star {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 52)
+	edges := make([]string, 0, 51)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -89637,14 +89488,11 @@ func (m *UserMutation) RemovedEdges() []string {
 	if m.removedapi_tokens != nil {
 		edges = append(edges, user.EdgeAPITokens)
 	}
-	if m.removedstar_model != nil {
-		edges = append(edges, user.EdgeStarModel)
+	if m.removeduser_models != nil {
+		edges = append(edges, user.EdgeUserModels)
 	}
 	if m.removedinvoke_model_orders != nil {
 		edges = append(edges, user.EdgeInvokeModelOrders)
-	}
-	if m.removedmodel_star != nil {
-		edges = append(edges, user.EdgeModelStar)
 	}
 	return edges
 }
@@ -89917,9 +89765,9 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeStarModel:
-		ids := make([]ent.Value, 0, len(m.removedstar_model))
-		for id := range m.removedstar_model {
+	case user.EdgeUserModels:
+		ids := make([]ent.Value, 0, len(m.removeduser_models))
+		for id := range m.removeduser_models {
 			ids = append(ids, id)
 		}
 		return ids
@@ -89929,19 +89777,13 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeModelStar:
-		ids := make([]ent.Value, 0, len(m.removedmodel_star))
-		for id := range m.removedmodel_star {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 52)
+	edges := make([]string, 0, 51)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -90089,14 +89931,11 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedapi_tokens {
 		edges = append(edges, user.EdgeAPITokens)
 	}
-	if m.clearedstar_model {
-		edges = append(edges, user.EdgeStarModel)
+	if m.cleareduser_models {
+		edges = append(edges, user.EdgeUserModels)
 	}
 	if m.clearedinvoke_model_orders {
 		edges = append(edges, user.EdgeInvokeModelOrders)
-	}
-	if m.clearedmodel_star {
-		edges = append(edges, user.EdgeModelStar)
 	}
 	return edges
 }
@@ -90203,12 +90042,10 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedmission_failed_feedbacks
 	case user.EdgeAPITokens:
 		return m.clearedapi_tokens
-	case user.EdgeStarModel:
-		return m.clearedstar_model
+	case user.EdgeUserModels:
+		return m.cleareduser_models
 	case user.EdgeInvokeModelOrders:
 		return m.clearedinvoke_model_orders
-	case user.EdgeModelStar:
-		return m.clearedmodel_star
 	}
 	return false
 }
@@ -90387,14 +90224,11 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgeAPITokens:
 		m.ResetAPITokens()
 		return nil
-	case user.EdgeStarModel:
-		m.ResetStarModel()
+	case user.EdgeUserModels:
+		m.ResetUserModels()
 		return nil
 	case user.EdgeInvokeModelOrders:
 		m.ResetInvokeModelOrders()
-		return nil
-	case user.EdgeModelStar:
-		m.ResetModelStar()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

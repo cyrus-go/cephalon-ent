@@ -37,7 +37,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
@@ -1155,19 +1154,19 @@ func (uc *UserCreate) AddAPITokens(a ...*ApiToken) *UserCreate {
 	return uc.AddAPITokenIDs(ids...)
 }
 
-// AddStarModelIDs adds the "star_model" edge to the Model entity by IDs.
-func (uc *UserCreate) AddStarModelIDs(ids ...int64) *UserCreate {
-	uc.mutation.AddStarModelIDs(ids...)
+// AddUserModelIDs adds the "user_models" edge to the UserModel entity by IDs.
+func (uc *UserCreate) AddUserModelIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddUserModelIDs(ids...)
 	return uc
 }
 
-// AddStarModel adds the "star_model" edges to the Model entity.
-func (uc *UserCreate) AddStarModel(m ...*Model) *UserCreate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// AddUserModels adds the "user_models" edges to the UserModel entity.
+func (uc *UserCreate) AddUserModels(u ...*UserModel) *UserCreate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
 	}
-	return uc.AddStarModelIDs(ids...)
+	return uc.AddUserModelIDs(ids...)
 }
 
 // AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by IDs.
@@ -1183,21 +1182,6 @@ func (uc *UserCreate) AddInvokeModelOrders(i ...*InvokeModelOrder) *UserCreate {
 		ids[j] = i[j].ID
 	}
 	return uc.AddInvokeModelOrderIDs(ids...)
-}
-
-// AddModelStarIDs adds the "model_star" edge to the UserModel entity by IDs.
-func (uc *UserCreate) AddModelStarIDs(ids ...int64) *UserCreate {
-	uc.mutation.AddModelStarIDs(ids...)
-	return uc
-}
-
-// AddModelStar adds the "model_star" edges to the UserModel entity.
-func (uc *UserCreate) AddModelStar(u ...*UserModel) *UserCreate {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return uc.AddModelStarIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -2342,26 +2326,19 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.StarModelIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.UserModelsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.StarModelTable,
-			Columns: user.StarModelPrimaryKey,
+			Table:   user.UserModelsTable,
+			Columns: []string{user.UserModelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(model.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		createE := &UserModelCreate{config: uc.config, mutation: newUserModelMutation(uc.config, OpCreate)}
-		createE.defaults()
-		_, specE := createE.createSpec()
-		edge.Target.Fields = specE.Fields
-		if specE.ID.Value != nil {
-			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
@@ -2374,22 +2351,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := uc.mutation.ModelStarIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   user.ModelStarTable,
-			Columns: []string{user.ModelStarColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

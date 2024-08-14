@@ -76,7 +76,7 @@ func (umq *UserModelQuery) QueryUser() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(usermodel.Table, usermodel.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, usermodel.UserTable, usermodel.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, usermodel.UserTable, usermodel.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(umq.driver.Dialect(), step)
 		return fromU, nil
@@ -98,7 +98,7 @@ func (umq *UserModelQuery) QueryModel() *ModelQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(usermodel.Table, usermodel.FieldID, selector),
 			sqlgraph.To(model.Table, model.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, usermodel.ModelTable, usermodel.ModelColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, usermodel.ModelTable, usermodel.ModelColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(umq.driver.Dialect(), step)
 		return fromU, nil

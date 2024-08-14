@@ -2837,8 +2837,8 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "relation", Type: field.TypeEnum, Comment: "关系", Enums: []string{"star", "used", "unknown"}, Default: "unknown"},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"unknown", "star", "unstar", "used"}, Default: "unknown"},
-		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
 		{Name: "model_id", Type: field.TypeInt64, Comment: "模型ID"},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
 	}
 	// UserModelsTable holds the schema information for the "user_models" table.
 	UserModelsTable = &schema.Table{
@@ -2847,23 +2847,16 @@ var (
 		PrimaryKey: []*schema.Column{UserModelsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "user_models_users_user",
+				Symbol:     "user_models_models_user_models",
 				Columns:    []*schema.Column{UserModelsColumns[8]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-			{
-				Symbol:     "user_models_models_model",
-				Columns:    []*schema.Column{UserModelsColumns[9]},
 				RefColumns: []*schema.Column{ModelsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
-		},
-		Indexes: []*schema.Index{
 			{
-				Name:    "usermodel_user_id_model_id",
-				Unique:  true,
-				Columns: []*schema.Column{UserModelsColumns[8], UserModelsColumns[9]},
+				Symbol:     "user_models_users_user_models",
+				Columns:    []*schema.Column{UserModelsColumns[9]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
@@ -3359,8 +3352,8 @@ func init() {
 	UserDevicesTable.ForeignKeys[0].RefTable = DevicesTable
 	UserDevicesTable.ForeignKeys[1].RefTable = UsersTable
 	UserDevicesTable.Annotation = &entsql.Annotation{}
-	UserModelsTable.ForeignKeys[0].RefTable = UsersTable
-	UserModelsTable.ForeignKeys[1].RefTable = ModelsTable
+	UserModelsTable.ForeignKeys[0].RefTable = ModelsTable
+	UserModelsTable.ForeignKeys[1].RefTable = UsersTable
 	UserModelsTable.Annotation = &entsql.Annotation{}
 	VxAccountsTable.ForeignKeys[0].RefTable = UsersTable
 	VxAccountsTable.Annotation = &entsql.Annotation{}

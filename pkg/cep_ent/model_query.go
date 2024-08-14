@@ -15,7 +15,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usermodel"
 )
 
@@ -27,9 +26,8 @@ type ModelQuery struct {
 	inters                []Interceptor
 	predicates            []predicate.Model
 	withModelPrices       *ModelPriceQuery
-	withStarUser          *UserQuery
+	withUserModels        *UserModelQuery
 	withInvokeModelOrders *InvokeModelOrderQuery
-	withStarModel         *UserModelQuery
 	modifiers             []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -89,9 +87,9 @@ func (mq *ModelQuery) QueryModelPrices() *ModelPriceQuery {
 	return query
 }
 
-// QueryStarUser chains the current query on the "star_user" edge.
-func (mq *ModelQuery) QueryStarUser() *UserQuery {
-	query := (&UserClient{config: mq.config}).Query()
+// QueryUserModels chains the current query on the "user_models" edge.
+func (mq *ModelQuery) QueryUserModels() *UserModelQuery {
+	query := (&UserModelClient{config: mq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := mq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -102,8 +100,8 @@ func (mq *ModelQuery) QueryStarUser() *UserQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(model.Table, model.FieldID, selector),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, model.StarUserTable, model.StarUserPrimaryKey...),
+			sqlgraph.To(usermodel.Table, usermodel.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, model.UserModelsTable, model.UserModelsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil
@@ -126,28 +124,6 @@ func (mq *ModelQuery) QueryInvokeModelOrders() *InvokeModelOrderQuery {
 			sqlgraph.From(model.Table, model.FieldID, selector),
 			sqlgraph.To(invokemodelorder.Table, invokemodelorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, model.InvokeModelOrdersTable, model.InvokeModelOrdersColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryStarModel chains the current query on the "star_model" edge.
-func (mq *ModelQuery) QueryStarModel() *UserModelQuery {
-	query := (&UserModelClient{config: mq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := mq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := mq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(model.Table, model.FieldID, selector),
-			sqlgraph.To(usermodel.Table, usermodel.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, model.StarModelTable, model.StarModelColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil
@@ -348,9 +324,8 @@ func (mq *ModelQuery) Clone() *ModelQuery {
 		inters:                append([]Interceptor{}, mq.inters...),
 		predicates:            append([]predicate.Model{}, mq.predicates...),
 		withModelPrices:       mq.withModelPrices.Clone(),
-		withStarUser:          mq.withStarUser.Clone(),
+		withUserModels:        mq.withUserModels.Clone(),
 		withInvokeModelOrders: mq.withInvokeModelOrders.Clone(),
-		withStarModel:         mq.withStarModel.Clone(),
 		// clone intermediate query.
 		sql:  mq.sql.Clone(),
 		path: mq.path,
@@ -368,14 +343,14 @@ func (mq *ModelQuery) WithModelPrices(opts ...func(*ModelPriceQuery)) *ModelQuer
 	return mq
 }
 
-// WithStarUser tells the query-builder to eager-load the nodes that are connected to
-// the "star_user" edge. The optional arguments are used to configure the query builder of the edge.
-func (mq *ModelQuery) WithStarUser(opts ...func(*UserQuery)) *ModelQuery {
-	query := (&UserClient{config: mq.config}).Query()
+// WithUserModels tells the query-builder to eager-load the nodes that are connected to
+// the "user_models" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *ModelQuery) WithUserModels(opts ...func(*UserModelQuery)) *ModelQuery {
+	query := (&UserModelClient{config: mq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	mq.withStarUser = query
+	mq.withUserModels = query
 	return mq
 }
 
@@ -387,17 +362,6 @@ func (mq *ModelQuery) WithInvokeModelOrders(opts ...func(*InvokeModelOrderQuery)
 		opt(query)
 	}
 	mq.withInvokeModelOrders = query
-	return mq
-}
-
-// WithStarModel tells the query-builder to eager-load the nodes that are connected to
-// the "star_model" edge. The optional arguments are used to configure the query builder of the edge.
-func (mq *ModelQuery) WithStarModel(opts ...func(*UserModelQuery)) *ModelQuery {
-	query := (&UserModelClient{config: mq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	mq.withStarModel = query
 	return mq
 }
 
@@ -479,11 +443,10 @@ func (mq *ModelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Model,
 	var (
 		nodes       = []*Model{}
 		_spec       = mq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [3]bool{
 			mq.withModelPrices != nil,
-			mq.withStarUser != nil,
+			mq.withUserModels != nil,
 			mq.withInvokeModelOrders != nil,
-			mq.withStarModel != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -514,10 +477,10 @@ func (mq *ModelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Model,
 			return nil, err
 		}
 	}
-	if query := mq.withStarUser; query != nil {
-		if err := mq.loadStarUser(ctx, query, nodes,
-			func(n *Model) { n.Edges.StarUser = []*User{} },
-			func(n *Model, e *User) { n.Edges.StarUser = append(n.Edges.StarUser, e) }); err != nil {
+	if query := mq.withUserModels; query != nil {
+		if err := mq.loadUserModels(ctx, query, nodes,
+			func(n *Model) { n.Edges.UserModels = []*UserModel{} },
+			func(n *Model, e *UserModel) { n.Edges.UserModels = append(n.Edges.UserModels, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -525,13 +488,6 @@ func (mq *ModelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Model,
 		if err := mq.loadInvokeModelOrders(ctx, query, nodes,
 			func(n *Model) { n.Edges.InvokeModelOrders = []*InvokeModelOrder{} },
 			func(n *Model, e *InvokeModelOrder) { n.Edges.InvokeModelOrders = append(n.Edges.InvokeModelOrders, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := mq.withStarModel; query != nil {
-		if err := mq.loadStarModel(ctx, query, nodes,
-			func(n *Model) { n.Edges.StarModel = []*UserModel{} },
-			func(n *Model, e *UserModel) { n.Edges.StarModel = append(n.Edges.StarModel, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -568,64 +524,33 @@ func (mq *ModelQuery) loadModelPrices(ctx context.Context, query *ModelPriceQuer
 	}
 	return nil
 }
-func (mq *ModelQuery) loadStarUser(ctx context.Context, query *UserQuery, nodes []*Model, init func(*Model), assign func(*Model, *User)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int64]*Model)
-	nids := make(map[int64]map[*Model]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
+func (mq *ModelQuery) loadUserModels(ctx context.Context, query *UserModelQuery, nodes []*Model, init func(*Model), assign func(*Model, *UserModel)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Model)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
 		if init != nil {
-			init(node)
+			init(nodes[i])
 		}
 	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(model.StarUserTable)
-		s.Join(joinT).On(s.C(user.FieldID), joinT.C(model.StarUserPrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(model.StarUserPrimaryKey[1]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(model.StarUserPrimaryKey[1]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(usermodel.FieldModelID)
 	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := values[0].(*sql.NullInt64).Int64
-				inValue := values[1].(*sql.NullInt64).Int64
-				if nids[inValue] == nil {
-					nids[inValue] = map[*Model]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*User](ctx, query, qr, query.inters)
+	query.Where(predicate.UserModel(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(model.UserModelsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
+		fk := n.ModelID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected "star_user" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "model_id" returned %v for node %v`, fk, n.ID)
 		}
-		for kn := range nodes {
-			assign(kn, n)
-		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -644,36 +569,6 @@ func (mq *ModelQuery) loadInvokeModelOrders(ctx context.Context, query *InvokeMo
 	}
 	query.Where(predicate.InvokeModelOrder(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(model.InvokeModelOrdersColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.ModelID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "model_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (mq *ModelQuery) loadStarModel(ctx context.Context, query *UserModelQuery, nodes []*Model, init func(*Model), assign func(*Model, *UserModel)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int64]*Model)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(usermodel.FieldModelID)
-	}
-	query.Where(predicate.UserModel(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(model.StarModelColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

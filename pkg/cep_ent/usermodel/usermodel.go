@@ -191,13 +191,13 @@ func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UserInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, false, UserTable, UserColumn),
+		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
 }
 func newModelStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ModelInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, false, ModelTable, ModelColumn),
+		sqlgraph.Edge(sqlgraph.M2O, true, ModelTable, ModelColumn),
 	)
 }

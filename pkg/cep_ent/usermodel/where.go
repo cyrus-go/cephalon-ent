@@ -396,7 +396,7 @@ func HasUser() predicate.UserModel {
 	return predicate.UserModel(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, UserTable, UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -419,7 +419,7 @@ func HasModel() predicate.UserModel {
 	return predicate.UserModel(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, ModelTable, ModelColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, ModelTable, ModelColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

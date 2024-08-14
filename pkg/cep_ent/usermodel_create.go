@@ -337,7 +337,7 @@ func (umc *UserModelCreate) createSpec() (*UserModel, *sqlgraph.CreateSpec) {
 	if nodes := umc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Inverse: true,
 			Table:   usermodel.UserTable,
 			Columns: []string{usermodel.UserColumn},
 			Bidi:    false,
@@ -354,7 +354,7 @@ func (umc *UserModelCreate) createSpec() (*UserModel, *sqlgraph.CreateSpec) {
 	if nodes := umc.mutation.ModelIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Inverse: true,
 			Table:   usermodel.ModelTable,
 			Columns: []string{usermodel.ModelColumn},
 			Bidi:    false,

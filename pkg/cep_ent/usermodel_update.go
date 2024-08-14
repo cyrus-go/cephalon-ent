@@ -263,7 +263,7 @@ func (umu *UserModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if umu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Inverse: true,
 			Table:   usermodel.UserTable,
 			Columns: []string{usermodel.UserColumn},
 			Bidi:    false,
@@ -276,7 +276,7 @@ func (umu *UserModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if nodes := umu.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Inverse: true,
 			Table:   usermodel.UserTable,
 			Columns: []string{usermodel.UserColumn},
 			Bidi:    false,
@@ -292,7 +292,7 @@ func (umu *UserModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if umu.mutation.ModelCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Inverse: true,
 			Table:   usermodel.ModelTable,
 			Columns: []string{usermodel.ModelColumn},
 			Bidi:    false,
@@ -305,7 +305,7 @@ func (umu *UserModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if nodes := umu.mutation.ModelIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Inverse: true,
 			Table:   usermodel.ModelTable,
 			Columns: []string{usermodel.ModelColumn},
 			Bidi:    false,
@@ -601,7 +601,7 @@ func (umuo *UserModelUpdateOne) sqlSave(ctx context.Context) (_node *UserModel, 
 	if umuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Inverse: true,
 			Table:   usermodel.UserTable,
 			Columns: []string{usermodel.UserColumn},
 			Bidi:    false,
@@ -614,7 +614,7 @@ func (umuo *UserModelUpdateOne) sqlSave(ctx context.Context) (_node *UserModel, 
 	if nodes := umuo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Inverse: true,
 			Table:   usermodel.UserTable,
 			Columns: []string{usermodel.UserColumn},
 			Bidi:    false,
@@ -630,7 +630,7 @@ func (umuo *UserModelUpdateOne) sqlSave(ctx context.Context) (_node *UserModel, 
 	if umuo.mutation.ModelCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Inverse: true,
 			Table:   usermodel.ModelTable,
 			Columns: []string{usermodel.ModelColumn},
 			Bidi:    false,
@@ -643,7 +643,7 @@ func (umuo *UserModelUpdateOne) sqlSave(ctx context.Context) (_node *UserModel, 
 	if nodes := umuo.mutation.ModelIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Inverse: true,
 			Table:   usermodel.ModelTable,
 			Columns: []string{usermodel.ModelColumn},
 			Bidi:    false,

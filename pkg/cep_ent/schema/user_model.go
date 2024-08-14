@@ -22,8 +22,8 @@ func (UserModel) Fields() []ent.Field {
 
 func (UserModel) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("user", User.Type).Unique().Required().Field("user_id"),
-		edge.To("model", Model.Type).Unique().Required().Field("model_id"),
+		edge.From("user", User.Type).Ref("user_models").Field("user_id").Unique().Required().StructTag(`json:"user,omitempty"`),
+		edge.From("model", Model.Type).Ref("user_models").Field("model_id").Unique().Required().StructTag(`json:"model,omitempty"`),
 	}
 }
 

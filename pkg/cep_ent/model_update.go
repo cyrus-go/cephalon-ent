@@ -15,7 +15,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usermodel"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -216,19 +215,19 @@ func (mu *ModelUpdate) AddModelPrices(m ...*ModelPrice) *ModelUpdate {
 	return mu.AddModelPriceIDs(ids...)
 }
 
-// AddStarUserIDs adds the "star_user" edge to the User entity by IDs.
-func (mu *ModelUpdate) AddStarUserIDs(ids ...int64) *ModelUpdate {
-	mu.mutation.AddStarUserIDs(ids...)
+// AddUserModelIDs adds the "user_models" edge to the UserModel entity by IDs.
+func (mu *ModelUpdate) AddUserModelIDs(ids ...int64) *ModelUpdate {
+	mu.mutation.AddUserModelIDs(ids...)
 	return mu
 }
 
-// AddStarUser adds the "star_user" edges to the User entity.
-func (mu *ModelUpdate) AddStarUser(u ...*User) *ModelUpdate {
+// AddUserModels adds the "user_models" edges to the UserModel entity.
+func (mu *ModelUpdate) AddUserModels(u ...*UserModel) *ModelUpdate {
 	ids := make([]int64, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
-	return mu.AddStarUserIDs(ids...)
+	return mu.AddUserModelIDs(ids...)
 }
 
 // AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by IDs.
@@ -244,21 +243,6 @@ func (mu *ModelUpdate) AddInvokeModelOrders(i ...*InvokeModelOrder) *ModelUpdate
 		ids[j] = i[j].ID
 	}
 	return mu.AddInvokeModelOrderIDs(ids...)
-}
-
-// AddStarModelIDs adds the "star_model" edge to the UserModel entity by IDs.
-func (mu *ModelUpdate) AddStarModelIDs(ids ...int64) *ModelUpdate {
-	mu.mutation.AddStarModelIDs(ids...)
-	return mu
-}
-
-// AddStarModel adds the "star_model" edges to the UserModel entity.
-func (mu *ModelUpdate) AddStarModel(u ...*UserModel) *ModelUpdate {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return mu.AddStarModelIDs(ids...)
 }
 
 // Mutation returns the ModelMutation object of the builder.
@@ -287,25 +271,25 @@ func (mu *ModelUpdate) RemoveModelPrices(m ...*ModelPrice) *ModelUpdate {
 	return mu.RemoveModelPriceIDs(ids...)
 }
 
-// ClearStarUser clears all "star_user" edges to the User entity.
-func (mu *ModelUpdate) ClearStarUser() *ModelUpdate {
-	mu.mutation.ClearStarUser()
+// ClearUserModels clears all "user_models" edges to the UserModel entity.
+func (mu *ModelUpdate) ClearUserModels() *ModelUpdate {
+	mu.mutation.ClearUserModels()
 	return mu
 }
 
-// RemoveStarUserIDs removes the "star_user" edge to User entities by IDs.
-func (mu *ModelUpdate) RemoveStarUserIDs(ids ...int64) *ModelUpdate {
-	mu.mutation.RemoveStarUserIDs(ids...)
+// RemoveUserModelIDs removes the "user_models" edge to UserModel entities by IDs.
+func (mu *ModelUpdate) RemoveUserModelIDs(ids ...int64) *ModelUpdate {
+	mu.mutation.RemoveUserModelIDs(ids...)
 	return mu
 }
 
-// RemoveStarUser removes "star_user" edges to User entities.
-func (mu *ModelUpdate) RemoveStarUser(u ...*User) *ModelUpdate {
+// RemoveUserModels removes "user_models" edges to UserModel entities.
+func (mu *ModelUpdate) RemoveUserModels(u ...*UserModel) *ModelUpdate {
 	ids := make([]int64, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
-	return mu.RemoveStarUserIDs(ids...)
+	return mu.RemoveUserModelIDs(ids...)
 }
 
 // ClearInvokeModelOrders clears all "invoke_model_orders" edges to the InvokeModelOrder entity.
@@ -327,27 +311,6 @@ func (mu *ModelUpdate) RemoveInvokeModelOrders(i ...*InvokeModelOrder) *ModelUpd
 		ids[j] = i[j].ID
 	}
 	return mu.RemoveInvokeModelOrderIDs(ids...)
-}
-
-// ClearStarModel clears all "star_model" edges to the UserModel entity.
-func (mu *ModelUpdate) ClearStarModel() *ModelUpdate {
-	mu.mutation.ClearStarModel()
-	return mu
-}
-
-// RemoveStarModelIDs removes the "star_model" edge to UserModel entities by IDs.
-func (mu *ModelUpdate) RemoveStarModelIDs(ids ...int64) *ModelUpdate {
-	mu.mutation.RemoveStarModelIDs(ids...)
-	return mu
-}
-
-// RemoveStarModel removes "star_model" edges to UserModel entities.
-func (mu *ModelUpdate) RemoveStarModel(u ...*UserModel) *ModelUpdate {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return mu.RemoveStarModelIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -506,69 +469,48 @@ func (mu *ModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if mu.mutation.StarUserCleared() {
+	if mu.mutation.UserModelsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   model.StarUserTable,
-			Columns: model.StarUserPrimaryKey,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.UserModelsTable,
+			Columns: []string{model.UserModelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
-		}
-		createE := &UserModelCreate{config: mu.config, mutation: newUserModelMutation(mu.config, OpCreate)}
-		createE.defaults()
-		_, specE := createE.createSpec()
-		edge.Target.Fields = specE.Fields
-		if specE.ID.Value != nil {
-			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := mu.mutation.RemovedStarUserIDs(); len(nodes) > 0 && !mu.mutation.StarUserCleared() {
+	if nodes := mu.mutation.RemovedUserModelsIDs(); len(nodes) > 0 && !mu.mutation.UserModelsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   model.StarUserTable,
-			Columns: model.StarUserPrimaryKey,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.UserModelsTable,
+			Columns: []string{model.UserModelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		createE := &UserModelCreate{config: mu.config, mutation: newUserModelMutation(mu.config, OpCreate)}
-		createE.defaults()
-		_, specE := createE.createSpec()
-		edge.Target.Fields = specE.Fields
-		if specE.ID.Value != nil {
-			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
-		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := mu.mutation.StarUserIDs(); len(nodes) > 0 {
+	if nodes := mu.mutation.UserModelsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   model.StarUserTable,
-			Columns: model.StarUserPrimaryKey,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.UserModelsTable,
+			Columns: []string{model.UserModelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		createE := &UserModelCreate{config: mu.config, mutation: newUserModelMutation(mu.config, OpCreate)}
-		createE.defaults()
-		_, specE := createE.createSpec()
-		edge.Target.Fields = specE.Fields
-		if specE.ID.Value != nil {
-			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
@@ -610,51 +552,6 @@ func (mu *ModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if mu.mutation.StarModelCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   model.StarModelTable,
-			Columns: []string{model.StarModelColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mu.mutation.RemovedStarModelIDs(); len(nodes) > 0 && !mu.mutation.StarModelCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   model.StarModelTable,
-			Columns: []string{model.StarModelColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mu.mutation.StarModelIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   model.StarModelTable,
-			Columns: []string{model.StarModelColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -866,19 +763,19 @@ func (muo *ModelUpdateOne) AddModelPrices(m ...*ModelPrice) *ModelUpdateOne {
 	return muo.AddModelPriceIDs(ids...)
 }
 
-// AddStarUserIDs adds the "star_user" edge to the User entity by IDs.
-func (muo *ModelUpdateOne) AddStarUserIDs(ids ...int64) *ModelUpdateOne {
-	muo.mutation.AddStarUserIDs(ids...)
+// AddUserModelIDs adds the "user_models" edge to the UserModel entity by IDs.
+func (muo *ModelUpdateOne) AddUserModelIDs(ids ...int64) *ModelUpdateOne {
+	muo.mutation.AddUserModelIDs(ids...)
 	return muo
 }
 
-// AddStarUser adds the "star_user" edges to the User entity.
-func (muo *ModelUpdateOne) AddStarUser(u ...*User) *ModelUpdateOne {
+// AddUserModels adds the "user_models" edges to the UserModel entity.
+func (muo *ModelUpdateOne) AddUserModels(u ...*UserModel) *ModelUpdateOne {
 	ids := make([]int64, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
-	return muo.AddStarUserIDs(ids...)
+	return muo.AddUserModelIDs(ids...)
 }
 
 // AddInvokeModelOrderIDs adds the "invoke_model_orders" edge to the InvokeModelOrder entity by IDs.
@@ -894,21 +791,6 @@ func (muo *ModelUpdateOne) AddInvokeModelOrders(i ...*InvokeModelOrder) *ModelUp
 		ids[j] = i[j].ID
 	}
 	return muo.AddInvokeModelOrderIDs(ids...)
-}
-
-// AddStarModelIDs adds the "star_model" edge to the UserModel entity by IDs.
-func (muo *ModelUpdateOne) AddStarModelIDs(ids ...int64) *ModelUpdateOne {
-	muo.mutation.AddStarModelIDs(ids...)
-	return muo
-}
-
-// AddStarModel adds the "star_model" edges to the UserModel entity.
-func (muo *ModelUpdateOne) AddStarModel(u ...*UserModel) *ModelUpdateOne {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return muo.AddStarModelIDs(ids...)
 }
 
 // Mutation returns the ModelMutation object of the builder.
@@ -937,25 +819,25 @@ func (muo *ModelUpdateOne) RemoveModelPrices(m ...*ModelPrice) *ModelUpdateOne {
 	return muo.RemoveModelPriceIDs(ids...)
 }
 
-// ClearStarUser clears all "star_user" edges to the User entity.
-func (muo *ModelUpdateOne) ClearStarUser() *ModelUpdateOne {
-	muo.mutation.ClearStarUser()
+// ClearUserModels clears all "user_models" edges to the UserModel entity.
+func (muo *ModelUpdateOne) ClearUserModels() *ModelUpdateOne {
+	muo.mutation.ClearUserModels()
 	return muo
 }
 
-// RemoveStarUserIDs removes the "star_user" edge to User entities by IDs.
-func (muo *ModelUpdateOne) RemoveStarUserIDs(ids ...int64) *ModelUpdateOne {
-	muo.mutation.RemoveStarUserIDs(ids...)
+// RemoveUserModelIDs removes the "user_models" edge to UserModel entities by IDs.
+func (muo *ModelUpdateOne) RemoveUserModelIDs(ids ...int64) *ModelUpdateOne {
+	muo.mutation.RemoveUserModelIDs(ids...)
 	return muo
 }
 
-// RemoveStarUser removes "star_user" edges to User entities.
-func (muo *ModelUpdateOne) RemoveStarUser(u ...*User) *ModelUpdateOne {
+// RemoveUserModels removes "user_models" edges to UserModel entities.
+func (muo *ModelUpdateOne) RemoveUserModels(u ...*UserModel) *ModelUpdateOne {
 	ids := make([]int64, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
-	return muo.RemoveStarUserIDs(ids...)
+	return muo.RemoveUserModelIDs(ids...)
 }
 
 // ClearInvokeModelOrders clears all "invoke_model_orders" edges to the InvokeModelOrder entity.
@@ -977,27 +859,6 @@ func (muo *ModelUpdateOne) RemoveInvokeModelOrders(i ...*InvokeModelOrder) *Mode
 		ids[j] = i[j].ID
 	}
 	return muo.RemoveInvokeModelOrderIDs(ids...)
-}
-
-// ClearStarModel clears all "star_model" edges to the UserModel entity.
-func (muo *ModelUpdateOne) ClearStarModel() *ModelUpdateOne {
-	muo.mutation.ClearStarModel()
-	return muo
-}
-
-// RemoveStarModelIDs removes the "star_model" edge to UserModel entities by IDs.
-func (muo *ModelUpdateOne) RemoveStarModelIDs(ids ...int64) *ModelUpdateOne {
-	muo.mutation.RemoveStarModelIDs(ids...)
-	return muo
-}
-
-// RemoveStarModel removes "star_model" edges to UserModel entities.
-func (muo *ModelUpdateOne) RemoveStarModel(u ...*UserModel) *ModelUpdateOne {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return muo.RemoveStarModelIDs(ids...)
 }
 
 // Where appends a list predicates to the ModelUpdate builder.
@@ -1186,69 +1047,48 @@ func (muo *ModelUpdateOne) sqlSave(ctx context.Context) (_node *Model, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if muo.mutation.StarUserCleared() {
+	if muo.mutation.UserModelsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   model.StarUserTable,
-			Columns: model.StarUserPrimaryKey,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.UserModelsTable,
+			Columns: []string{model.UserModelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
-		}
-		createE := &UserModelCreate{config: muo.config, mutation: newUserModelMutation(muo.config, OpCreate)}
-		createE.defaults()
-		_, specE := createE.createSpec()
-		edge.Target.Fields = specE.Fields
-		if specE.ID.Value != nil {
-			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := muo.mutation.RemovedStarUserIDs(); len(nodes) > 0 && !muo.mutation.StarUserCleared() {
+	if nodes := muo.mutation.RemovedUserModelsIDs(); len(nodes) > 0 && !muo.mutation.UserModelsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   model.StarUserTable,
-			Columns: model.StarUserPrimaryKey,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.UserModelsTable,
+			Columns: []string{model.UserModelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		createE := &UserModelCreate{config: muo.config, mutation: newUserModelMutation(muo.config, OpCreate)}
-		createE.defaults()
-		_, specE := createE.createSpec()
-		edge.Target.Fields = specE.Fields
-		if specE.ID.Value != nil {
-			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
-		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := muo.mutation.StarUserIDs(); len(nodes) > 0 {
+	if nodes := muo.mutation.UserModelsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   model.StarUserTable,
-			Columns: model.StarUserPrimaryKey,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   model.UserModelsTable,
+			Columns: []string{model.UserModelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		createE := &UserModelCreate{config: muo.config, mutation: newUserModelMutation(muo.config, OpCreate)}
-		createE.defaults()
-		_, specE := createE.createSpec()
-		edge.Target.Fields = specE.Fields
-		if specE.ID.Value != nil {
-			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
@@ -1290,51 +1130,6 @@ func (muo *ModelUpdateOne) sqlSave(ctx context.Context) (_node *Model, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(invokemodelorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if muo.mutation.StarModelCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   model.StarModelTable,
-			Columns: []string{model.StarModelColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := muo.mutation.RemovedStarModelIDs(); len(nodes) > 0 && !muo.mutation.StarModelCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   model.StarModelTable,
-			Columns: []string{model.StarModelColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := muo.mutation.StarModelIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   model.StarModelTable,
-			Columns: []string{model.StarModelColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

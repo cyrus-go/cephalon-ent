@@ -164,12 +164,10 @@ const (
 	EdgeMissionFailedFeedbacks = "mission_failed_feedbacks"
 	// EdgeAPITokens holds the string denoting the api_tokens edge name in mutations.
 	EdgeAPITokens = "api_tokens"
-	// EdgeStarModel holds the string denoting the star_model edge name in mutations.
-	EdgeStarModel = "star_model"
+	// EdgeUserModels holds the string denoting the user_models edge name in mutations.
+	EdgeUserModels = "user_models"
 	// EdgeInvokeModelOrders holds the string denoting the invoke_model_orders edge name in mutations.
 	EdgeInvokeModelOrders = "invoke_model_orders"
-	// EdgeModelStar holds the string denoting the model_star edge name in mutations.
-	EdgeModelStar = "model_star"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -503,11 +501,13 @@ const (
 	APITokensInverseTable = "api_tokens"
 	// APITokensColumn is the table column denoting the api_tokens relation/edge.
 	APITokensColumn = "user_id"
-	// StarModelTable is the table that holds the star_model relation/edge. The primary key declared below.
-	StarModelTable = "user_models"
-	// StarModelInverseTable is the table name for the Model entity.
-	// It exists in this package in order to avoid circular dependency with the "model" package.
-	StarModelInverseTable = "models"
+	// UserModelsTable is the table that holds the user_models relation/edge.
+	UserModelsTable = "user_models"
+	// UserModelsInverseTable is the table name for the UserModel entity.
+	// It exists in this package in order to avoid circular dependency with the "usermodel" package.
+	UserModelsInverseTable = "user_models"
+	// UserModelsColumn is the table column denoting the user_models relation/edge.
+	UserModelsColumn = "user_id"
 	// InvokeModelOrdersTable is the table that holds the invoke_model_orders relation/edge.
 	InvokeModelOrdersTable = "invoke_model_orders"
 	// InvokeModelOrdersInverseTable is the table name for the InvokeModelOrder entity.
@@ -515,13 +515,6 @@ const (
 	InvokeModelOrdersInverseTable = "invoke_model_orders"
 	// InvokeModelOrdersColumn is the table column denoting the invoke_model_orders relation/edge.
 	InvokeModelOrdersColumn = "user_id"
-	// ModelStarTable is the table that holds the model_star relation/edge.
-	ModelStarTable = "user_models"
-	// ModelStarInverseTable is the table name for the UserModel entity.
-	// It exists in this package in order to avoid circular dependency with the "usermodel" package.
-	ModelStarInverseTable = "user_models"
-	// ModelStarColumn is the table column denoting the model_star relation/edge.
-	ModelStarColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -553,12 +546,6 @@ var Columns = []string{
 	FieldBoundAt,
 	FieldUserStatus,
 }
-
-var (
-	// StarModelPrimaryKey and StarModelColumn2 are the table columns denoting the
-	// primary key for the star_model relation (M2M).
-	StarModelPrimaryKey = []string{"user_id", "model_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -1431,17 +1418,17 @@ func ByAPITokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByStarModelCount orders the results by star_model count.
-func ByStarModelCount(opts ...sql.OrderTermOption) OrderOption {
+// ByUserModelsCount orders the results by user_models count.
+func ByUserModelsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newStarModelStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newUserModelsStep(), opts...)
 	}
 }
 
-// ByStarModel orders the results by star_model terms.
-func ByStarModel(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByUserModels orders the results by user_models terms.
+func ByUserModels(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newStarModelStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newUserModelsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -1456,20 +1443,6 @@ func ByInvokeModelOrdersCount(opts ...sql.OrderTermOption) OrderOption {
 func ByInvokeModelOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newInvokeModelOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
-// ByModelStarCount orders the results by model_star count.
-func ByModelStarCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newModelStarStep(), opts...)
-	}
-}
-
-// ByModelStar orders the results by model_star terms.
-func ByModelStar(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newModelStarStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newVxAccountsStep() *sqlgraph.Step {
@@ -1815,11 +1788,11 @@ func newAPITokensStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, APITokensTable, APITokensColumn),
 	)
 }
-func newStarModelStep() *sqlgraph.Step {
+func newUserModelsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(StarModelInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, StarModelTable, StarModelPrimaryKey...),
+		sqlgraph.To(UserModelsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, UserModelsTable, UserModelsColumn),
 	)
 }
 func newInvokeModelOrdersStep() *sqlgraph.Step {
@@ -1827,12 +1800,5 @@ func newInvokeModelOrdersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(InvokeModelOrdersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, InvokeModelOrdersTable, InvokeModelOrdersColumn),
-	)
-}
-func newModelStarStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ModelStarInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, true, ModelStarTable, ModelStarColumn),
 	)
 }

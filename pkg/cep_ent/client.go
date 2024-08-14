@@ -9618,15 +9618,15 @@ func (c *ModelClient) QueryModelPrices(m *Model) *ModelPriceQuery {
 	return query
 }
 
-// QueryStarUser queries the star_user edge of a Model.
-func (c *ModelClient) QueryStarUser(m *Model) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
+// QueryUserModels queries the user_models edge of a Model.
+func (c *ModelClient) QueryUserModels(m *Model) *UserModelQuery {
+	query := (&UserModelClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(model.Table, model.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, model.StarUserTable, model.StarUserPrimaryKey...),
+			sqlgraph.To(usermodel.Table, usermodel.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, model.UserModelsTable, model.UserModelsColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
@@ -9643,22 +9643,6 @@ func (c *ModelClient) QueryInvokeModelOrders(m *Model) *InvokeModelOrderQuery {
 			sqlgraph.From(model.Table, model.FieldID, id),
 			sqlgraph.To(invokemodelorder.Table, invokemodelorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, model.InvokeModelOrdersTable, model.InvokeModelOrdersColumn),
-		)
-		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryStarModel queries the star_model edge of a Model.
-func (c *ModelClient) QueryStarModel(m *Model) *UserModelQuery {
-	query := (&UserModelClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(model.Table, model.FieldID, id),
-			sqlgraph.To(usermodel.Table, usermodel.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, model.StarModelTable, model.StarModelColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
@@ -13303,15 +13287,15 @@ func (c *UserClient) QueryAPITokens(u *User) *ApiTokenQuery {
 	return query
 }
 
-// QueryStarModel queries the star_model edge of a User.
-func (c *UserClient) QueryStarModel(u *User) *ModelQuery {
-	query := (&ModelClient{config: c.config}).Query()
+// QueryUserModels queries the user_models edge of a User.
+func (c *UserClient) QueryUserModels(u *User) *UserModelQuery {
+	query := (&UserModelClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(model.Table, model.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, user.StarModelTable, user.StarModelPrimaryKey...),
+			sqlgraph.To(usermodel.Table, usermodel.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserModelsTable, user.UserModelsColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -13328,22 +13312,6 @@ func (c *UserClient) QueryInvokeModelOrders(u *User) *InvokeModelOrderQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(invokemodelorder.Table, invokemodelorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.InvokeModelOrdersTable, user.InvokeModelOrdersColumn),
-		)
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryModelStar queries the model_star edge of a User.
-func (c *UserClient) QueryModelStar(u *User) *UserModelQuery {
-	query := (&UserModelClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(usermodel.Table, usermodel.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, user.ModelStarTable, user.ModelStarColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -13657,7 +13625,7 @@ func (c *UserModelClient) QueryUser(um *UserModel) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(usermodel.Table, usermodel.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, usermodel.UserTable, usermodel.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, usermodel.UserTable, usermodel.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(um.driver.Dialect(), step)
 		return fromV, nil
@@ -13673,7 +13641,7 @@ func (c *UserModelClient) QueryModel(um *UserModel) *ModelQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(usermodel.Table, usermodel.FieldID, id),
 			sqlgraph.To(model.Table, model.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, usermodel.ModelTable, usermodel.ModelColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, usermodel.ModelTable, usermodel.ModelColumn),
 		)
 		fromV = sqlgraph.Neighbors(um.driver.Dialect(), step)
 		return fromV, nil
