@@ -366,6 +366,36 @@ func MissionIDNotIn(vs ...int64) predicate.MissionFailedFeedback {
 	return predicate.MissionFailedFeedback(sql.FieldNotIn(FieldMissionID, vs...))
 }
 
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v enums.MissionFailedFeedbackType) predicate.MissionFailedFeedback {
+	vc := v
+	return predicate.MissionFailedFeedback(sql.FieldEQ(FieldType, vc))
+}
+
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v enums.MissionFailedFeedbackType) predicate.MissionFailedFeedback {
+	vc := v
+	return predicate.MissionFailedFeedback(sql.FieldNEQ(FieldType, vc))
+}
+
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...enums.MissionFailedFeedbackType) predicate.MissionFailedFeedback {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionFailedFeedback(sql.FieldIn(FieldType, v...))
+}
+
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...enums.MissionFailedFeedbackType) predicate.MissionFailedFeedback {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionFailedFeedback(sql.FieldNotIn(FieldType, v...))
+}
+
 // MissionNameEQ applies the EQ predicate on the "mission_name" field.
 func MissionNameEQ(v string) predicate.MissionFailedFeedback {
 	return predicate.MissionFailedFeedback(sql.FieldEQ(FieldMissionName, v))

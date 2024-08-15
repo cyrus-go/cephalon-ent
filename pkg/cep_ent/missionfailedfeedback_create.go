@@ -138,6 +138,20 @@ func (mffc *MissionFailedFeedbackCreate) SetNillableMissionID(i *int64) *Mission
 	return mffc
 }
 
+// SetType sets the "type" field.
+func (mffc *MissionFailedFeedbackCreate) SetType(efft enums.MissionFailedFeedbackType) *MissionFailedFeedbackCreate {
+	mffc.mutation.SetType(efft)
+	return mffc
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (mffc *MissionFailedFeedbackCreate) SetNillableType(efft *enums.MissionFailedFeedbackType) *MissionFailedFeedbackCreate {
+	if efft != nil {
+		mffc.SetType(*efft)
+	}
+	return mffc
+}
+
 // SetMissionName sets the "mission_name" field.
 func (mffc *MissionFailedFeedbackCreate) SetMissionName(s string) *MissionFailedFeedbackCreate {
 	mffc.mutation.SetMissionName(s)
@@ -276,6 +290,10 @@ func (mffc *MissionFailedFeedbackCreate) defaults() {
 		v := missionfailedfeedback.DefaultMissionID
 		mffc.mutation.SetMissionID(v)
 	}
+	if _, ok := mffc.mutation.GetType(); !ok {
+		v := missionfailedfeedback.DefaultType
+		mffc.mutation.SetType(v)
+	}
 	if _, ok := mffc.mutation.MissionName(); !ok {
 		v := missionfailedfeedback.DefaultMissionName
 		mffc.mutation.SetMissionName(v)
@@ -319,6 +337,14 @@ func (mffc *MissionFailedFeedbackCreate) check() error {
 	}
 	if _, ok := mffc.mutation.MissionID(); !ok {
 		return &ValidationError{Name: "mission_id", err: errors.New(`cep_ent: missing required field "MissionFailedFeedback.mission_id"`)}
+	}
+	if _, ok := mffc.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New(`cep_ent: missing required field "MissionFailedFeedback.type"`)}
+	}
+	if v, ok := mffc.mutation.GetType(); ok {
+		if err := missionfailedfeedback.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "MissionFailedFeedback.type": %w`, err)}
+		}
 	}
 	if _, ok := mffc.mutation.MissionName(); !ok {
 		return &ValidationError{Name: "mission_name", err: errors.New(`cep_ent: missing required field "MissionFailedFeedback.mission_name"`)}
@@ -395,6 +421,10 @@ func (mffc *MissionFailedFeedbackCreate) createSpec() (*MissionFailedFeedback, *
 	if value, ok := mffc.mutation.DeletedAt(); ok {
 		_spec.SetField(missionfailedfeedback.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
+	}
+	if value, ok := mffc.mutation.GetType(); ok {
+		_spec.SetField(missionfailedfeedback.FieldType, field.TypeEnum, value)
+		_node.Type = value
 	}
 	if value, ok := mffc.mutation.MissionName(); ok {
 		_spec.SetField(missionfailedfeedback.FieldMissionName, field.TypeString, value)
@@ -607,6 +637,18 @@ func (u *MissionFailedFeedbackUpsert) UpdateMissionID() *MissionFailedFeedbackUp
 	return u
 }
 
+// SetType sets the "type" field.
+func (u *MissionFailedFeedbackUpsert) SetType(v enums.MissionFailedFeedbackType) *MissionFailedFeedbackUpsert {
+	u.Set(missionfailedfeedback.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *MissionFailedFeedbackUpsert) UpdateType() *MissionFailedFeedbackUpsert {
+	u.SetExcluded(missionfailedfeedback.FieldType)
+	return u
+}
+
 // SetMissionName sets the "mission_name" field.
 func (u *MissionFailedFeedbackUpsert) SetMissionName(v string) *MissionFailedFeedbackUpsert {
 	u.Set(missionfailedfeedback.FieldMissionName, v)
@@ -803,6 +845,20 @@ func (u *MissionFailedFeedbackUpsertOne) SetMissionID(v int64) *MissionFailedFee
 func (u *MissionFailedFeedbackUpsertOne) UpdateMissionID() *MissionFailedFeedbackUpsertOne {
 	return u.Update(func(s *MissionFailedFeedbackUpsert) {
 		s.UpdateMissionID()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *MissionFailedFeedbackUpsertOne) SetType(v enums.MissionFailedFeedbackType) *MissionFailedFeedbackUpsertOne {
+	return u.Update(func(s *MissionFailedFeedbackUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *MissionFailedFeedbackUpsertOne) UpdateType() *MissionFailedFeedbackUpsertOne {
+	return u.Update(func(s *MissionFailedFeedbackUpsert) {
+		s.UpdateType()
 	})
 }
 
@@ -1174,6 +1230,20 @@ func (u *MissionFailedFeedbackUpsertBulk) SetMissionID(v int64) *MissionFailedFe
 func (u *MissionFailedFeedbackUpsertBulk) UpdateMissionID() *MissionFailedFeedbackUpsertBulk {
 	return u.Update(func(s *MissionFailedFeedbackUpsert) {
 		s.UpdateMissionID()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *MissionFailedFeedbackUpsertBulk) SetType(v enums.MissionFailedFeedbackType) *MissionFailedFeedbackUpsertBulk {
+	return u.Update(func(s *MissionFailedFeedbackUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *MissionFailedFeedbackUpsertBulk) UpdateType() *MissionFailedFeedbackUpsertBulk {
+	return u.Update(func(s *MissionFailedFeedbackUpsert) {
+		s.UpdateType()
 	})
 }
 

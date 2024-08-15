@@ -38,6 +38,8 @@ type MissionFailedFeedback struct {
 	DeviceID int64 `json:"device_id,string"`
 	// 外键，反馈关联的任务 ID
 	MissionID int64 `json:"mission_id,string"`
+	// 任务失败反馈类型
+	Type enums.MissionFailedFeedbackType `json:"type"`
 	// 应用名称
 	MissionName string `json:"mission_name"`
 	// 状态
@@ -109,7 +111,7 @@ func (*MissionFailedFeedback) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case missionfailedfeedback.FieldID, missionfailedfeedback.FieldCreatedBy, missionfailedfeedback.FieldUpdatedBy, missionfailedfeedback.FieldUserID, missionfailedfeedback.FieldDeviceID, missionfailedfeedback.FieldMissionID:
 			values[i] = new(sql.NullInt64)
-		case missionfailedfeedback.FieldMissionName, missionfailedfeedback.FieldStatus, missionfailedfeedback.FieldReason:
+		case missionfailedfeedback.FieldType, missionfailedfeedback.FieldMissionName, missionfailedfeedback.FieldStatus, missionfailedfeedback.FieldReason:
 			values[i] = new(sql.NullString)
 		case missionfailedfeedback.FieldCreatedAt, missionfailedfeedback.FieldUpdatedAt, missionfailedfeedback.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -181,6 +183,12 @@ func (mff *MissionFailedFeedback) assignValues(columns []string, values []any) e
 				return fmt.Errorf("unexpected type %T for field mission_id", values[i])
 			} else if value.Valid {
 				mff.MissionID = value.Int64
+			}
+		case missionfailedfeedback.FieldType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value.Valid {
+				mff.Type = enums.MissionFailedFeedbackType(value.String)
 			}
 		case missionfailedfeedback.FieldMissionName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -274,6 +282,9 @@ func (mff *MissionFailedFeedback) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mission_id=")
 	builder.WriteString(fmt.Sprintf("%v", mff.MissionID))
+	builder.WriteString(", ")
+	builder.WriteString("type=")
+	builder.WriteString(fmt.Sprintf("%v", mff.Type))
 	builder.WriteString(", ")
 	builder.WriteString("mission_name=")
 	builder.WriteString(mff.MissionName)

@@ -137,6 +137,20 @@ func (mffu *MissionFailedFeedbackUpdate) SetNillableMissionID(i *int64) *Mission
 	return mffu
 }
 
+// SetType sets the "type" field.
+func (mffu *MissionFailedFeedbackUpdate) SetType(efft enums.MissionFailedFeedbackType) *MissionFailedFeedbackUpdate {
+	mffu.mutation.SetType(efft)
+	return mffu
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (mffu *MissionFailedFeedbackUpdate) SetNillableType(efft *enums.MissionFailedFeedbackType) *MissionFailedFeedbackUpdate {
+	if efft != nil {
+		mffu.SetType(*efft)
+	}
+	return mffu
+}
+
 // SetMissionName sets the "mission_name" field.
 func (mffu *MissionFailedFeedbackUpdate) SetMissionName(s string) *MissionFailedFeedbackUpdate {
 	mffu.mutation.SetMissionName(s)
@@ -255,6 +269,11 @@ func (mffu *MissionFailedFeedbackUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (mffu *MissionFailedFeedbackUpdate) check() error {
+	if v, ok := mffu.mutation.GetType(); ok {
+		if err := missionfailedfeedback.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "MissionFailedFeedback.type": %w`, err)}
+		}
+	}
 	if v, ok := mffu.mutation.Status(); ok {
 		if err := missionfailedfeedback.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "MissionFailedFeedback.status": %w`, err)}
@@ -307,6 +326,9 @@ func (mffu *MissionFailedFeedbackUpdate) sqlSave(ctx context.Context) (n int, er
 	}
 	if value, ok := mffu.mutation.DeletedAt(); ok {
 		_spec.SetField(missionfailedfeedback.FieldDeletedAt, field.TypeTime, value)
+	}
+	if value, ok := mffu.mutation.GetType(); ok {
+		_spec.SetField(missionfailedfeedback.FieldType, field.TypeEnum, value)
 	}
 	if value, ok := mffu.mutation.MissionName(); ok {
 		_spec.SetField(missionfailedfeedback.FieldMissionName, field.TypeString, value)
@@ -530,6 +552,20 @@ func (mffuo *MissionFailedFeedbackUpdateOne) SetNillableMissionID(i *int64) *Mis
 	return mffuo
 }
 
+// SetType sets the "type" field.
+func (mffuo *MissionFailedFeedbackUpdateOne) SetType(efft enums.MissionFailedFeedbackType) *MissionFailedFeedbackUpdateOne {
+	mffuo.mutation.SetType(efft)
+	return mffuo
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (mffuo *MissionFailedFeedbackUpdateOne) SetNillableType(efft *enums.MissionFailedFeedbackType) *MissionFailedFeedbackUpdateOne {
+	if efft != nil {
+		mffuo.SetType(*efft)
+	}
+	return mffuo
+}
+
 // SetMissionName sets the "mission_name" field.
 func (mffuo *MissionFailedFeedbackUpdateOne) SetMissionName(s string) *MissionFailedFeedbackUpdateOne {
 	mffuo.mutation.SetMissionName(s)
@@ -661,6 +697,11 @@ func (mffuo *MissionFailedFeedbackUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (mffuo *MissionFailedFeedbackUpdateOne) check() error {
+	if v, ok := mffuo.mutation.GetType(); ok {
+		if err := missionfailedfeedback.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "MissionFailedFeedback.type": %w`, err)}
+		}
+	}
 	if v, ok := mffuo.mutation.Status(); ok {
 		if err := missionfailedfeedback.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "MissionFailedFeedback.status": %w`, err)}
@@ -730,6 +771,9 @@ func (mffuo *MissionFailedFeedbackUpdateOne) sqlSave(ctx context.Context) (_node
 	}
 	if value, ok := mffuo.mutation.DeletedAt(); ok {
 		_spec.SetField(missionfailedfeedback.FieldDeletedAt, field.TypeTime, value)
+	}
+	if value, ok := mffuo.mutation.GetType(); ok {
+		_spec.SetField(missionfailedfeedback.FieldType, field.TypeEnum, value)
 	}
 	if value, ok := mffuo.mutation.MissionName(); ok {
 		_spec.SetField(missionfailedfeedback.FieldMissionName, field.TypeString, value)

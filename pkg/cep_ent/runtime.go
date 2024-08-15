@@ -2423,11 +2423,11 @@ func init() {
 	// missionfailedfeedback.DefaultMissionID holds the default value on creation for the mission_id field.
 	missionfailedfeedback.DefaultMissionID = missionfailedfeedbackDescMissionID.Default.(int64)
 	// missionfailedfeedbackDescMissionName is the schema descriptor for mission_name field.
-	missionfailedfeedbackDescMissionName := missionfailedfeedbackFields[3].Descriptor()
+	missionfailedfeedbackDescMissionName := missionfailedfeedbackFields[4].Descriptor()
 	// missionfailedfeedback.DefaultMissionName holds the default value on creation for the mission_name field.
 	missionfailedfeedback.DefaultMissionName = missionfailedfeedbackDescMissionName.Default.(string)
 	// missionfailedfeedbackDescReason is the schema descriptor for reason field.
-	missionfailedfeedbackDescReason := missionfailedfeedbackFields[5].Descriptor()
+	missionfailedfeedbackDescReason := missionfailedfeedbackFields[6].Descriptor()
 	// missionfailedfeedback.DefaultReason holds the default value on creation for the reason field.
 	missionfailedfeedback.DefaultReason = missionfailedfeedbackDescReason.Default.(string)
 	// missionfailedfeedbackDescID is the schema descriptor for id field.

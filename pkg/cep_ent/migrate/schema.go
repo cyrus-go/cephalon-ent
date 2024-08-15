@@ -1754,6 +1754,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务失败反馈类型", Enums: []string{"unknown", "start", "recover"}, Default: "unknown"},
 		{Name: "mission_name", Type: field.TypeString, Comment: "应用名称", Default: ""},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"init", "done"}, Default: "init"},
 		{Name: "reason", Type: field.TypeString, Comment: "任务失败的原因", Default: ""},
@@ -1770,19 +1771,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "mission_failed_feedbacks_devices_mission_failed_feedbacks",
-				Columns:    []*schema.Column{MissionFailedFeedbacksColumns[9]},
+				Columns:    []*schema.Column{MissionFailedFeedbacksColumns[10]},
 				RefColumns: []*schema.Column{DevicesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "mission_failed_feedbacks_missions_mission_failed_feedback",
-				Columns:    []*schema.Column{MissionFailedFeedbacksColumns[10]},
+				Columns:    []*schema.Column{MissionFailedFeedbacksColumns[11]},
 				RefColumns: []*schema.Column{MissionsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "mission_failed_feedbacks_users_mission_failed_feedbacks",
-				Columns:    []*schema.Column{MissionFailedFeedbacksColumns[11]},
+				Columns:    []*schema.Column{MissionFailedFeedbacksColumns[12]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -1791,22 +1792,22 @@ var (
 			{
 				Name:    "missionfailedfeedback_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionFailedFeedbacksColumns[11]},
+				Columns: []*schema.Column{MissionFailedFeedbacksColumns[12]},
 			},
 			{
 				Name:    "missionfailedfeedback_device_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionFailedFeedbacksColumns[9]},
+				Columns: []*schema.Column{MissionFailedFeedbacksColumns[10]},
 			},
 			{
 				Name:    "missionfailedfeedback_mission_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionFailedFeedbacksColumns[10]},
+				Columns: []*schema.Column{MissionFailedFeedbacksColumns[11]},
 			},
 			{
 				Name:    "missionfailedfeedback_user_id_mission_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionFailedFeedbacksColumns[11], MissionFailedFeedbacksColumns[10]},
+				Columns: []*schema.Column{MissionFailedFeedbacksColumns[12], MissionFailedFeedbacksColumns[11]},
 			},
 		},
 	}

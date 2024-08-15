@@ -32,6 +32,8 @@ const (
 	FieldDeviceID = "device_id"
 	// FieldMissionID holds the string denoting the mission_id field in the database.
 	FieldMissionID = "mission_id"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
 	// FieldMissionName holds the string denoting the mission_name field in the database.
 	FieldMissionName = "mission_name"
 	// FieldStatus holds the string denoting the status field in the database.
@@ -80,6 +82,7 @@ var Columns = []string{
 	FieldUserID,
 	FieldDeviceID,
 	FieldMissionID,
+	FieldType,
 	FieldMissionName,
 	FieldStatus,
 	FieldReason,
@@ -121,6 +124,18 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
+
+const DefaultType enums.MissionFailedFeedbackType = "unknown"
+
+// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
+func TypeValidator(_type enums.MissionFailedFeedbackType) error {
+	switch _type {
+	case "unknown", "start", "recover":
+		return nil
+	default:
+		return fmt.Errorf("missionfailedfeedback: invalid enum value for type field: %q", _type)
+	}
+}
 
 const DefaultStatus enums.MissionFailedFeedbackStatus = "init"
 
@@ -180,6 +195,11 @@ func ByDeviceID(opts ...sql.OrderTermOption) OrderOption {
 // ByMissionID orders the results by the mission_id field.
 func ByMissionID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionID, opts...).ToFunc()
+}
+
+// ByType orders the results by the type field.
+func ByType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldType, opts...).ToFunc()
 }
 
 // ByMissionName orders the results by the mission_name field.

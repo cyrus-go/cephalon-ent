@@ -54237,6 +54237,7 @@ type MissionFailedFeedbackMutation struct {
 	created_at     *time.Time
 	updated_at     *time.Time
 	deleted_at     *time.Time
+	_type          *enums.MissionFailedFeedbackType
 	mission_name   *string
 	status         *enums.MissionFailedFeedbackStatus
 	reason         *string
@@ -54684,6 +54685,42 @@ func (m *MissionFailedFeedbackMutation) ResetMissionID() {
 	m.mission = nil
 }
 
+// SetType sets the "type" field.
+func (m *MissionFailedFeedbackMutation) SetType(efft enums.MissionFailedFeedbackType) {
+	m._type = &efft
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *MissionFailedFeedbackMutation) GetType() (r enums.MissionFailedFeedbackType, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the MissionFailedFeedback entity.
+// If the MissionFailedFeedback object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionFailedFeedbackMutation) OldType(ctx context.Context) (v enums.MissionFailedFeedbackType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *MissionFailedFeedbackMutation) ResetType() {
+	m._type = nil
+}
+
 // SetMissionName sets the "mission_name" field.
 func (m *MissionFailedFeedbackMutation) SetMissionName(s string) {
 	m.mission_name = &s
@@ -54907,7 +54944,7 @@ func (m *MissionFailedFeedbackMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionFailedFeedbackMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_by != nil {
 		fields = append(fields, missionfailedfeedback.FieldCreatedBy)
 	}
@@ -54931,6 +54968,9 @@ func (m *MissionFailedFeedbackMutation) Fields() []string {
 	}
 	if m.mission != nil {
 		fields = append(fields, missionfailedfeedback.FieldMissionID)
+	}
+	if m._type != nil {
+		fields = append(fields, missionfailedfeedback.FieldType)
 	}
 	if m.mission_name != nil {
 		fields = append(fields, missionfailedfeedback.FieldMissionName)
@@ -54965,6 +55005,8 @@ func (m *MissionFailedFeedbackMutation) Field(name string) (ent.Value, bool) {
 		return m.DeviceID()
 	case missionfailedfeedback.FieldMissionID:
 		return m.MissionID()
+	case missionfailedfeedback.FieldType:
+		return m.GetType()
 	case missionfailedfeedback.FieldMissionName:
 		return m.MissionName()
 	case missionfailedfeedback.FieldStatus:
@@ -54996,6 +55038,8 @@ func (m *MissionFailedFeedbackMutation) OldField(ctx context.Context, name strin
 		return m.OldDeviceID(ctx)
 	case missionfailedfeedback.FieldMissionID:
 		return m.OldMissionID(ctx)
+	case missionfailedfeedback.FieldType:
+		return m.OldType(ctx)
 	case missionfailedfeedback.FieldMissionName:
 		return m.OldMissionName(ctx)
 	case missionfailedfeedback.FieldStatus:
@@ -55066,6 +55110,13 @@ func (m *MissionFailedFeedbackMutation) SetField(name string, value ent.Value) e
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMissionID(v)
+		return nil
+	case missionfailedfeedback.FieldType:
+		v, ok := value.(enums.MissionFailedFeedbackType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
 		return nil
 	case missionfailedfeedback.FieldMissionName:
 		v, ok := value.(string)
@@ -55187,6 +55238,9 @@ func (m *MissionFailedFeedbackMutation) ResetField(name string) error {
 		return nil
 	case missionfailedfeedback.FieldMissionID:
 		m.ResetMissionID()
+		return nil
+	case missionfailedfeedback.FieldType:
+		m.ResetType()
 		return nil
 	case missionfailedfeedback.FieldMissionName:
 		m.ResetMissionName()
