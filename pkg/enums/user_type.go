@@ -8,6 +8,7 @@ const (
 	UserTypeAdmin         UserType = "admin"
 	UserTypeBoss          UserType = "boss"            // 超级管理员，可管理 admin 用户
 	UserTypeAdminReadOnly UserType = "admin_read_only" // 仅可查看后台数据的管理员
+	UserTypeOpenCL        UserType = "opencl"          // opencl 用户
 )
 
 func (obj UserType) Values() []string {
@@ -17,6 +18,7 @@ func (obj UserType) Values() []string {
 		string(UserTypeAdmin),
 		string(UserTypeBoss),
 		string(UserTypeAdminReadOnly),
+		string(UserTypeOpenCL),
 	}
 }
 
