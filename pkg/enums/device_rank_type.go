@@ -3,13 +3,15 @@ package enums
 type DeviceRankType string
 
 const (
-	DeviceRankTypeBlack  DeviceRankType = "black"  //黑名单
-	DeviceRankTypeNormal DeviceRankType = "normal" //正常
+	DeviceRankTypeBlack          DeviceRankType = "black"            // 正常黑名单
+	DeviceRankTypeNoRelieveBlack DeviceRankType = "no_relieve_black" // 不可自动解除黑名单状态
+	DeviceRankTypeNormal         DeviceRankType = "normal"           // 正常
 )
 
 func (DeviceRankType) Values() []string {
 	return []string{
 		string(DeviceRankTypeBlack),
+		string(DeviceRankTypeNoRelieveBlack),
 		string(DeviceRankTypeNormal),
 	}
 }

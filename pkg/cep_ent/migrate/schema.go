@@ -534,7 +534,7 @@ var (
 		{Name: "stability", Type: field.TypeEnum, Comment: "设备稳定性", Enums: []string{"great", "good", "ok", "bad"}, Default: "good"},
 		{Name: "version", Type: field.TypeString, Comment: "设备版本", Default: "无版本号"},
 		{Name: "fault", Type: field.TypeEnum, Comment: "故障信息", Enums: []string{"ok", "drive_abnormal", "no_disk", "task_failure", "recover"}, Default: "ok"},
-		{Name: "rank", Type: field.TypeEnum, Comment: "设备等级(目前阶段就是黑名单)", Enums: []string{"black", "normal"}, Default: "normal"},
+		{Name: "rank", Type: field.TypeEnum, Comment: "设备等级(目前阶段就是黑名单)", Enums: []string{"black", "no_relieve_black", "normal"}, Default: "normal"},
 		{Name: "free_gpu_num", Type: field.TypeInt, Comment: "空闲GPU数量", Default: 0},
 		{Name: "rank_at", Type: field.TypeTime, Nullable: true, Comment: "评定设备等级的时刻，带时区"},
 		{Name: "stability_at", Type: field.TypeTime, Nullable: true, Comment: "判定稳定性的时刻，带时区"},
