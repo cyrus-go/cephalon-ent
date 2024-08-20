@@ -50,6 +50,7 @@ const (
 	MissionTypeComfyuiLiuTime     MissionType = "comfyui_liu_time"
 	MissionTypeComfyuiLiTime      MissionType = "comfyui_li_time"
 	MissionTypeComfyuiNenlyTime   MissionType = "comfyui_nenly_time"
+	MissionTypeComfyuiOuTime      MissionType = "comfyui_ou_time"
 	MissionTypeWaitingTime        MissionType = "waiting_time" // 等待任务
 
 	MissionTypeSdTimePlan             MissionType = "sd_time_plan"
@@ -93,6 +94,7 @@ const (
 	MissionTypeComfyuiLiuTimePlan     MissionType = "comfyui_liu_time_plan"
 	MissionTypeComfyuiLiTimePlan      MissionType = "comfyui_li_time_plan"
 	MissionTypeComfyuiNenlyTimePlan   MissionType = "comfyui_nenly_time_plan"
+	MissionTypeComfyuiOuTimePlan      MissionType = "comfyui_ou_time_plan"
 	MissionTypeWaitingTimePlan        MissionType = "waiting_time_plan" // 等待任务
 )
 
@@ -186,6 +188,8 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeComfyuiLiTimePlan),
 		string(MissionTypeComfyuiNenlyTime),
 		string(MissionTypeComfyuiNenlyTimePlan),
+		string(MissionTypeComfyuiOuTime),
+		string(MissionTypeComfyuiOuTimePlan),
 		string(MissionTypeWaitingTime),
 		string(MissionTypeWaitingTimePlan),
 	}
