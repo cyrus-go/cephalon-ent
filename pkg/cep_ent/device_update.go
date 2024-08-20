@@ -480,6 +480,26 @@ func (du *DeviceUpdate) AddFreeGpuNum(i int) *DeviceUpdate {
 	return du
 }
 
+// SetStabilityAt sets the "stability_at" field.
+func (du *DeviceUpdate) SetStabilityAt(t time.Time) *DeviceUpdate {
+	du.mutation.SetStabilityAt(t)
+	return du
+}
+
+// SetNillableStabilityAt sets the "stability_at" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableStabilityAt(t *time.Time) *DeviceUpdate {
+	if t != nil {
+		du.SetStabilityAt(*t)
+	}
+	return du
+}
+
+// ClearStabilityAt clears the value of the "stability_at" field.
+func (du *DeviceUpdate) ClearStabilityAt() *DeviceUpdate {
+	du.mutation.ClearStabilityAt()
+	return du
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (du *DeviceUpdate) SetUser(u *User) *DeviceUpdate {
 	return du.SetUserID(u.ID)
@@ -1103,6 +1123,12 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.AddedFreeGpuNum(); ok {
 		_spec.AddField(device.FieldFreeGpuNum, field.TypeInt, value)
+	}
+	if value, ok := du.mutation.StabilityAt(); ok {
+		_spec.SetField(device.FieldStabilityAt, field.TypeTime, value)
+	}
+	if du.mutation.StabilityAtCleared() {
+		_spec.ClearField(device.FieldStabilityAt, field.TypeTime)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2088,6 +2114,26 @@ func (duo *DeviceUpdateOne) AddFreeGpuNum(i int) *DeviceUpdateOne {
 	return duo
 }
 
+// SetStabilityAt sets the "stability_at" field.
+func (duo *DeviceUpdateOne) SetStabilityAt(t time.Time) *DeviceUpdateOne {
+	duo.mutation.SetStabilityAt(t)
+	return duo
+}
+
+// SetNillableStabilityAt sets the "stability_at" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableStabilityAt(t *time.Time) *DeviceUpdateOne {
+	if t != nil {
+		duo.SetStabilityAt(*t)
+	}
+	return duo
+}
+
+// ClearStabilityAt clears the value of the "stability_at" field.
+func (duo *DeviceUpdateOne) ClearStabilityAt() *DeviceUpdateOne {
+	duo.mutation.ClearStabilityAt()
+	return duo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (duo *DeviceUpdateOne) SetUser(u *User) *DeviceUpdateOne {
 	return duo.SetUserID(u.ID)
@@ -2741,6 +2787,12 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if value, ok := duo.mutation.AddedFreeGpuNum(); ok {
 		_spec.AddField(device.FieldFreeGpuNum, field.TypeInt, value)
+	}
+	if value, ok := duo.mutation.StabilityAt(); ok {
+		_spec.SetField(device.FieldStabilityAt, field.TypeTime, value)
+	}
+	if duo.mutation.StabilityAtCleared() {
+		_spec.ClearField(device.FieldStabilityAt, field.TypeTime)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

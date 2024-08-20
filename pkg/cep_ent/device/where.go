@@ -156,6 +156,11 @@ func FreeGpuNum(v int) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldFreeGpuNum, v))
 }
 
+// StabilityAt applies equality check predicate on the "stability_at" field. It's identical to StabilityAtEQ.
+func StabilityAt(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldStabilityAt, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldCreatedBy, v))
@@ -1239,6 +1244,56 @@ func FreeGpuNumLT(v int) predicate.Device {
 // FreeGpuNumLTE applies the LTE predicate on the "free_gpu_num" field.
 func FreeGpuNumLTE(v int) predicate.Device {
 	return predicate.Device(sql.FieldLTE(FieldFreeGpuNum, v))
+}
+
+// StabilityAtEQ applies the EQ predicate on the "stability_at" field.
+func StabilityAtEQ(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldStabilityAt, v))
+}
+
+// StabilityAtNEQ applies the NEQ predicate on the "stability_at" field.
+func StabilityAtNEQ(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldStabilityAt, v))
+}
+
+// StabilityAtIn applies the In predicate on the "stability_at" field.
+func StabilityAtIn(vs ...time.Time) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldStabilityAt, vs...))
+}
+
+// StabilityAtNotIn applies the NotIn predicate on the "stability_at" field.
+func StabilityAtNotIn(vs ...time.Time) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldStabilityAt, vs...))
+}
+
+// StabilityAtGT applies the GT predicate on the "stability_at" field.
+func StabilityAtGT(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldStabilityAt, v))
+}
+
+// StabilityAtGTE applies the GTE predicate on the "stability_at" field.
+func StabilityAtGTE(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldStabilityAt, v))
+}
+
+// StabilityAtLT applies the LT predicate on the "stability_at" field.
+func StabilityAtLT(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldStabilityAt, v))
+}
+
+// StabilityAtLTE applies the LTE predicate on the "stability_at" field.
+func StabilityAtLTE(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldStabilityAt, v))
+}
+
+// StabilityAtIsNil applies the IsNil predicate on the "stability_at" field.
+func StabilityAtIsNil() predicate.Device {
+	return predicate.Device(sql.FieldIsNull(FieldStabilityAt))
+}
+
+// StabilityAtNotNil applies the NotNil predicate on the "stability_at" field.
+func StabilityAtNotNil() predicate.Device {
+	return predicate.Device(sql.FieldNotNull(FieldStabilityAt))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

@@ -773,6 +773,10 @@ func init() {
 	deviceDescFreeGpuNum := deviceFields[22].Descriptor()
 	// device.DefaultFreeGpuNum holds the default value on creation for the free_gpu_num field.
 	device.DefaultFreeGpuNum = deviceDescFreeGpuNum.Default.(int)
+	// deviceDescStabilityAt is the schema descriptor for stability_at field.
+	deviceDescStabilityAt := deviceFields[23].Descriptor()
+	// device.DefaultStabilityAt holds the default value on creation for the stability_at field.
+	device.DefaultStabilityAt = deviceDescStabilityAt.Default.(func() time.Time)
 	// deviceDescID is the schema descriptor for id field.
 	deviceDescID := deviceMixinFields0[0].Descriptor()
 	// device.DefaultID holds the default value on creation for the id field.

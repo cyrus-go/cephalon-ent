@@ -419,6 +419,20 @@ func (dc *DeviceCreate) SetNillableFreeGpuNum(i *int) *DeviceCreate {
 	return dc
 }
 
+// SetStabilityAt sets the "stability_at" field.
+func (dc *DeviceCreate) SetStabilityAt(t time.Time) *DeviceCreate {
+	dc.mutation.SetStabilityAt(t)
+	return dc
+}
+
+// SetNillableStabilityAt sets the "stability_at" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableStabilityAt(t *time.Time) *DeviceCreate {
+	if t != nil {
+		dc.SetStabilityAt(*t)
+	}
+	return dc
+}
+
 // SetID sets the "id" field.
 func (dc *DeviceCreate) SetID(i int64) *DeviceCreate {
 	dc.mutation.SetID(i)
@@ -746,6 +760,10 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultFreeGpuNum
 		dc.mutation.SetFreeGpuNum(v)
 	}
+	if _, ok := dc.mutation.StabilityAt(); !ok {
+		v := device.DefaultStabilityAt()
+		dc.mutation.SetStabilityAt(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := device.DefaultID()
 		dc.mutation.SetID(v)
@@ -1020,6 +1038,10 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	if value, ok := dc.mutation.FreeGpuNum(); ok {
 		_spec.SetField(device.FieldFreeGpuNum, field.TypeInt, value)
 		_node.FreeGpuNum = value
+	}
+	if value, ok := dc.mutation.StabilityAt(); ok {
+		_spec.SetField(device.FieldStabilityAt, field.TypeTime, value)
+		_node.StabilityAt = &value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1656,6 +1678,24 @@ func (u *DeviceUpsert) AddFreeGpuNum(v int) *DeviceUpsert {
 	return u
 }
 
+// SetStabilityAt sets the "stability_at" field.
+func (u *DeviceUpsert) SetStabilityAt(v time.Time) *DeviceUpsert {
+	u.Set(device.FieldStabilityAt, v)
+	return u
+}
+
+// UpdateStabilityAt sets the "stability_at" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateStabilityAt() *DeviceUpsert {
+	u.SetExcluded(device.FieldStabilityAt)
+	return u
+}
+
+// ClearStabilityAt clears the value of the "stability_at" field.
+func (u *DeviceUpsert) ClearStabilityAt() *DeviceUpsert {
+	u.SetNull(device.FieldStabilityAt)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2159,6 +2199,27 @@ func (u *DeviceUpsertOne) AddFreeGpuNum(v int) *DeviceUpsertOne {
 func (u *DeviceUpsertOne) UpdateFreeGpuNum() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateFreeGpuNum()
+	})
+}
+
+// SetStabilityAt sets the "stability_at" field.
+func (u *DeviceUpsertOne) SetStabilityAt(v time.Time) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetStabilityAt(v)
+	})
+}
+
+// UpdateStabilityAt sets the "stability_at" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateStabilityAt() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateStabilityAt()
+	})
+}
+
+// ClearStabilityAt clears the value of the "stability_at" field.
+func (u *DeviceUpsertOne) ClearStabilityAt() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.ClearStabilityAt()
 	})
 }
 
@@ -2834,6 +2895,27 @@ func (u *DeviceUpsertBulk) AddFreeGpuNum(v int) *DeviceUpsertBulk {
 func (u *DeviceUpsertBulk) UpdateFreeGpuNum() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateFreeGpuNum()
+	})
+}
+
+// SetStabilityAt sets the "stability_at" field.
+func (u *DeviceUpsertBulk) SetStabilityAt(v time.Time) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetStabilityAt(v)
+	})
+}
+
+// UpdateStabilityAt sets the "stability_at" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateStabilityAt() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateStabilityAt()
+	})
+}
+
+// ClearStabilityAt clears the value of the "stability_at" field.
+func (u *DeviceUpsertBulk) ClearStabilityAt() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.ClearStabilityAt()
 	})
 }
 
