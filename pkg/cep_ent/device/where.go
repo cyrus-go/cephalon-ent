@@ -156,6 +156,11 @@ func FreeGpuNum(v int) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldFreeGpuNum, v))
 }
 
+// RankAt applies equality check predicate on the "rank_at" field. It's identical to RankAtEQ.
+func RankAt(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldRankAt, v))
+}
+
 // StabilityAt applies equality check predicate on the "stability_at" field. It's identical to StabilityAtEQ.
 func StabilityAt(v time.Time) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldStabilityAt, v))
@@ -1244,6 +1249,56 @@ func FreeGpuNumLT(v int) predicate.Device {
 // FreeGpuNumLTE applies the LTE predicate on the "free_gpu_num" field.
 func FreeGpuNumLTE(v int) predicate.Device {
 	return predicate.Device(sql.FieldLTE(FieldFreeGpuNum, v))
+}
+
+// RankAtEQ applies the EQ predicate on the "rank_at" field.
+func RankAtEQ(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldRankAt, v))
+}
+
+// RankAtNEQ applies the NEQ predicate on the "rank_at" field.
+func RankAtNEQ(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldRankAt, v))
+}
+
+// RankAtIn applies the In predicate on the "rank_at" field.
+func RankAtIn(vs ...time.Time) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldRankAt, vs...))
+}
+
+// RankAtNotIn applies the NotIn predicate on the "rank_at" field.
+func RankAtNotIn(vs ...time.Time) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldRankAt, vs...))
+}
+
+// RankAtGT applies the GT predicate on the "rank_at" field.
+func RankAtGT(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldRankAt, v))
+}
+
+// RankAtGTE applies the GTE predicate on the "rank_at" field.
+func RankAtGTE(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldRankAt, v))
+}
+
+// RankAtLT applies the LT predicate on the "rank_at" field.
+func RankAtLT(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldRankAt, v))
+}
+
+// RankAtLTE applies the LTE predicate on the "rank_at" field.
+func RankAtLTE(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldRankAt, v))
+}
+
+// RankAtIsNil applies the IsNil predicate on the "rank_at" field.
+func RankAtIsNil() predicate.Device {
+	return predicate.Device(sql.FieldIsNull(FieldRankAt))
+}
+
+// RankAtNotNil applies the NotNil predicate on the "rank_at" field.
+func RankAtNotNil() predicate.Device {
+	return predicate.Device(sql.FieldNotNull(FieldRankAt))
 }
 
 // StabilityAtEQ applies the EQ predicate on the "stability_at" field.

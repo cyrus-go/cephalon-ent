@@ -76,6 +76,8 @@ type Device struct {
 	Rank enums.DeviceRankType `json:"rank"`
 	// 空闲GPU数量
 	FreeGpuNum int `json:"free_gpu_num"`
+	// 评定设备等级的时刻，带时区
+	RankAt *time.Time `json:"rank_at"`
 	// 判定稳定性的时刻，带时区
 	StabilityAt *time.Time `json:"stability_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -240,7 +242,7 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability, device.FieldVersion, device.FieldFault, device.FieldRank:
 			values[i] = new(sql.NullString)
-		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt, device.FieldStabilityAt:
+		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt, device.FieldRankAt, device.FieldStabilityAt:
 			values[i] = new(sql.NullTime)
 		case device.FieldCpus:
 			values[i] = device.ValueScanner.Cpus.ScanValue()
@@ -433,6 +435,13 @@ func (d *Device) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				d.FreeGpuNum = int(value.Int64)
 			}
+		case device.FieldRankAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field rank_at", values[i])
+			} else if value.Valid {
+				d.RankAt = new(time.Time)
+				*d.RankAt = value.Time
+			}
 		case device.FieldStabilityAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field stability_at", values[i])
@@ -619,6 +628,11 @@ func (d *Device) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("free_gpu_num=")
 	builder.WriteString(fmt.Sprintf("%v", d.FreeGpuNum))
+	builder.WriteString(", ")
+	if v := d.RankAt; v != nil {
+		builder.WriteString("rank_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	if v := d.StabilityAt; v != nil {
 		builder.WriteString("stability_at=")

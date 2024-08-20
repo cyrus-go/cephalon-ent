@@ -480,6 +480,26 @@ func (du *DeviceUpdate) AddFreeGpuNum(i int) *DeviceUpdate {
 	return du
 }
 
+// SetRankAt sets the "rank_at" field.
+func (du *DeviceUpdate) SetRankAt(t time.Time) *DeviceUpdate {
+	du.mutation.SetRankAt(t)
+	return du
+}
+
+// SetNillableRankAt sets the "rank_at" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableRankAt(t *time.Time) *DeviceUpdate {
+	if t != nil {
+		du.SetRankAt(*t)
+	}
+	return du
+}
+
+// ClearRankAt clears the value of the "rank_at" field.
+func (du *DeviceUpdate) ClearRankAt() *DeviceUpdate {
+	du.mutation.ClearRankAt()
+	return du
+}
+
 // SetStabilityAt sets the "stability_at" field.
 func (du *DeviceUpdate) SetStabilityAt(t time.Time) *DeviceUpdate {
 	du.mutation.SetStabilityAt(t)
@@ -1123,6 +1143,12 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.AddedFreeGpuNum(); ok {
 		_spec.AddField(device.FieldFreeGpuNum, field.TypeInt, value)
+	}
+	if value, ok := du.mutation.RankAt(); ok {
+		_spec.SetField(device.FieldRankAt, field.TypeTime, value)
+	}
+	if du.mutation.RankAtCleared() {
+		_spec.ClearField(device.FieldRankAt, field.TypeTime)
 	}
 	if value, ok := du.mutation.StabilityAt(); ok {
 		_spec.SetField(device.FieldStabilityAt, field.TypeTime, value)
@@ -2114,6 +2140,26 @@ func (duo *DeviceUpdateOne) AddFreeGpuNum(i int) *DeviceUpdateOne {
 	return duo
 }
 
+// SetRankAt sets the "rank_at" field.
+func (duo *DeviceUpdateOne) SetRankAt(t time.Time) *DeviceUpdateOne {
+	duo.mutation.SetRankAt(t)
+	return duo
+}
+
+// SetNillableRankAt sets the "rank_at" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableRankAt(t *time.Time) *DeviceUpdateOne {
+	if t != nil {
+		duo.SetRankAt(*t)
+	}
+	return duo
+}
+
+// ClearRankAt clears the value of the "rank_at" field.
+func (duo *DeviceUpdateOne) ClearRankAt() *DeviceUpdateOne {
+	duo.mutation.ClearRankAt()
+	return duo
+}
+
 // SetStabilityAt sets the "stability_at" field.
 func (duo *DeviceUpdateOne) SetStabilityAt(t time.Time) *DeviceUpdateOne {
 	duo.mutation.SetStabilityAt(t)
@@ -2787,6 +2833,12 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if value, ok := duo.mutation.AddedFreeGpuNum(); ok {
 		_spec.AddField(device.FieldFreeGpuNum, field.TypeInt, value)
+	}
+	if value, ok := duo.mutation.RankAt(); ok {
+		_spec.SetField(device.FieldRankAt, field.TypeTime, value)
+	}
+	if duo.mutation.RankAtCleared() {
+		_spec.ClearField(device.FieldRankAt, field.TypeTime)
 	}
 	if value, ok := duo.mutation.StabilityAt(); ok {
 		_spec.SetField(device.FieldStabilityAt, field.TypeTime, value)

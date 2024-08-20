@@ -536,6 +536,7 @@ var (
 		{Name: "fault", Type: field.TypeEnum, Comment: "故障信息", Enums: []string{"ok", "drive_abnormal", "no_disk", "task_failure", "recover"}, Default: "ok"},
 		{Name: "rank", Type: field.TypeEnum, Comment: "设备等级(目前阶段就是黑名单)", Enums: []string{"black", "normal"}, Default: "normal"},
 		{Name: "free_gpu_num", Type: field.TypeInt, Comment: "空闲GPU数量", Default: 0},
+		{Name: "rank_at", Type: field.TypeTime, Nullable: true, Comment: "评定设备等级的时刻，带时区"},
 		{Name: "stability_at", Type: field.TypeTime, Nullable: true, Comment: "判定稳定性的时刻，带时区"},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
@@ -548,7 +549,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "devices_users_devices",
-				Columns:    []*schema.Column{DevicesColumns[29]},
+				Columns:    []*schema.Column{DevicesColumns[30]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -557,7 +558,7 @@ var (
 			{
 				Name:    "device_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{DevicesColumns[29]},
+				Columns: []*schema.Column{DevicesColumns[30]},
 			},
 		},
 	}

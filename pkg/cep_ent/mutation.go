@@ -13761,6 +13761,7 @@ type DeviceMutation struct {
 	rank                            *enums.DeviceRankType
 	free_gpu_num                    *int
 	addfree_gpu_num                 *int
+	rank_at                         *time.Time
 	stability_at                    *time.Time
 	clearedFields                   map[string]struct{}
 	user                            *int64
@@ -15128,6 +15129,55 @@ func (m *DeviceMutation) ResetFreeGpuNum() {
 	m.addfree_gpu_num = nil
 }
 
+// SetRankAt sets the "rank_at" field.
+func (m *DeviceMutation) SetRankAt(t time.Time) {
+	m.rank_at = &t
+}
+
+// RankAt returns the value of the "rank_at" field in the mutation.
+func (m *DeviceMutation) RankAt() (r time.Time, exists bool) {
+	v := m.rank_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRankAt returns the old "rank_at" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldRankAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRankAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRankAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRankAt: %w", err)
+	}
+	return oldValue.RankAt, nil
+}
+
+// ClearRankAt clears the value of the "rank_at" field.
+func (m *DeviceMutation) ClearRankAt() {
+	m.rank_at = nil
+	m.clearedFields[device.FieldRankAt] = struct{}{}
+}
+
+// RankAtCleared returns if the "rank_at" field was cleared in this mutation.
+func (m *DeviceMutation) RankAtCleared() bool {
+	_, ok := m.clearedFields[device.FieldRankAt]
+	return ok
+}
+
+// ResetRankAt resets all changes to the "rank_at" field.
+func (m *DeviceMutation) ResetRankAt() {
+	m.rank_at = nil
+	delete(m.clearedFields, device.FieldRankAt)
+}
+
 // SetStabilityAt sets the "stability_at" field.
 func (m *DeviceMutation) SetStabilityAt(t time.Time) {
 	m.stability_at = &t
@@ -15832,7 +15882,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 29)
+	fields := make([]string, 0, 30)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -15917,6 +15967,9 @@ func (m *DeviceMutation) Fields() []string {
 	if m.free_gpu_num != nil {
 		fields = append(fields, device.FieldFreeGpuNum)
 	}
+	if m.rank_at != nil {
+		fields = append(fields, device.FieldRankAt)
+	}
 	if m.stability_at != nil {
 		fields = append(fields, device.FieldStabilityAt)
 	}
@@ -15984,6 +16037,8 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.Rank()
 	case device.FieldFreeGpuNum:
 		return m.FreeGpuNum()
+	case device.FieldRankAt:
+		return m.RankAt()
 	case device.FieldStabilityAt:
 		return m.StabilityAt()
 	}
@@ -16051,6 +16106,8 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldRank(ctx)
 	case device.FieldFreeGpuNum:
 		return m.OldFreeGpuNum(ctx)
+	case device.FieldRankAt:
+		return m.OldRankAt(ctx)
 	case device.FieldStabilityAt:
 		return m.OldStabilityAt(ctx)
 	}
@@ -16258,6 +16315,13 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetFreeGpuNum(v)
 		return nil
+	case device.FieldRankAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRankAt(v)
+		return nil
 	case device.FieldStabilityAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -16421,6 +16485,9 @@ func (m *DeviceMutation) ClearedFields() []string {
 	if m.FieldCleared(device.FieldCpus) {
 		fields = append(fields, device.FieldCpus)
 	}
+	if m.FieldCleared(device.FieldRankAt) {
+		fields = append(fields, device.FieldRankAt)
+	}
 	if m.FieldCleared(device.FieldStabilityAt) {
 		fields = append(fields, device.FieldStabilityAt)
 	}
@@ -16440,6 +16507,9 @@ func (m *DeviceMutation) ClearField(name string) error {
 	switch name {
 	case device.FieldCpus:
 		m.ClearCpus()
+		return nil
+	case device.FieldRankAt:
+		m.ClearRankAt()
 		return nil
 	case device.FieldStabilityAt:
 		m.ClearStabilityAt()
@@ -16535,6 +16605,9 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldFreeGpuNum:
 		m.ResetFreeGpuNum()
+		return nil
+	case device.FieldRankAt:
+		m.ResetRankAt()
 		return nil
 	case device.FieldStabilityAt:
 		m.ResetStabilityAt()

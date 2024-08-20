@@ -419,6 +419,20 @@ func (dc *DeviceCreate) SetNillableFreeGpuNum(i *int) *DeviceCreate {
 	return dc
 }
 
+// SetRankAt sets the "rank_at" field.
+func (dc *DeviceCreate) SetRankAt(t time.Time) *DeviceCreate {
+	dc.mutation.SetRankAt(t)
+	return dc
+}
+
+// SetNillableRankAt sets the "rank_at" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableRankAt(t *time.Time) *DeviceCreate {
+	if t != nil {
+		dc.SetRankAt(*t)
+	}
+	return dc
+}
+
 // SetStabilityAt sets the "stability_at" field.
 func (dc *DeviceCreate) SetStabilityAt(t time.Time) *DeviceCreate {
 	dc.mutation.SetStabilityAt(t)
@@ -760,6 +774,10 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultFreeGpuNum
 		dc.mutation.SetFreeGpuNum(v)
 	}
+	if _, ok := dc.mutation.RankAt(); !ok {
+		v := device.DefaultRankAt()
+		dc.mutation.SetRankAt(v)
+	}
 	if _, ok := dc.mutation.StabilityAt(); !ok {
 		v := device.DefaultStabilityAt()
 		dc.mutation.SetStabilityAt(v)
@@ -1038,6 +1056,10 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	if value, ok := dc.mutation.FreeGpuNum(); ok {
 		_spec.SetField(device.FieldFreeGpuNum, field.TypeInt, value)
 		_node.FreeGpuNum = value
+	}
+	if value, ok := dc.mutation.RankAt(); ok {
+		_spec.SetField(device.FieldRankAt, field.TypeTime, value)
+		_node.RankAt = &value
 	}
 	if value, ok := dc.mutation.StabilityAt(); ok {
 		_spec.SetField(device.FieldStabilityAt, field.TypeTime, value)
@@ -1678,6 +1700,24 @@ func (u *DeviceUpsert) AddFreeGpuNum(v int) *DeviceUpsert {
 	return u
 }
 
+// SetRankAt sets the "rank_at" field.
+func (u *DeviceUpsert) SetRankAt(v time.Time) *DeviceUpsert {
+	u.Set(device.FieldRankAt, v)
+	return u
+}
+
+// UpdateRankAt sets the "rank_at" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateRankAt() *DeviceUpsert {
+	u.SetExcluded(device.FieldRankAt)
+	return u
+}
+
+// ClearRankAt clears the value of the "rank_at" field.
+func (u *DeviceUpsert) ClearRankAt() *DeviceUpsert {
+	u.SetNull(device.FieldRankAt)
+	return u
+}
+
 // SetStabilityAt sets the "stability_at" field.
 func (u *DeviceUpsert) SetStabilityAt(v time.Time) *DeviceUpsert {
 	u.Set(device.FieldStabilityAt, v)
@@ -2199,6 +2239,27 @@ func (u *DeviceUpsertOne) AddFreeGpuNum(v int) *DeviceUpsertOne {
 func (u *DeviceUpsertOne) UpdateFreeGpuNum() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateFreeGpuNum()
+	})
+}
+
+// SetRankAt sets the "rank_at" field.
+func (u *DeviceUpsertOne) SetRankAt(v time.Time) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetRankAt(v)
+	})
+}
+
+// UpdateRankAt sets the "rank_at" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateRankAt() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateRankAt()
+	})
+}
+
+// ClearRankAt clears the value of the "rank_at" field.
+func (u *DeviceUpsertOne) ClearRankAt() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.ClearRankAt()
 	})
 }
 
@@ -2895,6 +2956,27 @@ func (u *DeviceUpsertBulk) AddFreeGpuNum(v int) *DeviceUpsertBulk {
 func (u *DeviceUpsertBulk) UpdateFreeGpuNum() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateFreeGpuNum()
+	})
+}
+
+// SetRankAt sets the "rank_at" field.
+func (u *DeviceUpsertBulk) SetRankAt(v time.Time) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetRankAt(v)
+	})
+}
+
+// UpdateRankAt sets the "rank_at" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateRankAt() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateRankAt()
+	})
+}
+
+// ClearRankAt clears the value of the "rank_at" field.
+func (u *DeviceUpsertBulk) ClearRankAt() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.ClearRankAt()
 	})
 }
 

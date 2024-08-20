@@ -41,6 +41,7 @@ func (Device) Fields() []ent.Field {
 		field.Enum("fault").GoType(enums.DeviceFaultTypeOK).StructTag(`json:"fault"`).Default(string(enums.DeviceFaultTypeOK)).Comment("故障信息"),
 		field.Enum("rank").GoType(enums.DeviceRankTypeNormal).StructTag(`json:"rank"`).Default(string(enums.DeviceRankTypeNormal)).Comment("设备等级(目前阶段就是黑名单)"),
 		field.Int("free_gpu_num").StructTag(`json:"free_gpu_num"`).Default(0).Comment("空闲GPU数量"),
+		field.Time("rank_at").Default(time.Now).Optional().Nillable().StructTag(`json:"rank_at"`).Comment("评定设备等级的时刻，带时区"),
 		field.Time("stability_at").Default(time.Now).Optional().Nillable().StructTag(`json:"stability_at"`).Comment("判定稳定性的时刻，带时区"),
 	}
 }
