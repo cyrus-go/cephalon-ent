@@ -215,7 +215,7 @@ const DefaultType enums.BillType = "unknown"
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.BillType) error {
 	switch _type {
-	case "withdraw", "unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active", "mission", "gas", "extra_service", "cdk", "lotto", "node_trouble", "income_manage", "illegal", "survey", "compensate", "invoke_model_order":
+	case "withdraw", "unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active", "mission", "special_mission", "gas", "extra_service", "cdk", "lotto", "node_trouble", "income_manage", "illegal", "survey", "compensate", "invoke_model_order":
 		return nil
 	default:
 		return fmt.Errorf("bill: invalid enum value for type field: %q", _type)

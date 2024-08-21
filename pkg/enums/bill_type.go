@@ -10,6 +10,7 @@ const (
 	BillTypeTransfer         BillType = "transfer"
 	BillTypeActive           BillType = "active"
 	BillTypeMission          BillType = "mission"
+	BillTypeSpecialMission   BillType = "special_mission" // 特殊任务收益 目前存在分润 但分润为0 不展示给小程序用户
 	BillTypeGas              BillType = "gas"
 	BillTypeExtraService     BillType = "extra_service"
 	BillTypeWithdraw         BillType = "withdraw"
@@ -33,6 +34,7 @@ func (BillType) Values() []string {
 		string(BillTypeTransfer),
 		string(BillTypeActive),
 		string(BillTypeMission),
+		string(BillTypeSpecialMission),
 		string(BillTypeGas),
 		string(BillTypeExtraService),
 		string(BillTypeCdk),
