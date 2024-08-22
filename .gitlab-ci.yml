@@ -1,0 +1,3 @@
+include:
+  - project: 'Maintenance/Workflow'
+    file: 'cephalon-cicd-test/.ORM-test.yml'

@@ -5,7 +5,7 @@ LABEL maintainer="StarkSim<stark@cephalon.ai>"
 # 在容器根目录创建 src 目录
 WORKDIR /src
 
-#RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache g++
 
 COPY ./go.mod .
@@ -29,6 +29,12 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache tzdata
 
 WORKDIR /app
+
+ENV CEPHALON_DB_HOST=180.168.18.80
+ENV CEPHALON_DB_PASSWORD=StarkSim123456.
+ENV CEPHALON_REDIS_HOST=180.168.36.48
+ENV CEPHALON_REDIS_PASSWORD=StarkSim123456.
+
 
 COPY --from=builder /src/entrypoint.sh /app/
 COPY --from=builder /src/main /app/
