@@ -1,3 +1,3 @@
 include:
   - project: 'Maintenance/Workflow'
-    file: 'cephalon-cicd-test/.godb-ci-test.yml'
+    file: 'cephalon-cicd-test/.ORM-test.yml'
