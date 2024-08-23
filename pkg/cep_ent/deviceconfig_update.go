@@ -148,6 +148,27 @@ func (dcu *DeviceConfigUpdate) AddGapRandomMax(i int64) *DeviceConfigUpdate {
 	return dcu
 }
 
+// SetGapRandomMin sets the "gap_random_min" field.
+func (dcu *DeviceConfigUpdate) SetGapRandomMin(i int64) *DeviceConfigUpdate {
+	dcu.mutation.ResetGapRandomMin()
+	dcu.mutation.SetGapRandomMin(i)
+	return dcu
+}
+
+// SetNillableGapRandomMin sets the "gap_random_min" field if the given value is not nil.
+func (dcu *DeviceConfigUpdate) SetNillableGapRandomMin(i *int64) *DeviceConfigUpdate {
+	if i != nil {
+		dcu.SetGapRandomMin(*i)
+	}
+	return dcu
+}
+
+// AddGapRandomMin adds i to the "gap_random_min" field.
+func (dcu *DeviceConfigUpdate) AddGapRandomMin(i int64) *DeviceConfigUpdate {
+	dcu.mutation.AddGapRandomMin(i)
+	return dcu
+}
+
 // SetDevice sets the "device" edge to the Device entity.
 func (dcu *DeviceConfigUpdate) SetDevice(d *Device) *DeviceConfigUpdate {
 	return dcu.SetDeviceID(d.ID)
@@ -255,6 +276,12 @@ func (dcu *DeviceConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := dcu.mutation.AddedGapRandomMax(); ok {
 		_spec.AddField(deviceconfig.FieldGapRandomMax, field.TypeInt64, value)
+	}
+	if value, ok := dcu.mutation.GapRandomMin(); ok {
+		_spec.SetField(deviceconfig.FieldGapRandomMin, field.TypeInt64, value)
+	}
+	if value, ok := dcu.mutation.AddedGapRandomMin(); ok {
+		_spec.AddField(deviceconfig.FieldGapRandomMin, field.TypeInt64, value)
 	}
 	if dcu.mutation.DeviceCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -425,6 +452,27 @@ func (dcuo *DeviceConfigUpdateOne) AddGapRandomMax(i int64) *DeviceConfigUpdateO
 	return dcuo
 }
 
+// SetGapRandomMin sets the "gap_random_min" field.
+func (dcuo *DeviceConfigUpdateOne) SetGapRandomMin(i int64) *DeviceConfigUpdateOne {
+	dcuo.mutation.ResetGapRandomMin()
+	dcuo.mutation.SetGapRandomMin(i)
+	return dcuo
+}
+
+// SetNillableGapRandomMin sets the "gap_random_min" field if the given value is not nil.
+func (dcuo *DeviceConfigUpdateOne) SetNillableGapRandomMin(i *int64) *DeviceConfigUpdateOne {
+	if i != nil {
+		dcuo.SetGapRandomMin(*i)
+	}
+	return dcuo
+}
+
+// AddGapRandomMin adds i to the "gap_random_min" field.
+func (dcuo *DeviceConfigUpdateOne) AddGapRandomMin(i int64) *DeviceConfigUpdateOne {
+	dcuo.mutation.AddGapRandomMin(i)
+	return dcuo
+}
+
 // SetDevice sets the "device" edge to the Device entity.
 func (dcuo *DeviceConfigUpdateOne) SetDevice(d *Device) *DeviceConfigUpdateOne {
 	return dcuo.SetDeviceID(d.ID)
@@ -562,6 +610,12 @@ func (dcuo *DeviceConfigUpdateOne) sqlSave(ctx context.Context) (_node *DeviceCo
 	}
 	if value, ok := dcuo.mutation.AddedGapRandomMax(); ok {
 		_spec.AddField(deviceconfig.FieldGapRandomMax, field.TypeInt64, value)
+	}
+	if value, ok := dcuo.mutation.GapRandomMin(); ok {
+		_spec.SetField(deviceconfig.FieldGapRandomMin, field.TypeInt64, value)
+	}
+	if value, ok := dcuo.mutation.AddedGapRandomMin(); ok {
+		_spec.AddField(deviceconfig.FieldGapRandomMin, field.TypeInt64, value)
 	}
 	if dcuo.mutation.DeviceCleared() {
 		edge := &sqlgraph.EdgeSpec{

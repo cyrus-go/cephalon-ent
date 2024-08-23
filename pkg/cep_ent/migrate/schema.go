@@ -572,7 +572,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "gap_base", Type: field.TypeInt64, Comment: "间隔基数", Default: 0},
-		{Name: "gap_random_max", Type: field.TypeInt64, Comment: "间隔随机范围", Default: 0},
+		{Name: "gap_random_max", Type: field.TypeInt64, Comment: "间隔随机范围最大值", Default: 0},
+		{Name: "gap_random_min", Type: field.TypeInt64, Comment: "间隔随机范围最小值", Default: 0},
 		{Name: "device_id", Type: field.TypeInt64, Unique: true, Comment: "外键设备 id", Default: 0},
 	}
 	// DeviceConfigsTable holds the schema information for the "device_configs" table.
@@ -584,7 +585,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "device_configs_devices_device_config",
-				Columns:    []*schema.Column{DeviceConfigsColumns[8]},
+				Columns:    []*schema.Column{DeviceConfigsColumns[9]},
 				RefColumns: []*schema.Column{DevicesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -593,7 +594,7 @@ var (
 			{
 				Name:    "deviceconfig_device_id",
 				Unique:  false,
-				Columns: []*schema.Column{DeviceConfigsColumns[8]},
+				Columns: []*schema.Column{DeviceConfigsColumns[9]},
 			},
 		},
 	}

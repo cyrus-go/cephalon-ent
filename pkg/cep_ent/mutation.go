@@ -17129,6 +17129,8 @@ type DeviceConfigMutation struct {
 	addgap_base       *int64
 	gap_random_max    *int64
 	addgap_random_max *int64
+	gap_random_min    *int64
+	addgap_random_min *int64
 	clearedFields     map[string]struct{}
 	device            *int64
 	cleareddevice     bool
@@ -17609,6 +17611,62 @@ func (m *DeviceConfigMutation) ResetGapRandomMax() {
 	m.addgap_random_max = nil
 }
 
+// SetGapRandomMin sets the "gap_random_min" field.
+func (m *DeviceConfigMutation) SetGapRandomMin(i int64) {
+	m.gap_random_min = &i
+	m.addgap_random_min = nil
+}
+
+// GapRandomMin returns the value of the "gap_random_min" field in the mutation.
+func (m *DeviceConfigMutation) GapRandomMin() (r int64, exists bool) {
+	v := m.gap_random_min
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGapRandomMin returns the old "gap_random_min" field's value of the DeviceConfig entity.
+// If the DeviceConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceConfigMutation) OldGapRandomMin(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGapRandomMin is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGapRandomMin requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGapRandomMin: %w", err)
+	}
+	return oldValue.GapRandomMin, nil
+}
+
+// AddGapRandomMin adds i to the "gap_random_min" field.
+func (m *DeviceConfigMutation) AddGapRandomMin(i int64) {
+	if m.addgap_random_min != nil {
+		*m.addgap_random_min += i
+	} else {
+		m.addgap_random_min = &i
+	}
+}
+
+// AddedGapRandomMin returns the value that was added to the "gap_random_min" field in this mutation.
+func (m *DeviceConfigMutation) AddedGapRandomMin() (r int64, exists bool) {
+	v := m.addgap_random_min
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGapRandomMin resets all changes to the "gap_random_min" field.
+func (m *DeviceConfigMutation) ResetGapRandomMin() {
+	m.gap_random_min = nil
+	m.addgap_random_min = nil
+}
+
 // ClearDevice clears the "device" edge to the Device entity.
 func (m *DeviceConfigMutation) ClearDevice() {
 	m.cleareddevice = true
@@ -17670,7 +17728,7 @@ func (m *DeviceConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceConfigMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.created_by != nil {
 		fields = append(fields, deviceconfig.FieldCreatedBy)
 	}
@@ -17694,6 +17752,9 @@ func (m *DeviceConfigMutation) Fields() []string {
 	}
 	if m.gap_random_max != nil {
 		fields = append(fields, deviceconfig.FieldGapRandomMax)
+	}
+	if m.gap_random_min != nil {
+		fields = append(fields, deviceconfig.FieldGapRandomMin)
 	}
 	return fields
 }
@@ -17719,6 +17780,8 @@ func (m *DeviceConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.GapBase()
 	case deviceconfig.FieldGapRandomMax:
 		return m.GapRandomMax()
+	case deviceconfig.FieldGapRandomMin:
+		return m.GapRandomMin()
 	}
 	return nil, false
 }
@@ -17744,6 +17807,8 @@ func (m *DeviceConfigMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldGapBase(ctx)
 	case deviceconfig.FieldGapRandomMax:
 		return m.OldGapRandomMax(ctx)
+	case deviceconfig.FieldGapRandomMin:
+		return m.OldGapRandomMin(ctx)
 	}
 	return nil, fmt.Errorf("unknown DeviceConfig field %s", name)
 }
@@ -17809,6 +17874,13 @@ func (m *DeviceConfigMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetGapRandomMax(v)
 		return nil
+	case deviceconfig.FieldGapRandomMin:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGapRandomMin(v)
+		return nil
 	}
 	return fmt.Errorf("unknown DeviceConfig field %s", name)
 }
@@ -17829,6 +17901,9 @@ func (m *DeviceConfigMutation) AddedFields() []string {
 	if m.addgap_random_max != nil {
 		fields = append(fields, deviceconfig.FieldGapRandomMax)
 	}
+	if m.addgap_random_min != nil {
+		fields = append(fields, deviceconfig.FieldGapRandomMin)
+	}
 	return fields
 }
 
@@ -17845,6 +17920,8 @@ func (m *DeviceConfigMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedGapBase()
 	case deviceconfig.FieldGapRandomMax:
 		return m.AddedGapRandomMax()
+	case deviceconfig.FieldGapRandomMin:
+		return m.AddedGapRandomMin()
 	}
 	return nil, false
 }
@@ -17881,6 +17958,13 @@ func (m *DeviceConfigMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddGapRandomMax(v)
+		return nil
+	case deviceconfig.FieldGapRandomMin:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGapRandomMin(v)
 		return nil
 	}
 	return fmt.Errorf("unknown DeviceConfig numeric field %s", name)
@@ -17932,6 +18016,9 @@ func (m *DeviceConfigMutation) ResetField(name string) error {
 		return nil
 	case deviceconfig.FieldGapRandomMax:
 		m.ResetGapRandomMax()
+		return nil
+	case deviceconfig.FieldGapRandomMin:
+		m.ResetGapRandomMin()
 		return nil
 	}
 	return fmt.Errorf("unknown DeviceConfig field %s", name)

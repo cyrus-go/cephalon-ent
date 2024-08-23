@@ -33,8 +33,10 @@ type DeviceConfig struct {
 	DeviceID int64 `json:"device_id,string"`
 	// 间隔基数
 	GapBase int64 `json:"gap_base"`
-	// 间隔随机范围
+	// 间隔随机范围最大值
 	GapRandomMax int64 `json:"gap_random_max"`
+	// 间隔随机范围最小值
+	GapRandomMin int64 `json:"gap_random_min"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceConfigQuery when eager-loading is set.
 	Edges        DeviceConfigEdges `json:"edges"`
@@ -68,7 +70,7 @@ func (*DeviceConfig) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case deviceconfig.FieldID, deviceconfig.FieldCreatedBy, deviceconfig.FieldUpdatedBy, deviceconfig.FieldDeviceID, deviceconfig.FieldGapBase, deviceconfig.FieldGapRandomMax:
+		case deviceconfig.FieldID, deviceconfig.FieldCreatedBy, deviceconfig.FieldUpdatedBy, deviceconfig.FieldDeviceID, deviceconfig.FieldGapBase, deviceconfig.FieldGapRandomMax, deviceconfig.FieldGapRandomMin:
 			values[i] = new(sql.NullInt64)
 		case deviceconfig.FieldCreatedAt, deviceconfig.FieldUpdatedAt, deviceconfig.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -141,6 +143,12 @@ func (dc *DeviceConfig) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				dc.GapRandomMax = value.Int64
 			}
+		case deviceconfig.FieldGapRandomMin:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field gap_random_min", values[i])
+			} else if value.Valid {
+				dc.GapRandomMin = value.Int64
+			}
 		default:
 			dc.selectValues.Set(columns[i], values[i])
 		}
@@ -205,6 +213,9 @@ func (dc *DeviceConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("gap_random_max=")
 	builder.WriteString(fmt.Sprintf("%v", dc.GapRandomMax))
+	builder.WriteString(", ")
+	builder.WriteString("gap_random_min=")
+	builder.WriteString(fmt.Sprintf("%v", dc.GapRandomMin))
 	builder.WriteByte(')')
 	return builder.String()
 }

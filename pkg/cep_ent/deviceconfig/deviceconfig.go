@@ -30,6 +30,8 @@ const (
 	FieldGapBase = "gap_base"
 	// FieldGapRandomMax holds the string denoting the gap_random_max field in the database.
 	FieldGapRandomMax = "gap_random_max"
+	// FieldGapRandomMin holds the string denoting the gap_random_min field in the database.
+	FieldGapRandomMin = "gap_random_min"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
 	EdgeDevice = "device"
 	// Table holds the table name of the deviceconfig in the database.
@@ -54,6 +56,7 @@ var Columns = []string{
 	FieldDeviceID,
 	FieldGapBase,
 	FieldGapRandomMax,
+	FieldGapRandomMin,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -85,6 +88,8 @@ var (
 	DefaultGapBase int64
 	// DefaultGapRandomMax holds the default value on creation for the "gap_random_max" field.
 	DefaultGapRandomMax int64
+	// DefaultGapRandomMin holds the default value on creation for the "gap_random_min" field.
+	DefaultGapRandomMin int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -135,6 +140,11 @@ func ByGapBase(opts ...sql.OrderTermOption) OrderOption {
 // ByGapRandomMax orders the results by the gap_random_max field.
 func ByGapRandomMax(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldGapRandomMax, opts...).ToFunc()
+}
+
+// ByGapRandomMin orders the results by the gap_random_min field.
+func ByGapRandomMin(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGapRandomMin, opts...).ToFunc()
 }
 
 // ByDeviceField orders the results by device field.

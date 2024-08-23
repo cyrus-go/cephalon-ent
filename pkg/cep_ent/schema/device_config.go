@@ -16,7 +16,8 @@ func (DeviceConfig) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("device_id").StructTag(`json:"device_id,string"`).Default(0).Comment("外键设备 id"),
 		field.Int64("gap_base").StructTag(`json:"gap_base"`).Default(0).Comment("间隔基数"),
-		field.Int64("gap_random_max").StructTag(`json:"gap_random_max"`).Default(0).Comment("间隔随机范围"),
+		field.Int64("gap_random_max").StructTag(`json:"gap_random_max"`).Default(0).Comment("间隔随机范围最大值"),
+		field.Int64("gap_random_min").StructTag(`json:"gap_random_min"`).Default(0).Comment("间隔随机范围最小值"),
 	}
 }
 

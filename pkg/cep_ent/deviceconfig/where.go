@@ -95,6 +95,11 @@ func GapRandomMax(v int64) predicate.DeviceConfig {
 	return predicate.DeviceConfig(sql.FieldEQ(FieldGapRandomMax, v))
 }
 
+// GapRandomMin applies equality check predicate on the "gap_random_min" field. It's identical to GapRandomMinEQ.
+func GapRandomMin(v int64) predicate.DeviceConfig {
+	return predicate.DeviceConfig(sql.FieldEQ(FieldGapRandomMin, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.DeviceConfig {
 	return predicate.DeviceConfig(sql.FieldEQ(FieldCreatedBy, v))
@@ -393,6 +398,46 @@ func GapRandomMaxLT(v int64) predicate.DeviceConfig {
 // GapRandomMaxLTE applies the LTE predicate on the "gap_random_max" field.
 func GapRandomMaxLTE(v int64) predicate.DeviceConfig {
 	return predicate.DeviceConfig(sql.FieldLTE(FieldGapRandomMax, v))
+}
+
+// GapRandomMinEQ applies the EQ predicate on the "gap_random_min" field.
+func GapRandomMinEQ(v int64) predicate.DeviceConfig {
+	return predicate.DeviceConfig(sql.FieldEQ(FieldGapRandomMin, v))
+}
+
+// GapRandomMinNEQ applies the NEQ predicate on the "gap_random_min" field.
+func GapRandomMinNEQ(v int64) predicate.DeviceConfig {
+	return predicate.DeviceConfig(sql.FieldNEQ(FieldGapRandomMin, v))
+}
+
+// GapRandomMinIn applies the In predicate on the "gap_random_min" field.
+func GapRandomMinIn(vs ...int64) predicate.DeviceConfig {
+	return predicate.DeviceConfig(sql.FieldIn(FieldGapRandomMin, vs...))
+}
+
+// GapRandomMinNotIn applies the NotIn predicate on the "gap_random_min" field.
+func GapRandomMinNotIn(vs ...int64) predicate.DeviceConfig {
+	return predicate.DeviceConfig(sql.FieldNotIn(FieldGapRandomMin, vs...))
+}
+
+// GapRandomMinGT applies the GT predicate on the "gap_random_min" field.
+func GapRandomMinGT(v int64) predicate.DeviceConfig {
+	return predicate.DeviceConfig(sql.FieldGT(FieldGapRandomMin, v))
+}
+
+// GapRandomMinGTE applies the GTE predicate on the "gap_random_min" field.
+func GapRandomMinGTE(v int64) predicate.DeviceConfig {
+	return predicate.DeviceConfig(sql.FieldGTE(FieldGapRandomMin, v))
+}
+
+// GapRandomMinLT applies the LT predicate on the "gap_random_min" field.
+func GapRandomMinLT(v int64) predicate.DeviceConfig {
+	return predicate.DeviceConfig(sql.FieldLT(FieldGapRandomMin, v))
+}
+
+// GapRandomMinLTE applies the LTE predicate on the "gap_random_min" field.
+func GapRandomMinLTE(v int64) predicate.DeviceConfig {
+	return predicate.DeviceConfig(sql.FieldLTE(FieldGapRandomMin, v))
 }
 
 // HasDevice applies the HasEdge predicate on the "device" edge.

@@ -135,6 +135,20 @@ func (dcc *DeviceConfigCreate) SetNillableGapRandomMax(i *int64) *DeviceConfigCr
 	return dcc
 }
 
+// SetGapRandomMin sets the "gap_random_min" field.
+func (dcc *DeviceConfigCreate) SetGapRandomMin(i int64) *DeviceConfigCreate {
+	dcc.mutation.SetGapRandomMin(i)
+	return dcc
+}
+
+// SetNillableGapRandomMin sets the "gap_random_min" field if the given value is not nil.
+func (dcc *DeviceConfigCreate) SetNillableGapRandomMin(i *int64) *DeviceConfigCreate {
+	if i != nil {
+		dcc.SetGapRandomMin(*i)
+	}
+	return dcc
+}
+
 // SetID sets the "id" field.
 func (dcc *DeviceConfigCreate) SetID(i int64) *DeviceConfigCreate {
 	dcc.mutation.SetID(i)
@@ -221,6 +235,10 @@ func (dcc *DeviceConfigCreate) defaults() {
 		v := deviceconfig.DefaultGapRandomMax
 		dcc.mutation.SetGapRandomMax(v)
 	}
+	if _, ok := dcc.mutation.GapRandomMin(); !ok {
+		v := deviceconfig.DefaultGapRandomMin
+		dcc.mutation.SetGapRandomMin(v)
+	}
 	if _, ok := dcc.mutation.ID(); !ok {
 		v := deviceconfig.DefaultID()
 		dcc.mutation.SetID(v)
@@ -252,6 +270,9 @@ func (dcc *DeviceConfigCreate) check() error {
 	}
 	if _, ok := dcc.mutation.GapRandomMax(); !ok {
 		return &ValidationError{Name: "gap_random_max", err: errors.New(`cep_ent: missing required field "DeviceConfig.gap_random_max"`)}
+	}
+	if _, ok := dcc.mutation.GapRandomMin(); !ok {
+		return &ValidationError{Name: "gap_random_min", err: errors.New(`cep_ent: missing required field "DeviceConfig.gap_random_min"`)}
 	}
 	if _, ok := dcc.mutation.DeviceID(); !ok {
 		return &ValidationError{Name: "device", err: errors.New(`cep_ent: missing required edge "DeviceConfig.device"`)}
@@ -316,6 +337,10 @@ func (dcc *DeviceConfigCreate) createSpec() (*DeviceConfig, *sqlgraph.CreateSpec
 	if value, ok := dcc.mutation.GapRandomMax(); ok {
 		_spec.SetField(deviceconfig.FieldGapRandomMax, field.TypeInt64, value)
 		_node.GapRandomMax = value
+	}
+	if value, ok := dcc.mutation.GapRandomMin(); ok {
+		_spec.SetField(deviceconfig.FieldGapRandomMin, field.TypeInt64, value)
+		_node.GapRandomMin = value
 	}
 	if nodes := dcc.mutation.DeviceIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -494,6 +519,24 @@ func (u *DeviceConfigUpsert) AddGapRandomMax(v int64) *DeviceConfigUpsert {
 	return u
 }
 
+// SetGapRandomMin sets the "gap_random_min" field.
+func (u *DeviceConfigUpsert) SetGapRandomMin(v int64) *DeviceConfigUpsert {
+	u.Set(deviceconfig.FieldGapRandomMin, v)
+	return u
+}
+
+// UpdateGapRandomMin sets the "gap_random_min" field to the value that was provided on create.
+func (u *DeviceConfigUpsert) UpdateGapRandomMin() *DeviceConfigUpsert {
+	u.SetExcluded(deviceconfig.FieldGapRandomMin)
+	return u
+}
+
+// AddGapRandomMin adds v to the "gap_random_min" field.
+func (u *DeviceConfigUpsert) AddGapRandomMin(v int64) *DeviceConfigUpsert {
+	u.Add(deviceconfig.FieldGapRandomMin, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -668,6 +711,27 @@ func (u *DeviceConfigUpsertOne) AddGapRandomMax(v int64) *DeviceConfigUpsertOne 
 func (u *DeviceConfigUpsertOne) UpdateGapRandomMax() *DeviceConfigUpsertOne {
 	return u.Update(func(s *DeviceConfigUpsert) {
 		s.UpdateGapRandomMax()
+	})
+}
+
+// SetGapRandomMin sets the "gap_random_min" field.
+func (u *DeviceConfigUpsertOne) SetGapRandomMin(v int64) *DeviceConfigUpsertOne {
+	return u.Update(func(s *DeviceConfigUpsert) {
+		s.SetGapRandomMin(v)
+	})
+}
+
+// AddGapRandomMin adds v to the "gap_random_min" field.
+func (u *DeviceConfigUpsertOne) AddGapRandomMin(v int64) *DeviceConfigUpsertOne {
+	return u.Update(func(s *DeviceConfigUpsert) {
+		s.AddGapRandomMin(v)
+	})
+}
+
+// UpdateGapRandomMin sets the "gap_random_min" field to the value that was provided on create.
+func (u *DeviceConfigUpsertOne) UpdateGapRandomMin() *DeviceConfigUpsertOne {
+	return u.Update(func(s *DeviceConfigUpsert) {
+		s.UpdateGapRandomMin()
 	})
 }
 
@@ -1011,6 +1075,27 @@ func (u *DeviceConfigUpsertBulk) AddGapRandomMax(v int64) *DeviceConfigUpsertBul
 func (u *DeviceConfigUpsertBulk) UpdateGapRandomMax() *DeviceConfigUpsertBulk {
 	return u.Update(func(s *DeviceConfigUpsert) {
 		s.UpdateGapRandomMax()
+	})
+}
+
+// SetGapRandomMin sets the "gap_random_min" field.
+func (u *DeviceConfigUpsertBulk) SetGapRandomMin(v int64) *DeviceConfigUpsertBulk {
+	return u.Update(func(s *DeviceConfigUpsert) {
+		s.SetGapRandomMin(v)
+	})
+}
+
+// AddGapRandomMin adds v to the "gap_random_min" field.
+func (u *DeviceConfigUpsertBulk) AddGapRandomMin(v int64) *DeviceConfigUpsertBulk {
+	return u.Update(func(s *DeviceConfigUpsert) {
+		s.AddGapRandomMin(v)
+	})
+}
+
+// UpdateGapRandomMin sets the "gap_random_min" field to the value that was provided on create.
+func (u *DeviceConfigUpsertBulk) UpdateGapRandomMin() *DeviceConfigUpsertBulk {
+	return u.Update(func(s *DeviceConfigUpsert) {
+		s.UpdateGapRandomMin()
 	})
 }
 
