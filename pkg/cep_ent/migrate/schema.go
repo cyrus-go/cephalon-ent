@@ -563,6 +563,40 @@ var (
 			},
 		},
 	}
+	// DeviceConfigsColumns holds the columns for the "device_configs" table.
+	DeviceConfigsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "gap_base", Type: field.TypeInt64, Comment: "间隔基数", Default: 0},
+		{Name: "gap_random_max", Type: field.TypeInt64, Comment: "间隔随机范围", Default: 0},
+		{Name: "device_id", Type: field.TypeInt64, Unique: true, Comment: "外键设备 id", Default: 0},
+	}
+	// DeviceConfigsTable holds the schema information for the "device_configs" table.
+	DeviceConfigsTable = &schema.Table{
+		Name:       "device_configs",
+		Comment:    "设备配置信息",
+		Columns:    DeviceConfigsColumns,
+		PrimaryKey: []*schema.Column{DeviceConfigsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "device_configs_devices_device_config",
+				Columns:    []*schema.Column{DeviceConfigsColumns[8]},
+				RefColumns: []*schema.Column{DevicesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "deviceconfig_device_id",
+				Unique:  false,
+				Columns: []*schema.Column{DeviceConfigsColumns[8]},
+			},
+		},
+	}
 	// DeviceGpuMissionsColumns holds the columns for the "device_gpu_missions" table.
 	DeviceGpuMissionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -3104,6 +3138,7 @@ var (
 		CostAccountsTable,
 		CostBillsTable,
 		DevicesTable,
+		DeviceConfigsTable,
 		DeviceGpuMissionsTable,
 		DeviceOfflineRecordsTable,
 		DeviceRebootTimesTable,
@@ -3209,6 +3244,8 @@ func init() {
 	CostBillsTable.Annotation = &entsql.Annotation{}
 	DevicesTable.ForeignKeys[0].RefTable = UsersTable
 	DevicesTable.Annotation = &entsql.Annotation{}
+	DeviceConfigsTable.ForeignKeys[0].RefTable = DevicesTable
+	DeviceConfigsTable.Annotation = &entsql.Annotation{}
 	DeviceGpuMissionsTable.ForeignKeys[0].RefTable = DevicesTable
 	DeviceGpuMissionsTable.ForeignKeys[1].RefTable = GpusTable
 	DeviceGpuMissionsTable.Annotation = &entsql.Annotation{}

@@ -23,6 +23,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
@@ -109,6 +110,7 @@ const (
 	TypeCostAccount           = "CostAccount"
 	TypeCostBill              = "CostBill"
 	TypeDevice                = "Device"
+	TypeDeviceConfig          = "DeviceConfig"
 	TypeDeviceGpuMission      = "DeviceGpuMission"
 	TypeDeviceOfflineRecord   = "DeviceOfflineRecord"
 	TypeDeviceRebootTime      = "DeviceRebootTime"
@@ -13800,6 +13802,8 @@ type DeviceMutation struct {
 	mission_failed_feedbacks        map[int64]struct{}
 	removedmission_failed_feedbacks map[int64]struct{}
 	clearedmission_failed_feedbacks bool
+	device_config                   *int64
+	cleareddevice_config            bool
 	done                            bool
 	oldValue                        func(context.Context) (*Device, error)
 	predicates                      []predicate.Device
@@ -15898,6 +15902,45 @@ func (m *DeviceMutation) ResetMissionFailedFeedbacks() {
 	m.removedmission_failed_feedbacks = nil
 }
 
+// SetDeviceConfigID sets the "device_config" edge to the DeviceConfig entity by id.
+func (m *DeviceMutation) SetDeviceConfigID(id int64) {
+	m.device_config = &id
+}
+
+// ClearDeviceConfig clears the "device_config" edge to the DeviceConfig entity.
+func (m *DeviceMutation) ClearDeviceConfig() {
+	m.cleareddevice_config = true
+}
+
+// DeviceConfigCleared reports if the "device_config" edge to the DeviceConfig entity was cleared.
+func (m *DeviceMutation) DeviceConfigCleared() bool {
+	return m.cleareddevice_config
+}
+
+// DeviceConfigID returns the "device_config" edge ID in the mutation.
+func (m *DeviceMutation) DeviceConfigID() (id int64, exists bool) {
+	if m.device_config != nil {
+		return *m.device_config, true
+	}
+	return
+}
+
+// DeviceConfigIDs returns the "device_config" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DeviceConfigID instead. It exists only for internal usage by the builders.
+func (m *DeviceMutation) DeviceConfigIDs() (ids []int64) {
+	if id := m.device_config; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDeviceConfig resets all changes to the "device_config" edge.
+func (m *DeviceMutation) ResetDeviceConfig() {
+	m.device_config = nil
+	m.cleareddevice_config = false
+}
+
 // Where appends a list predicates to the DeviceMutation builder.
 func (m *DeviceMutation) Where(ps ...predicate.Device) {
 	m.predicates = append(m.predicates, ps...)
@@ -16691,7 +16734,7 @@ func (m *DeviceMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *DeviceMutation) AddedEdges() []string {
-	edges := make([]string, 0, 12)
+	edges := make([]string, 0, 13)
 	if m.user != nil {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -16727,6 +16770,9 @@ func (m *DeviceMutation) AddedEdges() []string {
 	}
 	if m.mission_failed_feedbacks != nil {
 		edges = append(edges, device.EdgeMissionFailedFeedbacks)
+	}
+	if m.device_config != nil {
+		edges = append(edges, device.EdgeDeviceConfig)
 	}
 	return edges
 }
@@ -16805,13 +16851,17 @@ func (m *DeviceMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case device.EdgeDeviceConfig:
+		if id := m.device_config; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *DeviceMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 12)
+	edges := make([]string, 0, 13)
 	if m.removedmission_produce_orders != nil {
 		edges = append(edges, device.EdgeMissionProduceOrders)
 	}
@@ -16924,7 +16974,7 @@ func (m *DeviceMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *DeviceMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 12)
+	edges := make([]string, 0, 13)
 	if m.cleareduser {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -16961,6 +17011,9 @@ func (m *DeviceMutation) ClearedEdges() []string {
 	if m.clearedmission_failed_feedbacks {
 		edges = append(edges, device.EdgeMissionFailedFeedbacks)
 	}
+	if m.cleareddevice_config {
+		edges = append(edges, device.EdgeDeviceConfig)
+	}
 	return edges
 }
 
@@ -16992,6 +17045,8 @@ func (m *DeviceMutation) EdgeCleared(name string) bool {
 		return m.cleareddevice_offline_records
 	case device.EdgeMissionFailedFeedbacks:
 		return m.clearedmission_failed_feedbacks
+	case device.EdgeDeviceConfig:
+		return m.cleareddevice_config
 	}
 	return false
 }
@@ -17002,6 +17057,9 @@ func (m *DeviceMutation) ClearEdge(name string) error {
 	switch name {
 	case device.EdgeUser:
 		m.ClearUser()
+		return nil
+	case device.EdgeDeviceConfig:
+		m.ClearDeviceConfig()
 		return nil
 	}
 	return fmt.Errorf("unknown Device unique edge %s", name)
@@ -17047,8 +17105,910 @@ func (m *DeviceMutation) ResetEdge(name string) error {
 	case device.EdgeMissionFailedFeedbacks:
 		m.ResetMissionFailedFeedbacks()
 		return nil
+	case device.EdgeDeviceConfig:
+		m.ResetDeviceConfig()
+		return nil
 	}
 	return fmt.Errorf("unknown Device edge %s", name)
+}
+
+// DeviceConfigMutation represents an operation that mutates the DeviceConfig nodes in the graph.
+type DeviceConfigMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *int64
+	created_by        *int64
+	addcreated_by     *int64
+	updated_by        *int64
+	addupdated_by     *int64
+	created_at        *time.Time
+	updated_at        *time.Time
+	deleted_at        *time.Time
+	gap_base          *int64
+	addgap_base       *int64
+	gap_random_max    *int64
+	addgap_random_max *int64
+	clearedFields     map[string]struct{}
+	device            *int64
+	cleareddevice     bool
+	done              bool
+	oldValue          func(context.Context) (*DeviceConfig, error)
+	predicates        []predicate.DeviceConfig
+}
+
+var _ ent.Mutation = (*DeviceConfigMutation)(nil)
+
+// deviceconfigOption allows management of the mutation configuration using functional options.
+type deviceconfigOption func(*DeviceConfigMutation)
+
+// newDeviceConfigMutation creates new mutation for the DeviceConfig entity.
+func newDeviceConfigMutation(c config, op Op, opts ...deviceconfigOption) *DeviceConfigMutation {
+	m := &DeviceConfigMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeDeviceConfig,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withDeviceConfigID sets the ID field of the mutation.
+func withDeviceConfigID(id int64) deviceconfigOption {
+	return func(m *DeviceConfigMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *DeviceConfig
+		)
+		m.oldValue = func(ctx context.Context) (*DeviceConfig, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().DeviceConfig.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withDeviceConfig sets the old DeviceConfig of the mutation.
+func withDeviceConfig(node *DeviceConfig) deviceconfigOption {
+	return func(m *DeviceConfigMutation) {
+		m.oldValue = func(context.Context) (*DeviceConfig, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m DeviceConfigMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m DeviceConfigMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of DeviceConfig entities.
+func (m *DeviceConfigMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *DeviceConfigMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *DeviceConfigMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().DeviceConfig.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *DeviceConfigMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *DeviceConfigMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the DeviceConfig entity.
+// If the DeviceConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceConfigMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *DeviceConfigMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *DeviceConfigMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *DeviceConfigMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *DeviceConfigMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *DeviceConfigMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the DeviceConfig entity.
+// If the DeviceConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceConfigMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *DeviceConfigMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *DeviceConfigMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *DeviceConfigMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *DeviceConfigMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *DeviceConfigMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the DeviceConfig entity.
+// If the DeviceConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceConfigMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *DeviceConfigMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *DeviceConfigMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *DeviceConfigMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the DeviceConfig entity.
+// If the DeviceConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceConfigMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *DeviceConfigMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *DeviceConfigMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *DeviceConfigMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the DeviceConfig entity.
+// If the DeviceConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceConfigMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *DeviceConfigMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetDeviceID sets the "device_id" field.
+func (m *DeviceConfigMutation) SetDeviceID(i int64) {
+	m.device = &i
+}
+
+// DeviceID returns the value of the "device_id" field in the mutation.
+func (m *DeviceConfigMutation) DeviceID() (r int64, exists bool) {
+	v := m.device
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeviceID returns the old "device_id" field's value of the DeviceConfig entity.
+// If the DeviceConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceConfigMutation) OldDeviceID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeviceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeviceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeviceID: %w", err)
+	}
+	return oldValue.DeviceID, nil
+}
+
+// ResetDeviceID resets all changes to the "device_id" field.
+func (m *DeviceConfigMutation) ResetDeviceID() {
+	m.device = nil
+}
+
+// SetGapBase sets the "gap_base" field.
+func (m *DeviceConfigMutation) SetGapBase(i int64) {
+	m.gap_base = &i
+	m.addgap_base = nil
+}
+
+// GapBase returns the value of the "gap_base" field in the mutation.
+func (m *DeviceConfigMutation) GapBase() (r int64, exists bool) {
+	v := m.gap_base
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGapBase returns the old "gap_base" field's value of the DeviceConfig entity.
+// If the DeviceConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceConfigMutation) OldGapBase(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGapBase is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGapBase requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGapBase: %w", err)
+	}
+	return oldValue.GapBase, nil
+}
+
+// AddGapBase adds i to the "gap_base" field.
+func (m *DeviceConfigMutation) AddGapBase(i int64) {
+	if m.addgap_base != nil {
+		*m.addgap_base += i
+	} else {
+		m.addgap_base = &i
+	}
+}
+
+// AddedGapBase returns the value that was added to the "gap_base" field in this mutation.
+func (m *DeviceConfigMutation) AddedGapBase() (r int64, exists bool) {
+	v := m.addgap_base
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGapBase resets all changes to the "gap_base" field.
+func (m *DeviceConfigMutation) ResetGapBase() {
+	m.gap_base = nil
+	m.addgap_base = nil
+}
+
+// SetGapRandomMax sets the "gap_random_max" field.
+func (m *DeviceConfigMutation) SetGapRandomMax(i int64) {
+	m.gap_random_max = &i
+	m.addgap_random_max = nil
+}
+
+// GapRandomMax returns the value of the "gap_random_max" field in the mutation.
+func (m *DeviceConfigMutation) GapRandomMax() (r int64, exists bool) {
+	v := m.gap_random_max
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGapRandomMax returns the old "gap_random_max" field's value of the DeviceConfig entity.
+// If the DeviceConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceConfigMutation) OldGapRandomMax(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGapRandomMax is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGapRandomMax requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGapRandomMax: %w", err)
+	}
+	return oldValue.GapRandomMax, nil
+}
+
+// AddGapRandomMax adds i to the "gap_random_max" field.
+func (m *DeviceConfigMutation) AddGapRandomMax(i int64) {
+	if m.addgap_random_max != nil {
+		*m.addgap_random_max += i
+	} else {
+		m.addgap_random_max = &i
+	}
+}
+
+// AddedGapRandomMax returns the value that was added to the "gap_random_max" field in this mutation.
+func (m *DeviceConfigMutation) AddedGapRandomMax() (r int64, exists bool) {
+	v := m.addgap_random_max
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGapRandomMax resets all changes to the "gap_random_max" field.
+func (m *DeviceConfigMutation) ResetGapRandomMax() {
+	m.gap_random_max = nil
+	m.addgap_random_max = nil
+}
+
+// ClearDevice clears the "device" edge to the Device entity.
+func (m *DeviceConfigMutation) ClearDevice() {
+	m.cleareddevice = true
+	m.clearedFields[deviceconfig.FieldDeviceID] = struct{}{}
+}
+
+// DeviceCleared reports if the "device" edge to the Device entity was cleared.
+func (m *DeviceConfigMutation) DeviceCleared() bool {
+	return m.cleareddevice
+}
+
+// DeviceIDs returns the "device" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DeviceID instead. It exists only for internal usage by the builders.
+func (m *DeviceConfigMutation) DeviceIDs() (ids []int64) {
+	if id := m.device; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDevice resets all changes to the "device" edge.
+func (m *DeviceConfigMutation) ResetDevice() {
+	m.device = nil
+	m.cleareddevice = false
+}
+
+// Where appends a list predicates to the DeviceConfigMutation builder.
+func (m *DeviceConfigMutation) Where(ps ...predicate.DeviceConfig) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the DeviceConfigMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *DeviceConfigMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.DeviceConfig, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *DeviceConfigMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *DeviceConfigMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (DeviceConfig).
+func (m *DeviceConfigMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *DeviceConfigMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_by != nil {
+		fields = append(fields, deviceconfig.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, deviceconfig.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, deviceconfig.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, deviceconfig.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, deviceconfig.FieldDeletedAt)
+	}
+	if m.device != nil {
+		fields = append(fields, deviceconfig.FieldDeviceID)
+	}
+	if m.gap_base != nil {
+		fields = append(fields, deviceconfig.FieldGapBase)
+	}
+	if m.gap_random_max != nil {
+		fields = append(fields, deviceconfig.FieldGapRandomMax)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *DeviceConfigMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case deviceconfig.FieldCreatedBy:
+		return m.CreatedBy()
+	case deviceconfig.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case deviceconfig.FieldCreatedAt:
+		return m.CreatedAt()
+	case deviceconfig.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case deviceconfig.FieldDeletedAt:
+		return m.DeletedAt()
+	case deviceconfig.FieldDeviceID:
+		return m.DeviceID()
+	case deviceconfig.FieldGapBase:
+		return m.GapBase()
+	case deviceconfig.FieldGapRandomMax:
+		return m.GapRandomMax()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *DeviceConfigMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case deviceconfig.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case deviceconfig.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case deviceconfig.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case deviceconfig.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case deviceconfig.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case deviceconfig.FieldDeviceID:
+		return m.OldDeviceID(ctx)
+	case deviceconfig.FieldGapBase:
+		return m.OldGapBase(ctx)
+	case deviceconfig.FieldGapRandomMax:
+		return m.OldGapRandomMax(ctx)
+	}
+	return nil, fmt.Errorf("unknown DeviceConfig field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DeviceConfigMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case deviceconfig.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case deviceconfig.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case deviceconfig.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case deviceconfig.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case deviceconfig.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case deviceconfig.FieldDeviceID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeviceID(v)
+		return nil
+	case deviceconfig.FieldGapBase:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGapBase(v)
+		return nil
+	case deviceconfig.FieldGapRandomMax:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGapRandomMax(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceConfig field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *DeviceConfigMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, deviceconfig.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, deviceconfig.FieldUpdatedBy)
+	}
+	if m.addgap_base != nil {
+		fields = append(fields, deviceconfig.FieldGapBase)
+	}
+	if m.addgap_random_max != nil {
+		fields = append(fields, deviceconfig.FieldGapRandomMax)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *DeviceConfigMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case deviceconfig.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case deviceconfig.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case deviceconfig.FieldGapBase:
+		return m.AddedGapBase()
+	case deviceconfig.FieldGapRandomMax:
+		return m.AddedGapRandomMax()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DeviceConfigMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case deviceconfig.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case deviceconfig.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case deviceconfig.FieldGapBase:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGapBase(v)
+		return nil
+	case deviceconfig.FieldGapRandomMax:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGapRandomMax(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceConfig numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *DeviceConfigMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *DeviceConfigMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *DeviceConfigMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown DeviceConfig nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *DeviceConfigMutation) ResetField(name string) error {
+	switch name {
+	case deviceconfig.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case deviceconfig.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case deviceconfig.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case deviceconfig.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case deviceconfig.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case deviceconfig.FieldDeviceID:
+		m.ResetDeviceID()
+		return nil
+	case deviceconfig.FieldGapBase:
+		m.ResetGapBase()
+		return nil
+	case deviceconfig.FieldGapRandomMax:
+		m.ResetGapRandomMax()
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceConfig field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *DeviceConfigMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.device != nil {
+		edges = append(edges, deviceconfig.EdgeDevice)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *DeviceConfigMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case deviceconfig.EdgeDevice:
+		if id := m.device; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *DeviceConfigMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *DeviceConfigMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *DeviceConfigMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.cleareddevice {
+		edges = append(edges, deviceconfig.EdgeDevice)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *DeviceConfigMutation) EdgeCleared(name string) bool {
+	switch name {
+	case deviceconfig.EdgeDevice:
+		return m.cleareddevice
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *DeviceConfigMutation) ClearEdge(name string) error {
+	switch name {
+	case deviceconfig.EdgeDevice:
+		m.ClearDevice()
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceConfig unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *DeviceConfigMutation) ResetEdge(name string) error {
+	switch name {
+	case deviceconfig.EdgeDevice:
+		m.ResetDevice()
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceConfig edge %s", name)
 }
 
 // DeviceGpuMissionMutation represents an operation that mutates the DeviceGpuMission nodes in the graph.

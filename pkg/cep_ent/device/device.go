@@ -103,6 +103,8 @@ const (
 	EdgeDeviceOfflineRecords = "device_offline_records"
 	// EdgeMissionFailedFeedbacks holds the string denoting the mission_failed_feedbacks edge name in mutations.
 	EdgeMissionFailedFeedbacks = "mission_failed_feedbacks"
+	// EdgeDeviceConfig holds the string denoting the device_config edge name in mutations.
+	EdgeDeviceConfig = "device_config"
 	// Table holds the table name of the device in the database.
 	Table = "devices"
 	// UserTable is the table that holds the user relation/edge.
@@ -189,6 +191,13 @@ const (
 	MissionFailedFeedbacksInverseTable = "mission_failed_feedbacks"
 	// MissionFailedFeedbacksColumn is the table column denoting the mission_failed_feedbacks relation/edge.
 	MissionFailedFeedbacksColumn = "device_id"
+	// DeviceConfigTable is the table that holds the device_config relation/edge.
+	DeviceConfigTable = "device_configs"
+	// DeviceConfigInverseTable is the table name for the DeviceConfig entity.
+	// It exists in this package in order to avoid circular dependency with the "deviceconfig" package.
+	DeviceConfigInverseTable = "device_configs"
+	// DeviceConfigColumn is the table column denoting the device_config relation/edge.
+	DeviceConfigColumn = "device_id"
 )
 
 // Columns holds all SQL columns for device fields.
@@ -716,6 +725,13 @@ func ByMissionFailedFeedbacks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderO
 		sqlgraph.OrderByNeighborTerms(s, newMissionFailedFeedbacksStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByDeviceConfigField orders the results by device_config field.
+func ByDeviceConfigField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDeviceConfigStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -798,5 +814,12 @@ func newMissionFailedFeedbacksStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionFailedFeedbacksInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, MissionFailedFeedbacksTable, MissionFailedFeedbacksColumn),
+	)
+}
+func newDeviceConfigStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DeviceConfigInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, DeviceConfigTable, DeviceConfigColumn),
 	)
 }

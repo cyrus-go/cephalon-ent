@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
@@ -645,6 +646,25 @@ func (dc *DeviceCreate) AddMissionFailedFeedbacks(m ...*MissionFailedFeedback) *
 	return dc.AddMissionFailedFeedbackIDs(ids...)
 }
 
+// SetDeviceConfigID sets the "device_config" edge to the DeviceConfig entity by ID.
+func (dc *DeviceCreate) SetDeviceConfigID(id int64) *DeviceCreate {
+	dc.mutation.SetDeviceConfigID(id)
+	return dc
+}
+
+// SetNillableDeviceConfigID sets the "device_config" edge to the DeviceConfig entity by ID if the given value is not nil.
+func (dc *DeviceCreate) SetNillableDeviceConfigID(id *int64) *DeviceCreate {
+	if id != nil {
+		dc = dc.SetDeviceConfigID(*id)
+	}
+	return dc
+}
+
+// SetDeviceConfig sets the "device_config" edge to the DeviceConfig entity.
+func (dc *DeviceCreate) SetDeviceConfig(d *DeviceConfig) *DeviceCreate {
+	return dc.SetDeviceConfigID(d.ID)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (dc *DeviceCreate) Mutation() *DeviceMutation {
 	return dc.mutation
@@ -1273,6 +1293,22 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := dc.mutation.DeviceConfigIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   device.DeviceConfigTable,
+			Columns: []string{device.DeviceConfigColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(deviceconfig.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

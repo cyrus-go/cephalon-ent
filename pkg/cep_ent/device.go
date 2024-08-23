@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -114,9 +115,11 @@ type DeviceEdges struct {
 	DeviceOfflineRecords []*DeviceOfflineRecord `json:"device_offline_records,omitempty"`
 	// MissionFailedFeedbacks holds the value of the mission_failed_feedbacks edge.
 	MissionFailedFeedbacks []*MissionFailedFeedback `json:"mission_failed_feedbacks,omitempty"`
+	// DeviceConfig holds the value of the device_config edge.
+	DeviceConfig *DeviceConfig `json:"device_config,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [12]bool
+	loadedTypes [13]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -229,6 +232,19 @@ func (e DeviceEdges) MissionFailedFeedbacksOrErr() ([]*MissionFailedFeedback, er
 		return e.MissionFailedFeedbacks, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_failed_feedbacks"}
+}
+
+// DeviceConfigOrErr returns the DeviceConfig value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e DeviceEdges) DeviceConfigOrErr() (*DeviceConfig, error) {
+	if e.loadedTypes[12] {
+		if e.DeviceConfig == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: deviceconfig.Label}
+		}
+		return e.DeviceConfig, nil
+	}
+	return nil, &NotLoadedError{edge: "device_config"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -529,6 +545,11 @@ func (d *Device) QueryDeviceOfflineRecords() *DeviceOfflineRecordQuery {
 // QueryMissionFailedFeedbacks queries the "mission_failed_feedbacks" edge of the Device entity.
 func (d *Device) QueryMissionFailedFeedbacks() *MissionFailedFeedbackQuery {
 	return NewDeviceClient(d.config).QueryMissionFailedFeedbacks(d)
+}
+
+// QueryDeviceConfig queries the "device_config" edge of the Device entity.
+func (d *Device) QueryDeviceConfig() *DeviceConfigQuery {
+	return NewDeviceClient(d.config).QueryDeviceConfig(d)
 }
 
 // Update returns a builder for updating this Device.

@@ -63,6 +63,7 @@ func (Device) Edges() []ent.Edge {
 		edge.To("device_states", DeviceState.Type),
 		edge.To("device_offline_records", DeviceOfflineRecord.Type),
 		edge.To("mission_failed_feedbacks", MissionFailedFeedback.Type),
+		edge.To("device_config", DeviceConfig.Type).Unique(), // 1 对 1
 	}
 }
 

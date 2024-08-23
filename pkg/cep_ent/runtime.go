@@ -18,6 +18,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
@@ -789,6 +790,49 @@ func init() {
 	deviceDescID := deviceMixinFields0[0].Descriptor()
 	// device.DefaultID holds the default value on creation for the id field.
 	device.DefaultID = deviceDescID.Default.(func() int64)
+	deviceconfigMixin := schema.DeviceConfig{}.Mixin()
+	deviceconfigMixinFields0 := deviceconfigMixin[0].Fields()
+	_ = deviceconfigMixinFields0
+	deviceconfigFields := schema.DeviceConfig{}.Fields()
+	_ = deviceconfigFields
+	// deviceconfigDescCreatedBy is the schema descriptor for created_by field.
+	deviceconfigDescCreatedBy := deviceconfigMixinFields0[1].Descriptor()
+	// deviceconfig.DefaultCreatedBy holds the default value on creation for the created_by field.
+	deviceconfig.DefaultCreatedBy = deviceconfigDescCreatedBy.Default.(int64)
+	// deviceconfigDescUpdatedBy is the schema descriptor for updated_by field.
+	deviceconfigDescUpdatedBy := deviceconfigMixinFields0[2].Descriptor()
+	// deviceconfig.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	deviceconfig.DefaultUpdatedBy = deviceconfigDescUpdatedBy.Default.(int64)
+	// deviceconfigDescCreatedAt is the schema descriptor for created_at field.
+	deviceconfigDescCreatedAt := deviceconfigMixinFields0[3].Descriptor()
+	// deviceconfig.DefaultCreatedAt holds the default value on creation for the created_at field.
+	deviceconfig.DefaultCreatedAt = deviceconfigDescCreatedAt.Default.(func() time.Time)
+	// deviceconfigDescUpdatedAt is the schema descriptor for updated_at field.
+	deviceconfigDescUpdatedAt := deviceconfigMixinFields0[4].Descriptor()
+	// deviceconfig.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	deviceconfig.DefaultUpdatedAt = deviceconfigDescUpdatedAt.Default.(func() time.Time)
+	// deviceconfig.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	deviceconfig.UpdateDefaultUpdatedAt = deviceconfigDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// deviceconfigDescDeletedAt is the schema descriptor for deleted_at field.
+	deviceconfigDescDeletedAt := deviceconfigMixinFields0[5].Descriptor()
+	// deviceconfig.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	deviceconfig.DefaultDeletedAt = deviceconfigDescDeletedAt.Default.(time.Time)
+	// deviceconfigDescDeviceID is the schema descriptor for device_id field.
+	deviceconfigDescDeviceID := deviceconfigFields[0].Descriptor()
+	// deviceconfig.DefaultDeviceID holds the default value on creation for the device_id field.
+	deviceconfig.DefaultDeviceID = deviceconfigDescDeviceID.Default.(int64)
+	// deviceconfigDescGapBase is the schema descriptor for gap_base field.
+	deviceconfigDescGapBase := deviceconfigFields[1].Descriptor()
+	// deviceconfig.DefaultGapBase holds the default value on creation for the gap_base field.
+	deviceconfig.DefaultGapBase = deviceconfigDescGapBase.Default.(int64)
+	// deviceconfigDescGapRandomMax is the schema descriptor for gap_random_max field.
+	deviceconfigDescGapRandomMax := deviceconfigFields[2].Descriptor()
+	// deviceconfig.DefaultGapRandomMax holds the default value on creation for the gap_random_max field.
+	deviceconfig.DefaultGapRandomMax = deviceconfigDescGapRandomMax.Default.(int64)
+	// deviceconfigDescID is the schema descriptor for id field.
+	deviceconfigDescID := deviceconfigMixinFields0[0].Descriptor()
+	// deviceconfig.DefaultID holds the default value on creation for the id field.
+	deviceconfig.DefaultID = deviceconfigDescID.Default.(func() int64)
 	devicegpumissionMixin := schema.DeviceGpuMission{}.Mixin()
 	devicegpumissionMixinFields0 := devicegpumissionMixin[0].Fields()
 	_ = devicegpumissionMixinFields0

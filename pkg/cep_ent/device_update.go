@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
@@ -710,6 +711,25 @@ func (du *DeviceUpdate) AddMissionFailedFeedbacks(m ...*MissionFailedFeedback) *
 	return du.AddMissionFailedFeedbackIDs(ids...)
 }
 
+// SetDeviceConfigID sets the "device_config" edge to the DeviceConfig entity by ID.
+func (du *DeviceUpdate) SetDeviceConfigID(id int64) *DeviceUpdate {
+	du.mutation.SetDeviceConfigID(id)
+	return du
+}
+
+// SetNillableDeviceConfigID sets the "device_config" edge to the DeviceConfig entity by ID if the given value is not nil.
+func (du *DeviceUpdate) SetNillableDeviceConfigID(id *int64) *DeviceUpdate {
+	if id != nil {
+		du = du.SetDeviceConfigID(*id)
+	}
+	return du
+}
+
+// SetDeviceConfig sets the "device_config" edge to the DeviceConfig entity.
+func (du *DeviceUpdate) SetDeviceConfig(d *DeviceConfig) *DeviceUpdate {
+	return du.SetDeviceConfigID(d.ID)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (du *DeviceUpdate) Mutation() *DeviceMutation {
 	return du.mutation
@@ -950,6 +970,12 @@ func (du *DeviceUpdate) RemoveMissionFailedFeedbacks(m ...*MissionFailedFeedback
 		ids[i] = m[i].ID
 	}
 	return du.RemoveMissionFailedFeedbackIDs(ids...)
+}
+
+// ClearDeviceConfig clears the "device_config" edge to the DeviceConfig entity.
+func (du *DeviceUpdate) ClearDeviceConfig() *DeviceUpdate {
+	du.mutation.ClearDeviceConfig()
+	return du
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1706,6 +1732,35 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if du.mutation.DeviceConfigCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   device.DeviceConfigTable,
+			Columns: []string{device.DeviceConfigColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(deviceconfig.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.DeviceConfigIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   device.DeviceConfigTable,
+			Columns: []string{device.DeviceConfigColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(deviceconfig.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(du.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, du.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -2396,6 +2451,25 @@ func (duo *DeviceUpdateOne) AddMissionFailedFeedbacks(m ...*MissionFailedFeedbac
 	return duo.AddMissionFailedFeedbackIDs(ids...)
 }
 
+// SetDeviceConfigID sets the "device_config" edge to the DeviceConfig entity by ID.
+func (duo *DeviceUpdateOne) SetDeviceConfigID(id int64) *DeviceUpdateOne {
+	duo.mutation.SetDeviceConfigID(id)
+	return duo
+}
+
+// SetNillableDeviceConfigID sets the "device_config" edge to the DeviceConfig entity by ID if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableDeviceConfigID(id *int64) *DeviceUpdateOne {
+	if id != nil {
+		duo = duo.SetDeviceConfigID(*id)
+	}
+	return duo
+}
+
+// SetDeviceConfig sets the "device_config" edge to the DeviceConfig entity.
+func (duo *DeviceUpdateOne) SetDeviceConfig(d *DeviceConfig) *DeviceUpdateOne {
+	return duo.SetDeviceConfigID(d.ID)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (duo *DeviceUpdateOne) Mutation() *DeviceMutation {
 	return duo.mutation
@@ -2636,6 +2710,12 @@ func (duo *DeviceUpdateOne) RemoveMissionFailedFeedbacks(m ...*MissionFailedFeed
 		ids[i] = m[i].ID
 	}
 	return duo.RemoveMissionFailedFeedbackIDs(ids...)
+}
+
+// ClearDeviceConfig clears the "device_config" edge to the DeviceConfig entity.
+func (duo *DeviceUpdateOne) ClearDeviceConfig() *DeviceUpdateOne {
+	duo.mutation.ClearDeviceConfig()
+	return duo
 }
 
 // Where appends a list predicates to the DeviceUpdate builder.
@@ -3415,6 +3495,35 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if duo.mutation.DeviceConfigCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   device.DeviceConfigTable,
+			Columns: []string{device.DeviceConfigColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(deviceconfig.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.DeviceConfigIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   device.DeviceConfigTable,
+			Columns: []string{device.DeviceConfigColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(deviceconfig.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
