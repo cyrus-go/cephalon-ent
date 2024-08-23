@@ -781,6 +781,10 @@ func init() {
 	deviceDescStabilityAt := deviceFields[24].Descriptor()
 	// device.DefaultStabilityAt holds the default value on creation for the stability_at field.
 	device.DefaultStabilityAt = deviceDescStabilityAt.Default.(func() time.Time)
+	// deviceDescHighTemperatureAt is the schema descriptor for high_temperature_at field.
+	deviceDescHighTemperatureAt := deviceFields[25].Descriptor()
+	// device.DefaultHighTemperatureAt holds the default value on creation for the high_temperature_at field.
+	device.DefaultHighTemperatureAt = deviceDescHighTemperatureAt.Default.(func() time.Time)
 	// deviceDescID is the schema descriptor for id field.
 	deviceDescID := deviceMixinFields0[0].Descriptor()
 	// device.DefaultID holds the default value on creation for the id field.

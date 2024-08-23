@@ -13763,6 +13763,7 @@ type DeviceMutation struct {
 	addfree_gpu_num                 *int
 	rank_at                         *time.Time
 	stability_at                    *time.Time
+	high_temperature_at             *time.Time
 	clearedFields                   map[string]struct{}
 	user                            *int64
 	cleareduser                     bool
@@ -15227,6 +15228,55 @@ func (m *DeviceMutation) ResetStabilityAt() {
 	delete(m.clearedFields, device.FieldStabilityAt)
 }
 
+// SetHighTemperatureAt sets the "high_temperature_at" field.
+func (m *DeviceMutation) SetHighTemperatureAt(t time.Time) {
+	m.high_temperature_at = &t
+}
+
+// HighTemperatureAt returns the value of the "high_temperature_at" field in the mutation.
+func (m *DeviceMutation) HighTemperatureAt() (r time.Time, exists bool) {
+	v := m.high_temperature_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHighTemperatureAt returns the old "high_temperature_at" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldHighTemperatureAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHighTemperatureAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHighTemperatureAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHighTemperatureAt: %w", err)
+	}
+	return oldValue.HighTemperatureAt, nil
+}
+
+// ClearHighTemperatureAt clears the value of the "high_temperature_at" field.
+func (m *DeviceMutation) ClearHighTemperatureAt() {
+	m.high_temperature_at = nil
+	m.clearedFields[device.FieldHighTemperatureAt] = struct{}{}
+}
+
+// HighTemperatureAtCleared returns if the "high_temperature_at" field was cleared in this mutation.
+func (m *DeviceMutation) HighTemperatureAtCleared() bool {
+	_, ok := m.clearedFields[device.FieldHighTemperatureAt]
+	return ok
+}
+
+// ResetHighTemperatureAt resets all changes to the "high_temperature_at" field.
+func (m *DeviceMutation) ResetHighTemperatureAt() {
+	m.high_temperature_at = nil
+	delete(m.clearedFields, device.FieldHighTemperatureAt)
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *DeviceMutation) ClearUser() {
 	m.cleareduser = true
@@ -15882,7 +15932,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 30)
+	fields := make([]string, 0, 31)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -15973,6 +16023,9 @@ func (m *DeviceMutation) Fields() []string {
 	if m.stability_at != nil {
 		fields = append(fields, device.FieldStabilityAt)
 	}
+	if m.high_temperature_at != nil {
+		fields = append(fields, device.FieldHighTemperatureAt)
+	}
 	return fields
 }
 
@@ -16041,6 +16094,8 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.RankAt()
 	case device.FieldStabilityAt:
 		return m.StabilityAt()
+	case device.FieldHighTemperatureAt:
+		return m.HighTemperatureAt()
 	}
 	return nil, false
 }
@@ -16110,6 +16165,8 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldRankAt(ctx)
 	case device.FieldStabilityAt:
 		return m.OldStabilityAt(ctx)
+	case device.FieldHighTemperatureAt:
+		return m.OldHighTemperatureAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Device field %s", name)
 }
@@ -16329,6 +16386,13 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStabilityAt(v)
 		return nil
+	case device.FieldHighTemperatureAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHighTemperatureAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
 }
@@ -16491,6 +16555,9 @@ func (m *DeviceMutation) ClearedFields() []string {
 	if m.FieldCleared(device.FieldStabilityAt) {
 		fields = append(fields, device.FieldStabilityAt)
 	}
+	if m.FieldCleared(device.FieldHighTemperatureAt) {
+		fields = append(fields, device.FieldHighTemperatureAt)
+	}
 	return fields
 }
 
@@ -16513,6 +16580,9 @@ func (m *DeviceMutation) ClearField(name string) error {
 		return nil
 	case device.FieldStabilityAt:
 		m.ClearStabilityAt()
+		return nil
+	case device.FieldHighTemperatureAt:
+		m.ClearHighTemperatureAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Device nullable field %s", name)
@@ -16611,6 +16681,9 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldStabilityAt:
 		m.ResetStabilityAt()
+		return nil
+	case device.FieldHighTemperatureAt:
+		m.ResetHighTemperatureAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)

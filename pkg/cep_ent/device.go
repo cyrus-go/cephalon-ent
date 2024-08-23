@@ -80,6 +80,8 @@ type Device struct {
 	RankAt *time.Time `json:"rank_at"`
 	// 判定稳定性的时刻，带时区
 	StabilityAt *time.Time `json:"stability_at"`
+	// 温度超标的时刻，带时区
+	HighTemperatureAt *time.Time `json:"high_temperature_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges        DeviceEdges `json:"edges"`
@@ -242,7 +244,7 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability, device.FieldVersion, device.FieldFault, device.FieldRank:
 			values[i] = new(sql.NullString)
-		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt, device.FieldRankAt, device.FieldStabilityAt:
+		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt, device.FieldRankAt, device.FieldStabilityAt, device.FieldHighTemperatureAt:
 			values[i] = new(sql.NullTime)
 		case device.FieldCpus:
 			values[i] = device.ValueScanner.Cpus.ScanValue()
@@ -449,6 +451,13 @@ func (d *Device) assignValues(columns []string, values []any) error {
 				d.StabilityAt = new(time.Time)
 				*d.StabilityAt = value.Time
 			}
+		case device.FieldHighTemperatureAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field high_temperature_at", values[i])
+			} else if value.Valid {
+				d.HighTemperatureAt = new(time.Time)
+				*d.HighTemperatureAt = value.Time
+			}
 		default:
 			d.selectValues.Set(columns[i], values[i])
 		}
@@ -636,6 +645,11 @@ func (d *Device) String() string {
 	builder.WriteString(", ")
 	if v := d.StabilityAt; v != nil {
 		builder.WriteString("stability_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := d.HighTemperatureAt; v != nil {
+		builder.WriteString("high_temperature_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteByte(')')

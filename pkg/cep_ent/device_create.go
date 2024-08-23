@@ -447,6 +447,20 @@ func (dc *DeviceCreate) SetNillableStabilityAt(t *time.Time) *DeviceCreate {
 	return dc
 }
 
+// SetHighTemperatureAt sets the "high_temperature_at" field.
+func (dc *DeviceCreate) SetHighTemperatureAt(t time.Time) *DeviceCreate {
+	dc.mutation.SetHighTemperatureAt(t)
+	return dc
+}
+
+// SetNillableHighTemperatureAt sets the "high_temperature_at" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableHighTemperatureAt(t *time.Time) *DeviceCreate {
+	if t != nil {
+		dc.SetHighTemperatureAt(*t)
+	}
+	return dc
+}
+
 // SetID sets the "id" field.
 func (dc *DeviceCreate) SetID(i int64) *DeviceCreate {
 	dc.mutation.SetID(i)
@@ -782,6 +796,10 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultStabilityAt()
 		dc.mutation.SetStabilityAt(v)
 	}
+	if _, ok := dc.mutation.HighTemperatureAt(); !ok {
+		v := device.DefaultHighTemperatureAt()
+		dc.mutation.SetHighTemperatureAt(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := device.DefaultID()
 		dc.mutation.SetID(v)
@@ -1064,6 +1082,10 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	if value, ok := dc.mutation.StabilityAt(); ok {
 		_spec.SetField(device.FieldStabilityAt, field.TypeTime, value)
 		_node.StabilityAt = &value
+	}
+	if value, ok := dc.mutation.HighTemperatureAt(); ok {
+		_spec.SetField(device.FieldHighTemperatureAt, field.TypeTime, value)
+		_node.HighTemperatureAt = &value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1736,6 +1758,24 @@ func (u *DeviceUpsert) ClearStabilityAt() *DeviceUpsert {
 	return u
 }
 
+// SetHighTemperatureAt sets the "high_temperature_at" field.
+func (u *DeviceUpsert) SetHighTemperatureAt(v time.Time) *DeviceUpsert {
+	u.Set(device.FieldHighTemperatureAt, v)
+	return u
+}
+
+// UpdateHighTemperatureAt sets the "high_temperature_at" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateHighTemperatureAt() *DeviceUpsert {
+	u.SetExcluded(device.FieldHighTemperatureAt)
+	return u
+}
+
+// ClearHighTemperatureAt clears the value of the "high_temperature_at" field.
+func (u *DeviceUpsert) ClearHighTemperatureAt() *DeviceUpsert {
+	u.SetNull(device.FieldHighTemperatureAt)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2281,6 +2321,27 @@ func (u *DeviceUpsertOne) UpdateStabilityAt() *DeviceUpsertOne {
 func (u *DeviceUpsertOne) ClearStabilityAt() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.ClearStabilityAt()
+	})
+}
+
+// SetHighTemperatureAt sets the "high_temperature_at" field.
+func (u *DeviceUpsertOne) SetHighTemperatureAt(v time.Time) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetHighTemperatureAt(v)
+	})
+}
+
+// UpdateHighTemperatureAt sets the "high_temperature_at" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateHighTemperatureAt() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateHighTemperatureAt()
+	})
+}
+
+// ClearHighTemperatureAt clears the value of the "high_temperature_at" field.
+func (u *DeviceUpsertOne) ClearHighTemperatureAt() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.ClearHighTemperatureAt()
 	})
 }
 
@@ -2998,6 +3059,27 @@ func (u *DeviceUpsertBulk) UpdateStabilityAt() *DeviceUpsertBulk {
 func (u *DeviceUpsertBulk) ClearStabilityAt() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.ClearStabilityAt()
+	})
+}
+
+// SetHighTemperatureAt sets the "high_temperature_at" field.
+func (u *DeviceUpsertBulk) SetHighTemperatureAt(v time.Time) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetHighTemperatureAt(v)
+	})
+}
+
+// UpdateHighTemperatureAt sets the "high_temperature_at" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateHighTemperatureAt() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateHighTemperatureAt()
+	})
+}
+
+// ClearHighTemperatureAt clears the value of the "high_temperature_at" field.
+func (u *DeviceUpsertBulk) ClearHighTemperatureAt() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.ClearHighTemperatureAt()
 	})
 }
 

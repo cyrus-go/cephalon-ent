@@ -77,6 +77,8 @@ const (
 	FieldRankAt = "rank_at"
 	// FieldStabilityAt holds the string denoting the stability_at field in the database.
 	FieldStabilityAt = "stability_at"
+	// FieldHighTemperatureAt holds the string denoting the high_temperature_at field in the database.
+	FieldHighTemperatureAt = "high_temperature_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
@@ -222,6 +224,7 @@ var Columns = []string{
 	FieldFreeGpuNum,
 	FieldRankAt,
 	FieldStabilityAt,
+	FieldHighTemperatureAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -281,6 +284,8 @@ var (
 	DefaultRankAt func() time.Time
 	// DefaultStabilityAt holds the default value on creation for the "stability_at" field.
 	DefaultStabilityAt func() time.Time
+	// DefaultHighTemperatureAt holds the default value on creation for the "high_temperature_at" field.
+	DefaultHighTemperatureAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Device fields.
@@ -369,7 +374,7 @@ const DefaultFault enums.DeviceFaultType = "ok"
 // FaultValidator is a validator for the "fault" field enum values. It is called by the builders before save.
 func FaultValidator(f enums.DeviceFaultType) error {
 	switch f {
-	case "ok", "drive_abnormal", "no_disk", "task_failure", "recover":
+	case "ok", "drive_abnormal", "no_disk", "task_failure", "recover", "high_temperature":
 		return nil
 	default:
 		return fmt.Errorf("device: invalid enum value for fault field: %q", f)
@@ -544,6 +549,11 @@ func ByRankAt(opts ...sql.OrderTermOption) OrderOption {
 // ByStabilityAt orders the results by the stability_at field.
 func ByStabilityAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStabilityAt, opts...).ToFunc()
+}
+
+// ByHighTemperatureAt orders the results by the high_temperature_at field.
+func ByHighTemperatureAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHighTemperatureAt, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

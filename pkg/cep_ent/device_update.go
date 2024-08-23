@@ -520,6 +520,26 @@ func (du *DeviceUpdate) ClearStabilityAt() *DeviceUpdate {
 	return du
 }
 
+// SetHighTemperatureAt sets the "high_temperature_at" field.
+func (du *DeviceUpdate) SetHighTemperatureAt(t time.Time) *DeviceUpdate {
+	du.mutation.SetHighTemperatureAt(t)
+	return du
+}
+
+// SetNillableHighTemperatureAt sets the "high_temperature_at" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableHighTemperatureAt(t *time.Time) *DeviceUpdate {
+	if t != nil {
+		du.SetHighTemperatureAt(*t)
+	}
+	return du
+}
+
+// ClearHighTemperatureAt clears the value of the "high_temperature_at" field.
+func (du *DeviceUpdate) ClearHighTemperatureAt() *DeviceUpdate {
+	du.mutation.ClearHighTemperatureAt()
+	return du
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (du *DeviceUpdate) SetUser(u *User) *DeviceUpdate {
 	return du.SetUserID(u.ID)
@@ -1155,6 +1175,12 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if du.mutation.StabilityAtCleared() {
 		_spec.ClearField(device.FieldStabilityAt, field.TypeTime)
+	}
+	if value, ok := du.mutation.HighTemperatureAt(); ok {
+		_spec.SetField(device.FieldHighTemperatureAt, field.TypeTime, value)
+	}
+	if du.mutation.HighTemperatureAtCleared() {
+		_spec.ClearField(device.FieldHighTemperatureAt, field.TypeTime)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2180,6 +2206,26 @@ func (duo *DeviceUpdateOne) ClearStabilityAt() *DeviceUpdateOne {
 	return duo
 }
 
+// SetHighTemperatureAt sets the "high_temperature_at" field.
+func (duo *DeviceUpdateOne) SetHighTemperatureAt(t time.Time) *DeviceUpdateOne {
+	duo.mutation.SetHighTemperatureAt(t)
+	return duo
+}
+
+// SetNillableHighTemperatureAt sets the "high_temperature_at" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableHighTemperatureAt(t *time.Time) *DeviceUpdateOne {
+	if t != nil {
+		duo.SetHighTemperatureAt(*t)
+	}
+	return duo
+}
+
+// ClearHighTemperatureAt clears the value of the "high_temperature_at" field.
+func (duo *DeviceUpdateOne) ClearHighTemperatureAt() *DeviceUpdateOne {
+	duo.mutation.ClearHighTemperatureAt()
+	return duo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (duo *DeviceUpdateOne) SetUser(u *User) *DeviceUpdateOne {
 	return duo.SetUserID(u.ID)
@@ -2845,6 +2891,12 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if duo.mutation.StabilityAtCleared() {
 		_spec.ClearField(device.FieldStabilityAt, field.TypeTime)
+	}
+	if value, ok := duo.mutation.HighTemperatureAt(); ok {
+		_spec.SetField(device.FieldHighTemperatureAt, field.TypeTime, value)
+	}
+	if duo.mutation.HighTemperatureAtCleared() {
+		_spec.ClearField(device.FieldHighTemperatureAt, field.TypeTime)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

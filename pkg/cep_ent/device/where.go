@@ -166,6 +166,11 @@ func StabilityAt(v time.Time) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldStabilityAt, v))
 }
 
+// HighTemperatureAt applies equality check predicate on the "high_temperature_at" field. It's identical to HighTemperatureAtEQ.
+func HighTemperatureAt(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldHighTemperatureAt, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldCreatedBy, v))
@@ -1349,6 +1354,56 @@ func StabilityAtIsNil() predicate.Device {
 // StabilityAtNotNil applies the NotNil predicate on the "stability_at" field.
 func StabilityAtNotNil() predicate.Device {
 	return predicate.Device(sql.FieldNotNull(FieldStabilityAt))
+}
+
+// HighTemperatureAtEQ applies the EQ predicate on the "high_temperature_at" field.
+func HighTemperatureAtEQ(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldHighTemperatureAt, v))
+}
+
+// HighTemperatureAtNEQ applies the NEQ predicate on the "high_temperature_at" field.
+func HighTemperatureAtNEQ(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldHighTemperatureAt, v))
+}
+
+// HighTemperatureAtIn applies the In predicate on the "high_temperature_at" field.
+func HighTemperatureAtIn(vs ...time.Time) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldHighTemperatureAt, vs...))
+}
+
+// HighTemperatureAtNotIn applies the NotIn predicate on the "high_temperature_at" field.
+func HighTemperatureAtNotIn(vs ...time.Time) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldHighTemperatureAt, vs...))
+}
+
+// HighTemperatureAtGT applies the GT predicate on the "high_temperature_at" field.
+func HighTemperatureAtGT(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldHighTemperatureAt, v))
+}
+
+// HighTemperatureAtGTE applies the GTE predicate on the "high_temperature_at" field.
+func HighTemperatureAtGTE(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldHighTemperatureAt, v))
+}
+
+// HighTemperatureAtLT applies the LT predicate on the "high_temperature_at" field.
+func HighTemperatureAtLT(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldHighTemperatureAt, v))
+}
+
+// HighTemperatureAtLTE applies the LTE predicate on the "high_temperature_at" field.
+func HighTemperatureAtLTE(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldHighTemperatureAt, v))
+}
+
+// HighTemperatureAtIsNil applies the IsNil predicate on the "high_temperature_at" field.
+func HighTemperatureAtIsNil() predicate.Device {
+	return predicate.Device(sql.FieldIsNull(FieldHighTemperatureAt))
+}
+
+// HighTemperatureAtNotNil applies the NotNil predicate on the "high_temperature_at" field.
+func HighTemperatureAtNotNil() predicate.Device {
+	return predicate.Device(sql.FieldNotNull(FieldHighTemperatureAt))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.
