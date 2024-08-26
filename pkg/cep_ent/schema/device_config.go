@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 type DeviceConfig struct {
@@ -15,7 +16,7 @@ type DeviceConfig struct {
 func (DeviceConfig) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("device_id").StructTag(`json:"device_id,string"`).Default(0).Comment("外键设备 id"),
-		field.String("gpu_version").StructTag(`json:"gpu_version"`).Default("").Comment("GPU 版本"),
+		field.Enum("gpu_version").GoType(enums.GpuVersion3080).Default(string(enums.GpuVersion3080)).StructTag(`json:"gpu_version"`).Comment("GPU 版本"),
 		field.Int64("gap_base").StructTag(`json:"gap_base"`).Default(0).Comment("间隔基数"),
 		field.Int64("gap_random_max").StructTag(`json:"gap_random_max"`).Default(0).Comment("间隔随机范围最大值"),
 		field.Int64("gap_random_min").StructTag(`json:"gap_random_min"`).Default(0).Comment("间隔随机范围最小值"),

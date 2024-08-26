@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceconfig"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // DeviceConfigCreate is the builder for creating a DeviceConfig entity.
@@ -108,15 +109,15 @@ func (dcc *DeviceConfigCreate) SetNillableDeviceID(i *int64) *DeviceConfigCreate
 }
 
 // SetGpuVersion sets the "gpu_version" field.
-func (dcc *DeviceConfigCreate) SetGpuVersion(s string) *DeviceConfigCreate {
-	dcc.mutation.SetGpuVersion(s)
+func (dcc *DeviceConfigCreate) SetGpuVersion(ev enums.GpuVersion) *DeviceConfigCreate {
+	dcc.mutation.SetGpuVersion(ev)
 	return dcc
 }
 
 // SetNillableGpuVersion sets the "gpu_version" field if the given value is not nil.
-func (dcc *DeviceConfigCreate) SetNillableGpuVersion(s *string) *DeviceConfigCreate {
-	if s != nil {
-		dcc.SetGpuVersion(*s)
+func (dcc *DeviceConfigCreate) SetNillableGpuVersion(ev *enums.GpuVersion) *DeviceConfigCreate {
+	if ev != nil {
+		dcc.SetGpuVersion(*ev)
 	}
 	return dcc
 }
@@ -286,6 +287,11 @@ func (dcc *DeviceConfigCreate) check() error {
 	if _, ok := dcc.mutation.GpuVersion(); !ok {
 		return &ValidationError{Name: "gpu_version", err: errors.New(`cep_ent: missing required field "DeviceConfig.gpu_version"`)}
 	}
+	if v, ok := dcc.mutation.GpuVersion(); ok {
+		if err := deviceconfig.GpuVersionValidator(v); err != nil {
+			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "DeviceConfig.gpu_version": %w`, err)}
+		}
+	}
 	if _, ok := dcc.mutation.GapBase(); !ok {
 		return &ValidationError{Name: "gap_base", err: errors.New(`cep_ent: missing required field "DeviceConfig.gap_base"`)}
 	}
@@ -352,7 +358,7 @@ func (dcc *DeviceConfigCreate) createSpec() (*DeviceConfig, *sqlgraph.CreateSpec
 		_node.DeletedAt = value
 	}
 	if value, ok := dcc.mutation.GpuVersion(); ok {
-		_spec.SetField(deviceconfig.FieldGpuVersion, field.TypeString, value)
+		_spec.SetField(deviceconfig.FieldGpuVersion, field.TypeEnum, value)
 		_node.GpuVersion = value
 	}
 	if value, ok := dcc.mutation.GapBase(); ok {
@@ -509,7 +515,7 @@ func (u *DeviceConfigUpsert) UpdateDeviceID() *DeviceConfigUpsert {
 }
 
 // SetGpuVersion sets the "gpu_version" field.
-func (u *DeviceConfigUpsert) SetGpuVersion(v string) *DeviceConfigUpsert {
+func (u *DeviceConfigUpsert) SetGpuVersion(v enums.GpuVersion) *DeviceConfigUpsert {
 	u.Set(deviceconfig.FieldGpuVersion, v)
 	return u
 }
@@ -710,7 +716,7 @@ func (u *DeviceConfigUpsertOne) UpdateDeviceID() *DeviceConfigUpsertOne {
 }
 
 // SetGpuVersion sets the "gpu_version" field.
-func (u *DeviceConfigUpsertOne) SetGpuVersion(v string) *DeviceConfigUpsertOne {
+func (u *DeviceConfigUpsertOne) SetGpuVersion(v enums.GpuVersion) *DeviceConfigUpsertOne {
 	return u.Update(func(s *DeviceConfigUpsert) {
 		s.SetGpuVersion(v)
 	})
@@ -1088,7 +1094,7 @@ func (u *DeviceConfigUpsertBulk) UpdateDeviceID() *DeviceConfigUpsertBulk {
 }
 
 // SetGpuVersion sets the "gpu_version" field.
-func (u *DeviceConfigUpsertBulk) SetGpuVersion(v string) *DeviceConfigUpsertBulk {
+func (u *DeviceConfigUpsertBulk) SetGpuVersion(v enums.GpuVersion) *DeviceConfigUpsertBulk {
 	return u.Update(func(s *DeviceConfigUpsert) {
 		s.SetGpuVersion(v)
 	})

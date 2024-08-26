@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // DeviceConfigUpdate is the builder for updating DeviceConfig entities.
@@ -107,15 +108,15 @@ func (dcu *DeviceConfigUpdate) SetNillableDeviceID(i *int64) *DeviceConfigUpdate
 }
 
 // SetGpuVersion sets the "gpu_version" field.
-func (dcu *DeviceConfigUpdate) SetGpuVersion(s string) *DeviceConfigUpdate {
-	dcu.mutation.SetGpuVersion(s)
+func (dcu *DeviceConfigUpdate) SetGpuVersion(ev enums.GpuVersion) *DeviceConfigUpdate {
+	dcu.mutation.SetGpuVersion(ev)
 	return dcu
 }
 
 // SetNillableGpuVersion sets the "gpu_version" field if the given value is not nil.
-func (dcu *DeviceConfigUpdate) SetNillableGpuVersion(s *string) *DeviceConfigUpdate {
-	if s != nil {
-		dcu.SetGpuVersion(*s)
+func (dcu *DeviceConfigUpdate) SetNillableGpuVersion(ev *enums.GpuVersion) *DeviceConfigUpdate {
+	if ev != nil {
+		dcu.SetGpuVersion(*ev)
 	}
 	return dcu
 }
@@ -237,6 +238,11 @@ func (dcu *DeviceConfigUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (dcu *DeviceConfigUpdate) check() error {
+	if v, ok := dcu.mutation.GpuVersion(); ok {
+		if err := deviceconfig.GpuVersionValidator(v); err != nil {
+			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "DeviceConfig.gpu_version": %w`, err)}
+		}
+	}
 	if _, ok := dcu.mutation.DeviceID(); dcu.mutation.DeviceCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "DeviceConfig.device"`)
 	}
@@ -280,7 +286,7 @@ func (dcu *DeviceConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(deviceconfig.FieldDeletedAt, field.TypeTime, value)
 	}
 	if value, ok := dcu.mutation.GpuVersion(); ok {
-		_spec.SetField(deviceconfig.FieldGpuVersion, field.TypeString, value)
+		_spec.SetField(deviceconfig.FieldGpuVersion, field.TypeEnum, value)
 	}
 	if value, ok := dcu.mutation.GapBase(); ok {
 		_spec.SetField(deviceconfig.FieldGapBase, field.TypeInt64, value)
@@ -428,15 +434,15 @@ func (dcuo *DeviceConfigUpdateOne) SetNillableDeviceID(i *int64) *DeviceConfigUp
 }
 
 // SetGpuVersion sets the "gpu_version" field.
-func (dcuo *DeviceConfigUpdateOne) SetGpuVersion(s string) *DeviceConfigUpdateOne {
-	dcuo.mutation.SetGpuVersion(s)
+func (dcuo *DeviceConfigUpdateOne) SetGpuVersion(ev enums.GpuVersion) *DeviceConfigUpdateOne {
+	dcuo.mutation.SetGpuVersion(ev)
 	return dcuo
 }
 
 // SetNillableGpuVersion sets the "gpu_version" field if the given value is not nil.
-func (dcuo *DeviceConfigUpdateOne) SetNillableGpuVersion(s *string) *DeviceConfigUpdateOne {
-	if s != nil {
-		dcuo.SetGpuVersion(*s)
+func (dcuo *DeviceConfigUpdateOne) SetNillableGpuVersion(ev *enums.GpuVersion) *DeviceConfigUpdateOne {
+	if ev != nil {
+		dcuo.SetGpuVersion(*ev)
 	}
 	return dcuo
 }
@@ -571,6 +577,11 @@ func (dcuo *DeviceConfigUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (dcuo *DeviceConfigUpdateOne) check() error {
+	if v, ok := dcuo.mutation.GpuVersion(); ok {
+		if err := deviceconfig.GpuVersionValidator(v); err != nil {
+			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "DeviceConfig.gpu_version": %w`, err)}
+		}
+	}
 	if _, ok := dcuo.mutation.DeviceID(); dcuo.mutation.DeviceCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "DeviceConfig.device"`)
 	}
@@ -631,7 +642,7 @@ func (dcuo *DeviceConfigUpdateOne) sqlSave(ctx context.Context) (_node *DeviceCo
 		_spec.SetField(deviceconfig.FieldDeletedAt, field.TypeTime, value)
 	}
 	if value, ok := dcuo.mutation.GpuVersion(); ok {
-		_spec.SetField(deviceconfig.FieldGpuVersion, field.TypeString, value)
+		_spec.SetField(deviceconfig.FieldGpuVersion, field.TypeEnum, value)
 	}
 	if value, ok := dcuo.mutation.GapBase(); ok {
 		_spec.SetField(deviceconfig.FieldGapBase, field.TypeInt64, value)

@@ -17125,7 +17125,7 @@ type DeviceConfigMutation struct {
 	created_at        *time.Time
 	updated_at        *time.Time
 	deleted_at        *time.Time
-	gpu_version       *string
+	gpu_version       *enums.GpuVersion
 	gap_base          *int64
 	addgap_base       *int64
 	gap_random_max    *int64
@@ -17501,12 +17501,12 @@ func (m *DeviceConfigMutation) ResetDeviceID() {
 }
 
 // SetGpuVersion sets the "gpu_version" field.
-func (m *DeviceConfigMutation) SetGpuVersion(s string) {
-	m.gpu_version = &s
+func (m *DeviceConfigMutation) SetGpuVersion(ev enums.GpuVersion) {
+	m.gpu_version = &ev
 }
 
 // GpuVersion returns the value of the "gpu_version" field in the mutation.
-func (m *DeviceConfigMutation) GpuVersion() (r string, exists bool) {
+func (m *DeviceConfigMutation) GpuVersion() (r enums.GpuVersion, exists bool) {
 	v := m.gpu_version
 	if v == nil {
 		return
@@ -17517,7 +17517,7 @@ func (m *DeviceConfigMutation) GpuVersion() (r string, exists bool) {
 // OldGpuVersion returns the old "gpu_version" field's value of the DeviceConfig entity.
 // If the DeviceConfig object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DeviceConfigMutation) OldGpuVersion(ctx context.Context) (v string, err error) {
+func (m *DeviceConfigMutation) OldGpuVersion(ctx context.Context) (v enums.GpuVersion, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldGpuVersion is only allowed on UpdateOne operations")
 	}
@@ -17905,7 +17905,7 @@ func (m *DeviceConfigMutation) SetField(name string, value ent.Value) error {
 		m.SetDeviceID(v)
 		return nil
 	case deviceconfig.FieldGpuVersion:
-		v, ok := value.(string)
+		v, ok := value.(enums.GpuVersion)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

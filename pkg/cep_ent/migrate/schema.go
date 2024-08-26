@@ -571,7 +571,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "gpu_version", Type: field.TypeString, Comment: "GPU 版本", Default: ""},
+		{Name: "gpu_version", Type: field.TypeEnum, Comment: "GPU 版本", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100", "ComputilityKing-I", "Ascend910ProB", "P40"}, Default: "RTX3080"},
 		{Name: "gap_base", Type: field.TypeInt64, Comment: "间隔基数", Default: 0},
 		{Name: "gap_random_max", Type: field.TypeInt64, Comment: "间隔随机范围最大值", Default: 0},
 		{Name: "gap_random_min", Type: field.TypeInt64, Comment: "间隔随机范围最小值", Default: 0},

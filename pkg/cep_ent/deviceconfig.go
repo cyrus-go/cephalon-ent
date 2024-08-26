@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceconfig"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // 设备配置信息
@@ -32,7 +33,7 @@ type DeviceConfig struct {
 	// 外键设备 id
 	DeviceID int64 `json:"device_id,string"`
 	// GPU 版本
-	GpuVersion string `json:"gpu_version"`
+	GpuVersion enums.GpuVersion `json:"gpu_version"`
 	// 间隔基数
 	GapBase int64 `json:"gap_base"`
 	// 间隔随机范围最大值
@@ -139,7 +140,7 @@ func (dc *DeviceConfig) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field gpu_version", values[i])
 			} else if value.Valid {
-				dc.GpuVersion = value.String
+				dc.GpuVersion = enums.GpuVersion(value.String)
 			}
 		case deviceconfig.FieldGapBase:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -219,7 +220,7 @@ func (dc *DeviceConfig) String() string {
 	builder.WriteString(fmt.Sprintf("%v", dc.DeviceID))
 	builder.WriteString(", ")
 	builder.WriteString("gpu_version=")
-	builder.WriteString(dc.GpuVersion)
+	builder.WriteString(fmt.Sprintf("%v", dc.GpuVersion))
 	builder.WriteString(", ")
 	builder.WriteString("gap_base=")
 	builder.WriteString(fmt.Sprintf("%v", dc.GapBase))

@@ -3,10 +3,12 @@
 package deviceconfig
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 const (
@@ -87,8 +89,6 @@ var (
 	DefaultDeletedAt time.Time
 	// DefaultDeviceID holds the default value on creation for the "device_id" field.
 	DefaultDeviceID int64
-	// DefaultGpuVersion holds the default value on creation for the "gpu_version" field.
-	DefaultGpuVersion string
 	// DefaultGapBase holds the default value on creation for the "gap_base" field.
 	DefaultGapBase int64
 	// DefaultGapRandomMax holds the default value on creation for the "gap_random_max" field.
@@ -98,6 +98,18 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
+
+const DefaultGpuVersion enums.GpuVersion = "RTX3080"
+
+// GpuVersionValidator is a validator for the "gpu_version" field enum values. It is called by the builders before save.
+func GpuVersionValidator(gv enums.GpuVersion) error {
+	switch gv {
+	case "unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100", "ComputilityKing-I", "Ascend910ProB", "P40":
+		return nil
+	default:
+		return fmt.Errorf("deviceconfig: invalid enum value for gpu_version field: %q", gv)
+	}
+}
 
 // OrderOption defines the ordering options for the DeviceConfig queries.
 type OrderOption func(*sql.Selector)

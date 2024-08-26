@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ID filters vertices based on their ID field.
@@ -83,11 +84,6 @@ func DeletedAt(v time.Time) predicate.DeviceConfig {
 // DeviceID applies equality check predicate on the "device_id" field. It's identical to DeviceIDEQ.
 func DeviceID(v int64) predicate.DeviceConfig {
 	return predicate.DeviceConfig(sql.FieldEQ(FieldDeviceID, v))
-}
-
-// GpuVersion applies equality check predicate on the "gpu_version" field. It's identical to GpuVersionEQ.
-func GpuVersion(v string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldEQ(FieldGpuVersion, v))
 }
 
 // GapBase applies equality check predicate on the "gap_base" field. It's identical to GapBaseEQ.
@@ -326,68 +322,33 @@ func DeviceIDNotIn(vs ...int64) predicate.DeviceConfig {
 }
 
 // GpuVersionEQ applies the EQ predicate on the "gpu_version" field.
-func GpuVersionEQ(v string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldEQ(FieldGpuVersion, v))
+func GpuVersionEQ(v enums.GpuVersion) predicate.DeviceConfig {
+	vc := v
+	return predicate.DeviceConfig(sql.FieldEQ(FieldGpuVersion, vc))
 }
 
 // GpuVersionNEQ applies the NEQ predicate on the "gpu_version" field.
-func GpuVersionNEQ(v string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldNEQ(FieldGpuVersion, v))
+func GpuVersionNEQ(v enums.GpuVersion) predicate.DeviceConfig {
+	vc := v
+	return predicate.DeviceConfig(sql.FieldNEQ(FieldGpuVersion, vc))
 }
 
 // GpuVersionIn applies the In predicate on the "gpu_version" field.
-func GpuVersionIn(vs ...string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldIn(FieldGpuVersion, vs...))
+func GpuVersionIn(vs ...enums.GpuVersion) predicate.DeviceConfig {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.DeviceConfig(sql.FieldIn(FieldGpuVersion, v...))
 }
 
 // GpuVersionNotIn applies the NotIn predicate on the "gpu_version" field.
-func GpuVersionNotIn(vs ...string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldNotIn(FieldGpuVersion, vs...))
-}
-
-// GpuVersionGT applies the GT predicate on the "gpu_version" field.
-func GpuVersionGT(v string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldGT(FieldGpuVersion, v))
-}
-
-// GpuVersionGTE applies the GTE predicate on the "gpu_version" field.
-func GpuVersionGTE(v string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldGTE(FieldGpuVersion, v))
-}
-
-// GpuVersionLT applies the LT predicate on the "gpu_version" field.
-func GpuVersionLT(v string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldLT(FieldGpuVersion, v))
-}
-
-// GpuVersionLTE applies the LTE predicate on the "gpu_version" field.
-func GpuVersionLTE(v string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldLTE(FieldGpuVersion, v))
-}
-
-// GpuVersionContains applies the Contains predicate on the "gpu_version" field.
-func GpuVersionContains(v string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldContains(FieldGpuVersion, v))
-}
-
-// GpuVersionHasPrefix applies the HasPrefix predicate on the "gpu_version" field.
-func GpuVersionHasPrefix(v string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldHasPrefix(FieldGpuVersion, v))
-}
-
-// GpuVersionHasSuffix applies the HasSuffix predicate on the "gpu_version" field.
-func GpuVersionHasSuffix(v string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldHasSuffix(FieldGpuVersion, v))
-}
-
-// GpuVersionEqualFold applies the EqualFold predicate on the "gpu_version" field.
-func GpuVersionEqualFold(v string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldEqualFold(FieldGpuVersion, v))
-}
-
-// GpuVersionContainsFold applies the ContainsFold predicate on the "gpu_version" field.
-func GpuVersionContainsFold(v string) predicate.DeviceConfig {
-	return predicate.DeviceConfig(sql.FieldContainsFold(FieldGpuVersion, v))
+func GpuVersionNotIn(vs ...enums.GpuVersion) predicate.DeviceConfig {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.DeviceConfig(sql.FieldNotIn(FieldGpuVersion, v...))
 }
 
 // GapBaseEQ applies the EQ predicate on the "gap_base" field.

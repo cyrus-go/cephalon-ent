@@ -821,10 +821,6 @@ func init() {
 	deviceconfigDescDeviceID := deviceconfigFields[0].Descriptor()
 	// deviceconfig.DefaultDeviceID holds the default value on creation for the device_id field.
 	deviceconfig.DefaultDeviceID = deviceconfigDescDeviceID.Default.(int64)
-	// deviceconfigDescGpuVersion is the schema descriptor for gpu_version field.
-	deviceconfigDescGpuVersion := deviceconfigFields[1].Descriptor()
-	// deviceconfig.DefaultGpuVersion holds the default value on creation for the gpu_version field.
-	deviceconfig.DefaultGpuVersion = deviceconfigDescGpuVersion.Default.(string)
 	// deviceconfigDescGapBase is the schema descriptor for gap_base field.
 	deviceconfigDescGapBase := deviceconfigFields[2].Descriptor()
 	// deviceconfig.DefaultGapBase holds the default value on creation for the gap_base field.
