@@ -821,16 +821,20 @@ func init() {
 	deviceconfigDescDeviceID := deviceconfigFields[0].Descriptor()
 	// deviceconfig.DefaultDeviceID holds the default value on creation for the device_id field.
 	deviceconfig.DefaultDeviceID = deviceconfigDescDeviceID.Default.(int64)
+	// deviceconfigDescGpuVersion is the schema descriptor for gpu_version field.
+	deviceconfigDescGpuVersion := deviceconfigFields[1].Descriptor()
+	// deviceconfig.DefaultGpuVersion holds the default value on creation for the gpu_version field.
+	deviceconfig.DefaultGpuVersion = deviceconfigDescGpuVersion.Default.(string)
 	// deviceconfigDescGapBase is the schema descriptor for gap_base field.
-	deviceconfigDescGapBase := deviceconfigFields[1].Descriptor()
+	deviceconfigDescGapBase := deviceconfigFields[2].Descriptor()
 	// deviceconfig.DefaultGapBase holds the default value on creation for the gap_base field.
 	deviceconfig.DefaultGapBase = deviceconfigDescGapBase.Default.(int64)
 	// deviceconfigDescGapRandomMax is the schema descriptor for gap_random_max field.
-	deviceconfigDescGapRandomMax := deviceconfigFields[2].Descriptor()
+	deviceconfigDescGapRandomMax := deviceconfigFields[3].Descriptor()
 	// deviceconfig.DefaultGapRandomMax holds the default value on creation for the gap_random_max field.
 	deviceconfig.DefaultGapRandomMax = deviceconfigDescGapRandomMax.Default.(int64)
 	// deviceconfigDescGapRandomMin is the schema descriptor for gap_random_min field.
-	deviceconfigDescGapRandomMin := deviceconfigFields[3].Descriptor()
+	deviceconfigDescGapRandomMin := deviceconfigFields[4].Descriptor()
 	// deviceconfig.DefaultGapRandomMin holds the default value on creation for the gap_random_min field.
 	deviceconfig.DefaultGapRandomMin = deviceconfigDescGapRandomMin.Default.(int64)
 	// deviceconfigDescID is the schema descriptor for id field.

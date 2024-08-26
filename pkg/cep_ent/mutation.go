@@ -17125,6 +17125,7 @@ type DeviceConfigMutation struct {
 	created_at        *time.Time
 	updated_at        *time.Time
 	deleted_at        *time.Time
+	gpu_version       *string
 	gap_base          *int64
 	addgap_base       *int64
 	gap_random_max    *int64
@@ -17499,6 +17500,42 @@ func (m *DeviceConfigMutation) ResetDeviceID() {
 	m.device = nil
 }
 
+// SetGpuVersion sets the "gpu_version" field.
+func (m *DeviceConfigMutation) SetGpuVersion(s string) {
+	m.gpu_version = &s
+}
+
+// GpuVersion returns the value of the "gpu_version" field in the mutation.
+func (m *DeviceConfigMutation) GpuVersion() (r string, exists bool) {
+	v := m.gpu_version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGpuVersion returns the old "gpu_version" field's value of the DeviceConfig entity.
+// If the DeviceConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceConfigMutation) OldGpuVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGpuVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGpuVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGpuVersion: %w", err)
+	}
+	return oldValue.GpuVersion, nil
+}
+
+// ResetGpuVersion resets all changes to the "gpu_version" field.
+func (m *DeviceConfigMutation) ResetGpuVersion() {
+	m.gpu_version = nil
+}
+
 // SetGapBase sets the "gap_base" field.
 func (m *DeviceConfigMutation) SetGapBase(i int64) {
 	m.gap_base = &i
@@ -17728,7 +17765,7 @@ func (m *DeviceConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceConfigMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.created_by != nil {
 		fields = append(fields, deviceconfig.FieldCreatedBy)
 	}
@@ -17746,6 +17783,9 @@ func (m *DeviceConfigMutation) Fields() []string {
 	}
 	if m.device != nil {
 		fields = append(fields, deviceconfig.FieldDeviceID)
+	}
+	if m.gpu_version != nil {
+		fields = append(fields, deviceconfig.FieldGpuVersion)
 	}
 	if m.gap_base != nil {
 		fields = append(fields, deviceconfig.FieldGapBase)
@@ -17776,6 +17816,8 @@ func (m *DeviceConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case deviceconfig.FieldDeviceID:
 		return m.DeviceID()
+	case deviceconfig.FieldGpuVersion:
+		return m.GpuVersion()
 	case deviceconfig.FieldGapBase:
 		return m.GapBase()
 	case deviceconfig.FieldGapRandomMax:
@@ -17803,6 +17845,8 @@ func (m *DeviceConfigMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldDeletedAt(ctx)
 	case deviceconfig.FieldDeviceID:
 		return m.OldDeviceID(ctx)
+	case deviceconfig.FieldGpuVersion:
+		return m.OldGpuVersion(ctx)
 	case deviceconfig.FieldGapBase:
 		return m.OldGapBase(ctx)
 	case deviceconfig.FieldGapRandomMax:
@@ -17859,6 +17903,13 @@ func (m *DeviceConfigMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeviceID(v)
+		return nil
+	case deviceconfig.FieldGpuVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGpuVersion(v)
 		return nil
 	case deviceconfig.FieldGapBase:
 		v, ok := value.(int64)
@@ -18010,6 +18061,9 @@ func (m *DeviceConfigMutation) ResetField(name string) error {
 		return nil
 	case deviceconfig.FieldDeviceID:
 		m.ResetDeviceID()
+		return nil
+	case deviceconfig.FieldGpuVersion:
+		m.ResetGpuVersion()
 		return nil
 	case deviceconfig.FieldGapBase:
 		m.ResetGapBase()

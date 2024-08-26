@@ -571,6 +571,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "gpu_version", Type: field.TypeString, Comment: "GPU 版本", Default: ""},
 		{Name: "gap_base", Type: field.TypeInt64, Comment: "间隔基数", Default: 0},
 		{Name: "gap_random_max", Type: field.TypeInt64, Comment: "间隔随机范围最大值", Default: 0},
 		{Name: "gap_random_min", Type: field.TypeInt64, Comment: "间隔随机范围最小值", Default: 0},
@@ -585,7 +586,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "device_configs_devices_device_config",
-				Columns:    []*schema.Column{DeviceConfigsColumns[9]},
+				Columns:    []*schema.Column{DeviceConfigsColumns[10]},
 				RefColumns: []*schema.Column{DevicesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -594,7 +595,7 @@ var (
 			{
 				Name:    "deviceconfig_device_id",
 				Unique:  false,
-				Columns: []*schema.Column{DeviceConfigsColumns[9]},
+				Columns: []*schema.Column{DeviceConfigsColumns[10]},
 			},
 		},
 	}

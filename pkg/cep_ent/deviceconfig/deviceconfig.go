@@ -26,6 +26,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldDeviceID holds the string denoting the device_id field in the database.
 	FieldDeviceID = "device_id"
+	// FieldGpuVersion holds the string denoting the gpu_version field in the database.
+	FieldGpuVersion = "gpu_version"
 	// FieldGapBase holds the string denoting the gap_base field in the database.
 	FieldGapBase = "gap_base"
 	// FieldGapRandomMax holds the string denoting the gap_random_max field in the database.
@@ -54,6 +56,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldDeviceID,
+	FieldGpuVersion,
 	FieldGapBase,
 	FieldGapRandomMax,
 	FieldGapRandomMin,
@@ -84,6 +87,8 @@ var (
 	DefaultDeletedAt time.Time
 	// DefaultDeviceID holds the default value on creation for the "device_id" field.
 	DefaultDeviceID int64
+	// DefaultGpuVersion holds the default value on creation for the "gpu_version" field.
+	DefaultGpuVersion string
 	// DefaultGapBase holds the default value on creation for the "gap_base" field.
 	DefaultGapBase int64
 	// DefaultGapRandomMax holds the default value on creation for the "gap_random_max" field.
@@ -130,6 +135,11 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByDeviceID orders the results by the device_id field.
 func ByDeviceID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeviceID, opts...).ToFunc()
+}
+
+// ByGpuVersion orders the results by the gpu_version field.
+func ByGpuVersion(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGpuVersion, opts...).ToFunc()
 }
 
 // ByGapBase orders the results by the gap_base field.

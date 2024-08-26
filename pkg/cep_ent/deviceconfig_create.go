@@ -107,6 +107,20 @@ func (dcc *DeviceConfigCreate) SetNillableDeviceID(i *int64) *DeviceConfigCreate
 	return dcc
 }
 
+// SetGpuVersion sets the "gpu_version" field.
+func (dcc *DeviceConfigCreate) SetGpuVersion(s string) *DeviceConfigCreate {
+	dcc.mutation.SetGpuVersion(s)
+	return dcc
+}
+
+// SetNillableGpuVersion sets the "gpu_version" field if the given value is not nil.
+func (dcc *DeviceConfigCreate) SetNillableGpuVersion(s *string) *DeviceConfigCreate {
+	if s != nil {
+		dcc.SetGpuVersion(*s)
+	}
+	return dcc
+}
+
 // SetGapBase sets the "gap_base" field.
 func (dcc *DeviceConfigCreate) SetGapBase(i int64) *DeviceConfigCreate {
 	dcc.mutation.SetGapBase(i)
@@ -227,6 +241,10 @@ func (dcc *DeviceConfigCreate) defaults() {
 		v := deviceconfig.DefaultDeviceID
 		dcc.mutation.SetDeviceID(v)
 	}
+	if _, ok := dcc.mutation.GpuVersion(); !ok {
+		v := deviceconfig.DefaultGpuVersion
+		dcc.mutation.SetGpuVersion(v)
+	}
 	if _, ok := dcc.mutation.GapBase(); !ok {
 		v := deviceconfig.DefaultGapBase
 		dcc.mutation.SetGapBase(v)
@@ -264,6 +282,9 @@ func (dcc *DeviceConfigCreate) check() error {
 	}
 	if _, ok := dcc.mutation.DeviceID(); !ok {
 		return &ValidationError{Name: "device_id", err: errors.New(`cep_ent: missing required field "DeviceConfig.device_id"`)}
+	}
+	if _, ok := dcc.mutation.GpuVersion(); !ok {
+		return &ValidationError{Name: "gpu_version", err: errors.New(`cep_ent: missing required field "DeviceConfig.gpu_version"`)}
 	}
 	if _, ok := dcc.mutation.GapBase(); !ok {
 		return &ValidationError{Name: "gap_base", err: errors.New(`cep_ent: missing required field "DeviceConfig.gap_base"`)}
@@ -329,6 +350,10 @@ func (dcc *DeviceConfigCreate) createSpec() (*DeviceConfig, *sqlgraph.CreateSpec
 	if value, ok := dcc.mutation.DeletedAt(); ok {
 		_spec.SetField(deviceconfig.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
+	}
+	if value, ok := dcc.mutation.GpuVersion(); ok {
+		_spec.SetField(deviceconfig.FieldGpuVersion, field.TypeString, value)
+		_node.GpuVersion = value
 	}
 	if value, ok := dcc.mutation.GapBase(); ok {
 		_spec.SetField(deviceconfig.FieldGapBase, field.TypeInt64, value)
@@ -480,6 +505,18 @@ func (u *DeviceConfigUpsert) SetDeviceID(v int64) *DeviceConfigUpsert {
 // UpdateDeviceID sets the "device_id" field to the value that was provided on create.
 func (u *DeviceConfigUpsert) UpdateDeviceID() *DeviceConfigUpsert {
 	u.SetExcluded(deviceconfig.FieldDeviceID)
+	return u
+}
+
+// SetGpuVersion sets the "gpu_version" field.
+func (u *DeviceConfigUpsert) SetGpuVersion(v string) *DeviceConfigUpsert {
+	u.Set(deviceconfig.FieldGpuVersion, v)
+	return u
+}
+
+// UpdateGpuVersion sets the "gpu_version" field to the value that was provided on create.
+func (u *DeviceConfigUpsert) UpdateGpuVersion() *DeviceConfigUpsert {
+	u.SetExcluded(deviceconfig.FieldGpuVersion)
 	return u
 }
 
@@ -669,6 +706,20 @@ func (u *DeviceConfigUpsertOne) SetDeviceID(v int64) *DeviceConfigUpsertOne {
 func (u *DeviceConfigUpsertOne) UpdateDeviceID() *DeviceConfigUpsertOne {
 	return u.Update(func(s *DeviceConfigUpsert) {
 		s.UpdateDeviceID()
+	})
+}
+
+// SetGpuVersion sets the "gpu_version" field.
+func (u *DeviceConfigUpsertOne) SetGpuVersion(v string) *DeviceConfigUpsertOne {
+	return u.Update(func(s *DeviceConfigUpsert) {
+		s.SetGpuVersion(v)
+	})
+}
+
+// UpdateGpuVersion sets the "gpu_version" field to the value that was provided on create.
+func (u *DeviceConfigUpsertOne) UpdateGpuVersion() *DeviceConfigUpsertOne {
+	return u.Update(func(s *DeviceConfigUpsert) {
+		s.UpdateGpuVersion()
 	})
 }
 
@@ -1033,6 +1084,20 @@ func (u *DeviceConfigUpsertBulk) SetDeviceID(v int64) *DeviceConfigUpsertBulk {
 func (u *DeviceConfigUpsertBulk) UpdateDeviceID() *DeviceConfigUpsertBulk {
 	return u.Update(func(s *DeviceConfigUpsert) {
 		s.UpdateDeviceID()
+	})
+}
+
+// SetGpuVersion sets the "gpu_version" field.
+func (u *DeviceConfigUpsertBulk) SetGpuVersion(v string) *DeviceConfigUpsertBulk {
+	return u.Update(func(s *DeviceConfigUpsert) {
+		s.SetGpuVersion(v)
+	})
+}
+
+// UpdateGpuVersion sets the "gpu_version" field to the value that was provided on create.
+func (u *DeviceConfigUpsertBulk) UpdateGpuVersion() *DeviceConfigUpsertBulk {
+	return u.Update(func(s *DeviceConfigUpsert) {
+		s.UpdateGpuVersion()
 	})
 }
 

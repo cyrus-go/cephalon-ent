@@ -106,6 +106,20 @@ func (dcu *DeviceConfigUpdate) SetNillableDeviceID(i *int64) *DeviceConfigUpdate
 	return dcu
 }
 
+// SetGpuVersion sets the "gpu_version" field.
+func (dcu *DeviceConfigUpdate) SetGpuVersion(s string) *DeviceConfigUpdate {
+	dcu.mutation.SetGpuVersion(s)
+	return dcu
+}
+
+// SetNillableGpuVersion sets the "gpu_version" field if the given value is not nil.
+func (dcu *DeviceConfigUpdate) SetNillableGpuVersion(s *string) *DeviceConfigUpdate {
+	if s != nil {
+		dcu.SetGpuVersion(*s)
+	}
+	return dcu
+}
+
 // SetGapBase sets the "gap_base" field.
 func (dcu *DeviceConfigUpdate) SetGapBase(i int64) *DeviceConfigUpdate {
 	dcu.mutation.ResetGapBase()
@@ -265,6 +279,9 @@ func (dcu *DeviceConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := dcu.mutation.DeletedAt(); ok {
 		_spec.SetField(deviceconfig.FieldDeletedAt, field.TypeTime, value)
 	}
+	if value, ok := dcu.mutation.GpuVersion(); ok {
+		_spec.SetField(deviceconfig.FieldGpuVersion, field.TypeString, value)
+	}
 	if value, ok := dcu.mutation.GapBase(); ok {
 		_spec.SetField(deviceconfig.FieldGapBase, field.TypeInt64, value)
 	}
@@ -406,6 +423,20 @@ func (dcuo *DeviceConfigUpdateOne) SetDeviceID(i int64) *DeviceConfigUpdateOne {
 func (dcuo *DeviceConfigUpdateOne) SetNillableDeviceID(i *int64) *DeviceConfigUpdateOne {
 	if i != nil {
 		dcuo.SetDeviceID(*i)
+	}
+	return dcuo
+}
+
+// SetGpuVersion sets the "gpu_version" field.
+func (dcuo *DeviceConfigUpdateOne) SetGpuVersion(s string) *DeviceConfigUpdateOne {
+	dcuo.mutation.SetGpuVersion(s)
+	return dcuo
+}
+
+// SetNillableGpuVersion sets the "gpu_version" field if the given value is not nil.
+func (dcuo *DeviceConfigUpdateOne) SetNillableGpuVersion(s *string) *DeviceConfigUpdateOne {
+	if s != nil {
+		dcuo.SetGpuVersion(*s)
 	}
 	return dcuo
 }
@@ -598,6 +629,9 @@ func (dcuo *DeviceConfigUpdateOne) sqlSave(ctx context.Context) (_node *DeviceCo
 	}
 	if value, ok := dcuo.mutation.DeletedAt(); ok {
 		_spec.SetField(deviceconfig.FieldDeletedAt, field.TypeTime, value)
+	}
+	if value, ok := dcuo.mutation.GpuVersion(); ok {
+		_spec.SetField(deviceconfig.FieldGpuVersion, field.TypeString, value)
 	}
 	if value, ok := dcuo.mutation.GapBase(); ok {
 		_spec.SetField(deviceconfig.FieldGapBase, field.TypeInt64, value)

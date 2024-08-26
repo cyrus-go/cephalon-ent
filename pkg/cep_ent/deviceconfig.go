@@ -31,6 +31,8 @@ type DeviceConfig struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	// 外键设备 id
 	DeviceID int64 `json:"device_id,string"`
+	// GPU 版本
+	GpuVersion string `json:"gpu_version"`
 	// 间隔基数
 	GapBase int64 `json:"gap_base"`
 	// 间隔随机范围最大值
@@ -72,6 +74,8 @@ func (*DeviceConfig) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case deviceconfig.FieldID, deviceconfig.FieldCreatedBy, deviceconfig.FieldUpdatedBy, deviceconfig.FieldDeviceID, deviceconfig.FieldGapBase, deviceconfig.FieldGapRandomMax, deviceconfig.FieldGapRandomMin:
 			values[i] = new(sql.NullInt64)
+		case deviceconfig.FieldGpuVersion:
+			values[i] = new(sql.NullString)
 		case deviceconfig.FieldCreatedAt, deviceconfig.FieldUpdatedAt, deviceconfig.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
@@ -130,6 +134,12 @@ func (dc *DeviceConfig) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field device_id", values[i])
 			} else if value.Valid {
 				dc.DeviceID = value.Int64
+			}
+		case deviceconfig.FieldGpuVersion:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field gpu_version", values[i])
+			} else if value.Valid {
+				dc.GpuVersion = value.String
 			}
 		case deviceconfig.FieldGapBase:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -207,6 +217,9 @@ func (dc *DeviceConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("device_id=")
 	builder.WriteString(fmt.Sprintf("%v", dc.DeviceID))
+	builder.WriteString(", ")
+	builder.WriteString("gpu_version=")
+	builder.WriteString(dc.GpuVersion)
 	builder.WriteString(", ")
 	builder.WriteString("gap_base=")
 	builder.WriteString(fmt.Sprintf("%v", dc.GapBase))
