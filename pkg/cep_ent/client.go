@@ -27,7 +27,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
@@ -40,6 +39,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceprice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/giftmissionconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
@@ -120,8 +120,6 @@ type Client struct {
 	CostBill *CostBillClient
 	// Device is the client for interacting with the Device builders.
 	Device *DeviceClient
-	// DeviceConfig is the client for interacting with the DeviceConfig builders.
-	DeviceConfig *DeviceConfigClient
 	// DeviceGpuMission is the client for interacting with the DeviceGpuMission builders.
 	DeviceGpuMission *DeviceGpuMissionClient
 	// DeviceOfflineRecord is the client for interacting with the DeviceOfflineRecord builders.
@@ -146,6 +144,8 @@ type Client struct {
 	FrpcInfo *FrpcInfoClient
 	// FrpsInfo is the client for interacting with the FrpsInfo builders.
 	FrpsInfo *FrpsInfoClient
+	// GiftMissionConfig is the client for interacting with the GiftMissionConfig builders.
+	GiftMissionConfig *GiftMissionConfigClient
 	// Gpu is the client for interacting with the Gpu builders.
 	Gpu *GpuClient
 	// HmacKeyPair is the client for interacting with the HmacKeyPair builders.
@@ -269,7 +269,6 @@ func (c *Client) init() {
 	c.CostAccount = NewCostAccountClient(c.config)
 	c.CostBill = NewCostBillClient(c.config)
 	c.Device = NewDeviceClient(c.config)
-	c.DeviceConfig = NewDeviceConfigClient(c.config)
 	c.DeviceGpuMission = NewDeviceGpuMissionClient(c.config)
 	c.DeviceOfflineRecord = NewDeviceOfflineRecordClient(c.config)
 	c.DeviceRebootTime = NewDeviceRebootTimeClient(c.config)
@@ -282,6 +281,7 @@ func (c *Client) init() {
 	c.ExtraServicePrice = NewExtraServicePriceClient(c.config)
 	c.FrpcInfo = NewFrpcInfoClient(c.config)
 	c.FrpsInfo = NewFrpsInfoClient(c.config)
+	c.GiftMissionConfig = NewGiftMissionConfigClient(c.config)
 	c.Gpu = NewGpuClient(c.config)
 	c.HmacKeyPair = NewHmacKeyPairClient(c.config)
 	c.IncomeManage = NewIncomeManageClient(c.config)
@@ -428,7 +428,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CostAccount:           NewCostAccountClient(cfg),
 		CostBill:              NewCostBillClient(cfg),
 		Device:                NewDeviceClient(cfg),
-		DeviceConfig:          NewDeviceConfigClient(cfg),
 		DeviceGpuMission:      NewDeviceGpuMissionClient(cfg),
 		DeviceOfflineRecord:   NewDeviceOfflineRecordClient(cfg),
 		DeviceRebootTime:      NewDeviceRebootTimeClient(cfg),
@@ -441,6 +440,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ExtraServicePrice:     NewExtraServicePriceClient(cfg),
 		FrpcInfo:              NewFrpcInfoClient(cfg),
 		FrpsInfo:              NewFrpsInfoClient(cfg),
+		GiftMissionConfig:     NewGiftMissionConfigClient(cfg),
 		Gpu:                   NewGpuClient(cfg),
 		HmacKeyPair:           NewHmacKeyPairClient(cfg),
 		IncomeManage:          NewIncomeManageClient(cfg),
@@ -521,7 +521,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CostAccount:           NewCostAccountClient(cfg),
 		CostBill:              NewCostBillClient(cfg),
 		Device:                NewDeviceClient(cfg),
-		DeviceConfig:          NewDeviceConfigClient(cfg),
 		DeviceGpuMission:      NewDeviceGpuMissionClient(cfg),
 		DeviceOfflineRecord:   NewDeviceOfflineRecordClient(cfg),
 		DeviceRebootTime:      NewDeviceRebootTimeClient(cfg),
@@ -534,6 +533,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ExtraServicePrice:     NewExtraServicePriceClient(cfg),
 		FrpcInfo:              NewFrpcInfoClient(cfg),
 		FrpsInfo:              NewFrpsInfoClient(cfg),
+		GiftMissionConfig:     NewGiftMissionConfigClient(cfg),
 		Gpu:                   NewGpuClient(cfg),
 		HmacKeyPair:           NewHmacKeyPairClient(cfg),
 		IncomeManage:          NewIncomeManageClient(cfg),
@@ -614,11 +614,11 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.ApiToken, c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign,
 		c.CampaignOrder, c.CloudFile, c.Collect, c.CostAccount, c.CostBill, c.Device,
-		c.DeviceConfig, c.DeviceGpuMission, c.DeviceOfflineRecord, c.DeviceRebootTime,
-		c.DeviceState, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
-		c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo,
-		c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.IncomeManage, c.InputLog, c.Invite,
-		c.InvokeModelOrder, c.LoginRecord, c.Lotto, c.LottoChanceRule,
+		c.DeviceGpuMission, c.DeviceOfflineRecord, c.DeviceRebootTime, c.DeviceState,
+		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.ExtraService,
+		c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo,
+		c.GiftMissionConfig, c.Gpu, c.HmacKeyPair, c.IncomeManage, c.InputLog,
+		c.Invite, c.InvokeModelOrder, c.LoginRecord, c.Lotto, c.LottoChanceRule,
 		c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord, c.LottoUserCount,
 		c.Mission, c.MissionBatch, c.MissionCategory, c.MissionConsumeOrder,
 		c.MissionExtraService, c.MissionFailedFeedback, c.MissionKeyPair,
@@ -640,11 +640,11 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.ApiToken, c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign,
 		c.CampaignOrder, c.CloudFile, c.Collect, c.CostAccount, c.CostBill, c.Device,
-		c.DeviceConfig, c.DeviceGpuMission, c.DeviceOfflineRecord, c.DeviceRebootTime,
-		c.DeviceState, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
-		c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo,
-		c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.IncomeManage, c.InputLog, c.Invite,
-		c.InvokeModelOrder, c.LoginRecord, c.Lotto, c.LottoChanceRule,
+		c.DeviceGpuMission, c.DeviceOfflineRecord, c.DeviceRebootTime, c.DeviceState,
+		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.ExtraService,
+		c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo,
+		c.GiftMissionConfig, c.Gpu, c.HmacKeyPair, c.IncomeManage, c.InputLog,
+		c.Invite, c.InvokeModelOrder, c.LoginRecord, c.Lotto, c.LottoChanceRule,
 		c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord, c.LottoUserCount,
 		c.Mission, c.MissionBatch, c.MissionCategory, c.MissionConsumeOrder,
 		c.MissionExtraService, c.MissionFailedFeedback, c.MissionKeyPair,
@@ -687,8 +687,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.CostBill.mutate(ctx, m)
 	case *DeviceMutation:
 		return c.Device.mutate(ctx, m)
-	case *DeviceConfigMutation:
-		return c.DeviceConfig.mutate(ctx, m)
 	case *DeviceGpuMissionMutation:
 		return c.DeviceGpuMission.mutate(ctx, m)
 	case *DeviceOfflineRecordMutation:
@@ -713,6 +711,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.FrpcInfo.mutate(ctx, m)
 	case *FrpsInfoMutation:
 		return c.FrpsInfo.mutate(ctx, m)
+	case *GiftMissionConfigMutation:
+		return c.GiftMissionConfig.mutate(ctx, m)
 	case *GpuMutation:
 		return c.Gpu.mutate(ctx, m)
 	case *HmacKeyPairMutation:
@@ -2915,6 +2915,22 @@ func (c *DeviceClient) QueryUser(d *Device) *UserQuery {
 	return query
 }
 
+// QueryGiftMissionConfig queries the gift_mission_config edge of a Device.
+func (c *DeviceClient) QueryGiftMissionConfig(d *Device) *GiftMissionConfigQuery {
+	query := (&GiftMissionConfigClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := d.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(device.Table, device.FieldID, id),
+			sqlgraph.To(giftmissionconfig.Table, giftmissionconfig.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, device.GiftMissionConfigTable, device.GiftMissionConfigColumn),
+		)
+		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryMissionProduceOrders queries the mission_produce_orders edge of a Device.
 func (c *DeviceClient) QueryMissionProduceOrders(d *Device) *MissionProduceOrderQuery {
 	query := (&MissionProduceOrderClient{config: c.config}).Query()
@@ -3091,22 +3107,6 @@ func (c *DeviceClient) QueryMissionFailedFeedbacks(d *Device) *MissionFailedFeed
 	return query
 }
 
-// QueryDeviceConfig queries the device_config edge of a Device.
-func (c *DeviceClient) QueryDeviceConfig(d *Device) *DeviceConfigQuery {
-	query := (&DeviceConfigClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := d.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(device.Table, device.FieldID, id),
-			sqlgraph.To(deviceconfig.Table, deviceconfig.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, device.DeviceConfigTable, device.DeviceConfigColumn),
-		)
-		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *DeviceClient) Hooks() []Hook {
 	return c.hooks.Device
@@ -3129,155 +3129,6 @@ func (c *DeviceClient) mutate(ctx context.Context, m *DeviceMutation) (Value, er
 		return (&DeviceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown Device mutation op: %q", m.Op())
-	}
-}
-
-// DeviceConfigClient is a client for the DeviceConfig schema.
-type DeviceConfigClient struct {
-	config
-}
-
-// NewDeviceConfigClient returns a client for the DeviceConfig from the given config.
-func NewDeviceConfigClient(c config) *DeviceConfigClient {
-	return &DeviceConfigClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `deviceconfig.Hooks(f(g(h())))`.
-func (c *DeviceConfigClient) Use(hooks ...Hook) {
-	c.hooks.DeviceConfig = append(c.hooks.DeviceConfig, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `deviceconfig.Intercept(f(g(h())))`.
-func (c *DeviceConfigClient) Intercept(interceptors ...Interceptor) {
-	c.inters.DeviceConfig = append(c.inters.DeviceConfig, interceptors...)
-}
-
-// Create returns a builder for creating a DeviceConfig entity.
-func (c *DeviceConfigClient) Create() *DeviceConfigCreate {
-	mutation := newDeviceConfigMutation(c.config, OpCreate)
-	return &DeviceConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of DeviceConfig entities.
-func (c *DeviceConfigClient) CreateBulk(builders ...*DeviceConfigCreate) *DeviceConfigCreateBulk {
-	return &DeviceConfigCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *DeviceConfigClient) MapCreateBulk(slice any, setFunc func(*DeviceConfigCreate, int)) *DeviceConfigCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &DeviceConfigCreateBulk{err: fmt.Errorf("calling to DeviceConfigClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*DeviceConfigCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &DeviceConfigCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for DeviceConfig.
-func (c *DeviceConfigClient) Update() *DeviceConfigUpdate {
-	mutation := newDeviceConfigMutation(c.config, OpUpdate)
-	return &DeviceConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *DeviceConfigClient) UpdateOne(dc *DeviceConfig) *DeviceConfigUpdateOne {
-	mutation := newDeviceConfigMutation(c.config, OpUpdateOne, withDeviceConfig(dc))
-	return &DeviceConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *DeviceConfigClient) UpdateOneID(id int64) *DeviceConfigUpdateOne {
-	mutation := newDeviceConfigMutation(c.config, OpUpdateOne, withDeviceConfigID(id))
-	return &DeviceConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for DeviceConfig.
-func (c *DeviceConfigClient) Delete() *DeviceConfigDelete {
-	mutation := newDeviceConfigMutation(c.config, OpDelete)
-	return &DeviceConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *DeviceConfigClient) DeleteOne(dc *DeviceConfig) *DeviceConfigDeleteOne {
-	return c.DeleteOneID(dc.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *DeviceConfigClient) DeleteOneID(id int64) *DeviceConfigDeleteOne {
-	builder := c.Delete().Where(deviceconfig.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &DeviceConfigDeleteOne{builder}
-}
-
-// Query returns a query builder for DeviceConfig.
-func (c *DeviceConfigClient) Query() *DeviceConfigQuery {
-	return &DeviceConfigQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeDeviceConfig},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a DeviceConfig entity by its id.
-func (c *DeviceConfigClient) Get(ctx context.Context, id int64) (*DeviceConfig, error) {
-	return c.Query().Where(deviceconfig.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *DeviceConfigClient) GetX(ctx context.Context, id int64) *DeviceConfig {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryDevice queries the device edge of a DeviceConfig.
-func (c *DeviceConfigClient) QueryDevice(dc *DeviceConfig) *DeviceQuery {
-	query := (&DeviceClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := dc.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(deviceconfig.Table, deviceconfig.FieldID, id),
-			sqlgraph.To(device.Table, device.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, deviceconfig.DeviceTable, deviceconfig.DeviceColumn),
-		)
-		fromV = sqlgraph.Neighbors(dc.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *DeviceConfigClient) Hooks() []Hook {
-	return c.hooks.DeviceConfig
-}
-
-// Interceptors returns the client interceptors.
-func (c *DeviceConfigClient) Interceptors() []Interceptor {
-	return c.inters.DeviceConfig
-}
-
-func (c *DeviceConfigClient) mutate(ctx context.Context, m *DeviceConfigMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&DeviceConfigCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&DeviceConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&DeviceConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&DeviceConfigDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("cep_ent: unknown DeviceConfig mutation op: %q", m.Op())
 	}
 }
 
@@ -5194,6 +5045,155 @@ func (c *FrpsInfoClient) mutate(ctx context.Context, m *FrpsInfoMutation) (Value
 		return (&FrpsInfoDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown FrpsInfo mutation op: %q", m.Op())
+	}
+}
+
+// GiftMissionConfigClient is a client for the GiftMissionConfig schema.
+type GiftMissionConfigClient struct {
+	config
+}
+
+// NewGiftMissionConfigClient returns a client for the GiftMissionConfig from the given config.
+func NewGiftMissionConfigClient(c config) *GiftMissionConfigClient {
+	return &GiftMissionConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `giftmissionconfig.Hooks(f(g(h())))`.
+func (c *GiftMissionConfigClient) Use(hooks ...Hook) {
+	c.hooks.GiftMissionConfig = append(c.hooks.GiftMissionConfig, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `giftmissionconfig.Intercept(f(g(h())))`.
+func (c *GiftMissionConfigClient) Intercept(interceptors ...Interceptor) {
+	c.inters.GiftMissionConfig = append(c.inters.GiftMissionConfig, interceptors...)
+}
+
+// Create returns a builder for creating a GiftMissionConfig entity.
+func (c *GiftMissionConfigClient) Create() *GiftMissionConfigCreate {
+	mutation := newGiftMissionConfigMutation(c.config, OpCreate)
+	return &GiftMissionConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of GiftMissionConfig entities.
+func (c *GiftMissionConfigClient) CreateBulk(builders ...*GiftMissionConfigCreate) *GiftMissionConfigCreateBulk {
+	return &GiftMissionConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *GiftMissionConfigClient) MapCreateBulk(slice any, setFunc func(*GiftMissionConfigCreate, int)) *GiftMissionConfigCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &GiftMissionConfigCreateBulk{err: fmt.Errorf("calling to GiftMissionConfigClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*GiftMissionConfigCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &GiftMissionConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for GiftMissionConfig.
+func (c *GiftMissionConfigClient) Update() *GiftMissionConfigUpdate {
+	mutation := newGiftMissionConfigMutation(c.config, OpUpdate)
+	return &GiftMissionConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *GiftMissionConfigClient) UpdateOne(gmc *GiftMissionConfig) *GiftMissionConfigUpdateOne {
+	mutation := newGiftMissionConfigMutation(c.config, OpUpdateOne, withGiftMissionConfig(gmc))
+	return &GiftMissionConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *GiftMissionConfigClient) UpdateOneID(id int64) *GiftMissionConfigUpdateOne {
+	mutation := newGiftMissionConfigMutation(c.config, OpUpdateOne, withGiftMissionConfigID(id))
+	return &GiftMissionConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for GiftMissionConfig.
+func (c *GiftMissionConfigClient) Delete() *GiftMissionConfigDelete {
+	mutation := newGiftMissionConfigMutation(c.config, OpDelete)
+	return &GiftMissionConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *GiftMissionConfigClient) DeleteOne(gmc *GiftMissionConfig) *GiftMissionConfigDeleteOne {
+	return c.DeleteOneID(gmc.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *GiftMissionConfigClient) DeleteOneID(id int64) *GiftMissionConfigDeleteOne {
+	builder := c.Delete().Where(giftmissionconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &GiftMissionConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for GiftMissionConfig.
+func (c *GiftMissionConfigClient) Query() *GiftMissionConfigQuery {
+	return &GiftMissionConfigQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeGiftMissionConfig},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a GiftMissionConfig entity by its id.
+func (c *GiftMissionConfigClient) Get(ctx context.Context, id int64) (*GiftMissionConfig, error) {
+	return c.Query().Where(giftmissionconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *GiftMissionConfigClient) GetX(ctx context.Context, id int64) *GiftMissionConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryDevices queries the devices edge of a GiftMissionConfig.
+func (c *GiftMissionConfigClient) QueryDevices(gmc *GiftMissionConfig) *DeviceQuery {
+	query := (&DeviceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := gmc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(giftmissionconfig.Table, giftmissionconfig.FieldID, id),
+			sqlgraph.To(device.Table, device.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, giftmissionconfig.DevicesTable, giftmissionconfig.DevicesColumn),
+		)
+		fromV = sqlgraph.Neighbors(gmc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *GiftMissionConfigClient) Hooks() []Hook {
+	return c.hooks.GiftMissionConfig
+}
+
+// Interceptors returns the client interceptors.
+func (c *GiftMissionConfigClient) Interceptors() []Interceptor {
+	return c.inters.GiftMissionConfig
+}
+
+func (c *GiftMissionConfigClient) mutate(ctx context.Context, m *GiftMissionConfigMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&GiftMissionConfigCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&GiftMissionConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&GiftMissionConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&GiftMissionConfigDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown GiftMissionConfig mutation op: %q", m.Op())
 	}
 }
 
@@ -14678,10 +14678,10 @@ func (c *WithdrawRecordClient) mutate(ctx context.Context, m *WithdrawRecordMuta
 type (
 	hooks struct {
 		ApiToken, Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder,
-		CloudFile, Collect, CostAccount, CostBill, Device, DeviceConfig,
-		DeviceGpuMission, DeviceOfflineRecord, DeviceRebootTime, DeviceState, EarnBill,
-		EnumCondition, EnumMissionStatus, ExtraService, ExtraServiceOrder,
-		ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, IncomeManage,
+		CloudFile, Collect, CostAccount, CostBill, Device, DeviceGpuMission,
+		DeviceOfflineRecord, DeviceRebootTime, DeviceState, EarnBill, EnumCondition,
+		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
+		FrpcInfo, FrpsInfo, GiftMissionConfig, Gpu, HmacKeyPair, IncomeManage,
 		InputLog, Invite, InvokeModelOrder, LoginRecord, Lotto, LottoChanceRule,
 		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
 		MissionBatch, MissionCategory, MissionConsumeOrder, MissionExtraService,
@@ -14695,10 +14695,10 @@ type (
 	}
 	inters struct {
 		ApiToken, Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder,
-		CloudFile, Collect, CostAccount, CostBill, Device, DeviceConfig,
-		DeviceGpuMission, DeviceOfflineRecord, DeviceRebootTime, DeviceState, EarnBill,
-		EnumCondition, EnumMissionStatus, ExtraService, ExtraServiceOrder,
-		ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, IncomeManage,
+		CloudFile, Collect, CostAccount, CostBill, Device, DeviceGpuMission,
+		DeviceOfflineRecord, DeviceRebootTime, DeviceState, EarnBill, EnumCondition,
+		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
+		FrpcInfo, FrpsInfo, GiftMissionConfig, Gpu, HmacKeyPair, IncomeManage,
 		InputLog, Invite, InvokeModelOrder, LoginRecord, Lotto, LottoChanceRule,
 		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
 		MissionBatch, MissionCategory, MissionConsumeOrder, MissionExtraService,

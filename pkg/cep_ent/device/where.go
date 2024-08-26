@@ -86,6 +86,11 @@ func UserID(v int64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldUserID, v))
 }
 
+// GiftMissionConfigID applies equality check predicate on the "gift_mission_config_id" field. It's identical to GiftMissionConfigIDEQ.
+func GiftMissionConfigID(v int64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldGiftMissionConfigID, v))
+}
+
 // SerialNumber applies equality check predicate on the "serial_number" field. It's identical to SerialNumberEQ.
 func SerialNumber(v string) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldSerialNumber, v))
@@ -389,6 +394,26 @@ func UserIDIn(vs ...int64) predicate.Device {
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
 func UserIDNotIn(vs ...int64) predicate.Device {
 	return predicate.Device(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// GiftMissionConfigIDEQ applies the EQ predicate on the "gift_mission_config_id" field.
+func GiftMissionConfigIDEQ(v int64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldGiftMissionConfigID, v))
+}
+
+// GiftMissionConfigIDNEQ applies the NEQ predicate on the "gift_mission_config_id" field.
+func GiftMissionConfigIDNEQ(v int64) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldGiftMissionConfigID, v))
+}
+
+// GiftMissionConfigIDIn applies the In predicate on the "gift_mission_config_id" field.
+func GiftMissionConfigIDIn(vs ...int64) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldGiftMissionConfigID, vs...))
+}
+
+// GiftMissionConfigIDNotIn applies the NotIn predicate on the "gift_mission_config_id" field.
+func GiftMissionConfigIDNotIn(vs ...int64) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldGiftMissionConfigID, vs...))
 }
 
 // SerialNumberEQ applies the EQ predicate on the "serial_number" field.
@@ -1429,6 +1454,29 @@ func HasUserWith(preds ...predicate.User) predicate.Device {
 	})
 }
 
+// HasGiftMissionConfig applies the HasEdge predicate on the "gift_mission_config" edge.
+func HasGiftMissionConfig() predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, GiftMissionConfigTable, GiftMissionConfigColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasGiftMissionConfigWith applies the HasEdge predicate on the "gift_mission_config" edge with a given conditions (other predicates).
+func HasGiftMissionConfigWith(preds ...predicate.GiftMissionConfig) predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := newGiftMissionConfigStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasMissionProduceOrders applies the HasEdge predicate on the "mission_produce_orders" edge.
 func HasMissionProduceOrders() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
@@ -1674,29 +1722,6 @@ func HasMissionFailedFeedbacks() predicate.Device {
 func HasMissionFailedFeedbacksWith(preds ...predicate.MissionFailedFeedback) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		step := newMissionFailedFeedbacksStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasDeviceConfig applies the HasEdge predicate on the "device_config" edge.
-func HasDeviceConfig() predicate.Device {
-	return predicate.Device(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, DeviceConfigTable, DeviceConfigColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasDeviceConfigWith applies the HasEdge predicate on the "device_config" edge with a given conditions (other predicates).
-func HasDeviceConfigWith(preds ...predicate.DeviceConfig) predicate.Device {
-	return predicate.Device(func(s *sql.Selector) {
-		step := newDeviceConfigStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

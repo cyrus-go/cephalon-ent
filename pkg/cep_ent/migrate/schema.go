@@ -539,6 +539,7 @@ var (
 		{Name: "rank_at", Type: field.TypeTime, Nullable: true, Comment: "评定设备等级的时刻，带时区"},
 		{Name: "stability_at", Type: field.TypeTime, Nullable: true, Comment: "判定稳定性的时刻，带时区"},
 		{Name: "high_temperature_at", Type: field.TypeTime, Nullable: true, Comment: "温度超标的时刻，带时区"},
+		{Name: "gift_mission_config_id", Type: field.TypeInt64, Comment: "外键补贴任务配置 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
@@ -549,8 +550,14 @@ var (
 		PrimaryKey: []*schema.Column{DevicesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "devices_users_devices",
+				Symbol:     "devices_gift_mission_configs_devices",
 				Columns:    []*schema.Column{DevicesColumns[31]},
+				RefColumns: []*schema.Column{GiftMissionConfigsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "devices_users_devices",
+				Columns:    []*schema.Column{DevicesColumns[32]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -559,43 +566,7 @@ var (
 			{
 				Name:    "device_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{DevicesColumns[31]},
-			},
-		},
-	}
-	// DeviceConfigsColumns holds the columns for the "device_configs" table.
-	DeviceConfigsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
-		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
-		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
-		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
-		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "gpu_version", Type: field.TypeEnum, Comment: "GPU 版本", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100", "ComputilityKing-I", "Ascend910ProB", "P40"}, Default: "RTX3080"},
-		{Name: "gap_base", Type: field.TypeInt64, Comment: "间隔基数", Default: 0},
-		{Name: "gap_random_max", Type: field.TypeInt64, Comment: "间隔随机范围最大值", Default: 0},
-		{Name: "gap_random_min", Type: field.TypeInt64, Comment: "间隔随机范围最小值", Default: 0},
-		{Name: "device_id", Type: field.TypeInt64, Unique: true, Comment: "外键设备 id", Default: 0},
-	}
-	// DeviceConfigsTable holds the schema information for the "device_configs" table.
-	DeviceConfigsTable = &schema.Table{
-		Name:       "device_configs",
-		Comment:    "设备配置信息",
-		Columns:    DeviceConfigsColumns,
-		PrimaryKey: []*schema.Column{DeviceConfigsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "device_configs_devices_device_config",
-				Columns:    []*schema.Column{DeviceConfigsColumns[10]},
-				RefColumns: []*schema.Column{DevicesColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "deviceconfig_device_id",
-				Unique:  false,
-				Columns: []*schema.Column{DeviceConfigsColumns[10]},
+				Columns: []*schema.Column{DevicesColumns[32]},
 			},
 		},
 	}
@@ -1062,6 +1033,34 @@ var (
 		Comment:    "fRPS 服务器列表",
 		Columns:    FrpsInfosColumns,
 		PrimaryKey: []*schema.Column{FrpsInfosColumns[0]},
+	}
+	// GiftMissionConfigsColumns holds the columns for the "gift_mission_configs" table.
+	GiftMissionConfigsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "stability_level", Type: field.TypeEnum, Comment: "稳定性等级", Enums: []string{"great", "good", "ok", "bad"}, Default: "good"},
+		{Name: "gpu_version", Type: field.TypeEnum, Comment: "GPU 版本", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100", "ComputilityKing-I", "Ascend910ProB", "P40"}, Default: "RTX3080"},
+		{Name: "gap_base", Type: field.TypeInt64, Comment: "间隔基数", Default: 0},
+		{Name: "gap_random_max", Type: field.TypeInt64, Comment: "间隔随机范围最大值", Default: 0},
+		{Name: "gap_random_min", Type: field.TypeInt64, Comment: "间隔随机范围最小值", Default: 0},
+	}
+	// GiftMissionConfigsTable holds the schema information for the "gift_mission_configs" table.
+	GiftMissionConfigsTable = &schema.Table{
+		Name:       "gift_mission_configs",
+		Comment:    "补贴任务参数配置（需要初始化数据）",
+		Columns:    GiftMissionConfigsColumns,
+		PrimaryKey: []*schema.Column{GiftMissionConfigsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "giftmissionconfig_stability_level_gpu_version",
+				Unique:  false,
+				Columns: []*schema.Column{GiftMissionConfigsColumns[6], GiftMissionConfigsColumns[7]},
+			},
+		},
 	}
 	// GpusColumns holds the columns for the "gpus" table.
 	GpusColumns = []*schema.Column{
@@ -3140,7 +3139,6 @@ var (
 		CostAccountsTable,
 		CostBillsTable,
 		DevicesTable,
-		DeviceConfigsTable,
 		DeviceGpuMissionsTable,
 		DeviceOfflineRecordsTable,
 		DeviceRebootTimesTable,
@@ -3153,6 +3151,7 @@ var (
 		ExtraServicePricesTable,
 		FrpcInfosTable,
 		FrpsInfosTable,
+		GiftMissionConfigsTable,
 		GpusTable,
 		HmacKeyPairsTable,
 		IncomeManagesTable,
@@ -3244,10 +3243,9 @@ func init() {
 	CostBillsTable.ForeignKeys[4].RefTable = RechargeOrdersTable
 	CostBillsTable.ForeignKeys[5].RefTable = UsersTable
 	CostBillsTable.Annotation = &entsql.Annotation{}
-	DevicesTable.ForeignKeys[0].RefTable = UsersTable
+	DevicesTable.ForeignKeys[0].RefTable = GiftMissionConfigsTable
+	DevicesTable.ForeignKeys[1].RefTable = UsersTable
 	DevicesTable.Annotation = &entsql.Annotation{}
-	DeviceConfigsTable.ForeignKeys[0].RefTable = DevicesTable
-	DeviceConfigsTable.Annotation = &entsql.Annotation{}
 	DeviceGpuMissionsTable.ForeignKeys[0].RefTable = DevicesTable
 	DeviceGpuMissionsTable.ForeignKeys[1].RefTable = GpusTable
 	DeviceGpuMissionsTable.Annotation = &entsql.Annotation{}
@@ -3277,6 +3275,7 @@ func init() {
 	FrpcInfosTable.ForeignKeys[1].RefTable = FrpsInfosTable
 	FrpcInfosTable.Annotation = &entsql.Annotation{}
 	FrpsInfosTable.Annotation = &entsql.Annotation{}
+	GiftMissionConfigsTable.Annotation = &entsql.Annotation{}
 	GpusTable.Annotation = &entsql.Annotation{}
 	HmacKeyPairsTable.Annotation = &entsql.Annotation{}
 	IncomeManagesTable.ForeignKeys[0].RefTable = UsersTable

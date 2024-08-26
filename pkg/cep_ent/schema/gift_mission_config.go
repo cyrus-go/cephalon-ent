@@ -9,13 +9,13 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
-type DeviceConfig struct {
+type GiftMissionConfig struct {
 	ent.Schema
 }
 
-func (DeviceConfig) Fields() []ent.Field {
+func (GiftMissionConfig) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("device_id").StructTag(`json:"device_id,string"`).Default(0).Comment("外键设备 id"),
+		field.Enum("stability_level").GoType(enums.DeviceStabilityTypeGood).Default(string(enums.DeviceStabilityTypeGood)).StructTag(`json:"stability_level"`).Comment("稳定性等级"),
 		field.Enum("gpu_version").GoType(enums.GpuVersion3080).Default(string(enums.GpuVersion3080)).StructTag(`json:"gpu_version"`).Comment("GPU 版本"),
 		field.Int64("gap_base").StructTag(`json:"gap_base"`).Default(0).Comment("间隔基数"),
 		field.Int64("gap_random_max").StructTag(`json:"gap_random_max"`).Default(0).Comment("间隔随机范围最大值"),
@@ -23,30 +23,29 @@ func (DeviceConfig) Fields() []ent.Field {
 	}
 }
 
-// Edges of the DeviceConfig.
-func (DeviceConfig) Edges() []ent.Edge {
+// Edges of the GiftMissionConfig.
+func (GiftMissionConfig) Edges() []ent.Edge {
 	return []ent.Edge{
-		// 逻辑外键
-		edge.From("device", Device.Type).Ref("device_config").Field("device_id").Unique().Required(),
+		edge.To("devices", Device.Type),
 	}
 }
 
-// Indexes of DeviceConfig
-func (DeviceConfig) Indexes() []ent.Index {
+// Indexes of GiftMissionConfig
+func (GiftMissionConfig) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("device_id"),
+		index.Fields("stability_level", "gpu_version"),
 	}
 }
 
-// Mixin of DeviceConfig
-func (DeviceConfig) Mixin() []ent.Mixin {
+// Mixin of GiftMissionConfig
+func (GiftMissionConfig) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
 	}
 }
 
-func (DeviceConfig) Annotations() []schema.Annotation {
+func (GiftMissionConfig) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		schema.Comment("设备配置信息"),
+		schema.Comment("补贴任务参数配置（需要初始化数据）"),
 	}
 }

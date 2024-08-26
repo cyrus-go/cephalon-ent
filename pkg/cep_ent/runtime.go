@@ -18,7 +18,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
@@ -31,6 +30,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceprice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/giftmissionconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
@@ -715,128 +715,85 @@ func init() {
 	deviceDescUserID := deviceFields[0].Descriptor()
 	// device.DefaultUserID holds the default value on creation for the user_id field.
 	device.DefaultUserID = deviceDescUserID.Default.(int64)
+	// deviceDescGiftMissionConfigID is the schema descriptor for gift_mission_config_id field.
+	deviceDescGiftMissionConfigID := deviceFields[1].Descriptor()
+	// device.DefaultGiftMissionConfigID holds the default value on creation for the gift_mission_config_id field.
+	device.DefaultGiftMissionConfigID = deviceDescGiftMissionConfigID.Default.(int64)
 	// deviceDescSerialNumber is the schema descriptor for serial_number field.
-	deviceDescSerialNumber := deviceFields[1].Descriptor()
+	deviceDescSerialNumber := deviceFields[2].Descriptor()
 	// device.DefaultSerialNumber holds the default value on creation for the serial_number field.
 	device.DefaultSerialNumber = deviceDescSerialNumber.Default.(string)
 	// deviceDescSumCep is the schema descriptor for sum_cep field.
-	deviceDescSumCep := deviceFields[3].Descriptor()
+	deviceDescSumCep := deviceFields[4].Descriptor()
 	// device.DefaultSumCep holds the default value on creation for the sum_cep field.
 	device.DefaultSumCep = deviceDescSumCep.Default.(int64)
 	// deviceDescLinking is the schema descriptor for linking field.
-	deviceDescLinking := deviceFields[4].Descriptor()
+	deviceDescLinking := deviceFields[5].Descriptor()
 	// device.DefaultLinking holds the default value on creation for the linking field.
 	device.DefaultLinking = deviceDescLinking.Default.(bool)
 	// deviceDescName is the schema descriptor for name field.
-	deviceDescName := deviceFields[7].Descriptor()
+	deviceDescName := deviceFields[8].Descriptor()
 	// device.DefaultName holds the default value on creation for the name field.
 	device.DefaultName = deviceDescName.Default.(string)
 	// deviceDescManageName is the schema descriptor for manage_name field.
-	deviceDescManageName := deviceFields[8].Descriptor()
+	deviceDescManageName := deviceFields[9].Descriptor()
 	// device.DefaultManageName holds the default value on creation for the manage_name field.
 	device.DefaultManageName = deviceDescManageName.Default.(string)
 	// deviceDescCoresNumber is the schema descriptor for cores_number field.
-	deviceDescCoresNumber := deviceFields[10].Descriptor()
+	deviceDescCoresNumber := deviceFields[11].Descriptor()
 	// device.DefaultCoresNumber holds the default value on creation for the cores_number field.
 	device.DefaultCoresNumber = deviceDescCoresNumber.Default.(int64)
 	// deviceDescCPU is the schema descriptor for cpu field.
-	deviceDescCPU := deviceFields[11].Descriptor()
+	deviceDescCPU := deviceFields[12].Descriptor()
 	// device.DefaultCPU holds the default value on creation for the cpu field.
 	device.DefaultCPU = deviceDescCPU.Default.(string)
 	// deviceDescCpus is the schema descriptor for cpus field.
-	deviceDescCpus := deviceFields[12].Descriptor()
+	deviceDescCpus := deviceFields[13].Descriptor()
 	device.ValueScanner.Cpus = deviceDescCpus.ValueScanner.(field.TypeValueScanner[[]string])
 	// deviceDescMemory is the schema descriptor for memory field.
-	deviceDescMemory := deviceFields[13].Descriptor()
+	deviceDescMemory := deviceFields[14].Descriptor()
 	// device.DefaultMemory holds the default value on creation for the memory field.
 	device.DefaultMemory = deviceDescMemory.Default.(int64)
 	// deviceDescDisk is the schema descriptor for disk field.
-	deviceDescDisk := deviceFields[14].Descriptor()
+	deviceDescDisk := deviceFields[15].Descriptor()
 	// device.DefaultDisk holds the default value on creation for the disk field.
 	device.DefaultDisk = deviceDescDisk.Default.(float32)
 	// deviceDescDelay is the schema descriptor for delay field.
-	deviceDescDelay := deviceFields[15].Descriptor()
+	deviceDescDelay := deviceFields[16].Descriptor()
 	// device.DefaultDelay holds the default value on creation for the delay field.
 	device.DefaultDelay = deviceDescDelay.Default.(float64)
 	// deviceDescGpuTemperature is the schema descriptor for gpu_temperature field.
-	deviceDescGpuTemperature := deviceFields[16].Descriptor()
+	deviceDescGpuTemperature := deviceFields[17].Descriptor()
 	// device.DefaultGpuTemperature holds the default value on creation for the gpu_temperature field.
 	device.DefaultGpuTemperature = deviceDescGpuTemperature.Default.(float64)
 	// deviceDescCPUTemperature is the schema descriptor for cpu_temperature field.
-	deviceDescCPUTemperature := deviceFields[17].Descriptor()
+	deviceDescCPUTemperature := deviceFields[18].Descriptor()
 	// device.DefaultCPUTemperature holds the default value on creation for the cpu_temperature field.
 	device.DefaultCPUTemperature = deviceDescCPUTemperature.Default.(float64)
 	// deviceDescVersion is the schema descriptor for version field.
-	deviceDescVersion := deviceFields[19].Descriptor()
+	deviceDescVersion := deviceFields[20].Descriptor()
 	// device.DefaultVersion holds the default value on creation for the version field.
 	device.DefaultVersion = deviceDescVersion.Default.(string)
 	// deviceDescFreeGpuNum is the schema descriptor for free_gpu_num field.
-	deviceDescFreeGpuNum := deviceFields[22].Descriptor()
+	deviceDescFreeGpuNum := deviceFields[23].Descriptor()
 	// device.DefaultFreeGpuNum holds the default value on creation for the free_gpu_num field.
 	device.DefaultFreeGpuNum = deviceDescFreeGpuNum.Default.(int)
 	// deviceDescRankAt is the schema descriptor for rank_at field.
-	deviceDescRankAt := deviceFields[23].Descriptor()
+	deviceDescRankAt := deviceFields[24].Descriptor()
 	// device.DefaultRankAt holds the default value on creation for the rank_at field.
 	device.DefaultRankAt = deviceDescRankAt.Default.(func() time.Time)
 	// deviceDescStabilityAt is the schema descriptor for stability_at field.
-	deviceDescStabilityAt := deviceFields[24].Descriptor()
+	deviceDescStabilityAt := deviceFields[25].Descriptor()
 	// device.DefaultStabilityAt holds the default value on creation for the stability_at field.
 	device.DefaultStabilityAt = deviceDescStabilityAt.Default.(func() time.Time)
 	// deviceDescHighTemperatureAt is the schema descriptor for high_temperature_at field.
-	deviceDescHighTemperatureAt := deviceFields[25].Descriptor()
+	deviceDescHighTemperatureAt := deviceFields[26].Descriptor()
 	// device.DefaultHighTemperatureAt holds the default value on creation for the high_temperature_at field.
 	device.DefaultHighTemperatureAt = deviceDescHighTemperatureAt.Default.(func() time.Time)
 	// deviceDescID is the schema descriptor for id field.
 	deviceDescID := deviceMixinFields0[0].Descriptor()
 	// device.DefaultID holds the default value on creation for the id field.
 	device.DefaultID = deviceDescID.Default.(func() int64)
-	deviceconfigMixin := schema.DeviceConfig{}.Mixin()
-	deviceconfigMixinFields0 := deviceconfigMixin[0].Fields()
-	_ = deviceconfigMixinFields0
-	deviceconfigFields := schema.DeviceConfig{}.Fields()
-	_ = deviceconfigFields
-	// deviceconfigDescCreatedBy is the schema descriptor for created_by field.
-	deviceconfigDescCreatedBy := deviceconfigMixinFields0[1].Descriptor()
-	// deviceconfig.DefaultCreatedBy holds the default value on creation for the created_by field.
-	deviceconfig.DefaultCreatedBy = deviceconfigDescCreatedBy.Default.(int64)
-	// deviceconfigDescUpdatedBy is the schema descriptor for updated_by field.
-	deviceconfigDescUpdatedBy := deviceconfigMixinFields0[2].Descriptor()
-	// deviceconfig.DefaultUpdatedBy holds the default value on creation for the updated_by field.
-	deviceconfig.DefaultUpdatedBy = deviceconfigDescUpdatedBy.Default.(int64)
-	// deviceconfigDescCreatedAt is the schema descriptor for created_at field.
-	deviceconfigDescCreatedAt := deviceconfigMixinFields0[3].Descriptor()
-	// deviceconfig.DefaultCreatedAt holds the default value on creation for the created_at field.
-	deviceconfig.DefaultCreatedAt = deviceconfigDescCreatedAt.Default.(func() time.Time)
-	// deviceconfigDescUpdatedAt is the schema descriptor for updated_at field.
-	deviceconfigDescUpdatedAt := deviceconfigMixinFields0[4].Descriptor()
-	// deviceconfig.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	deviceconfig.DefaultUpdatedAt = deviceconfigDescUpdatedAt.Default.(func() time.Time)
-	// deviceconfig.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	deviceconfig.UpdateDefaultUpdatedAt = deviceconfigDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// deviceconfigDescDeletedAt is the schema descriptor for deleted_at field.
-	deviceconfigDescDeletedAt := deviceconfigMixinFields0[5].Descriptor()
-	// deviceconfig.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	deviceconfig.DefaultDeletedAt = deviceconfigDescDeletedAt.Default.(time.Time)
-	// deviceconfigDescDeviceID is the schema descriptor for device_id field.
-	deviceconfigDescDeviceID := deviceconfigFields[0].Descriptor()
-	// deviceconfig.DefaultDeviceID holds the default value on creation for the device_id field.
-	deviceconfig.DefaultDeviceID = deviceconfigDescDeviceID.Default.(int64)
-	// deviceconfigDescGapBase is the schema descriptor for gap_base field.
-	deviceconfigDescGapBase := deviceconfigFields[2].Descriptor()
-	// deviceconfig.DefaultGapBase holds the default value on creation for the gap_base field.
-	deviceconfig.DefaultGapBase = deviceconfigDescGapBase.Default.(int64)
-	// deviceconfigDescGapRandomMax is the schema descriptor for gap_random_max field.
-	deviceconfigDescGapRandomMax := deviceconfigFields[3].Descriptor()
-	// deviceconfig.DefaultGapRandomMax holds the default value on creation for the gap_random_max field.
-	deviceconfig.DefaultGapRandomMax = deviceconfigDescGapRandomMax.Default.(int64)
-	// deviceconfigDescGapRandomMin is the schema descriptor for gap_random_min field.
-	deviceconfigDescGapRandomMin := deviceconfigFields[4].Descriptor()
-	// deviceconfig.DefaultGapRandomMin holds the default value on creation for the gap_random_min field.
-	deviceconfig.DefaultGapRandomMin = deviceconfigDescGapRandomMin.Default.(int64)
-	// deviceconfigDescID is the schema descriptor for id field.
-	deviceconfigDescID := deviceconfigMixinFields0[0].Descriptor()
-	// deviceconfig.DefaultID holds the default value on creation for the id field.
-	deviceconfig.DefaultID = deviceconfigDescID.Default.(func() int64)
 	devicegpumissionMixin := schema.DeviceGpuMission{}.Mixin()
 	devicegpumissionMixinFields0 := devicegpumissionMixin[0].Fields()
 	_ = devicegpumissionMixinFields0
@@ -1471,6 +1428,49 @@ func init() {
 	frpsinfoDescID := frpsinfoMixinFields0[0].Descriptor()
 	// frpsinfo.DefaultID holds the default value on creation for the id field.
 	frpsinfo.DefaultID = frpsinfoDescID.Default.(func() int64)
+	giftmissionconfigMixin := schema.GiftMissionConfig{}.Mixin()
+	giftmissionconfigMixinFields0 := giftmissionconfigMixin[0].Fields()
+	_ = giftmissionconfigMixinFields0
+	giftmissionconfigFields := schema.GiftMissionConfig{}.Fields()
+	_ = giftmissionconfigFields
+	// giftmissionconfigDescCreatedBy is the schema descriptor for created_by field.
+	giftmissionconfigDescCreatedBy := giftmissionconfigMixinFields0[1].Descriptor()
+	// giftmissionconfig.DefaultCreatedBy holds the default value on creation for the created_by field.
+	giftmissionconfig.DefaultCreatedBy = giftmissionconfigDescCreatedBy.Default.(int64)
+	// giftmissionconfigDescUpdatedBy is the schema descriptor for updated_by field.
+	giftmissionconfigDescUpdatedBy := giftmissionconfigMixinFields0[2].Descriptor()
+	// giftmissionconfig.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	giftmissionconfig.DefaultUpdatedBy = giftmissionconfigDescUpdatedBy.Default.(int64)
+	// giftmissionconfigDescCreatedAt is the schema descriptor for created_at field.
+	giftmissionconfigDescCreatedAt := giftmissionconfigMixinFields0[3].Descriptor()
+	// giftmissionconfig.DefaultCreatedAt holds the default value on creation for the created_at field.
+	giftmissionconfig.DefaultCreatedAt = giftmissionconfigDescCreatedAt.Default.(func() time.Time)
+	// giftmissionconfigDescUpdatedAt is the schema descriptor for updated_at field.
+	giftmissionconfigDescUpdatedAt := giftmissionconfigMixinFields0[4].Descriptor()
+	// giftmissionconfig.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	giftmissionconfig.DefaultUpdatedAt = giftmissionconfigDescUpdatedAt.Default.(func() time.Time)
+	// giftmissionconfig.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	giftmissionconfig.UpdateDefaultUpdatedAt = giftmissionconfigDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// giftmissionconfigDescDeletedAt is the schema descriptor for deleted_at field.
+	giftmissionconfigDescDeletedAt := giftmissionconfigMixinFields0[5].Descriptor()
+	// giftmissionconfig.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	giftmissionconfig.DefaultDeletedAt = giftmissionconfigDescDeletedAt.Default.(time.Time)
+	// giftmissionconfigDescGapBase is the schema descriptor for gap_base field.
+	giftmissionconfigDescGapBase := giftmissionconfigFields[2].Descriptor()
+	// giftmissionconfig.DefaultGapBase holds the default value on creation for the gap_base field.
+	giftmissionconfig.DefaultGapBase = giftmissionconfigDescGapBase.Default.(int64)
+	// giftmissionconfigDescGapRandomMax is the schema descriptor for gap_random_max field.
+	giftmissionconfigDescGapRandomMax := giftmissionconfigFields[3].Descriptor()
+	// giftmissionconfig.DefaultGapRandomMax holds the default value on creation for the gap_random_max field.
+	giftmissionconfig.DefaultGapRandomMax = giftmissionconfigDescGapRandomMax.Default.(int64)
+	// giftmissionconfigDescGapRandomMin is the schema descriptor for gap_random_min field.
+	giftmissionconfigDescGapRandomMin := giftmissionconfigFields[4].Descriptor()
+	// giftmissionconfig.DefaultGapRandomMin holds the default value on creation for the gap_random_min field.
+	giftmissionconfig.DefaultGapRandomMin = giftmissionconfigDescGapRandomMin.Default.(int64)
+	// giftmissionconfigDescID is the schema descriptor for id field.
+	giftmissionconfigDescID := giftmissionconfigMixinFields0[0].Descriptor()
+	// giftmissionconfig.DefaultID holds the default value on creation for the id field.
+	giftmissionconfig.DefaultID = giftmissionconfigDescID.Default.(func() int64)
 	gpuMixin := schema.Gpu{}.Mixin()
 	gpuMixinFields0 := gpuMixin[0].Fields()
 	_ = gpuMixinFields0

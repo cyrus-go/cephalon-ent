@@ -29,6 +29,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
+	// FieldGiftMissionConfigID holds the string denoting the gift_mission_config_id field in the database.
+	FieldGiftMissionConfigID = "gift_mission_config_id"
 	// FieldSerialNumber holds the string denoting the serial_number field in the database.
 	FieldSerialNumber = "serial_number"
 	// FieldState holds the string denoting the state field in the database.
@@ -81,6 +83,8 @@ const (
 	FieldHighTemperatureAt = "high_temperature_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
+	// EdgeGiftMissionConfig holds the string denoting the gift_mission_config edge name in mutations.
+	EdgeGiftMissionConfig = "gift_mission_config"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
 	EdgeMissionProduceOrders = "mission_produce_orders"
 	// EdgeUserDevices holds the string denoting the user_devices edge name in mutations.
@@ -103,8 +107,6 @@ const (
 	EdgeDeviceOfflineRecords = "device_offline_records"
 	// EdgeMissionFailedFeedbacks holds the string denoting the mission_failed_feedbacks edge name in mutations.
 	EdgeMissionFailedFeedbacks = "mission_failed_feedbacks"
-	// EdgeDeviceConfig holds the string denoting the device_config edge name in mutations.
-	EdgeDeviceConfig = "device_config"
 	// Table holds the table name of the device in the database.
 	Table = "devices"
 	// UserTable is the table that holds the user relation/edge.
@@ -114,6 +116,13 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_id"
+	// GiftMissionConfigTable is the table that holds the gift_mission_config relation/edge.
+	GiftMissionConfigTable = "devices"
+	// GiftMissionConfigInverseTable is the table name for the GiftMissionConfig entity.
+	// It exists in this package in order to avoid circular dependency with the "giftmissionconfig" package.
+	GiftMissionConfigInverseTable = "gift_mission_configs"
+	// GiftMissionConfigColumn is the table column denoting the gift_mission_config relation/edge.
+	GiftMissionConfigColumn = "gift_mission_config_id"
 	// MissionProduceOrdersTable is the table that holds the mission_produce_orders relation/edge.
 	MissionProduceOrdersTable = "mission_produce_orders"
 	// MissionProduceOrdersInverseTable is the table name for the MissionProduceOrder entity.
@@ -191,13 +200,6 @@ const (
 	MissionFailedFeedbacksInverseTable = "mission_failed_feedbacks"
 	// MissionFailedFeedbacksColumn is the table column denoting the mission_failed_feedbacks relation/edge.
 	MissionFailedFeedbacksColumn = "device_id"
-	// DeviceConfigTable is the table that holds the device_config relation/edge.
-	DeviceConfigTable = "device_configs"
-	// DeviceConfigInverseTable is the table name for the DeviceConfig entity.
-	// It exists in this package in order to avoid circular dependency with the "deviceconfig" package.
-	DeviceConfigInverseTable = "device_configs"
-	// DeviceConfigColumn is the table column denoting the device_config relation/edge.
-	DeviceConfigColumn = "device_id"
 )
 
 // Columns holds all SQL columns for device fields.
@@ -209,6 +211,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldUserID,
+	FieldGiftMissionConfigID,
 	FieldSerialNumber,
 	FieldState,
 	FieldSumCep,
@@ -261,6 +264,8 @@ var (
 	DefaultDeletedAt time.Time
 	// DefaultUserID holds the default value on creation for the "user_id" field.
 	DefaultUserID int64
+	// DefaultGiftMissionConfigID holds the default value on creation for the "gift_mission_config_id" field.
+	DefaultGiftMissionConfigID int64
 	// DefaultSerialNumber holds the default value on creation for the "serial_number" field.
 	DefaultSerialNumber string
 	// DefaultSumCep holds the default value on creation for the "sum_cep" field.
@@ -440,6 +445,11 @@ func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUserID, opts...).ToFunc()
 }
 
+// ByGiftMissionConfigID orders the results by the gift_mission_config_id field.
+func ByGiftMissionConfigID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGiftMissionConfigID, opts...).ToFunc()
+}
+
 // BySerialNumber orders the results by the serial_number field.
 func BySerialNumber(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSerialNumber, opts...).ToFunc()
@@ -569,6 +579,13 @@ func ByHighTemperatureAt(opts ...sql.OrderTermOption) OrderOption {
 func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByGiftMissionConfigField orders the results by gift_mission_config field.
+func ByGiftMissionConfigField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newGiftMissionConfigStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -725,18 +742,18 @@ func ByMissionFailedFeedbacks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderO
 		sqlgraph.OrderByNeighborTerms(s, newMissionFailedFeedbacksStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-
-// ByDeviceConfigField orders the results by device_config field.
-func ByDeviceConfigField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newDeviceConfigStep(), sql.OrderByField(field, opts...))
-	}
-}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UserInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+	)
+}
+func newGiftMissionConfigStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(GiftMissionConfigInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, GiftMissionConfigTable, GiftMissionConfigColumn),
 	)
 }
 func newMissionProduceOrdersStep() *sqlgraph.Step {
@@ -814,12 +831,5 @@ func newMissionFailedFeedbacksStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionFailedFeedbacksInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, MissionFailedFeedbacksTable, MissionFailedFeedbacksColumn),
-	)
-}
-func newDeviceConfigStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(DeviceConfigInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, DeviceConfigTable, DeviceConfigColumn),
 	)
 }

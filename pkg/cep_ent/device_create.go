@@ -12,12 +12,12 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicestate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/giftmissionconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
@@ -116,6 +116,20 @@ func (dc *DeviceCreate) SetUserID(i int64) *DeviceCreate {
 func (dc *DeviceCreate) SetNillableUserID(i *int64) *DeviceCreate {
 	if i != nil {
 		dc.SetUserID(*i)
+	}
+	return dc
+}
+
+// SetGiftMissionConfigID sets the "gift_mission_config_id" field.
+func (dc *DeviceCreate) SetGiftMissionConfigID(i int64) *DeviceCreate {
+	dc.mutation.SetGiftMissionConfigID(i)
+	return dc
+}
+
+// SetNillableGiftMissionConfigID sets the "gift_mission_config_id" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableGiftMissionConfigID(i *int64) *DeviceCreate {
+	if i != nil {
+		dc.SetGiftMissionConfigID(*i)
 	}
 	return dc
 }
@@ -481,6 +495,11 @@ func (dc *DeviceCreate) SetUser(u *User) *DeviceCreate {
 	return dc.SetUserID(u.ID)
 }
 
+// SetGiftMissionConfig sets the "gift_mission_config" edge to the GiftMissionConfig entity.
+func (dc *DeviceCreate) SetGiftMissionConfig(g *GiftMissionConfig) *DeviceCreate {
+	return dc.SetGiftMissionConfigID(g.ID)
+}
+
 // AddMissionProduceOrderIDs adds the "mission_produce_orders" edge to the MissionProduceOrder entity by IDs.
 func (dc *DeviceCreate) AddMissionProduceOrderIDs(ids ...int64) *DeviceCreate {
 	dc.mutation.AddMissionProduceOrderIDs(ids...)
@@ -646,25 +665,6 @@ func (dc *DeviceCreate) AddMissionFailedFeedbacks(m ...*MissionFailedFeedback) *
 	return dc.AddMissionFailedFeedbackIDs(ids...)
 }
 
-// SetDeviceConfigID sets the "device_config" edge to the DeviceConfig entity by ID.
-func (dc *DeviceCreate) SetDeviceConfigID(id int64) *DeviceCreate {
-	dc.mutation.SetDeviceConfigID(id)
-	return dc
-}
-
-// SetNillableDeviceConfigID sets the "device_config" edge to the DeviceConfig entity by ID if the given value is not nil.
-func (dc *DeviceCreate) SetNillableDeviceConfigID(id *int64) *DeviceCreate {
-	if id != nil {
-		dc = dc.SetDeviceConfigID(*id)
-	}
-	return dc
-}
-
-// SetDeviceConfig sets the "device_config" edge to the DeviceConfig entity.
-func (dc *DeviceCreate) SetDeviceConfig(d *DeviceConfig) *DeviceCreate {
-	return dc.SetDeviceConfigID(d.ID)
-}
-
 // Mutation returns the DeviceMutation object of the builder.
 func (dc *DeviceCreate) Mutation() *DeviceMutation {
 	return dc.mutation
@@ -723,6 +723,10 @@ func (dc *DeviceCreate) defaults() {
 	if _, ok := dc.mutation.UserID(); !ok {
 		v := device.DefaultUserID
 		dc.mutation.SetUserID(v)
+	}
+	if _, ok := dc.mutation.GiftMissionConfigID(); !ok {
+		v := device.DefaultGiftMissionConfigID
+		dc.mutation.SetGiftMissionConfigID(v)
 	}
 	if _, ok := dc.mutation.SerialNumber(); !ok {
 		v := device.DefaultSerialNumber
@@ -846,6 +850,9 @@ func (dc *DeviceCreate) check() error {
 	if _, ok := dc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`cep_ent: missing required field "Device.user_id"`)}
 	}
+	if _, ok := dc.mutation.GiftMissionConfigID(); !ok {
+		return &ValidationError{Name: "gift_mission_config_id", err: errors.New(`cep_ent: missing required field "Device.gift_mission_config_id"`)}
+	}
 	if _, ok := dc.mutation.SerialNumber(); !ok {
 		return &ValidationError{Name: "serial_number", err: errors.New(`cep_ent: missing required field "Device.serial_number"`)}
 	}
@@ -946,6 +953,9 @@ func (dc *DeviceCreate) check() error {
 	}
 	if _, ok := dc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "Device.user"`)}
+	}
+	if _, ok := dc.mutation.GiftMissionConfigID(); !ok {
+		return &ValidationError{Name: "gift_mission_config", err: errors.New(`cep_ent: missing required edge "Device.gift_mission_config"`)}
 	}
 	return nil
 }
@@ -1124,6 +1134,23 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := dc.mutation.GiftMissionConfigIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   device.GiftMissionConfigTable,
+			Columns: []string{device.GiftMissionConfigColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(giftmissionconfig.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.GiftMissionConfigID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	if nodes := dc.mutation.MissionProduceOrdersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -1300,22 +1327,6 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := dc.mutation.DeviceConfigIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   device.DeviceConfigTable,
-			Columns: []string{device.DeviceConfigColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(deviceconfig.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	return _node, _spec, nil
 }
 
@@ -1437,6 +1448,18 @@ func (u *DeviceUpsert) SetUserID(v int64) *DeviceUpsert {
 // UpdateUserID sets the "user_id" field to the value that was provided on create.
 func (u *DeviceUpsert) UpdateUserID() *DeviceUpsert {
 	u.SetExcluded(device.FieldUserID)
+	return u
+}
+
+// SetGiftMissionConfigID sets the "gift_mission_config_id" field.
+func (u *DeviceUpsert) SetGiftMissionConfigID(v int64) *DeviceUpsert {
+	u.Set(device.FieldGiftMissionConfigID, v)
+	return u
+}
+
+// UpdateGiftMissionConfigID sets the "gift_mission_config_id" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateGiftMissionConfigID() *DeviceUpsert {
+	u.SetExcluded(device.FieldGiftMissionConfigID)
 	return u
 }
 
@@ -1944,6 +1967,20 @@ func (u *DeviceUpsertOne) SetUserID(v int64) *DeviceUpsertOne {
 func (u *DeviceUpsertOne) UpdateUserID() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateUserID()
+	})
+}
+
+// SetGiftMissionConfigID sets the "gift_mission_config_id" field.
+func (u *DeviceUpsertOne) SetGiftMissionConfigID(v int64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetGiftMissionConfigID(v)
+	})
+}
+
+// UpdateGiftMissionConfigID sets the "gift_mission_config_id" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateGiftMissionConfigID() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateGiftMissionConfigID()
 	})
 }
 
@@ -2682,6 +2719,20 @@ func (u *DeviceUpsertBulk) SetUserID(v int64) *DeviceUpsertBulk {
 func (u *DeviceUpsertBulk) UpdateUserID() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateUserID()
+	})
+}
+
+// SetGiftMissionConfigID sets the "gift_mission_config_id" field.
+func (u *DeviceUpsertBulk) SetGiftMissionConfigID(v int64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetGiftMissionConfigID(v)
+	})
+}
+
+// UpdateGiftMissionConfigID sets the "gift_mission_config_id" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateGiftMissionConfigID() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateGiftMissionConfigID()
 	})
 }
 

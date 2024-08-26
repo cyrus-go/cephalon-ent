@@ -153,18 +153,6 @@ func (f DeviceFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.DeviceMutation", m)
 }
 
-// The DeviceConfigFunc type is an adapter to allow the use of ordinary
-// function as DeviceConfig mutator.
-type DeviceConfigFunc func(context.Context, *cep_ent.DeviceConfigMutation) (cep_ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f DeviceConfigFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
-	if mv, ok := m.(*cep_ent.DeviceConfigMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.DeviceConfigMutation", m)
-}
-
 // The DeviceGpuMissionFunc type is an adapter to allow the use of ordinary
 // function as DeviceGpuMission mutator.
 type DeviceGpuMissionFunc func(context.Context, *cep_ent.DeviceGpuMissionMutation) (cep_ent.Value, error)
@@ -307,6 +295,18 @@ func (f FrpsInfoFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.V
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.FrpsInfoMutation", m)
+}
+
+// The GiftMissionConfigFunc type is an adapter to allow the use of ordinary
+// function as GiftMissionConfig mutator.
+type GiftMissionConfigFunc func(context.Context, *cep_ent.GiftMissionConfigMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GiftMissionConfigFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.GiftMissionConfigMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.GiftMissionConfigMutation", m)
 }
 
 // The GpuFunc type is an adapter to allow the use of ordinary

@@ -24,7 +24,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
@@ -37,6 +36,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceprice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/giftmissionconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
@@ -158,7 +158,6 @@ func checkColumn(table, column string) error {
 			costaccount.Table:           costaccount.ValidColumn,
 			costbill.Table:              costbill.ValidColumn,
 			device.Table:                device.ValidColumn,
-			deviceconfig.Table:          deviceconfig.ValidColumn,
 			devicegpumission.Table:      devicegpumission.ValidColumn,
 			deviceofflinerecord.Table:   deviceofflinerecord.ValidColumn,
 			devicereboottime.Table:      devicereboottime.ValidColumn,
@@ -171,6 +170,7 @@ func checkColumn(table, column string) error {
 			extraserviceprice.Table:     extraserviceprice.ValidColumn,
 			frpcinfo.Table:              frpcinfo.ValidColumn,
 			frpsinfo.Table:              frpsinfo.ValidColumn,
+			giftmissionconfig.Table:     giftmissionconfig.ValidColumn,
 			gpu.Table:                   gpu.ValidColumn,
 			hmackeypair.Table:           hmackeypair.ValidColumn,
 			incomemanage.Table:          incomemanage.ValidColumn,

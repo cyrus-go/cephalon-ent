@@ -19,6 +19,7 @@ type Device struct {
 func (Device) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("user_id").StructTag(`json:"user_id,string"`).Default(0).Comment("外键用户 id"),
+		field.Int64("gift_mission_config_id").StructTag(`json:"gift_mission_config_id,string"`).Default(0).Comment("外键补贴任务配置 id"),
 		field.String("serial_number").StructTag(`json:"serial_number"`).Default("").Comment("设备唯一序列号"),
 		field.Enum("state").Values("On", "Down", "Init").Default("Init").Comment("设备状态"),
 		field.Int64("sum_cep").StructTag(`json:"sum_cep"`).Default(0).Comment("该设备总获得利润"),
@@ -52,6 +53,7 @@ func (Device) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
 		edge.From("user", User.Type).Ref("devices").Field("user_id").Unique().Required(),
+		edge.From("gift_mission_config", GiftMissionConfig.Type).Ref("devices").Field("gift_mission_config_id").Unique().Required(),
 		edge.To("mission_produce_orders", MissionProduceOrder.Type),
 		edge.To("user_devices", UserDevice.Type),
 		edge.To("device_gpu_missions", DeviceGpuMission.Type),
@@ -63,7 +65,6 @@ func (Device) Edges() []ent.Edge {
 		edge.To("device_states", DeviceState.Type),
 		edge.To("device_offline_records", DeviceOfflineRecord.Type),
 		edge.To("mission_failed_feedbacks", MissionFailedFeedback.Type),
-		edge.To("device_config", DeviceConfig.Type).Unique(), // 1 对 1
 	}
 }
 

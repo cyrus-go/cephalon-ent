@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceconfig"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/giftmissionconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -33,6 +33,8 @@ type Device struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	// 外键用户 id
 	UserID int64 `json:"user_id,string"`
+	// 外键补贴任务配置 id
+	GiftMissionConfigID int64 `json:"gift_mission_config_id,string"`
 	// 设备唯一序列号
 	SerialNumber string `json:"serial_number"`
 	// 设备状态
@@ -93,6 +95,8 @@ type Device struct {
 type DeviceEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
+	// GiftMissionConfig holds the value of the gift_mission_config edge.
+	GiftMissionConfig *GiftMissionConfig `json:"gift_mission_config,omitempty"`
 	// MissionProduceOrders holds the value of the mission_produce_orders edge.
 	MissionProduceOrders []*MissionProduceOrder `json:"mission_produce_orders,omitempty"`
 	// UserDevices holds the value of the user_devices edge.
@@ -115,8 +119,6 @@ type DeviceEdges struct {
 	DeviceOfflineRecords []*DeviceOfflineRecord `json:"device_offline_records,omitempty"`
 	// MissionFailedFeedbacks holds the value of the mission_failed_feedbacks edge.
 	MissionFailedFeedbacks []*MissionFailedFeedback `json:"mission_failed_feedbacks,omitempty"`
-	// DeviceConfig holds the value of the device_config edge.
-	DeviceConfig *DeviceConfig `json:"device_config,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [13]bool
@@ -135,10 +137,23 @@ func (e DeviceEdges) UserOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "user"}
 }
 
+// GiftMissionConfigOrErr returns the GiftMissionConfig value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e DeviceEdges) GiftMissionConfigOrErr() (*GiftMissionConfig, error) {
+	if e.loadedTypes[1] {
+		if e.GiftMissionConfig == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: giftmissionconfig.Label}
+		}
+		return e.GiftMissionConfig, nil
+	}
+	return nil, &NotLoadedError{edge: "gift_mission_config"}
+}
+
 // MissionProduceOrdersOrErr returns the MissionProduceOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e DeviceEdges) MissionProduceOrdersOrErr() ([]*MissionProduceOrder, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		return e.MissionProduceOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_produce_orders"}
@@ -147,7 +162,7 @@ func (e DeviceEdges) MissionProduceOrdersOrErr() ([]*MissionProduceOrder, error)
 // UserDevicesOrErr returns the UserDevices value or an error if the edge
 // was not loaded in eager-loading.
 func (e DeviceEdges) UserDevicesOrErr() ([]*UserDevice, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.UserDevices, nil
 	}
 	return nil, &NotLoadedError{edge: "user_devices"}
@@ -156,7 +171,7 @@ func (e DeviceEdges) UserDevicesOrErr() ([]*UserDevice, error) {
 // DeviceGpuMissionsOrErr returns the DeviceGpuMissions value or an error if the edge
 // was not loaded in eager-loading.
 func (e DeviceEdges) DeviceGpuMissionsOrErr() ([]*DeviceGpuMission, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.DeviceGpuMissions, nil
 	}
 	return nil, &NotLoadedError{edge: "device_gpu_missions"}
@@ -165,7 +180,7 @@ func (e DeviceEdges) DeviceGpuMissionsOrErr() ([]*DeviceGpuMission, error) {
 // FrpcInfosOrErr returns the FrpcInfos value or an error if the edge
 // was not loaded in eager-loading.
 func (e DeviceEdges) FrpcInfosOrErr() ([]*FrpcInfo, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		return e.FrpcInfos, nil
 	}
 	return nil, &NotLoadedError{edge: "frpc_infos"}
@@ -174,7 +189,7 @@ func (e DeviceEdges) FrpcInfosOrErr() ([]*FrpcInfo, error) {
 // MissionOrdersOrErr returns the MissionOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e DeviceEdges) MissionOrdersOrErr() ([]*MissionOrder, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.MissionOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_orders"}
@@ -183,7 +198,7 @@ func (e DeviceEdges) MissionOrdersOrErr() ([]*MissionOrder, error) {
 // MissionProductionsOrErr returns the MissionProductions value or an error if the edge
 // was not loaded in eager-loading.
 func (e DeviceEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.MissionProductions, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_productions"}
@@ -192,7 +207,7 @@ func (e DeviceEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
 // DeviceRebootTimesOrErr returns the DeviceRebootTimes value or an error if the edge
 // was not loaded in eager-loading.
 func (e DeviceEdges) DeviceRebootTimesOrErr() ([]*DeviceRebootTime, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.DeviceRebootTimes, nil
 	}
 	return nil, &NotLoadedError{edge: "device_reboot_times"}
@@ -201,7 +216,7 @@ func (e DeviceEdges) DeviceRebootTimesOrErr() ([]*DeviceRebootTime, error) {
 // TroubleDeductsOrErr returns the TroubleDeducts value or an error if the edge
 // was not loaded in eager-loading.
 func (e DeviceEdges) TroubleDeductsOrErr() ([]*TroubleDeduct, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.TroubleDeducts, nil
 	}
 	return nil, &NotLoadedError{edge: "trouble_deducts"}
@@ -210,7 +225,7 @@ func (e DeviceEdges) TroubleDeductsOrErr() ([]*TroubleDeduct, error) {
 // DeviceStatesOrErr returns the DeviceStates value or an error if the edge
 // was not loaded in eager-loading.
 func (e DeviceEdges) DeviceStatesOrErr() ([]*DeviceState, error) {
-	if e.loadedTypes[9] {
+	if e.loadedTypes[10] {
 		return e.DeviceStates, nil
 	}
 	return nil, &NotLoadedError{edge: "device_states"}
@@ -219,7 +234,7 @@ func (e DeviceEdges) DeviceStatesOrErr() ([]*DeviceState, error) {
 // DeviceOfflineRecordsOrErr returns the DeviceOfflineRecords value or an error if the edge
 // was not loaded in eager-loading.
 func (e DeviceEdges) DeviceOfflineRecordsOrErr() ([]*DeviceOfflineRecord, error) {
-	if e.loadedTypes[10] {
+	if e.loadedTypes[11] {
 		return e.DeviceOfflineRecords, nil
 	}
 	return nil, &NotLoadedError{edge: "device_offline_records"}
@@ -228,23 +243,10 @@ func (e DeviceEdges) DeviceOfflineRecordsOrErr() ([]*DeviceOfflineRecord, error)
 // MissionFailedFeedbacksOrErr returns the MissionFailedFeedbacks value or an error if the edge
 // was not loaded in eager-loading.
 func (e DeviceEdges) MissionFailedFeedbacksOrErr() ([]*MissionFailedFeedback, error) {
-	if e.loadedTypes[11] {
+	if e.loadedTypes[12] {
 		return e.MissionFailedFeedbacks, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_failed_feedbacks"}
-}
-
-// DeviceConfigOrErr returns the DeviceConfig value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e DeviceEdges) DeviceConfigOrErr() (*DeviceConfig, error) {
-	if e.loadedTypes[12] {
-		if e.DeviceConfig == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: deviceconfig.Label}
-		}
-		return e.DeviceConfig, nil
-	}
-	return nil, &NotLoadedError{edge: "device_config"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -256,7 +258,7 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case device.FieldDisk, device.FieldDelay, device.FieldGpuTemperature, device.FieldCPUTemperature:
 			values[i] = new(sql.NullFloat64)
-		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory, device.FieldFreeGpuNum:
+		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldGiftMissionConfigID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory, device.FieldFreeGpuNum:
 			values[i] = new(sql.NullInt64)
 		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability, device.FieldVersion, device.FieldFault, device.FieldRank:
 			values[i] = new(sql.NullString)
@@ -320,6 +322,12 @@ func (d *Device) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
 				d.UserID = value.Int64
+			}
+		case device.FieldGiftMissionConfigID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field gift_mission_config_id", values[i])
+			} else if value.Valid {
+				d.GiftMissionConfigID = value.Int64
 			}
 		case device.FieldSerialNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -492,6 +500,11 @@ func (d *Device) QueryUser() *UserQuery {
 	return NewDeviceClient(d.config).QueryUser(d)
 }
 
+// QueryGiftMissionConfig queries the "gift_mission_config" edge of the Device entity.
+func (d *Device) QueryGiftMissionConfig() *GiftMissionConfigQuery {
+	return NewDeviceClient(d.config).QueryGiftMissionConfig(d)
+}
+
 // QueryMissionProduceOrders queries the "mission_produce_orders" edge of the Device entity.
 func (d *Device) QueryMissionProduceOrders() *MissionProduceOrderQuery {
 	return NewDeviceClient(d.config).QueryMissionProduceOrders(d)
@@ -547,11 +560,6 @@ func (d *Device) QueryMissionFailedFeedbacks() *MissionFailedFeedbackQuery {
 	return NewDeviceClient(d.config).QueryMissionFailedFeedbacks(d)
 }
 
-// QueryDeviceConfig queries the "device_config" edge of the Device entity.
-func (d *Device) QueryDeviceConfig() *DeviceConfigQuery {
-	return NewDeviceClient(d.config).QueryDeviceConfig(d)
-}
-
 // Update returns a builder for updating this Device.
 // Note that you need to call Device.Unwrap() before calling this method if this Device
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -592,6 +600,9 @@ func (d *Device) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", d.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("gift_mission_config_id=")
+	builder.WriteString(fmt.Sprintf("%v", d.GiftMissionConfigID))
 	builder.WriteString(", ")
 	builder.WriteString("serial_number=")
 	builder.WriteString(d.SerialNumber)

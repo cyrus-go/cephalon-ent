@@ -53,9 +53,6 @@ func DeviceOrErr(p Device, err error) Device {
 	}
 }
 
-// DeviceConfig is the predicate function for deviceconfig builders.
-type DeviceConfig func(*sql.Selector)
-
 // DeviceGpuMission is the predicate function for devicegpumission builders.
 type DeviceGpuMission func(*sql.Selector)
 
@@ -102,6 +99,9 @@ type FrpcInfo func(*sql.Selector)
 
 // FrpsInfo is the predicate function for frpsinfo builders.
 type FrpsInfo func(*sql.Selector)
+
+// GiftMissionConfig is the predicate function for giftmissionconfig builders.
+type GiftMissionConfig func(*sql.Selector)
 
 // Gpu is the predicate function for gpu builders.
 type Gpu func(*sql.Selector)
