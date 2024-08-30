@@ -22,6 +22,7 @@ const (
 	BillTypeIllegal          BillType = "illegal"       // 违规操作
 	BillTypeSurvey           BillType = "survey"        // 问卷调查
 	BillTypeCompensate       BillType = "compensate"    // 补偿
+	BillTypeSubsidy          BillType = "subsidy"       // 补贴
 )
 
 func (BillType) Values() []string {
@@ -45,6 +46,7 @@ func (BillType) Values() []string {
 		string(BillTypeSurvey),
 		string(BillTypeCompensate),
 		string(BillTypeInvokeModelOrder),
+		string(BillTypeSubsidy),
 	}
 }
 

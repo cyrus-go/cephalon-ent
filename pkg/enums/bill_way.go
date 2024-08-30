@@ -44,6 +44,7 @@ const (
 	BillWaySurveySubmit                   BillWay = "survey_submit"                     // 提交问卷调查
 	BillWayCompensateMissionRecoverFailed BillWay = "compensate_mission_recover_failed" // 任务恢复（重新开机）失败补偿
 	BillWayInvokedModel                   BillWay = "invoked_model"                     // 调用模型
+	BillWayNightSubsidy                   BillWay = "night_subsidy"                     // 夜间补贴
 )
 
 func (BillWay) Values() []string {
@@ -89,6 +90,7 @@ func (BillWay) Values() []string {
 		string(BillWaySurveySubmit),
 		string(BillWayCompensateMissionRecoverFailed),
 		string(BillWayInvokedModel),
+		string(BillWayNightSubsidy),
 	}
 }
 
