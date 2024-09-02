@@ -37,6 +37,7 @@ const (
 	MissionTypeAscendTime         MissionType = "ascend_time"
 	MissionTypeSdWuShanTime       MissionType = "sd_wu_shan_time"
 	MissionTypeSdLangTime         MissionType = "sd_lang_time"
+	MissionTypeSdZhiDaoTime       MissionType = "sd_zhi_dao_time"
 	MissionTypeComfyuiKeTime      MissionType = "comfyui_ke_time"
 	MissionTypeChatchatTime       MissionType = "chatchat_time"
 	MissionTypeChatTTSTime        MissionType = "chat_tts_time"
@@ -52,6 +53,7 @@ const (
 	MissionTypeComfyuiNenlyTime   MissionType = "comfyui_nenly_time"
 	MissionTypeComfyuiOuTime      MissionType = "comfyui_ou_time"
 	MissionTypeComfyuiLuTime      MissionType = "comfyui_lu_time"
+	MissionTypeComfyuiJiangTime   MissionType = "comfyui_jiang_time"
 	MissionTypeWaitingTime        MissionType = "waiting_time"     // 等待任务
 	MissionTypeOpenCLTime         MissionType = "opencl_core_time" //监控任务 不需要显卡
 	MissionTypeIOPaintTime        MissionType = "io_paint_time"
@@ -84,6 +86,7 @@ const (
 	MissionTypeAscendTimePlan         MissionType = "ascend_time_plan"
 	MissionTypeSdWuShanTimePlan       MissionType = "sd_wu_shan_time_plan"
 	MissionTypeSdLangTimePlan         MissionType = "sd_lang_time_plan"
+	MissionTypeSdZhiDaoTimePlan       MissionType = "sd_zhi_dao_time_plan"
 	MissionTypeComfyuiKeTimePlan      MissionType = "comfyui_ke_time_plan"
 	MissionTypeChatchatTimePlan       MissionType = "chatchat_time_plan"
 	MissionTypeChatTTSTimePlan        MissionType = "chat_tts_time_plan"
@@ -99,6 +102,7 @@ const (
 	MissionTypeComfyuiNenlyTimePlan   MissionType = "comfyui_nenly_time_plan"
 	MissionTypeComfyuiOuTimePlan      MissionType = "comfyui_ou_time_plan"
 	MissionTypeComfyuiLuTimePlan      MissionType = "comfyui_lu_time_plan"
+	MissionTypeComfyuiJiangTimePlan   MissionType = "comfyui_jiang_time_plan"
 	MissionTypeWaitingTimePlan        MissionType = "waiting_time_plan"     // 等待任务
 	MissionTypeOpenCLTimePlan         MissionType = "opencl_core_time_plan" //监控任务 不需要显卡
 	MissionTypeIOPaintTimePlan        MissionType = "io_paint_time_plan"
@@ -168,6 +172,8 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeSdWuShanTimePlan),
 		string(MissionTypeSdLangTime),
 		string(MissionTypeSdLangTimePlan),
+		string(MissionTypeSdZhiDaoTime),
+		string(MissionTypeSdZhiDaoTimePlan),
 		string(MissionTypeComfyuiKeTime),
 		string(MissionTypeComfyuiKeTimePlan),
 		string(MissionTypeChatchatTime),
@@ -198,6 +204,8 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeComfyuiOuTimePlan),
 		string(MissionTypeComfyuiLuTime),
 		string(MissionTypeComfyuiLuTimePlan),
+		string(MissionTypeComfyuiJiangTime),
+		string(MissionTypeComfyuiJiangTimePlan),
 		string(MissionTypeWaitingTime),
 		string(MissionTypeWaitingTimePlan),
 		string(MissionTypeOpenCLTime),

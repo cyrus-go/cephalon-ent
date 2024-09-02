@@ -27,6 +27,7 @@ const (
 	MissionCategoryAscend        MissionCategory = "ASCEND"
 	MissionCategorySDWuShan      MissionCategory = "SD_WU_SHAN"
 	MissionCategorySDLang        MissionCategory = "SD_LANG"
+	MissionCategorySDZhiDao      MissionCategory = "SD_ZHI_DAO"
 	MissionCategoryComfyuiKe     MissionCategory = "COMFYUI_KE"
 	MissionCategoryChatchat      MissionCategory = "CHATCHAT"
 	MissionCategoryChatTTS       MissionCategory = "CHATTTS"
@@ -42,6 +43,7 @@ const (
 	MissionCategoryComfyuiNenly  MissionCategory = "COMFYUI_NENLY"
 	MissionCategoryComfyuiOu     MissionCategory = "COMFYUI_OU"
 	MissionCategoryComfyuiLu     MissionCategory = "COMFYUI_LU"
+	MissionCategoryComfyuiJiang  MissionCategory = "COMFYUI_JIANG"
 	MissionCategoryWaiting       MissionCategory = "WAITING"
 	MissionCategoryOpenCL        MissionCategory = "OPEN_CL"
 	MissionCategoryIOPaint       MissionCategory = "IO_PAINT"
@@ -73,6 +75,7 @@ func (obj MissionCategory) Values() []string {
 		string(MissionCategoryAscend),
 		string(MissionCategorySDWuShan),
 		string(MissionCategorySDLang),
+		string(MissionCategorySDZhiDao),
 		string(MissionCategoryComfyuiKe),
 		string(MissionCategoryChatchat),
 		string(MissionCategoryChatTTS),
@@ -88,6 +91,7 @@ func (obj MissionCategory) Values() []string {
 		string(MissionCategoryComfyuiNenly),
 		string(MissionCategoryComfyuiOu),
 		string(MissionCategoryComfyuiLu),
+		string(MissionCategoryComfyuiJiang),
 		string(MissionCategoryWaiting),
 		string(MissionCategoryOpenCL),
 		string(MissionCategoryIOPaint),
