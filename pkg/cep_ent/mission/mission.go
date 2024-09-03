@@ -105,6 +105,8 @@ const (
 	FieldOldMissionID = "old_mission_id"
 	// FieldTimedShutdown holds the string denoting the timed_shutdown field in the database.
 	FieldTimedShutdown = "timed_shutdown"
+	// FieldGpuNum holds the string denoting the gpu_num field in the database.
+	FieldGpuNum = "gpu_num"
 	// EdgeMissionKind holds the string denoting the mission_kind edge name in mutations.
 	EdgeMissionKind = "mission_kind"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -294,6 +296,7 @@ var Columns = []string{
 	FieldUseAuth,
 	FieldOldMissionID,
 	FieldTimedShutdown,
+	FieldGpuNum,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "missions"
@@ -384,6 +387,8 @@ var (
 	DefaultOldMissionID int64
 	// DefaultTimedShutdown holds the default value on creation for the "timed_shutdown" field.
 	DefaultTimedShutdown time.Time
+	// DefaultGpuNum holds the default value on creation for the "gpu_num" field.
+	DefaultGpuNum int
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Mission fields.
@@ -434,7 +439,7 @@ const DefaultState enums.MissionState = "unknown"
 // StateValidator is a validator for the "state" field enum values. It is called by the builders before save.
 func StateValidator(s enums.MissionState) error {
 	switch s {
-	case "unknown", "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed":
+	case "unknown", "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed", "paused":
 		return nil
 	default:
 		return fmt.Errorf("mission: invalid enum value for state field: %q", s)
@@ -693,6 +698,11 @@ func ByOldMissionID(opts ...sql.OrderTermOption) OrderOption {
 // ByTimedShutdown orders the results by the timed_shutdown field.
 func ByTimedShutdown(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTimedShutdown, opts...).ToFunc()
+}
+
+// ByGpuNum orders the results by the gpu_num field.
+func ByGpuNum(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGpuNum, opts...).ToFunc()
 }
 
 // ByMissionKindField orders the results by mission_kind field.

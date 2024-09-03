@@ -621,6 +621,20 @@ func (mc *MissionCreate) SetNillableTimedShutdown(t *time.Time) *MissionCreate {
 	return mc
 }
 
+// SetGpuNum sets the "gpu_num" field.
+func (mc *MissionCreate) SetGpuNum(i int) *MissionCreate {
+	mc.mutation.SetGpuNum(i)
+	return mc
+}
+
+// SetNillableGpuNum sets the "gpu_num" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableGpuNum(i *int) *MissionCreate {
+	if i != nil {
+		mc.SetGpuNum(*i)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -1024,6 +1038,10 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultTimedShutdown
 		mc.mutation.SetTimedShutdown(v)
 	}
+	if _, ok := mc.mutation.GpuNum(); !ok {
+		v := mission.DefaultGpuNum
+		mc.mutation.SetGpuNum(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -1168,6 +1186,9 @@ func (mc *MissionCreate) check() error {
 	}
 	if _, ok := mc.mutation.OldMissionID(); !ok {
 		return &ValidationError{Name: "old_mission_id", err: errors.New(`cep_ent: missing required field "Mission.old_mission_id"`)}
+	}
+	if _, ok := mc.mutation.GpuNum(); !ok {
+		return &ValidationError{Name: "gpu_num", err: errors.New(`cep_ent: missing required field "Mission.gpu_num"`)}
 	}
 	if _, ok := mc.mutation.MissionKindID(); !ok {
 		return &ValidationError{Name: "mission_kind", err: errors.New(`cep_ent: missing required edge "Mission.mission_kind"`)}
@@ -1383,6 +1404,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 	if value, ok := mc.mutation.TimedShutdown(); ok {
 		_spec.SetField(mission.FieldTimedShutdown, field.TypeTime, value)
 		_node.TimedShutdown = &value
+	}
+	if value, ok := mc.mutation.GpuNum(); ok {
+		_spec.SetField(mission.FieldGpuNum, field.TypeInt, value)
+		_node.GpuNum = value
 	}
 	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -2303,6 +2328,24 @@ func (u *MissionUpsert) ClearTimedShutdown() *MissionUpsert {
 	return u
 }
 
+// SetGpuNum sets the "gpu_num" field.
+func (u *MissionUpsert) SetGpuNum(v int) *MissionUpsert {
+	u.Set(mission.FieldGpuNum, v)
+	return u
+}
+
+// UpdateGpuNum sets the "gpu_num" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateGpuNum() *MissionUpsert {
+	u.SetExcluded(mission.FieldGpuNum)
+	return u
+}
+
+// AddGpuNum adds v to the "gpu_num" field.
+func (u *MissionUpsert) AddGpuNum(v int) *MissionUpsert {
+	u.Add(mission.FieldGpuNum, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -3058,6 +3101,27 @@ func (u *MissionUpsertOne) UpdateTimedShutdown() *MissionUpsertOne {
 func (u *MissionUpsertOne) ClearTimedShutdown() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.ClearTimedShutdown()
+	})
+}
+
+// SetGpuNum sets the "gpu_num" field.
+func (u *MissionUpsertOne) SetGpuNum(v int) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetGpuNum(v)
+	})
+}
+
+// AddGpuNum adds v to the "gpu_num" field.
+func (u *MissionUpsertOne) AddGpuNum(v int) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.AddGpuNum(v)
+	})
+}
+
+// UpdateGpuNum sets the "gpu_num" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateGpuNum() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateGpuNum()
 	})
 }
 
@@ -3985,6 +4049,27 @@ func (u *MissionUpsertBulk) UpdateTimedShutdown() *MissionUpsertBulk {
 func (u *MissionUpsertBulk) ClearTimedShutdown() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.ClearTimedShutdown()
+	})
+}
+
+// SetGpuNum sets the "gpu_num" field.
+func (u *MissionUpsertBulk) SetGpuNum(v int) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetGpuNum(v)
+	})
+}
+
+// AddGpuNum adds v to the "gpu_num" field.
+func (u *MissionUpsertBulk) AddGpuNum(v int) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.AddGpuNum(v)
+	})
+}
+
+// UpdateGpuNum sets the "gpu_num" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateGpuNum() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateGpuNum()
 	})
 }
 

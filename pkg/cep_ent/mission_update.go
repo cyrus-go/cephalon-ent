@@ -708,6 +708,27 @@ func (mu *MissionUpdate) ClearTimedShutdown() *MissionUpdate {
 	return mu
 }
 
+// SetGpuNum sets the "gpu_num" field.
+func (mu *MissionUpdate) SetGpuNum(i int) *MissionUpdate {
+	mu.mutation.ResetGpuNum()
+	mu.mutation.SetGpuNum(i)
+	return mu
+}
+
+// SetNillableGpuNum sets the "gpu_num" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableGpuNum(i *int) *MissionUpdate {
+	if i != nil {
+		mu.SetGpuNum(*i)
+	}
+	return mu
+}
+
+// AddGpuNum adds i to the "gpu_num" field.
+func (mu *MissionUpdate) AddGpuNum(i int) *MissionUpdate {
+	mu.mutation.AddGpuNum(i)
+	return mu
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (mu *MissionUpdate) SetMissionKind(m *MissionKind) *MissionUpdate {
 	return mu.SetMissionKindID(m.ID)
@@ -1422,6 +1443,12 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if mu.mutation.TimedShutdownCleared() {
 		_spec.ClearField(mission.FieldTimedShutdown, field.TypeTime)
+	}
+	if value, ok := mu.mutation.GpuNum(); ok {
+		_spec.SetField(mission.FieldGpuNum, field.TypeInt, value)
+	}
+	if value, ok := mu.mutation.AddedGpuNum(); ok {
+		_spec.AddField(mission.FieldGpuNum, field.TypeInt, value)
 	}
 	if mu.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2716,6 +2743,27 @@ func (muo *MissionUpdateOne) ClearTimedShutdown() *MissionUpdateOne {
 	return muo
 }
 
+// SetGpuNum sets the "gpu_num" field.
+func (muo *MissionUpdateOne) SetGpuNum(i int) *MissionUpdateOne {
+	muo.mutation.ResetGpuNum()
+	muo.mutation.SetGpuNum(i)
+	return muo
+}
+
+// SetNillableGpuNum sets the "gpu_num" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableGpuNum(i *int) *MissionUpdateOne {
+	if i != nil {
+		muo.SetGpuNum(*i)
+	}
+	return muo
+}
+
+// AddGpuNum adds i to the "gpu_num" field.
+func (muo *MissionUpdateOne) AddGpuNum(i int) *MissionUpdateOne {
+	muo.mutation.AddGpuNum(i)
+	return muo
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (muo *MissionUpdateOne) SetMissionKind(m *MissionKind) *MissionUpdateOne {
 	return muo.SetMissionKindID(m.ID)
@@ -3460,6 +3508,12 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if muo.mutation.TimedShutdownCleared() {
 		_spec.ClearField(mission.FieldTimedShutdown, field.TypeTime)
+	}
+	if value, ok := muo.mutation.GpuNum(); ok {
+		_spec.SetField(mission.FieldGpuNum, field.TypeInt, value)
+	}
+	if value, ok := muo.mutation.AddedGpuNum(); ok {
+		_spec.AddField(mission.FieldGpuNum, field.TypeInt, value)
 	}
 	if muo.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{

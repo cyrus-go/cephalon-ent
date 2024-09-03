@@ -2255,6 +2255,10 @@ func init() {
 	missionDescTimedShutdown := missionFields[38].Descriptor()
 	// mission.DefaultTimedShutdown holds the default value on creation for the timed_shutdown field.
 	mission.DefaultTimedShutdown = missionDescTimedShutdown.Default.(time.Time)
+	// missionDescGpuNum is the schema descriptor for gpu_num field.
+	missionDescGpuNum := missionFields[39].Descriptor()
+	// mission.DefaultGpuNum holds the default value on creation for the gpu_num field.
+	mission.DefaultGpuNum = missionDescGpuNum.Default.(int)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.

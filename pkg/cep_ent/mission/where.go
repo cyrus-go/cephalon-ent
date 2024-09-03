@@ -226,6 +226,11 @@ func TimedShutdown(v time.Time) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldTimedShutdown, v))
 }
 
+// GpuNum applies equality check predicate on the "gpu_num" field. It's identical to GpuNumEQ.
+func GpuNum(v int) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldGpuNum, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldCreatedBy, v))
@@ -2089,6 +2094,46 @@ func TimedShutdownIsNil() predicate.Mission {
 // TimedShutdownNotNil applies the NotNil predicate on the "timed_shutdown" field.
 func TimedShutdownNotNil() predicate.Mission {
 	return predicate.Mission(sql.FieldNotNull(FieldTimedShutdown))
+}
+
+// GpuNumEQ applies the EQ predicate on the "gpu_num" field.
+func GpuNumEQ(v int) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldGpuNum, v))
+}
+
+// GpuNumNEQ applies the NEQ predicate on the "gpu_num" field.
+func GpuNumNEQ(v int) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldGpuNum, v))
+}
+
+// GpuNumIn applies the In predicate on the "gpu_num" field.
+func GpuNumIn(vs ...int) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldGpuNum, vs...))
+}
+
+// GpuNumNotIn applies the NotIn predicate on the "gpu_num" field.
+func GpuNumNotIn(vs ...int) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldGpuNum, vs...))
+}
+
+// GpuNumGT applies the GT predicate on the "gpu_num" field.
+func GpuNumGT(v int) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldGpuNum, v))
+}
+
+// GpuNumGTE applies the GTE predicate on the "gpu_num" field.
+func GpuNumGTE(v int) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldGpuNum, v))
+}
+
+// GpuNumLT applies the LT predicate on the "gpu_num" field.
+func GpuNumLT(v int) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldGpuNum, v))
+}
+
+// GpuNumLTE applies the LTE predicate on the "gpu_num" field.
+func GpuNumLTE(v int) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldGpuNum, v))
 }
 
 // HasMissionKind applies the HasEdge predicate on the "mission_kind" edge.

@@ -47089,6 +47089,8 @@ type MissionMutation struct {
 	remark                         *string
 	use_auth                       *bool
 	timed_shutdown                 *time.Time
+	gpu_num                        *int
+	addgpu_num                     *int
 	clearedFields                  map[string]struct{}
 	mission_kind                   *int64
 	clearedmission_kind            bool
@@ -49070,6 +49072,62 @@ func (m *MissionMutation) ResetTimedShutdown() {
 	delete(m.clearedFields, mission.FieldTimedShutdown)
 }
 
+// SetGpuNum sets the "gpu_num" field.
+func (m *MissionMutation) SetGpuNum(i int) {
+	m.gpu_num = &i
+	m.addgpu_num = nil
+}
+
+// GpuNum returns the value of the "gpu_num" field in the mutation.
+func (m *MissionMutation) GpuNum() (r int, exists bool) {
+	v := m.gpu_num
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGpuNum returns the old "gpu_num" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldGpuNum(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGpuNum is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGpuNum requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGpuNum: %w", err)
+	}
+	return oldValue.GpuNum, nil
+}
+
+// AddGpuNum adds i to the "gpu_num" field.
+func (m *MissionMutation) AddGpuNum(i int) {
+	if m.addgpu_num != nil {
+		*m.addgpu_num += i
+	} else {
+		m.addgpu_num = &i
+	}
+}
+
+// AddedGpuNum returns the value that was added to the "gpu_num" field in this mutation.
+func (m *MissionMutation) AddedGpuNum() (r int, exists bool) {
+	v := m.addgpu_num
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGpuNum resets all changes to the "gpu_num" field.
+func (m *MissionMutation) ResetGpuNum() {
+	m.gpu_num = nil
+	m.addgpu_num = nil
+}
+
 // ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
 func (m *MissionMutation) ClearMissionKind() {
 	m.clearedmission_kind = true
@@ -49803,7 +49861,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 44)
+	fields := make([]string, 0, 45)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -49936,6 +49994,9 @@ func (m *MissionMutation) Fields() []string {
 	if m.timed_shutdown != nil {
 		fields = append(fields, mission.FieldTimedShutdown)
 	}
+	if m.gpu_num != nil {
+		fields = append(fields, mission.FieldGpuNum)
+	}
 	return fields
 }
 
@@ -50032,6 +50093,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.OldMissionID()
 	case mission.FieldTimedShutdown:
 		return m.TimedShutdown()
+	case mission.FieldGpuNum:
+		return m.GpuNum()
 	}
 	return nil, false
 }
@@ -50129,6 +50192,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldOldMissionID(ctx)
 	case mission.FieldTimedShutdown:
 		return m.OldTimedShutdown(ctx)
+	case mission.FieldGpuNum:
+		return m.OldGpuNum(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -50446,6 +50511,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTimedShutdown(v)
 		return nil
+	case mission.FieldGpuNum:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGpuNum(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
@@ -50469,6 +50541,9 @@ func (m *MissionMutation) AddedFields() []string {
 	if m.addwarning_times != nil {
 		fields = append(fields, mission.FieldWarningTimes)
 	}
+	if m.addgpu_num != nil {
+		fields = append(fields, mission.FieldGpuNum)
+	}
 	return fields
 }
 
@@ -50487,6 +50562,8 @@ func (m *MissionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedRespStatusCode()
 	case mission.FieldWarningTimes:
 		return m.AddedWarningTimes()
+	case mission.FieldGpuNum:
+		return m.AddedGpuNum()
 	}
 	return nil, false
 }
@@ -50530,6 +50607,13 @@ func (m *MissionMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddWarningTimes(v)
+		return nil
+	case mission.FieldGpuNum:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGpuNum(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Mission numeric field %s", name)
@@ -50752,6 +50836,9 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldTimedShutdown:
 		m.ResetTimedShutdown()
+		return nil
+	case mission.FieldGpuNum:
+		m.ResetGpuNum()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)

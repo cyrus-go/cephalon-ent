@@ -114,6 +114,8 @@ type Mission struct {
 	OldMissionID int64 `json:"old_mission_id,string"`
 	// 任务定时关机时间
 	TimedShutdown *time.Time `json:"timed_shutdown"`
+	// 多GPU支持,使用GPU数量
+	GpuNum int `json:"gpu_num"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges                  MissionEdges `json:"edges"`
@@ -341,7 +343,7 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case mission.FieldUseAuth:
 			values[i] = new(sql.NullBool)
-		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldMissionKindID, mission.FieldKeyPairID, mission.FieldUserID, mission.FieldMissionBatchID, mission.FieldUnitCep, mission.FieldRespStatusCode, mission.FieldWarningTimes, mission.FieldOldMissionID:
+		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldMissionKindID, mission.FieldKeyPairID, mission.FieldUserID, mission.FieldMissionBatchID, mission.FieldUnitCep, mission.FieldRespStatusCode, mission.FieldWarningTimes, mission.FieldOldMissionID, mission.FieldGpuNum:
 			values[i] = new(sql.NullInt64)
 		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword, mission.FieldCloseWay, mission.FieldRemark:
 			values[i] = new(sql.NullString)
@@ -646,6 +648,12 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 				m.TimedShutdown = new(time.Time)
 				*m.TimedShutdown = value.Time
 			}
+		case mission.FieldGpuNum:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field gpu_num", values[i])
+			} else if value.Valid {
+				m.GpuNum = int(value.Int64)
+			}
 		case mission.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field extra_service_missions", value)
@@ -910,6 +918,9 @@ func (m *Mission) String() string {
 		builder.WriteString("timed_shutdown=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
+	builder.WriteString(", ")
+	builder.WriteString("gpu_num=")
+	builder.WriteString(fmt.Sprintf("%v", m.GpuNum))
 	builder.WriteByte(')')
 	return builder.String()
 }
