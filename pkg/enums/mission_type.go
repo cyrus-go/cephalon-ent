@@ -42,6 +42,7 @@ const (
 	MissionTypeChatchatTime       MissionType = "chatchat_time"
 	MissionTypeChatTTSTime        MissionType = "chat_tts_time"
 	MissionTypeLoraTime           MissionType = "lora_time"
+	MissionTypeLoraFluxTime       MissionType = "lora_flux_time"
 	MissionTypeFooocusWuTime      MissionType = "fooocus_wu_time"
 	MissionTypeSvdBackTime        MissionType = "svd_back_time"
 	MissionTypeSdJiTime           MissionType = "sd_ji_time"
@@ -91,6 +92,7 @@ const (
 	MissionTypeChatchatTimePlan       MissionType = "chatchat_time_plan"
 	MissionTypeChatTTSTimePlan        MissionType = "chat_tts_time_plan"
 	MissionTypeLoraTimePlan           MissionType = "lora_time_plan"
+	MissionTypeLoraFluxTimePlan       MissionType = "lora_flux_time_plan"
 	MissionTypeFooocusWuTimePlan      MissionType = "fooocus_wu_time_plan"
 	MissionTypeSvdBackTimePlan        MissionType = "svd_back_time_plan"
 	MissionTypeSdJiTimePlan           MissionType = "sd_ji_time_plan"
@@ -182,6 +184,8 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeChatTTSTimePlan),
 		string(MissionTypeLoraTime),
 		string(MissionTypeLoraTimePlan),
+		string(MissionTypeLoraFluxTime),
+		string(MissionTypeLoraFluxTimePlan),
 		string(MissionTypeFooocusWuTime),
 		string(MissionTypeFooocusWuTimePlan),
 		string(MissionTypeSvdBackTime),
