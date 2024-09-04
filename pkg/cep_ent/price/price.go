@@ -153,7 +153,7 @@ const DefaultMissionCategory enums.MissionCategory = "SD"
 // MissionCategoryValidator is a validator for the "mission_category" field enum values. It is called by the builders before save.
 func MissionCategoryValidator(mc enums.MissionCategory) error {
 	switch mc {
-	case "unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO", "SD_CMD", "SD_TIAN", "SD_BINGO", "FOOOCUS", "FOOOCUS_LAN_QUE", "FOOOCUS_SHA_API", "TABBY", "OLLAMA", "JP_CONDA", "SD_CAT", "SD_FIRE", "COMFYUI", "SD_XL", "SD_CHICK", "ASCEND", "SD_WU_SHAN", "SD_LANG", "SD_ZHI_DAO", "COMFYUI_KE", "CHATCHAT", "CHATTTS", "LORA", "LORA_FLUX", "FOOOCUS_WU", "SVD_BACK", "SD_JI", "SD_SHANG_JIN", "SD_XIAO_CHUN", "COMFYUI_WU", "COMFYUI_LIU", "COMFYUI_LI", "COMFYUI_NENLY", "COMFYUI_OU", "COMFYUI_LU", "COMFYUI_JIANG", "WAITING", "OPEN_CL", "IO_PAINT":
+	case "unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO", "SD_CMD", "SD_TIAN", "SD_BINGO", "FOOOCUS", "FOOOCUS_LAN_QUE", "FOOOCUS_SHA_API", "TABBY", "OLLAMA", "JP_CONDA", "SD_CAT", "SD_FIRE", "COMFYUI", "SD_XL", "SD_CHICK", "ASCEND", "SD_WU_SHAN", "SD_LANG", "SD_ZHI_DAO", "COMFYUI_KE", "CHATCHAT", "CHATTTS", "LORA", "FOOOCUS_WU", "SVD_BACK", "SD_JI", "SD_SHANG_JIN", "SD_XIAO_CHUN", "COMFYUI_WU", "COMFYUI_LIU", "COMFYUI_LI", "COMFYUI_NENLY", "COMFYUI_OU", "COMFYUI_LU", "COMFYUI_JIANG", "WAITING", "OPEN_CL", "IO_PAINT":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for mission_category field: %q", mc)
