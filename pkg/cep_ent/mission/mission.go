@@ -415,7 +415,7 @@ const DefaultStatus enums.MissionStatus = "waiting"
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s enums.MissionStatus) error {
 	switch s {
-	case "waiting", "canceled", "doing", "supplying", "closing", "done", "paused":
+	case "waiting", "canceled", "doing", "supplying", "closing", "done", "paused", "paused2":
 		return nil
 	default:
 		return fmt.Errorf("mission: invalid enum value for status field: %q", s)

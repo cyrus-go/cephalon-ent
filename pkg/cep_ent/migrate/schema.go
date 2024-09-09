@@ -1541,7 +1541,7 @@ var (
 		{Name: "call_back_url", Type: field.TypeString, Comment: "回调地址，空字符串表示不回调", Default: ""},
 		{Name: "call_back_info", Type: field.TypeString, Nullable: true, Comment: "回调时带上的参数，接收任何类型数据后 json 压缩"},
 		{Name: "call_back_data", Type: field.TypeBytes, Nullable: true, Comment: "回调时带上的参数，需 json 反序列化后才可使用，所以没有直接 json 序列化字段 (sensitive)"},
-		{Name: "status", Type: field.TypeEnum, Comment: "任务状态", Enums: []string{"waiting", "canceled", "doing", "supplying", "closing", "done", "paused"}, Default: "waiting"},
+		{Name: "status", Type: field.TypeEnum, Comment: "任务状态", Enums: []string{"waiting", "canceled", "doing", "supplying", "closing", "done", "paused", "paused2"}, Default: "waiting"},
 		{Name: "result", Type: field.TypeEnum, Comment: "任务结果，pending 表示还没有结果", Enums: []string{"pending", "succeed", "failed"}, Default: "pending"},
 		{Name: "state", Type: field.TypeEnum, Comment: "新任务状态，整合原状态和结果", Enums: []string{"unknown", "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed", "paused"}, Default: "unknown"},
 		{Name: "result_urls", Type: field.TypeJSON, Nullable: true, Comment: "任务结果资源位置列表序列化"},
