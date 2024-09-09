@@ -10,6 +10,7 @@ const (
 	MissionOrderStatusSupplying MissionOrderStatus = "supplying"
 	MissionOrderStatusFailed    MissionOrderStatus = "failed"
 	MissionOrderStatusSucceed   MissionOrderStatus = "succeed"
+	MissionOrderStatusPaused    MissionOrderStatus = "paused"
 )
 
 func (obj MissionOrderStatus) Values() []string {
@@ -21,6 +22,7 @@ func (obj MissionOrderStatus) Values() []string {
 		string(MissionOrderStatusSupplying),
 		string(MissionOrderStatusFailed),
 		string(MissionOrderStatusSucceed),
+		string(MissionOrderStatusPaused),
 	}
 }
 

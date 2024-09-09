@@ -48,6 +48,10 @@ const (
 	FieldRespStatusCode = "resp_status_code"
 	// FieldRespBody holds the string denoting the resp_body field in the database.
 	FieldRespBody = "resp_body"
+	// FieldDeviceSlots holds the string denoting the device_slots field in the database.
+	FieldDeviceSlots = "device_slots"
+	// FieldGpuNum holds the string denoting the gpu_num field in the database.
+	FieldGpuNum = "gpu_num"
 	// EdgeMission holds the string denoting the mission edge name in mutations.
 	EdgeMission = "mission"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -107,6 +111,8 @@ var Columns = []string{
 	FieldUrls,
 	FieldRespStatusCode,
 	FieldRespBody,
+	FieldDeviceSlots,
+	FieldGpuNum,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -146,6 +152,10 @@ var (
 	DefaultRespStatusCode int32
 	// DefaultRespBody holds the default value on creation for the "resp_body" field.
 	DefaultRespBody string
+	// DefaultDeviceSlots holds the default value on creation for the "device_slots" field.
+	DefaultDeviceSlots string
+	// DefaultGpuNum holds the default value on creation for the "gpu_num" field.
+	DefaultGpuNum int8
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -260,6 +270,16 @@ func ByRespStatusCode(opts ...sql.OrderTermOption) OrderOption {
 // ByRespBody orders the results by the resp_body field.
 func ByRespBody(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRespBody, opts...).ToFunc()
+}
+
+// ByDeviceSlots orders the results by the device_slots field.
+func ByDeviceSlots(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeviceSlots, opts...).ToFunc()
+}
+
+// ByGpuNum orders the results by the gpu_num field.
+func ByGpuNum(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGpuNum, opts...).ToFunc()
 }
 
 // ByMissionField orders the results by mission field.

@@ -63494,6 +63494,9 @@ type MissionProductionMutation struct {
 	resp_status_code             *int32
 	addresp_status_code          *int32
 	resp_body                    *string
+	device_slots                 *string
+	gpu_num                      *int8
+	addgpu_num                   *int8
 	clearedFields                map[string]struct{}
 	mission                      *int64
 	clearedmission               bool
@@ -64268,6 +64271,98 @@ func (m *MissionProductionMutation) ResetRespBody() {
 	m.resp_body = nil
 }
 
+// SetDeviceSlots sets the "device_slots" field.
+func (m *MissionProductionMutation) SetDeviceSlots(s string) {
+	m.device_slots = &s
+}
+
+// DeviceSlots returns the value of the "device_slots" field in the mutation.
+func (m *MissionProductionMutation) DeviceSlots() (r string, exists bool) {
+	v := m.device_slots
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeviceSlots returns the old "device_slots" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldDeviceSlots(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeviceSlots is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeviceSlots requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeviceSlots: %w", err)
+	}
+	return oldValue.DeviceSlots, nil
+}
+
+// ResetDeviceSlots resets all changes to the "device_slots" field.
+func (m *MissionProductionMutation) ResetDeviceSlots() {
+	m.device_slots = nil
+}
+
+// SetGpuNum sets the "gpu_num" field.
+func (m *MissionProductionMutation) SetGpuNum(i int8) {
+	m.gpu_num = &i
+	m.addgpu_num = nil
+}
+
+// GpuNum returns the value of the "gpu_num" field in the mutation.
+func (m *MissionProductionMutation) GpuNum() (r int8, exists bool) {
+	v := m.gpu_num
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGpuNum returns the old "gpu_num" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldGpuNum(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGpuNum is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGpuNum requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGpuNum: %w", err)
+	}
+	return oldValue.GpuNum, nil
+}
+
+// AddGpuNum adds i to the "gpu_num" field.
+func (m *MissionProductionMutation) AddGpuNum(i int8) {
+	if m.addgpu_num != nil {
+		*m.addgpu_num += i
+	} else {
+		m.addgpu_num = &i
+	}
+}
+
+// AddedGpuNum returns the value that was added to the "gpu_num" field in this mutation.
+func (m *MissionProductionMutation) AddedGpuNum() (r int8, exists bool) {
+	v := m.addgpu_num
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGpuNum resets all changes to the "gpu_num" field.
+func (m *MissionProductionMutation) ResetGpuNum() {
+	m.gpu_num = nil
+	m.addgpu_num = nil
+}
+
 // ClearMission clears the "mission" edge to the Mission entity.
 func (m *MissionProductionMutation) ClearMission() {
 	m.clearedmission = true
@@ -64422,7 +64517,7 @@ func (m *MissionProductionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionProductionMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 18)
 	if m.created_by != nil {
 		fields = append(fields, missionproduction.FieldCreatedBy)
 	}
@@ -64471,6 +64566,12 @@ func (m *MissionProductionMutation) Fields() []string {
 	if m.resp_body != nil {
 		fields = append(fields, missionproduction.FieldRespBody)
 	}
+	if m.device_slots != nil {
+		fields = append(fields, missionproduction.FieldDeviceSlots)
+	}
+	if m.gpu_num != nil {
+		fields = append(fields, missionproduction.FieldGpuNum)
+	}
 	return fields
 }
 
@@ -64511,6 +64612,10 @@ func (m *MissionProductionMutation) Field(name string) (ent.Value, bool) {
 		return m.RespStatusCode()
 	case missionproduction.FieldRespBody:
 		return m.RespBody()
+	case missionproduction.FieldDeviceSlots:
+		return m.DeviceSlots()
+	case missionproduction.FieldGpuNum:
+		return m.GpuNum()
 	}
 	return nil, false
 }
@@ -64552,6 +64657,10 @@ func (m *MissionProductionMutation) OldField(ctx context.Context, name string) (
 		return m.OldRespStatusCode(ctx)
 	case missionproduction.FieldRespBody:
 		return m.OldRespBody(ctx)
+	case missionproduction.FieldDeviceSlots:
+		return m.OldDeviceSlots(ctx)
+	case missionproduction.FieldGpuNum:
+		return m.OldGpuNum(ctx)
 	}
 	return nil, fmt.Errorf("unknown MissionProduction field %s", name)
 }
@@ -64673,6 +64782,20 @@ func (m *MissionProductionMutation) SetField(name string, value ent.Value) error
 		}
 		m.SetRespBody(v)
 		return nil
+	case missionproduction.FieldDeviceSlots:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeviceSlots(v)
+		return nil
+	case missionproduction.FieldGpuNum:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGpuNum(v)
+		return nil
 	}
 	return fmt.Errorf("unknown MissionProduction field %s", name)
 }
@@ -64693,6 +64816,9 @@ func (m *MissionProductionMutation) AddedFields() []string {
 	if m.addresp_status_code != nil {
 		fields = append(fields, missionproduction.FieldRespStatusCode)
 	}
+	if m.addgpu_num != nil {
+		fields = append(fields, missionproduction.FieldGpuNum)
+	}
 	return fields
 }
 
@@ -64709,6 +64835,8 @@ func (m *MissionProductionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedDeviceSlot()
 	case missionproduction.FieldRespStatusCode:
 		return m.AddedRespStatusCode()
+	case missionproduction.FieldGpuNum:
+		return m.AddedGpuNum()
 	}
 	return nil, false
 }
@@ -64745,6 +64873,13 @@ func (m *MissionProductionMutation) AddField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddRespStatusCode(v)
+		return nil
+	case missionproduction.FieldGpuNum:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGpuNum(v)
 		return nil
 	}
 	return fmt.Errorf("unknown MissionProduction numeric field %s", name)
@@ -64820,6 +64955,12 @@ func (m *MissionProductionMutation) ResetField(name string) error {
 		return nil
 	case missionproduction.FieldRespBody:
 		m.ResetRespBody()
+		return nil
+	case missionproduction.FieldDeviceSlots:
+		m.ResetDeviceSlots()
+		return nil
+	case missionproduction.FieldGpuNum:
+		m.ResetGpuNum()
 		return nil
 	}
 	return fmt.Errorf("unknown MissionProduction field %s", name)

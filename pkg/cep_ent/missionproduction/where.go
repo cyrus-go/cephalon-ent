@@ -126,6 +126,16 @@ func RespBody(v string) predicate.MissionProduction {
 	return predicate.MissionProduction(sql.FieldEQ(FieldRespBody, v))
 }
 
+// DeviceSlots applies equality check predicate on the "device_slots" field. It's identical to DeviceSlotsEQ.
+func DeviceSlots(v string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldEQ(FieldDeviceSlots, v))
+}
+
+// GpuNum applies equality check predicate on the "gpu_num" field. It's identical to GpuNumEQ.
+func GpuNum(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldEQ(FieldGpuNum, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.MissionProduction {
 	return predicate.MissionProduction(sql.FieldEQ(FieldCreatedBy, v))
@@ -734,6 +744,111 @@ func RespBodyEqualFold(v string) predicate.MissionProduction {
 // RespBodyContainsFold applies the ContainsFold predicate on the "resp_body" field.
 func RespBodyContainsFold(v string) predicate.MissionProduction {
 	return predicate.MissionProduction(sql.FieldContainsFold(FieldRespBody, v))
+}
+
+// DeviceSlotsEQ applies the EQ predicate on the "device_slots" field.
+func DeviceSlotsEQ(v string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldEQ(FieldDeviceSlots, v))
+}
+
+// DeviceSlotsNEQ applies the NEQ predicate on the "device_slots" field.
+func DeviceSlotsNEQ(v string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldNEQ(FieldDeviceSlots, v))
+}
+
+// DeviceSlotsIn applies the In predicate on the "device_slots" field.
+func DeviceSlotsIn(vs ...string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldIn(FieldDeviceSlots, vs...))
+}
+
+// DeviceSlotsNotIn applies the NotIn predicate on the "device_slots" field.
+func DeviceSlotsNotIn(vs ...string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldNotIn(FieldDeviceSlots, vs...))
+}
+
+// DeviceSlotsGT applies the GT predicate on the "device_slots" field.
+func DeviceSlotsGT(v string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldGT(FieldDeviceSlots, v))
+}
+
+// DeviceSlotsGTE applies the GTE predicate on the "device_slots" field.
+func DeviceSlotsGTE(v string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldGTE(FieldDeviceSlots, v))
+}
+
+// DeviceSlotsLT applies the LT predicate on the "device_slots" field.
+func DeviceSlotsLT(v string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldLT(FieldDeviceSlots, v))
+}
+
+// DeviceSlotsLTE applies the LTE predicate on the "device_slots" field.
+func DeviceSlotsLTE(v string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldLTE(FieldDeviceSlots, v))
+}
+
+// DeviceSlotsContains applies the Contains predicate on the "device_slots" field.
+func DeviceSlotsContains(v string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldContains(FieldDeviceSlots, v))
+}
+
+// DeviceSlotsHasPrefix applies the HasPrefix predicate on the "device_slots" field.
+func DeviceSlotsHasPrefix(v string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldHasPrefix(FieldDeviceSlots, v))
+}
+
+// DeviceSlotsHasSuffix applies the HasSuffix predicate on the "device_slots" field.
+func DeviceSlotsHasSuffix(v string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldHasSuffix(FieldDeviceSlots, v))
+}
+
+// DeviceSlotsEqualFold applies the EqualFold predicate on the "device_slots" field.
+func DeviceSlotsEqualFold(v string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldEqualFold(FieldDeviceSlots, v))
+}
+
+// DeviceSlotsContainsFold applies the ContainsFold predicate on the "device_slots" field.
+func DeviceSlotsContainsFold(v string) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldContainsFold(FieldDeviceSlots, v))
+}
+
+// GpuNumEQ applies the EQ predicate on the "gpu_num" field.
+func GpuNumEQ(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldEQ(FieldGpuNum, v))
+}
+
+// GpuNumNEQ applies the NEQ predicate on the "gpu_num" field.
+func GpuNumNEQ(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldNEQ(FieldGpuNum, v))
+}
+
+// GpuNumIn applies the In predicate on the "gpu_num" field.
+func GpuNumIn(vs ...int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldIn(FieldGpuNum, vs...))
+}
+
+// GpuNumNotIn applies the NotIn predicate on the "gpu_num" field.
+func GpuNumNotIn(vs ...int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldNotIn(FieldGpuNum, vs...))
+}
+
+// GpuNumGT applies the GT predicate on the "gpu_num" field.
+func GpuNumGT(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldGT(FieldGpuNum, v))
+}
+
+// GpuNumGTE applies the GTE predicate on the "gpu_num" field.
+func GpuNumGTE(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldGTE(FieldGpuNum, v))
+}
+
+// GpuNumLT applies the LT predicate on the "gpu_num" field.
+func GpuNumLT(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldLT(FieldGpuNum, v))
+}
+
+// GpuNumLTE applies the LTE predicate on the "gpu_num" field.
+func GpuNumLTE(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldLTE(FieldGpuNum, v))
 }
 
 // HasMission applies the HasEdge predicate on the "mission" edge.

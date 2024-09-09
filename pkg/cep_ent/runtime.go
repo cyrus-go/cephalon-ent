@@ -2817,6 +2817,14 @@ func init() {
 	missionproductionDescRespBody := missionproductionFields[10].Descriptor()
 	// missionproduction.DefaultRespBody holds the default value on creation for the resp_body field.
 	missionproduction.DefaultRespBody = missionproductionDescRespBody.Default.(string)
+	// missionproductionDescDeviceSlots is the schema descriptor for device_slots field.
+	missionproductionDescDeviceSlots := missionproductionFields[11].Descriptor()
+	// missionproduction.DefaultDeviceSlots holds the default value on creation for the device_slots field.
+	missionproduction.DefaultDeviceSlots = missionproductionDescDeviceSlots.Default.(string)
+	// missionproductionDescGpuNum is the schema descriptor for gpu_num field.
+	missionproductionDescGpuNum := missionproductionFields[12].Descriptor()
+	// missionproduction.DefaultGpuNum holds the default value on creation for the gpu_num field.
+	missionproduction.DefaultGpuNum = missionproductionDescGpuNum.Default.(int8)
 	// missionproductionDescID is the schema descriptor for id field.
 	missionproductionDescID := missionproductionMixinFields0[0].Descriptor()
 	// missionproduction.DefaultID holds the default value on creation for the id field.

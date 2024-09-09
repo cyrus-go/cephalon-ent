@@ -176,7 +176,7 @@ const DefaultStatus enums.MissionOrderStatus = "unknown"
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s enums.MissionOrderStatus) error {
 	switch s {
-	case "unknown", "waiting", "canceled", "doing", "supplying", "failed", "succeed":
+	case "unknown", "waiting", "canceled", "doing", "supplying", "failed", "succeed", "paused":
 		return nil
 	default:
 		return fmt.Errorf("missionconsumeorder: invalid enum value for status field: %q", s)

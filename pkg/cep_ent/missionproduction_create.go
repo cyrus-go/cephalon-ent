@@ -235,6 +235,34 @@ func (mpc *MissionProductionCreate) SetNillableRespBody(s *string) *MissionProdu
 	return mpc
 }
 
+// SetDeviceSlots sets the "device_slots" field.
+func (mpc *MissionProductionCreate) SetDeviceSlots(s string) *MissionProductionCreate {
+	mpc.mutation.SetDeviceSlots(s)
+	return mpc
+}
+
+// SetNillableDeviceSlots sets the "device_slots" field if the given value is not nil.
+func (mpc *MissionProductionCreate) SetNillableDeviceSlots(s *string) *MissionProductionCreate {
+	if s != nil {
+		mpc.SetDeviceSlots(*s)
+	}
+	return mpc
+}
+
+// SetGpuNum sets the "gpu_num" field.
+func (mpc *MissionProductionCreate) SetGpuNum(i int8) *MissionProductionCreate {
+	mpc.mutation.SetGpuNum(i)
+	return mpc
+}
+
+// SetNillableGpuNum sets the "gpu_num" field if the given value is not nil.
+func (mpc *MissionProductionCreate) SetNillableGpuNum(i *int8) *MissionProductionCreate {
+	if i != nil {
+		mpc.SetGpuNum(*i)
+	}
+	return mpc
+}
+
 // SetID sets the "id" field.
 func (mpc *MissionProductionCreate) SetID(i int64) *MissionProductionCreate {
 	mpc.mutation.SetID(i)
@@ -374,6 +402,14 @@ func (mpc *MissionProductionCreate) defaults() {
 		v := missionproduction.DefaultRespBody
 		mpc.mutation.SetRespBody(v)
 	}
+	if _, ok := mpc.mutation.DeviceSlots(); !ok {
+		v := missionproduction.DefaultDeviceSlots
+		mpc.mutation.SetDeviceSlots(v)
+	}
+	if _, ok := mpc.mutation.GpuNum(); !ok {
+		v := missionproduction.DefaultGpuNum
+		mpc.mutation.SetGpuNum(v)
+	}
 	if _, ok := mpc.mutation.ID(); !ok {
 		v := missionproduction.DefaultID()
 		mpc.mutation.SetID(v)
@@ -439,6 +475,12 @@ func (mpc *MissionProductionCreate) check() error {
 	}
 	if _, ok := mpc.mutation.RespBody(); !ok {
 		return &ValidationError{Name: "resp_body", err: errors.New(`cep_ent: missing required field "MissionProduction.resp_body"`)}
+	}
+	if _, ok := mpc.mutation.DeviceSlots(); !ok {
+		return &ValidationError{Name: "device_slots", err: errors.New(`cep_ent: missing required field "MissionProduction.device_slots"`)}
+	}
+	if _, ok := mpc.mutation.GpuNum(); !ok {
+		return &ValidationError{Name: "gpu_num", err: errors.New(`cep_ent: missing required field "MissionProduction.gpu_num"`)}
 	}
 	if _, ok := mpc.mutation.MissionID(); !ok {
 		return &ValidationError{Name: "mission", err: errors.New(`cep_ent: missing required edge "MissionProduction.mission"`)}
@@ -533,6 +575,14 @@ func (mpc *MissionProductionCreate) createSpec() (*MissionProduction, *sqlgraph.
 	if value, ok := mpc.mutation.RespBody(); ok {
 		_spec.SetField(missionproduction.FieldRespBody, field.TypeString, value)
 		_node.RespBody = value
+	}
+	if value, ok := mpc.mutation.DeviceSlots(); ok {
+		_spec.SetField(missionproduction.FieldDeviceSlots, field.TypeString, value)
+		_node.DeviceSlots = value
+	}
+	if value, ok := mpc.mutation.GpuNum(); ok {
+		_spec.SetField(missionproduction.FieldGpuNum, field.TypeInt8, value)
+		_node.GpuNum = value
 	}
 	if nodes := mpc.mutation.MissionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -857,6 +907,36 @@ func (u *MissionProductionUpsert) UpdateRespBody() *MissionProductionUpsert {
 	return u
 }
 
+// SetDeviceSlots sets the "device_slots" field.
+func (u *MissionProductionUpsert) SetDeviceSlots(v string) *MissionProductionUpsert {
+	u.Set(missionproduction.FieldDeviceSlots, v)
+	return u
+}
+
+// UpdateDeviceSlots sets the "device_slots" field to the value that was provided on create.
+func (u *MissionProductionUpsert) UpdateDeviceSlots() *MissionProductionUpsert {
+	u.SetExcluded(missionproduction.FieldDeviceSlots)
+	return u
+}
+
+// SetGpuNum sets the "gpu_num" field.
+func (u *MissionProductionUpsert) SetGpuNum(v int8) *MissionProductionUpsert {
+	u.Set(missionproduction.FieldGpuNum, v)
+	return u
+}
+
+// UpdateGpuNum sets the "gpu_num" field to the value that was provided on create.
+func (u *MissionProductionUpsert) UpdateGpuNum() *MissionProductionUpsert {
+	u.SetExcluded(missionproduction.FieldGpuNum)
+	return u
+}
+
+// AddGpuNum adds v to the "gpu_num" field.
+func (u *MissionProductionUpsert) AddGpuNum(v int8) *MissionProductionUpsert {
+	u.Add(missionproduction.FieldGpuNum, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1143,6 +1223,41 @@ func (u *MissionProductionUpsertOne) SetRespBody(v string) *MissionProductionUps
 func (u *MissionProductionUpsertOne) UpdateRespBody() *MissionProductionUpsertOne {
 	return u.Update(func(s *MissionProductionUpsert) {
 		s.UpdateRespBody()
+	})
+}
+
+// SetDeviceSlots sets the "device_slots" field.
+func (u *MissionProductionUpsertOne) SetDeviceSlots(v string) *MissionProductionUpsertOne {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.SetDeviceSlots(v)
+	})
+}
+
+// UpdateDeviceSlots sets the "device_slots" field to the value that was provided on create.
+func (u *MissionProductionUpsertOne) UpdateDeviceSlots() *MissionProductionUpsertOne {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.UpdateDeviceSlots()
+	})
+}
+
+// SetGpuNum sets the "gpu_num" field.
+func (u *MissionProductionUpsertOne) SetGpuNum(v int8) *MissionProductionUpsertOne {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.SetGpuNum(v)
+	})
+}
+
+// AddGpuNum adds v to the "gpu_num" field.
+func (u *MissionProductionUpsertOne) AddGpuNum(v int8) *MissionProductionUpsertOne {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.AddGpuNum(v)
+	})
+}
+
+// UpdateGpuNum sets the "gpu_num" field to the value that was provided on create.
+func (u *MissionProductionUpsertOne) UpdateGpuNum() *MissionProductionUpsertOne {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.UpdateGpuNum()
 	})
 }
 
@@ -1598,6 +1713,41 @@ func (u *MissionProductionUpsertBulk) SetRespBody(v string) *MissionProductionUp
 func (u *MissionProductionUpsertBulk) UpdateRespBody() *MissionProductionUpsertBulk {
 	return u.Update(func(s *MissionProductionUpsert) {
 		s.UpdateRespBody()
+	})
+}
+
+// SetDeviceSlots sets the "device_slots" field.
+func (u *MissionProductionUpsertBulk) SetDeviceSlots(v string) *MissionProductionUpsertBulk {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.SetDeviceSlots(v)
+	})
+}
+
+// UpdateDeviceSlots sets the "device_slots" field to the value that was provided on create.
+func (u *MissionProductionUpsertBulk) UpdateDeviceSlots() *MissionProductionUpsertBulk {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.UpdateDeviceSlots()
+	})
+}
+
+// SetGpuNum sets the "gpu_num" field.
+func (u *MissionProductionUpsertBulk) SetGpuNum(v int8) *MissionProductionUpsertBulk {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.SetGpuNum(v)
+	})
+}
+
+// AddGpuNum adds v to the "gpu_num" field.
+func (u *MissionProductionUpsertBulk) AddGpuNum(v int8) *MissionProductionUpsertBulk {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.AddGpuNum(v)
+	})
+}
+
+// UpdateGpuNum sets the "gpu_num" field to the value that was provided on create.
+func (u *MissionProductionUpsertBulk) UpdateGpuNum() *MissionProductionUpsertBulk {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.UpdateGpuNum()
 	})
 }
 

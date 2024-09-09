@@ -248,6 +248,41 @@ func (mpu *MissionProductionUpdate) SetNillableRespBody(s *string) *MissionProdu
 	return mpu
 }
 
+// SetDeviceSlots sets the "device_slots" field.
+func (mpu *MissionProductionUpdate) SetDeviceSlots(s string) *MissionProductionUpdate {
+	mpu.mutation.SetDeviceSlots(s)
+	return mpu
+}
+
+// SetNillableDeviceSlots sets the "device_slots" field if the given value is not nil.
+func (mpu *MissionProductionUpdate) SetNillableDeviceSlots(s *string) *MissionProductionUpdate {
+	if s != nil {
+		mpu.SetDeviceSlots(*s)
+	}
+	return mpu
+}
+
+// SetGpuNum sets the "gpu_num" field.
+func (mpu *MissionProductionUpdate) SetGpuNum(i int8) *MissionProductionUpdate {
+	mpu.mutation.ResetGpuNum()
+	mpu.mutation.SetGpuNum(i)
+	return mpu
+}
+
+// SetNillableGpuNum sets the "gpu_num" field if the given value is not nil.
+func (mpu *MissionProductionUpdate) SetNillableGpuNum(i *int8) *MissionProductionUpdate {
+	if i != nil {
+		mpu.SetGpuNum(*i)
+	}
+	return mpu
+}
+
+// AddGpuNum adds i to the "gpu_num" field.
+func (mpu *MissionProductionUpdate) AddGpuNum(i int8) *MissionProductionUpdate {
+	mpu.mutation.AddGpuNum(i)
+	return mpu
+}
+
 // SetMission sets the "mission" edge to the Mission entity.
 func (mpu *MissionProductionUpdate) SetMission(m *Mission) *MissionProductionUpdate {
 	return mpu.SetMissionID(m.ID)
@@ -436,6 +471,15 @@ func (mpu *MissionProductionUpdate) sqlSave(ctx context.Context) (n int, err err
 	}
 	if value, ok := mpu.mutation.RespBody(); ok {
 		_spec.SetField(missionproduction.FieldRespBody, field.TypeString, value)
+	}
+	if value, ok := mpu.mutation.DeviceSlots(); ok {
+		_spec.SetField(missionproduction.FieldDeviceSlots, field.TypeString, value)
+	}
+	if value, ok := mpu.mutation.GpuNum(); ok {
+		_spec.SetField(missionproduction.FieldGpuNum, field.TypeInt8, value)
+	}
+	if value, ok := mpu.mutation.AddedGpuNum(); ok {
+		_spec.AddField(missionproduction.FieldGpuNum, field.TypeInt8, value)
 	}
 	if mpu.mutation.MissionCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -789,6 +833,41 @@ func (mpuo *MissionProductionUpdateOne) SetNillableRespBody(s *string) *MissionP
 	return mpuo
 }
 
+// SetDeviceSlots sets the "device_slots" field.
+func (mpuo *MissionProductionUpdateOne) SetDeviceSlots(s string) *MissionProductionUpdateOne {
+	mpuo.mutation.SetDeviceSlots(s)
+	return mpuo
+}
+
+// SetNillableDeviceSlots sets the "device_slots" field if the given value is not nil.
+func (mpuo *MissionProductionUpdateOne) SetNillableDeviceSlots(s *string) *MissionProductionUpdateOne {
+	if s != nil {
+		mpuo.SetDeviceSlots(*s)
+	}
+	return mpuo
+}
+
+// SetGpuNum sets the "gpu_num" field.
+func (mpuo *MissionProductionUpdateOne) SetGpuNum(i int8) *MissionProductionUpdateOne {
+	mpuo.mutation.ResetGpuNum()
+	mpuo.mutation.SetGpuNum(i)
+	return mpuo
+}
+
+// SetNillableGpuNum sets the "gpu_num" field if the given value is not nil.
+func (mpuo *MissionProductionUpdateOne) SetNillableGpuNum(i *int8) *MissionProductionUpdateOne {
+	if i != nil {
+		mpuo.SetGpuNum(*i)
+	}
+	return mpuo
+}
+
+// AddGpuNum adds i to the "gpu_num" field.
+func (mpuo *MissionProductionUpdateOne) AddGpuNum(i int8) *MissionProductionUpdateOne {
+	mpuo.mutation.AddGpuNum(i)
+	return mpuo
+}
+
 // SetMission sets the "mission" edge to the Mission entity.
 func (mpuo *MissionProductionUpdateOne) SetMission(m *Mission) *MissionProductionUpdateOne {
 	return mpuo.SetMissionID(m.ID)
@@ -1007,6 +1086,15 @@ func (mpuo *MissionProductionUpdateOne) sqlSave(ctx context.Context) (_node *Mis
 	}
 	if value, ok := mpuo.mutation.RespBody(); ok {
 		_spec.SetField(missionproduction.FieldRespBody, field.TypeString, value)
+	}
+	if value, ok := mpuo.mutation.DeviceSlots(); ok {
+		_spec.SetField(missionproduction.FieldDeviceSlots, field.TypeString, value)
+	}
+	if value, ok := mpuo.mutation.GpuNum(); ok {
+		_spec.SetField(missionproduction.FieldGpuNum, field.TypeInt8, value)
+	}
+	if value, ok := mpuo.mutation.AddedGpuNum(); ok {
+		_spec.AddField(missionproduction.FieldGpuNum, field.TypeInt8, value)
 	}
 	if mpuo.mutation.MissionCleared() {
 		edge := &sqlgraph.EdgeSpec{

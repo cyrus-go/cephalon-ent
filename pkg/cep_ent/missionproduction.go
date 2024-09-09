@@ -55,6 +55,10 @@ type MissionProduction struct {
 	RespStatusCode int32 `json:"resp_status_code"`
 	// 返回内容体 json 转 string
 	RespBody string `json:"resp_body"`
+	// 显卡占用设备的插槽(多gpu)
+	DeviceSlots string `json:"device_slots"`
+	// 使用显卡数量
+	GpuNum int8 `json:"gpu_num"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionProductionQuery when eager-loading is set.
 	Edges        MissionProductionEdges `json:"edges"`
@@ -133,9 +137,9 @@ func (*MissionProduction) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case missionproduction.FieldID, missionproduction.FieldCreatedBy, missionproduction.FieldUpdatedBy, missionproduction.FieldMissionID, missionproduction.FieldUserID, missionproduction.FieldDeviceID, missionproduction.FieldDeviceSlot, missionproduction.FieldRespStatusCode:
+		case missionproduction.FieldID, missionproduction.FieldCreatedBy, missionproduction.FieldUpdatedBy, missionproduction.FieldMissionID, missionproduction.FieldUserID, missionproduction.FieldDeviceID, missionproduction.FieldDeviceSlot, missionproduction.FieldRespStatusCode, missionproduction.FieldGpuNum:
 			values[i] = new(sql.NullInt64)
-		case missionproduction.FieldState, missionproduction.FieldGpuVersion, missionproduction.FieldUrls, missionproduction.FieldRespBody:
+		case missionproduction.FieldState, missionproduction.FieldGpuVersion, missionproduction.FieldUrls, missionproduction.FieldRespBody, missionproduction.FieldDeviceSlots:
 			values[i] = new(sql.NullString)
 		case missionproduction.FieldCreatedAt, missionproduction.FieldUpdatedAt, missionproduction.FieldDeletedAt, missionproduction.FieldStartedAt, missionproduction.FieldFinishedAt:
 			values[i] = new(sql.NullTime)
@@ -256,6 +260,18 @@ func (mp *MissionProduction) assignValues(columns []string, values []any) error 
 			} else if value.Valid {
 				mp.RespBody = value.String
 			}
+		case missionproduction.FieldDeviceSlots:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field device_slots", values[i])
+			} else if value.Valid {
+				mp.DeviceSlots = value.String
+			}
+		case missionproduction.FieldGpuNum:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field gpu_num", values[i])
+			} else if value.Valid {
+				mp.GpuNum = int8(value.Int64)
+			}
 		default:
 			mp.selectValues.Set(columns[i], values[i])
 		}
@@ -359,6 +375,12 @@ func (mp *MissionProduction) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("resp_body=")
 	builder.WriteString(mp.RespBody)
+	builder.WriteString(", ")
+	builder.WriteString("device_slots=")
+	builder.WriteString(mp.DeviceSlots)
+	builder.WriteString(", ")
+	builder.WriteString("gpu_num=")
+	builder.WriteString(fmt.Sprintf("%v", mp.GpuNum))
 	builder.WriteByte(')')
 	return builder.String()
 }

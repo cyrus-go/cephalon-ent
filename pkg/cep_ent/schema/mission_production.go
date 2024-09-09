@@ -29,6 +29,8 @@ func (MissionProduction) Fields() []ent.Field {
 		field.String("urls").Default("").StructTag(`json:"urls"`).Comment("任务结果链接列表，json 序列化后存储"),
 		field.Int32("resp_status_code").Default(0).StructTag(`json:"resp_status_code"`).Comment("内部功能返回码"),
 		field.String("resp_body").Default("").StructTag(`json:"resp_body"`).Comment("返回内容体 json 转 string"),
+		field.String("device_slots").Default("").StructTag(`json:"device_slots"`).Comment("显卡占用设备的插槽(多gpu)"),
+		field.Int8("gpu_num").Default(0).StructTag(`json:"gpu_num"`).Comment("使用显卡数量"),
 	}
 }
 
