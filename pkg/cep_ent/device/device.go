@@ -81,6 +81,8 @@ const (
 	FieldStabilityAt = "stability_at"
 	// FieldHighTemperatureAt holds the string denoting the high_temperature_at field in the database.
 	FieldHighTemperatureAt = "high_temperature_at"
+	// FieldHostingType holds the string denoting the hosting_type field in the database.
+	FieldHostingType = "hosting_type"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeGiftMissionConfig holds the string denoting the gift_mission_config edge name in mutations.
@@ -237,6 +239,7 @@ var Columns = []string{
 	FieldRankAt,
 	FieldStabilityAt,
 	FieldHighTemperatureAt,
+	FieldHostingType,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -407,6 +410,18 @@ func RankValidator(r enums.DeviceRankType) error {
 	}
 }
 
+const DefaultHostingType enums.DeviceHostingType = "no"
+
+// HostingTypeValidator is a validator for the "hosting_type" field enum values. It is called by the builders before save.
+func HostingTypeValidator(ht enums.DeviceHostingType) error {
+	switch ht {
+	case "no", "half", "full":
+		return nil
+	default:
+		return fmt.Errorf("device: invalid enum value for hosting_type field: %q", ht)
+	}
+}
+
 // OrderOption defines the ordering options for the Device queries.
 type OrderOption func(*sql.Selector)
 
@@ -573,6 +588,11 @@ func ByStabilityAt(opts ...sql.OrderTermOption) OrderOption {
 // ByHighTemperatureAt orders the results by the high_temperature_at field.
 func ByHighTemperatureAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldHighTemperatureAt, opts...).ToFunc()
+}
+
+// ByHostingType orders the results by the hosting_type field.
+func ByHostingType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHostingType, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

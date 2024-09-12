@@ -85,6 +85,8 @@ type Device struct {
 	StabilityAt *time.Time `json:"stability_at"`
 	// 温度超标的时刻，带时区
 	HighTemperatureAt *time.Time `json:"high_temperature_at"`
+	// 托管类型，非托管/半托管/全托管等
+	HostingType enums.DeviceHostingType `json:"hosting_type"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges        DeviceEdges `json:"edges"`
@@ -260,7 +262,7 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldGiftMissionConfigID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory, device.FieldFreeGpuNum:
 			values[i] = new(sql.NullInt64)
-		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability, device.FieldVersion, device.FieldFault, device.FieldRank:
+		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability, device.FieldVersion, device.FieldFault, device.FieldRank, device.FieldHostingType:
 			values[i] = new(sql.NullString)
 		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt, device.FieldRankAt, device.FieldStabilityAt, device.FieldHighTemperatureAt:
 			values[i] = new(sql.NullTime)
@@ -482,6 +484,12 @@ func (d *Device) assignValues(columns []string, values []any) error {
 				d.HighTemperatureAt = new(time.Time)
 				*d.HighTemperatureAt = value.Time
 			}
+		case device.FieldHostingType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field hosting_type", values[i])
+			} else if value.Valid {
+				d.HostingType = enums.DeviceHostingType(value.String)
+			}
 		default:
 			d.selectValues.Set(columns[i], values[i])
 		}
@@ -684,6 +692,9 @@ func (d *Device) String() string {
 		builder.WriteString("high_temperature_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
+	builder.WriteString(", ")
+	builder.WriteString("hosting_type=")
+	builder.WriteString(fmt.Sprintf("%v", d.HostingType))
 	builder.WriteByte(')')
 	return builder.String()
 }

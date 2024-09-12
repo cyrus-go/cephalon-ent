@@ -413,6 +413,20 @@ func (uc *UserCreate) SetNillableUserStatus(es *enums.UserStatus) *UserCreate {
 	return uc
 }
 
+// SetChannel sets the "channel" field.
+func (uc *UserCreate) SetChannel(ect enums.UserChannelType) *UserCreate {
+	uc.mutation.SetChannel(ect)
+	return uc
+}
+
+// SetNillableChannel sets the "channel" field if the given value is not nil.
+func (uc *UserCreate) SetNillableChannel(ect *enums.UserChannelType) *UserCreate {
+	if ect != nil {
+		uc.SetChannel(*ect)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(i int64) *UserCreate {
 	uc.mutation.SetID(i)
@@ -1319,6 +1333,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultUserStatus
 		uc.mutation.SetUserStatus(v)
 	}
+	if _, ok := uc.mutation.Channel(); !ok {
+		v := user.DefaultChannel
+		uc.mutation.SetChannel(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
 		uc.mutation.SetID(v)
@@ -1407,6 +1425,14 @@ func (uc *UserCreate) check() error {
 	if v, ok := uc.mutation.UserStatus(); ok {
 		if err := user.UserStatusValidator(v); err != nil {
 			return &ValidationError{Name: "user_status", err: fmt.Errorf(`cep_ent: validator failed for field "User.user_status": %w`, err)}
+		}
+	}
+	if _, ok := uc.mutation.Channel(); !ok {
+		return &ValidationError{Name: "channel", err: errors.New(`cep_ent: missing required field "User.channel"`)}
+	}
+	if v, ok := uc.mutation.Channel(); ok {
+		if err := user.ChannelValidator(v); err != nil {
+			return &ValidationError{Name: "channel", err: fmt.Errorf(`cep_ent: validator failed for field "User.channel": %w`, err)}
 		}
 	}
 	if _, ok := uc.mutation.ParentID(); !ok {
@@ -1539,6 +1565,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.UserStatus(); ok {
 		_spec.SetField(user.FieldUserStatus, field.TypeEnum, value)
 		_node.UserStatus = value
+	}
+	if value, ok := uc.mutation.Channel(); ok {
+		_spec.SetField(user.FieldChannel, field.TypeEnum, value)
+		_node.Channel = value
 	}
 	if nodes := uc.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -2722,6 +2752,18 @@ func (u *UserUpsert) UpdateUserStatus() *UserUpsert {
 	return u
 }
 
+// SetChannel sets the "channel" field.
+func (u *UserUpsert) SetChannel(v enums.UserChannelType) *UserUpsert {
+	u.Set(user.FieldChannel, v)
+	return u
+}
+
+// UpdateChannel sets the "channel" field to the value that was provided on create.
+func (u *UserUpsert) UpdateChannel() *UserUpsert {
+	u.SetExcluded(user.FieldChannel)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -3134,6 +3176,20 @@ func (u *UserUpsertOne) SetUserStatus(v enums.UserStatus) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateUserStatus() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateUserStatus()
+	})
+}
+
+// SetChannel sets the "channel" field.
+func (u *UserUpsertOne) SetChannel(v enums.UserChannelType) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetChannel(v)
+	})
+}
+
+// UpdateChannel sets the "channel" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateChannel() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateChannel()
 	})
 }
 
@@ -3715,6 +3771,20 @@ func (u *UserUpsertBulk) SetUserStatus(v enums.UserStatus) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateUserStatus() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateUserStatus()
+	})
+}
+
+// SetChannel sets the "channel" field.
+func (u *UserUpsertBulk) SetChannel(v enums.UserChannelType) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetChannel(v)
+	})
+}
+
+// UpdateChannel sets the "channel" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateChannel() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateChannel()
 	})
 }
 

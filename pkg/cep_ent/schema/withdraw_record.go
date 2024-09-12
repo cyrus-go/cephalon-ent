@@ -30,6 +30,7 @@ func (WithdrawRecord) Fields() []ent.Field {
 		field.String("reject_reason").Default("").StructTag(`json:"reject_reason"`).Comment("提现审批拒绝的理由"),
 		field.Int64("operate_user_id").StructTag(`json:"operate_user_id,string"`).Default(0).Comment("操作的用户 id，手动充值或者提现审批才有数据，默认为 0"),
 		field.Int64("transfer_order_id").StructTag(`json:"transfer_order_id,string"`).Default(0).Comment("对应的交易订单 id（一对一）"),
+		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id,string"`).Comment("消费的外键币种 id"),
 	}
 }
 
@@ -47,6 +48,8 @@ func (WithdrawRecord) Edges() []ent.Edge {
 func (WithdrawRecord) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("user_id"),
+		index.Fields("operate_user_id"),
+		index.Fields("transfer_order_id"),
 	}
 }
 

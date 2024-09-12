@@ -1431,6 +1431,36 @@ func HighTemperatureAtNotNil() predicate.Device {
 	return predicate.Device(sql.FieldNotNull(FieldHighTemperatureAt))
 }
 
+// HostingTypeEQ applies the EQ predicate on the "hosting_type" field.
+func HostingTypeEQ(v enums.DeviceHostingType) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldEQ(FieldHostingType, vc))
+}
+
+// HostingTypeNEQ applies the NEQ predicate on the "hosting_type" field.
+func HostingTypeNEQ(v enums.DeviceHostingType) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldNEQ(FieldHostingType, vc))
+}
+
+// HostingTypeIn applies the In predicate on the "hosting_type" field.
+func HostingTypeIn(vs ...enums.DeviceHostingType) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldIn(FieldHostingType, v...))
+}
+
+// HostingTypeNotIn applies the NotIn predicate on the "hosting_type" field.
+func HostingTypeNotIn(vs ...enums.DeviceHostingType) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldNotIn(FieldHostingType, v...))
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {

@@ -52,6 +52,8 @@ const (
 	FieldOperateUserID = "operate_user_id"
 	// FieldTransferOrderID holds the string denoting the transfer_order_id field in the database.
 	FieldTransferOrderID = "transfer_order_id"
+	// FieldSymbolID holds the string denoting the symbol_id field in the database.
+	FieldSymbolID = "symbol_id"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeOperateUser holds the string denoting the operate_user edge name in mutations.
@@ -104,6 +106,7 @@ var Columns = []string{
 	FieldRejectReason,
 	FieldOperateUserID,
 	FieldTransferOrderID,
+	FieldSymbolID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -151,6 +154,8 @@ var (
 	DefaultOperateUserID int64
 	// DefaultTransferOrderID holds the default value on creation for the "transfer_order_id" field.
 	DefaultTransferOrderID int64
+	// DefaultSymbolID holds the default value on creation for the "symbol_id" field.
+	DefaultSymbolID int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -275,6 +280,11 @@ func ByOperateUserID(opts ...sql.OrderTermOption) OrderOption {
 // ByTransferOrderID orders the results by the transfer_order_id field.
 func ByTransferOrderID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTransferOrderID, opts...).ToFunc()
+}
+
+// BySymbolID orders the results by the symbol_id field.
+func BySymbolID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSymbolID, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

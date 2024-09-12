@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/stark-sim/cephalon-ent/common"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -37,6 +38,7 @@ func (User) Fields() []ent.Field {
 		field.String("baidu_refresh_token").Default("").Sensitive().Comment("百度网盘刷新 token"),
 		field.Time("bound_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"bound_at"`).Comment("用户绑定邀请码的时间"),
 		field.Enum("user_status").GoType(enums.UserStatusNormal).Default(string(enums.UserStatusNormal)).StructTag(`json:"user_status"`).Comment("用户状态"),
+		field.Enum("channel").GoType(enums.UserChannelTypeNoChannel).Default(string(enums.UserChannelTypeNoChannel)).StructTag(`json:"channel"`).Comment("渠道身份，默认为非渠道用户"),
 	}
 }
 
@@ -98,7 +100,13 @@ func (User) Edges() []ent.Edge {
 
 // Indexes of User
 func (User) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+		index.Fields("phone"),
+		index.Fields("email"),
+		index.Fields("parent_id"),
+		index.Fields("applet_parent_id"),
+		index.Fields("channel"),
+	}
 }
 
 // Mixin of User

@@ -539,6 +539,7 @@ var (
 		{Name: "rank_at", Type: field.TypeTime, Nullable: true, Comment: "评定设备等级的时刻，带时区"},
 		{Name: "stability_at", Type: field.TypeTime, Nullable: true, Comment: "判定稳定性的时刻，带时区"},
 		{Name: "high_temperature_at", Type: field.TypeTime, Nullable: true, Comment: "温度超标的时刻，带时区"},
+		{Name: "hosting_type", Type: field.TypeEnum, Comment: "托管类型，非托管/半托管/全托管等", Enums: []string{"no", "half", "full"}, Default: "no"},
 		{Name: "gift_mission_config_id", Type: field.TypeInt64, Comment: "外键补贴任务配置 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
@@ -551,13 +552,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "devices_gift_mission_configs_devices",
-				Columns:    []*schema.Column{DevicesColumns[31]},
+				Columns:    []*schema.Column{DevicesColumns[32]},
 				RefColumns: []*schema.Column{GiftMissionConfigsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "devices_users_devices",
-				Columns:    []*schema.Column{DevicesColumns[32]},
+				Columns:    []*schema.Column{DevicesColumns[33]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -566,7 +567,7 @@ var (
 			{
 				Name:    "device_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{DevicesColumns[32]},
+				Columns: []*schema.Column{DevicesColumns[33]},
 			},
 		},
 	}
@@ -2799,6 +2800,7 @@ var (
 		{Name: "baidu_refresh_token", Type: field.TypeString, Comment: "百度网盘刷新 token", Default: ""},
 		{Name: "bound_at", Type: field.TypeTime, Nullable: true, Comment: "用户绑定邀请码的时间"},
 		{Name: "user_status", Type: field.TypeEnum, Comment: "用户状态", Enums: []string{"normal", "frozen", "closed"}, Default: "normal"},
+		{Name: "channel", Type: field.TypeEnum, Comment: "渠道身份，默认为非渠道用户", Enums: []string{"no_channel", "normal_channel"}, Default: "no_channel"},
 		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "邀请人用户 id", Default: 0},
 		{Name: "applet_parent_id", Type: field.TypeInt64, Nullable: true, Comment: "小程序邀请人用户 id", Default: 0},
 	}
@@ -2811,15 +2813,42 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_users_children",
-				Columns:    []*schema.Column{UsersColumns[24]},
+				Columns:    []*schema.Column{UsersColumns[25]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "users_users_applet_children",
-				Columns:    []*schema.Column{UsersColumns[25]},
+				Columns:    []*schema.Column{UsersColumns[26]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "user_phone",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[11]},
+			},
+			{
+				Name:    "user_email",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[18]},
+			},
+			{
+				Name:    "user_parent_id",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[25]},
+			},
+			{
+				Name:    "user_applet_parent_id",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[26]},
+			},
+			{
+				Name:    "user_channel",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[24]},
 			},
 		},
 	}
@@ -3090,6 +3119,7 @@ var (
 		{Name: "real_amount", Type: field.TypeInt64, Comment: "提现实际到账（扣除手续费），单位：厘", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "转账订单的状态，比如微信发起支付后可能没完成支付", Enums: []string{"pending", "canceled", "succeed", "failed", "reexchange", "pending_order", "approved", "reject"}, Default: "pending"},
 		{Name: "reject_reason", Type: field.TypeString, Comment: "提现审批拒绝的理由", Default: ""},
+		{Name: "symbol_id", Type: field.TypeInt64, Comment: "消费的外键币种 id", Default: 0},
 		{Name: "transfer_order_id", Type: field.TypeInt64, Unique: true, Comment: "对应的交易订单 id（一对一）", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "提现的用户 id", Default: 0},
 		{Name: "operate_user_id", Type: field.TypeInt64, Comment: "操作的用户 id，手动充值或者提现审批才有数据，默认为 0", Default: 0},
@@ -3103,19 +3133,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "withdraw_records_transfer_orders_withdraw_record",
-				Columns:    []*schema.Column{WithdrawRecordsColumns[16]},
+				Columns:    []*schema.Column{WithdrawRecordsColumns[17]},
 				RefColumns: []*schema.Column{TransferOrdersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "withdraw_records_users_withdraw_records",
-				Columns:    []*schema.Column{WithdrawRecordsColumns[17]},
+				Columns:    []*schema.Column{WithdrawRecordsColumns[18]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "withdraw_records_users_operate_withdraw_records",
-				Columns:    []*schema.Column{WithdrawRecordsColumns[18]},
+				Columns:    []*schema.Column{WithdrawRecordsColumns[19]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -3123,6 +3153,16 @@ var (
 		Indexes: []*schema.Index{
 			{
 				Name:    "withdrawrecord_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{WithdrawRecordsColumns[18]},
+			},
+			{
+				Name:    "withdrawrecord_operate_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{WithdrawRecordsColumns[19]},
+			},
+			{
+				Name:    "withdrawrecord_transfer_order_id",
 				Unique:  false,
 				Columns: []*schema.Column{WithdrawRecordsColumns[17]},
 			},

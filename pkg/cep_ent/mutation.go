@@ -13766,6 +13766,7 @@ type DeviceMutation struct {
 	rank_at                         *time.Time
 	stability_at                    *time.Time
 	high_temperature_at             *time.Time
+	hosting_type                    *enums.DeviceHostingType
 	clearedFields                   map[string]struct{}
 	user                            *int64
 	cleareduser                     bool
@@ -15317,6 +15318,42 @@ func (m *DeviceMutation) ResetHighTemperatureAt() {
 	delete(m.clearedFields, device.FieldHighTemperatureAt)
 }
 
+// SetHostingType sets the "hosting_type" field.
+func (m *DeviceMutation) SetHostingType(eht enums.DeviceHostingType) {
+	m.hosting_type = &eht
+}
+
+// HostingType returns the value of the "hosting_type" field in the mutation.
+func (m *DeviceMutation) HostingType() (r enums.DeviceHostingType, exists bool) {
+	v := m.hosting_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHostingType returns the old "hosting_type" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldHostingType(ctx context.Context) (v enums.DeviceHostingType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHostingType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHostingType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHostingType: %w", err)
+	}
+	return oldValue.HostingType, nil
+}
+
+// ResetHostingType resets all changes to the "hosting_type" field.
+func (m *DeviceMutation) ResetHostingType() {
+	m.hosting_type = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *DeviceMutation) ClearUser() {
 	m.cleareduser = true
@@ -15999,7 +16036,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 32)
+	fields := make([]string, 0, 33)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -16096,6 +16133,9 @@ func (m *DeviceMutation) Fields() []string {
 	if m.high_temperature_at != nil {
 		fields = append(fields, device.FieldHighTemperatureAt)
 	}
+	if m.hosting_type != nil {
+		fields = append(fields, device.FieldHostingType)
+	}
 	return fields
 }
 
@@ -16168,6 +16208,8 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.StabilityAt()
 	case device.FieldHighTemperatureAt:
 		return m.HighTemperatureAt()
+	case device.FieldHostingType:
+		return m.HostingType()
 	}
 	return nil, false
 }
@@ -16241,6 +16283,8 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldStabilityAt(ctx)
 	case device.FieldHighTemperatureAt:
 		return m.OldHighTemperatureAt(ctx)
+	case device.FieldHostingType:
+		return m.OldHostingType(ctx)
 	}
 	return nil, fmt.Errorf("unknown Device field %s", name)
 }
@@ -16473,6 +16517,13 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetHighTemperatureAt(v)
+		return nil
+	case device.FieldHostingType:
+		v, ok := value.(enums.DeviceHostingType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHostingType(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
@@ -16768,6 +16819,9 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldHighTemperatureAt:
 		m.ResetHighTemperatureAt()
+		return nil
+	case device.FieldHostingType:
+		m.ResetHostingType()
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
@@ -86099,6 +86153,7 @@ type UserMutation struct {
 	baidu_refresh_token             *string
 	bound_at                        *time.Time
 	user_status                     *enums.UserStatus
+	channel                         *enums.UserChannelType
 	clearedFields                   map[string]struct{}
 	vx_accounts                     map[int64]struct{}
 	removedvx_accounts              map[int64]struct{}
@@ -87328,6 +87383,42 @@ func (m *UserMutation) OldUserStatus(ctx context.Context) (v enums.UserStatus, e
 // ResetUserStatus resets all changes to the "user_status" field.
 func (m *UserMutation) ResetUserStatus() {
 	m.user_status = nil
+}
+
+// SetChannel sets the "channel" field.
+func (m *UserMutation) SetChannel(ect enums.UserChannelType) {
+	m.channel = &ect
+}
+
+// Channel returns the value of the "channel" field in the mutation.
+func (m *UserMutation) Channel() (r enums.UserChannelType, exists bool) {
+	v := m.channel
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChannel returns the old "channel" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldChannel(ctx context.Context) (v enums.UserChannelType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChannel is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChannel requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChannel: %w", err)
+	}
+	return oldValue.Channel, nil
+}
+
+// ResetChannel resets all changes to the "channel" field.
+func (m *UserMutation) ResetChannel() {
+	m.channel = nil
 }
 
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by ids.
@@ -90019,7 +90110,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 25)
+	fields := make([]string, 0, 26)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -90095,6 +90186,9 @@ func (m *UserMutation) Fields() []string {
 	if m.user_status != nil {
 		fields = append(fields, user.FieldUserStatus)
 	}
+	if m.channel != nil {
+		fields = append(fields, user.FieldChannel)
+	}
 	return fields
 }
 
@@ -90153,6 +90247,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.BoundAt()
 	case user.FieldUserStatus:
 		return m.UserStatus()
+	case user.FieldChannel:
+		return m.Channel()
 	}
 	return nil, false
 }
@@ -90212,6 +90308,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldBoundAt(ctx)
 	case user.FieldUserStatus:
 		return m.OldUserStatus(ctx)
+	case user.FieldChannel:
+		return m.OldChannel(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -90396,6 +90494,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUserStatus(v)
 		return nil
+	case user.FieldChannel:
+		v, ok := value.(enums.UserChannelType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChannel(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -90567,6 +90672,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldUserStatus:
 		m.ResetUserStatus()
+		return nil
+	case user.FieldChannel:
+		m.ResetChannel()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -98500,6 +98608,8 @@ type WithdrawRecordMutation struct {
 	addreal_amount        *int64
 	status                *enums.WithdrawStatus
 	reject_reason         *string
+	symbol_id             *int64
+	addsymbol_id          *int64
 	clearedFields         map[string]struct{}
 	user                  *int64
 	cleareduser           bool
@@ -99384,6 +99494,62 @@ func (m *WithdrawRecordMutation) ResetTransferOrderID() {
 	m.transfer_order = nil
 }
 
+// SetSymbolID sets the "symbol_id" field.
+func (m *WithdrawRecordMutation) SetSymbolID(i int64) {
+	m.symbol_id = &i
+	m.addsymbol_id = nil
+}
+
+// SymbolID returns the value of the "symbol_id" field in the mutation.
+func (m *WithdrawRecordMutation) SymbolID() (r int64, exists bool) {
+	v := m.symbol_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSymbolID returns the old "symbol_id" field's value of the WithdrawRecord entity.
+// If the WithdrawRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawRecordMutation) OldSymbolID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSymbolID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSymbolID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSymbolID: %w", err)
+	}
+	return oldValue.SymbolID, nil
+}
+
+// AddSymbolID adds i to the "symbol_id" field.
+func (m *WithdrawRecordMutation) AddSymbolID(i int64) {
+	if m.addsymbol_id != nil {
+		*m.addsymbol_id += i
+	} else {
+		m.addsymbol_id = &i
+	}
+}
+
+// AddedSymbolID returns the value that was added to the "symbol_id" field in this mutation.
+func (m *WithdrawRecordMutation) AddedSymbolID() (r int64, exists bool) {
+	v := m.addsymbol_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSymbolID resets all changes to the "symbol_id" field.
+func (m *WithdrawRecordMutation) ResetSymbolID() {
+	m.symbol_id = nil
+	m.addsymbol_id = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *WithdrawRecordMutation) ClearUser() {
 	m.cleareduser = true
@@ -99499,7 +99665,7 @@ func (m *WithdrawRecordMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WithdrawRecordMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.created_by != nil {
 		fields = append(fields, withdrawrecord.FieldCreatedBy)
 	}
@@ -99554,6 +99720,9 @@ func (m *WithdrawRecordMutation) Fields() []string {
 	if m.transfer_order != nil {
 		fields = append(fields, withdrawrecord.FieldTransferOrderID)
 	}
+	if m.symbol_id != nil {
+		fields = append(fields, withdrawrecord.FieldSymbolID)
+	}
 	return fields
 }
 
@@ -99598,6 +99767,8 @@ func (m *WithdrawRecordMutation) Field(name string) (ent.Value, bool) {
 		return m.OperateUserID()
 	case withdrawrecord.FieldTransferOrderID:
 		return m.TransferOrderID()
+	case withdrawrecord.FieldSymbolID:
+		return m.SymbolID()
 	}
 	return nil, false
 }
@@ -99643,6 +99814,8 @@ func (m *WithdrawRecordMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldOperateUserID(ctx)
 	case withdrawrecord.FieldTransferOrderID:
 		return m.OldTransferOrderID(ctx)
+	case withdrawrecord.FieldSymbolID:
+		return m.OldSymbolID(ctx)
 	}
 	return nil, fmt.Errorf("unknown WithdrawRecord field %s", name)
 }
@@ -99778,6 +99951,13 @@ func (m *WithdrawRecordMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTransferOrderID(v)
 		return nil
+	case withdrawrecord.FieldSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSymbolID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown WithdrawRecord field %s", name)
 }
@@ -99804,6 +99984,9 @@ func (m *WithdrawRecordMutation) AddedFields() []string {
 	if m.addreal_amount != nil {
 		fields = append(fields, withdrawrecord.FieldRealAmount)
 	}
+	if m.addsymbol_id != nil {
+		fields = append(fields, withdrawrecord.FieldSymbolID)
+	}
 	return fields
 }
 
@@ -99824,6 +100007,8 @@ func (m *WithdrawRecordMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedRate()
 	case withdrawrecord.FieldRealAmount:
 		return m.AddedRealAmount()
+	case withdrawrecord.FieldSymbolID:
+		return m.AddedSymbolID()
 	}
 	return nil, false
 }
@@ -99874,6 +100059,13 @@ func (m *WithdrawRecordMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddRealAmount(v)
+		return nil
+	case withdrawrecord.FieldSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSymbolID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown WithdrawRecord numeric field %s", name)
@@ -99955,6 +100147,9 @@ func (m *WithdrawRecordMutation) ResetField(name string) error {
 		return nil
 	case withdrawrecord.FieldTransferOrderID:
 		m.ResetTransferOrderID()
+		return nil
+	case withdrawrecord.FieldSymbolID:
+		m.ResetSymbolID()
 		return nil
 	}
 	return fmt.Errorf("unknown WithdrawRecord field %s", name)

@@ -425,6 +425,20 @@ func (uu *UserUpdate) SetNillableUserStatus(es *enums.UserStatus) *UserUpdate {
 	return uu
 }
 
+// SetChannel sets the "channel" field.
+func (uu *UserUpdate) SetChannel(ect enums.UserChannelType) *UserUpdate {
+	uu.mutation.SetChannel(ect)
+	return uu
+}
+
+// SetNillableChannel sets the "channel" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableChannel(ect *enums.UserChannelType) *UserUpdate {
+	if ect != nil {
+		uu.SetChannel(*ect)
+	}
+	return uu
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uu *UserUpdate) AddVxAccountIDs(ids ...int64) *UserUpdate {
 	uu.mutation.AddVxAccountIDs(ids...)
@@ -2231,6 +2245,11 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "user_status", err: fmt.Errorf(`cep_ent: validator failed for field "User.user_status": %w`, err)}
 		}
 	}
+	if v, ok := uu.mutation.Channel(); ok {
+		if err := user.ChannelValidator(v); err != nil {
+			return &ValidationError{Name: "channel", err: fmt.Errorf(`cep_ent: validator failed for field "User.channel": %w`, err)}
+		}
+	}
 	if _, ok := uu.mutation.ParentID(); uu.mutation.ParentCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "User.parent"`)
 	}
@@ -2335,6 +2354,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.UserStatus(); ok {
 		_spec.SetField(user.FieldUserStatus, field.TypeEnum, value)
+	}
+	if value, ok := uu.mutation.Channel(); ok {
+		_spec.SetField(user.FieldChannel, field.TypeEnum, value)
 	}
 	if uu.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -4928,6 +4950,20 @@ func (uuo *UserUpdateOne) SetNillableUserStatus(es *enums.UserStatus) *UserUpdat
 	return uuo
 }
 
+// SetChannel sets the "channel" field.
+func (uuo *UserUpdateOne) SetChannel(ect enums.UserChannelType) *UserUpdateOne {
+	uuo.mutation.SetChannel(ect)
+	return uuo
+}
+
+// SetNillableChannel sets the "channel" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableChannel(ect *enums.UserChannelType) *UserUpdateOne {
+	if ect != nil {
+		uuo.SetChannel(*ect)
+	}
+	return uuo
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uuo *UserUpdateOne) AddVxAccountIDs(ids ...int64) *UserUpdateOne {
 	uuo.mutation.AddVxAccountIDs(ids...)
@@ -6747,6 +6783,11 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "user_status", err: fmt.Errorf(`cep_ent: validator failed for field "User.user_status": %w`, err)}
 		}
 	}
+	if v, ok := uuo.mutation.Channel(); ok {
+		if err := user.ChannelValidator(v); err != nil {
+			return &ValidationError{Name: "channel", err: fmt.Errorf(`cep_ent: validator failed for field "User.channel": %w`, err)}
+		}
+	}
 	if _, ok := uuo.mutation.ParentID(); uuo.mutation.ParentCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "User.parent"`)
 	}
@@ -6868,6 +6909,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.UserStatus(); ok {
 		_spec.SetField(user.FieldUserStatus, field.TypeEnum, value)
+	}
+	if value, ok := uuo.mutation.Channel(); ok {
+		_spec.SetField(user.FieldChannel, field.TypeEnum, value)
 	}
 	if uuo.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{

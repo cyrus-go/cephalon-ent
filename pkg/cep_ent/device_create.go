@@ -476,6 +476,20 @@ func (dc *DeviceCreate) SetNillableHighTemperatureAt(t *time.Time) *DeviceCreate
 	return dc
 }
 
+// SetHostingType sets the "hosting_type" field.
+func (dc *DeviceCreate) SetHostingType(eht enums.DeviceHostingType) *DeviceCreate {
+	dc.mutation.SetHostingType(eht)
+	return dc
+}
+
+// SetNillableHostingType sets the "hosting_type" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableHostingType(eht *enums.DeviceHostingType) *DeviceCreate {
+	if eht != nil {
+		dc.SetHostingType(*eht)
+	}
+	return dc
+}
+
 // SetID sets the "id" field.
 func (dc *DeviceCreate) SetID(i int64) *DeviceCreate {
 	dc.mutation.SetID(i)
@@ -824,6 +838,10 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultHighTemperatureAt()
 		dc.mutation.SetHighTemperatureAt(v)
 	}
+	if _, ok := dc.mutation.HostingType(); !ok {
+		v := device.DefaultHostingType
+		dc.mutation.SetHostingType(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := device.DefaultID()
 		dc.mutation.SetID(v)
@@ -950,6 +968,14 @@ func (dc *DeviceCreate) check() error {
 	}
 	if _, ok := dc.mutation.FreeGpuNum(); !ok {
 		return &ValidationError{Name: "free_gpu_num", err: errors.New(`cep_ent: missing required field "Device.free_gpu_num"`)}
+	}
+	if _, ok := dc.mutation.HostingType(); !ok {
+		return &ValidationError{Name: "hosting_type", err: errors.New(`cep_ent: missing required field "Device.hosting_type"`)}
+	}
+	if v, ok := dc.mutation.HostingType(); ok {
+		if err := device.HostingTypeValidator(v); err != nil {
+			return &ValidationError{Name: "hosting_type", err: fmt.Errorf(`cep_ent: validator failed for field "Device.hosting_type": %w`, err)}
+		}
 	}
 	if _, ok := dc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "Device.user"`)}
@@ -1116,6 +1142,10 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	if value, ok := dc.mutation.HighTemperatureAt(); ok {
 		_spec.SetField(device.FieldHighTemperatureAt, field.TypeTime, value)
 		_node.HighTemperatureAt = &value
+	}
+	if value, ok := dc.mutation.HostingType(); ok {
+		_spec.SetField(device.FieldHostingType, field.TypeEnum, value)
+		_node.HostingType = value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1835,6 +1865,18 @@ func (u *DeviceUpsert) ClearHighTemperatureAt() *DeviceUpsert {
 	return u
 }
 
+// SetHostingType sets the "hosting_type" field.
+func (u *DeviceUpsert) SetHostingType(v enums.DeviceHostingType) *DeviceUpsert {
+	u.Set(device.FieldHostingType, v)
+	return u
+}
+
+// UpdateHostingType sets the "hosting_type" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateHostingType() *DeviceUpsert {
+	u.SetExcluded(device.FieldHostingType)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2415,6 +2457,20 @@ func (u *DeviceUpsertOne) UpdateHighTemperatureAt() *DeviceUpsertOne {
 func (u *DeviceUpsertOne) ClearHighTemperatureAt() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.ClearHighTemperatureAt()
+	})
+}
+
+// SetHostingType sets the "hosting_type" field.
+func (u *DeviceUpsertOne) SetHostingType(v enums.DeviceHostingType) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetHostingType(v)
+	})
+}
+
+// UpdateHostingType sets the "hosting_type" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateHostingType() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateHostingType()
 	})
 }
 
@@ -3167,6 +3223,20 @@ func (u *DeviceUpsertBulk) UpdateHighTemperatureAt() *DeviceUpsertBulk {
 func (u *DeviceUpsertBulk) ClearHighTemperatureAt() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.ClearHighTemperatureAt()
+	})
+}
+
+// SetHostingType sets the "hosting_type" field.
+func (u *DeviceUpsertBulk) SetHostingType(v enums.DeviceHostingType) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetHostingType(v)
+	})
+}
+
+// UpdateHostingType sets the "hosting_type" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateHostingType() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateHostingType()
 	})
 }
 

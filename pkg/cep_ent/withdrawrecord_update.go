@@ -304,6 +304,27 @@ func (wru *WithdrawRecordUpdate) SetNillableTransferOrderID(i *int64) *WithdrawR
 	return wru
 }
 
+// SetSymbolID sets the "symbol_id" field.
+func (wru *WithdrawRecordUpdate) SetSymbolID(i int64) *WithdrawRecordUpdate {
+	wru.mutation.ResetSymbolID()
+	wru.mutation.SetSymbolID(i)
+	return wru
+}
+
+// SetNillableSymbolID sets the "symbol_id" field if the given value is not nil.
+func (wru *WithdrawRecordUpdate) SetNillableSymbolID(i *int64) *WithdrawRecordUpdate {
+	if i != nil {
+		wru.SetSymbolID(*i)
+	}
+	return wru
+}
+
+// AddSymbolID adds i to the "symbol_id" field.
+func (wru *WithdrawRecordUpdate) AddSymbolID(i int64) *WithdrawRecordUpdate {
+	wru.mutation.AddSymbolID(i)
+	return wru
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (wru *WithdrawRecordUpdate) SetUser(u *User) *WithdrawRecordUpdate {
 	return wru.SetUserID(u.ID)
@@ -479,6 +500,12 @@ func (wru *WithdrawRecordUpdate) sqlSave(ctx context.Context) (n int, err error)
 	}
 	if value, ok := wru.mutation.RejectReason(); ok {
 		_spec.SetField(withdrawrecord.FieldRejectReason, field.TypeString, value)
+	}
+	if value, ok := wru.mutation.SymbolID(); ok {
+		_spec.SetField(withdrawrecord.FieldSymbolID, field.TypeInt64, value)
+	}
+	if value, ok := wru.mutation.AddedSymbolID(); ok {
+		_spec.AddField(withdrawrecord.FieldSymbolID, field.TypeInt64, value)
 	}
 	if wru.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -861,6 +888,27 @@ func (wruo *WithdrawRecordUpdateOne) SetNillableTransferOrderID(i *int64) *Withd
 	return wruo
 }
 
+// SetSymbolID sets the "symbol_id" field.
+func (wruo *WithdrawRecordUpdateOne) SetSymbolID(i int64) *WithdrawRecordUpdateOne {
+	wruo.mutation.ResetSymbolID()
+	wruo.mutation.SetSymbolID(i)
+	return wruo
+}
+
+// SetNillableSymbolID sets the "symbol_id" field if the given value is not nil.
+func (wruo *WithdrawRecordUpdateOne) SetNillableSymbolID(i *int64) *WithdrawRecordUpdateOne {
+	if i != nil {
+		wruo.SetSymbolID(*i)
+	}
+	return wruo
+}
+
+// AddSymbolID adds i to the "symbol_id" field.
+func (wruo *WithdrawRecordUpdateOne) AddSymbolID(i int64) *WithdrawRecordUpdateOne {
+	wruo.mutation.AddSymbolID(i)
+	return wruo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (wruo *WithdrawRecordUpdateOne) SetUser(u *User) *WithdrawRecordUpdateOne {
 	return wruo.SetUserID(u.ID)
@@ -1066,6 +1114,12 @@ func (wruo *WithdrawRecordUpdateOne) sqlSave(ctx context.Context) (_node *Withdr
 	}
 	if value, ok := wruo.mutation.RejectReason(); ok {
 		_spec.SetField(withdrawrecord.FieldRejectReason, field.TypeString, value)
+	}
+	if value, ok := wruo.mutation.SymbolID(); ok {
+		_spec.SetField(withdrawrecord.FieldSymbolID, field.TypeInt64, value)
+	}
+	if value, ok := wruo.mutation.AddedSymbolID(); ok {
+		_spec.AddField(withdrawrecord.FieldSymbolID, field.TypeInt64, value)
 	}
 	if wruo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

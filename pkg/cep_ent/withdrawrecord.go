@@ -57,6 +57,8 @@ type WithdrawRecord struct {
 	OperateUserID int64 `json:"operate_user_id,string"`
 	// 对应的交易订单 id（一对一）
 	TransferOrderID int64 `json:"transfer_order_id,string"`
+	// 消费的外键币种 id
+	SymbolID int64 `json:"symbol_id,string"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WithdrawRecordQuery when eager-loading is set.
 	Edges        WithdrawRecordEdges `json:"edges"`
@@ -120,7 +122,7 @@ func (*WithdrawRecord) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case withdrawrecord.FieldID, withdrawrecord.FieldCreatedBy, withdrawrecord.FieldUpdatedBy, withdrawrecord.FieldUserID, withdrawrecord.FieldAmount, withdrawrecord.FieldRemainAmount, withdrawrecord.FieldRate, withdrawrecord.FieldRealAmount, withdrawrecord.FieldOperateUserID, withdrawrecord.FieldTransferOrderID:
+		case withdrawrecord.FieldID, withdrawrecord.FieldCreatedBy, withdrawrecord.FieldUpdatedBy, withdrawrecord.FieldUserID, withdrawrecord.FieldAmount, withdrawrecord.FieldRemainAmount, withdrawrecord.FieldRate, withdrawrecord.FieldRealAmount, withdrawrecord.FieldOperateUserID, withdrawrecord.FieldTransferOrderID, withdrawrecord.FieldSymbolID:
 			values[i] = new(sql.NullInt64)
 		case withdrawrecord.FieldWithdrawAccount, withdrawrecord.FieldBusinessName, withdrawrecord.FieldBank, withdrawrecord.FieldType, withdrawrecord.FieldStatus, withdrawrecord.FieldRejectReason:
 			values[i] = new(sql.NullString)
@@ -255,6 +257,12 @@ func (wr *WithdrawRecord) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				wr.TransferOrderID = value.Int64
 			}
+		case withdrawrecord.FieldSymbolID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field symbol_id", values[i])
+			} else if value.Valid {
+				wr.SymbolID = value.Int64
+			}
 		default:
 			wr.selectValues.Set(columns[i], values[i])
 		}
@@ -359,6 +367,9 @@ func (wr *WithdrawRecord) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("transfer_order_id=")
 	builder.WriteString(fmt.Sprintf("%v", wr.TransferOrderID))
+	builder.WriteString(", ")
+	builder.WriteString("symbol_id=")
+	builder.WriteString(fmt.Sprintf("%v", wr.SymbolID))
 	builder.WriteByte(')')
 	return builder.String()
 }

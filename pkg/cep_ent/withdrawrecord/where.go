@@ -136,6 +136,11 @@ func TransferOrderID(v int64) predicate.WithdrawRecord {
 	return predicate.WithdrawRecord(sql.FieldEQ(FieldTransferOrderID, v))
 }
 
+// SymbolID applies equality check predicate on the "symbol_id" field. It's identical to SymbolIDEQ.
+func SymbolID(v int64) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldEQ(FieldSymbolID, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.WithdrawRecord {
 	return predicate.WithdrawRecord(sql.FieldEQ(FieldCreatedBy, v))
@@ -874,6 +879,46 @@ func TransferOrderIDIn(vs ...int64) predicate.WithdrawRecord {
 // TransferOrderIDNotIn applies the NotIn predicate on the "transfer_order_id" field.
 func TransferOrderIDNotIn(vs ...int64) predicate.WithdrawRecord {
 	return predicate.WithdrawRecord(sql.FieldNotIn(FieldTransferOrderID, vs...))
+}
+
+// SymbolIDEQ applies the EQ predicate on the "symbol_id" field.
+func SymbolIDEQ(v int64) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldEQ(FieldSymbolID, v))
+}
+
+// SymbolIDNEQ applies the NEQ predicate on the "symbol_id" field.
+func SymbolIDNEQ(v int64) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldNEQ(FieldSymbolID, v))
+}
+
+// SymbolIDIn applies the In predicate on the "symbol_id" field.
+func SymbolIDIn(vs ...int64) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldIn(FieldSymbolID, vs...))
+}
+
+// SymbolIDNotIn applies the NotIn predicate on the "symbol_id" field.
+func SymbolIDNotIn(vs ...int64) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldNotIn(FieldSymbolID, vs...))
+}
+
+// SymbolIDGT applies the GT predicate on the "symbol_id" field.
+func SymbolIDGT(v int64) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldGT(FieldSymbolID, v))
+}
+
+// SymbolIDGTE applies the GTE predicate on the "symbol_id" field.
+func SymbolIDGTE(v int64) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldGTE(FieldSymbolID, v))
+}
+
+// SymbolIDLT applies the LT predicate on the "symbol_id" field.
+func SymbolIDLT(v int64) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldLT(FieldSymbolID, v))
+}
+
+// SymbolIDLTE applies the LTE predicate on the "symbol_id" field.
+func SymbolIDLTE(v int64) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldLTE(FieldSymbolID, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

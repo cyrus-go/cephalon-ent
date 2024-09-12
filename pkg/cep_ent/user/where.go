@@ -1361,6 +1361,36 @@ func UserStatusNotIn(vs ...enums.UserStatus) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldUserStatus, v...))
 }
 
+// ChannelEQ applies the EQ predicate on the "channel" field.
+func ChannelEQ(v enums.UserChannelType) predicate.User {
+	vc := v
+	return predicate.User(sql.FieldEQ(FieldChannel, vc))
+}
+
+// ChannelNEQ applies the NEQ predicate on the "channel" field.
+func ChannelNEQ(v enums.UserChannelType) predicate.User {
+	vc := v
+	return predicate.User(sql.FieldNEQ(FieldChannel, vc))
+}
+
+// ChannelIn applies the In predicate on the "channel" field.
+func ChannelIn(vs ...enums.UserChannelType) predicate.User {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(sql.FieldIn(FieldChannel, v...))
+}
+
+// ChannelNotIn applies the NotIn predicate on the "channel" field.
+func ChannelNotIn(vs ...enums.UserChannelType) predicate.User {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(sql.FieldNotIn(FieldChannel, v...))
+}
+
 // HasVxAccounts applies the HasEdge predicate on the "vx_accounts" edge.
 func HasVxAccounts() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

@@ -555,6 +555,20 @@ func (du *DeviceUpdate) ClearHighTemperatureAt() *DeviceUpdate {
 	return du
 }
 
+// SetHostingType sets the "hosting_type" field.
+func (du *DeviceUpdate) SetHostingType(eht enums.DeviceHostingType) *DeviceUpdate {
+	du.mutation.SetHostingType(eht)
+	return du
+}
+
+// SetNillableHostingType sets the "hosting_type" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableHostingType(eht *enums.DeviceHostingType) *DeviceUpdate {
+	if eht != nil {
+		du.SetHostingType(*eht)
+	}
+	return du
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (du *DeviceUpdate) SetUser(u *User) *DeviceUpdate {
 	return du.SetUserID(u.ID)
@@ -1051,6 +1065,11 @@ func (du *DeviceUpdate) check() error {
 			return &ValidationError{Name: "rank", err: fmt.Errorf(`cep_ent: validator failed for field "Device.rank": %w`, err)}
 		}
 	}
+	if v, ok := du.mutation.HostingType(); ok {
+		if err := device.HostingTypeValidator(v); err != nil {
+			return &ValidationError{Name: "hosting_type", err: fmt.Errorf(`cep_ent: validator failed for field "Device.hosting_type": %w`, err)}
+		}
+	}
 	if _, ok := du.mutation.UserID(); du.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Device.user"`)
 	}
@@ -1210,6 +1229,9 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if du.mutation.HighTemperatureAtCleared() {
 		_spec.ClearField(device.FieldHighTemperatureAt, field.TypeTime)
+	}
+	if value, ok := du.mutation.HostingType(); ok {
+		_spec.SetField(device.FieldHostingType, field.TypeEnum, value)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2298,6 +2320,20 @@ func (duo *DeviceUpdateOne) ClearHighTemperatureAt() *DeviceUpdateOne {
 	return duo
 }
 
+// SetHostingType sets the "hosting_type" field.
+func (duo *DeviceUpdateOne) SetHostingType(eht enums.DeviceHostingType) *DeviceUpdateOne {
+	duo.mutation.SetHostingType(eht)
+	return duo
+}
+
+// SetNillableHostingType sets the "hosting_type" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableHostingType(eht *enums.DeviceHostingType) *DeviceUpdateOne {
+	if eht != nil {
+		duo.SetHostingType(*eht)
+	}
+	return duo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (duo *DeviceUpdateOne) SetUser(u *User) *DeviceUpdateOne {
 	return duo.SetUserID(u.ID)
@@ -2807,6 +2843,11 @@ func (duo *DeviceUpdateOne) check() error {
 			return &ValidationError{Name: "rank", err: fmt.Errorf(`cep_ent: validator failed for field "Device.rank": %w`, err)}
 		}
 	}
+	if v, ok := duo.mutation.HostingType(); ok {
+		if err := device.HostingTypeValidator(v); err != nil {
+			return &ValidationError{Name: "hosting_type", err: fmt.Errorf(`cep_ent: validator failed for field "Device.hosting_type": %w`, err)}
+		}
+	}
 	if _, ok := duo.mutation.UserID(); duo.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Device.user"`)
 	}
@@ -2983,6 +3024,9 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if duo.mutation.HighTemperatureAtCleared() {
 		_spec.ClearField(device.FieldHighTemperatureAt, field.TypeTime)
+	}
+	if value, ok := duo.mutation.HostingType(); ok {
+		_spec.SetField(device.FieldHostingType, field.TypeEnum, value)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

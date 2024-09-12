@@ -4199,6 +4199,10 @@ func init() {
 	withdrawrecordDescTransferOrderID := withdrawrecordFields[12].Descriptor()
 	// withdrawrecord.DefaultTransferOrderID holds the default value on creation for the transfer_order_id field.
 	withdrawrecord.DefaultTransferOrderID = withdrawrecordDescTransferOrderID.Default.(int64)
+	// withdrawrecordDescSymbolID is the schema descriptor for symbol_id field.
+	withdrawrecordDescSymbolID := withdrawrecordFields[13].Descriptor()
+	// withdrawrecord.DefaultSymbolID holds the default value on creation for the symbol_id field.
+	withdrawrecord.DefaultSymbolID = withdrawrecordDescSymbolID.Default.(int64)
 	// withdrawrecordDescID is the schema descriptor for id field.
 	withdrawrecordDescID := withdrawrecordMixinFields0[0].Descriptor()
 	// withdrawrecord.DefaultID holds the default value on creation for the id field.

@@ -277,6 +277,20 @@ func (wrc *WithdrawRecordCreate) SetNillableTransferOrderID(i *int64) *WithdrawR
 	return wrc
 }
 
+// SetSymbolID sets the "symbol_id" field.
+func (wrc *WithdrawRecordCreate) SetSymbolID(i int64) *WithdrawRecordCreate {
+	wrc.mutation.SetSymbolID(i)
+	return wrc
+}
+
+// SetNillableSymbolID sets the "symbol_id" field if the given value is not nil.
+func (wrc *WithdrawRecordCreate) SetNillableSymbolID(i *int64) *WithdrawRecordCreate {
+	if i != nil {
+		wrc.SetSymbolID(*i)
+	}
+	return wrc
+}
+
 // SetID sets the "id" field.
 func (wrc *WithdrawRecordCreate) SetID(i int64) *WithdrawRecordCreate {
 	wrc.mutation.SetID(i)
@@ -413,6 +427,10 @@ func (wrc *WithdrawRecordCreate) defaults() {
 		v := withdrawrecord.DefaultTransferOrderID
 		wrc.mutation.SetTransferOrderID(v)
 	}
+	if _, ok := wrc.mutation.SymbolID(); !ok {
+		v := withdrawrecord.DefaultSymbolID
+		wrc.mutation.SetSymbolID(v)
+	}
 	if _, ok := wrc.mutation.ID(); !ok {
 		v := withdrawrecord.DefaultID()
 		wrc.mutation.SetID(v)
@@ -484,6 +502,9 @@ func (wrc *WithdrawRecordCreate) check() error {
 	}
 	if _, ok := wrc.mutation.TransferOrderID(); !ok {
 		return &ValidationError{Name: "transfer_order_id", err: errors.New(`cep_ent: missing required field "WithdrawRecord.transfer_order_id"`)}
+	}
+	if _, ok := wrc.mutation.SymbolID(); !ok {
+		return &ValidationError{Name: "symbol_id", err: errors.New(`cep_ent: missing required field "WithdrawRecord.symbol_id"`)}
 	}
 	if _, ok := wrc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "WithdrawRecord.user"`)}
@@ -586,6 +607,10 @@ func (wrc *WithdrawRecordCreate) createSpec() (*WithdrawRecord, *sqlgraph.Create
 	if value, ok := wrc.mutation.RejectReason(); ok {
 		_spec.SetField(withdrawrecord.FieldRejectReason, field.TypeString, value)
 		_node.RejectReason = value
+	}
+	if value, ok := wrc.mutation.SymbolID(); ok {
+		_spec.SetField(withdrawrecord.FieldSymbolID, field.TypeInt64, value)
+		_node.SymbolID = value
 	}
 	if nodes := wrc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -930,6 +955,24 @@ func (u *WithdrawRecordUpsert) UpdateTransferOrderID() *WithdrawRecordUpsert {
 	return u
 }
 
+// SetSymbolID sets the "symbol_id" field.
+func (u *WithdrawRecordUpsert) SetSymbolID(v int64) *WithdrawRecordUpsert {
+	u.Set(withdrawrecord.FieldSymbolID, v)
+	return u
+}
+
+// UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
+func (u *WithdrawRecordUpsert) UpdateSymbolID() *WithdrawRecordUpsert {
+	u.SetExcluded(withdrawrecord.FieldSymbolID)
+	return u
+}
+
+// AddSymbolID adds v to the "symbol_id" field.
+func (u *WithdrawRecordUpsert) AddSymbolID(v int64) *WithdrawRecordUpsert {
+	u.Add(withdrawrecord.FieldSymbolID, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1258,6 +1301,27 @@ func (u *WithdrawRecordUpsertOne) SetTransferOrderID(v int64) *WithdrawRecordUps
 func (u *WithdrawRecordUpsertOne) UpdateTransferOrderID() *WithdrawRecordUpsertOne {
 	return u.Update(func(s *WithdrawRecordUpsert) {
 		s.UpdateTransferOrderID()
+	})
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (u *WithdrawRecordUpsertOne) SetSymbolID(v int64) *WithdrawRecordUpsertOne {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.SetSymbolID(v)
+	})
+}
+
+// AddSymbolID adds v to the "symbol_id" field.
+func (u *WithdrawRecordUpsertOne) AddSymbolID(v int64) *WithdrawRecordUpsertOne {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.AddSymbolID(v)
+	})
+}
+
+// UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
+func (u *WithdrawRecordUpsertOne) UpdateSymbolID() *WithdrawRecordUpsertOne {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.UpdateSymbolID()
 	})
 }
 
@@ -1755,6 +1819,27 @@ func (u *WithdrawRecordUpsertBulk) SetTransferOrderID(v int64) *WithdrawRecordUp
 func (u *WithdrawRecordUpsertBulk) UpdateTransferOrderID() *WithdrawRecordUpsertBulk {
 	return u.Update(func(s *WithdrawRecordUpsert) {
 		s.UpdateTransferOrderID()
+	})
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (u *WithdrawRecordUpsertBulk) SetSymbolID(v int64) *WithdrawRecordUpsertBulk {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.SetSymbolID(v)
+	})
+}
+
+// AddSymbolID adds v to the "symbol_id" field.
+func (u *WithdrawRecordUpsertBulk) AddSymbolID(v int64) *WithdrawRecordUpsertBulk {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.AddSymbolID(v)
+	})
+}
+
+// UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
+func (u *WithdrawRecordUpsertBulk) UpdateSymbolID() *WithdrawRecordUpsertBulk {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.UpdateSymbolID()
 	})
 }
 
