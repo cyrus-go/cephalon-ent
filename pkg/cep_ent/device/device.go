@@ -388,7 +388,7 @@ const DefaultFault enums.DeviceFaultType = "ok"
 // FaultValidator is a validator for the "fault" field enum values. It is called by the builders before save.
 func FaultValidator(f enums.DeviceFaultType) error {
 	switch f {
-	case "ok", "drive_abnormal", "no_disk", "task_failure", "recover", "high_temperature":
+	case "ok", "drive_abnormal", "no_disk", "task_failure", "recover", "high_temperature", "disk_write_failed", "gpu_not_match":
 		return nil
 	default:
 		return fmt.Errorf("device: invalid enum value for fault field: %q", f)
