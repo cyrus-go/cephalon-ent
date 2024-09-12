@@ -10,7 +10,7 @@ const (
 	MissionStatusClosing   MissionStatus = "closing"
 	MissionStatusDone      MissionStatus = "done"
 	MissionStatusPaused    MissionStatus = "paused"
-	MissionStatusPaused2   MissionStatus = "paused2"
+	MissionStatusResuming  MissionState  = "resuming"
 )
 
 func (obj MissionStatus) Values() []string {
@@ -22,7 +22,7 @@ func (obj MissionStatus) Values() []string {
 		string(MissionStatusClosing),
 		string(MissionStatusDone),
 		string(MissionStatusPaused),
-		string(MissionStatusPaused2),
+		string(MissionStatusResuming),
 	}
 }
 

@@ -12,6 +12,7 @@ const (
 	MissionStateSucceed   MissionState = "succeed"
 	MissionStateFailed    MissionState = "failed"
 	MissionStatePaused    MissionState = "paused"
+	MissionStateResuming  MissionState = "resuming"
 )
 
 func (obj MissionState) Values() []string {
@@ -25,6 +26,7 @@ func (obj MissionState) Values() []string {
 		string(MissionStateSucceed),
 		string(MissionStateFailed),
 		string(MissionStatePaused),
+		string(MissionStateResuming),
 	}
 }
 
