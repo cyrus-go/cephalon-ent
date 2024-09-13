@@ -55,6 +55,7 @@ const (
 	MissionTypeComfyuiOuTime      MissionType = "comfyui_ou_time"
 	MissionTypeComfyuiLuTime      MissionType = "comfyui_lu_time"
 	MissionTypeComfyuiJiangTime   MissionType = "comfyui_jiang_time"
+	MissionTypeComfyuiStarTime    MissionType = "comfyui_star_time"
 	MissionTypeWaitingTime        MissionType = "waiting_time"     // 等待任务
 	MissionTypeWaitingAlTime      MissionType = "waiting_al_time"  // 等待任务
 	MissionTypeOpenCLTime         MissionType = "opencl_core_time" //监控任务 不需要显卡
@@ -106,6 +107,7 @@ const (
 	MissionTypeComfyuiOuTimePlan      MissionType = "comfyui_ou_time_plan"
 	MissionTypeComfyuiLuTimePlan      MissionType = "comfyui_lu_time_plan"
 	MissionTypeComfyuiJiangTimePlan   MissionType = "comfyui_jiang_time_plan"
+	MissionTypeComfyuiStarTimePlan    MissionType = "comfyui_star_time_plan"
 	MissionTypeWaitingTimePlan        MissionType = "waiting_time_plan"     // 等待任务
 	MissionTypeWaitingAlTimePlan      MissionType = "waiting_al_time_plan"  // 等待任务
 	MissionTypeOpenCLTimePlan         MissionType = "opencl_core_time_plan" //监控任务 不需要显卡
@@ -212,6 +214,8 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeComfyuiLuTimePlan),
 		string(MissionTypeComfyuiJiangTime),
 		string(MissionTypeComfyuiJiangTimePlan),
+		string(MissionTypeComfyuiStarTime),
+		string(MissionTypeComfyuiStarTimePlan),
 		string(MissionTypeWaitingTime),
 		string(MissionTypeWaitingTimePlan),
 		string(MissionTypeWaitingAlTime),
