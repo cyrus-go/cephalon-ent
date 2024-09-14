@@ -24,6 +24,7 @@ const (
 	GpuVersion4070Ti           GpuVersion = "RTX4070Ti"
 	GpuVersion4080             GpuVersion = "RTX4080"
 	GpuVersion4090             GpuVersion = "RTX4090"
+	GpuVersion4090D            GpuVersion = "RTX4090D"
 	GpuVersionA800             GpuVersion = "A800"
 	GpuVersionA100             GpuVersion = "A100"
 	GpuVersionV100             GpuVersion = "V100"
@@ -55,6 +56,7 @@ func (obj GpuVersion) Values() []string {
 		string(GpuVersion4070Ti),
 		string(GpuVersion4080),
 		string(GpuVersion4090),
+		string(GpuVersion4090D),
 		string(GpuVersionA800),
 		string(GpuVersionA100),
 		string(GpuVersionV100),
