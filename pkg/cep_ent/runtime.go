@@ -3814,6 +3814,10 @@ func init() {
 	userDescBoundAt := userFields[18].Descriptor()
 	// user.DefaultBoundAt holds the default value on creation for the bound_at field.
 	user.DefaultBoundAt = userDescBoundAt.Default.(time.Time)
+	// userDescChannelRatio is the schema descriptor for channel_ratio field.
+	userDescChannelRatio := userFields[21].Descriptor()
+	// user.DefaultChannelRatio holds the default value on creation for the channel_ratio field.
+	user.DefaultChannelRatio = userDescChannelRatio.Default.(int64)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.

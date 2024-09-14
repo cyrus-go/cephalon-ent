@@ -2801,6 +2801,7 @@ var (
 		{Name: "bound_at", Type: field.TypeTime, Nullable: true, Comment: "用户绑定邀请码的时间"},
 		{Name: "user_status", Type: field.TypeEnum, Comment: "用户状态", Enums: []string{"normal", "frozen", "closed"}, Default: "normal"},
 		{Name: "channel", Type: field.TypeEnum, Comment: "渠道身份，默认为非渠道用户", Enums: []string{"no_channel", "normal_channel"}, Default: "no_channel"},
+		{Name: "channel_ratio", Type: field.TypeInt64, Comment: "渠道分成比例", Default: 0},
 		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "邀请人用户 id", Default: 0},
 		{Name: "applet_parent_id", Type: field.TypeInt64, Nullable: true, Comment: "小程序邀请人用户 id", Default: 0},
 	}
@@ -2813,13 +2814,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_users_children",
-				Columns:    []*schema.Column{UsersColumns[25]},
+				Columns:    []*schema.Column{UsersColumns[26]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "users_users_applet_children",
-				Columns:    []*schema.Column{UsersColumns[26]},
+				Columns:    []*schema.Column{UsersColumns[27]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2838,12 +2839,12 @@ var (
 			{
 				Name:    "user_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[25]},
+				Columns: []*schema.Column{UsersColumns[26]},
 			},
 			{
 				Name:    "user_applet_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[26]},
+				Columns: []*schema.Column{UsersColumns[27]},
 			},
 			{
 				Name:    "user_channel",

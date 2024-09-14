@@ -74,6 +74,8 @@ type User struct {
 	UserStatus enums.UserStatus `json:"user_status"`
 	// 渠道身份，默认为非渠道用户
 	Channel enums.UserChannelType `json:"channel"`
+	// 渠道分成比例
+	ChannelRatio int64 `json:"channel_ratio"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -675,7 +677,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldIsFrozen, user.FieldIsRecharge:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID, user.FieldAppletParentID, user.FieldCloudSpace:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID, user.FieldAppletParentID, user.FieldCloudSpace, user.FieldChannelRatio:
 			values[i] = new(sql.NullInt64)
 		case user.FieldName, user.FieldNickName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion, user.FieldAreaCode, user.FieldEmail, user.FieldBaiduAccessToken, user.FieldBaiduRefreshToken, user.FieldUserStatus, user.FieldChannel:
 			values[i] = new(sql.NullString)
@@ -858,6 +860,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field channel", values[i])
 			} else if value.Valid {
 				u.Channel = enums.UserChannelType(value.String)
+			}
+		case user.FieldChannelRatio:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field channel_ratio", values[i])
+			} else if value.Valid {
+				u.ChannelRatio = value.Int64
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -1225,6 +1233,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("channel=")
 	builder.WriteString(fmt.Sprintf("%v", u.Channel))
+	builder.WriteString(", ")
+	builder.WriteString("channel_ratio=")
+	builder.WriteString(fmt.Sprintf("%v", u.ChannelRatio))
 	builder.WriteByte(')')
 	return builder.String()
 }
