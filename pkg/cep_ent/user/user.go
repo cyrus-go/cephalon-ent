@@ -56,6 +56,8 @@ const (
 	FieldAreaCode = "area_code"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
+	// FieldGithubID holds the string denoting the github_id field in the database.
+	FieldGithubID = "github_id"
 	// FieldCloudSpace holds the string denoting the cloud_space field in the database.
 	FieldCloudSpace = "cloud_space"
 	// FieldBaiduAccessToken holds the string denoting the baidu_access_token field in the database.
@@ -544,6 +546,7 @@ var Columns = []string{
 	FieldPopVersion,
 	FieldAreaCode,
 	FieldEmail,
+	FieldGithubID,
 	FieldCloudSpace,
 	FieldBaiduAccessToken,
 	FieldBaiduRefreshToken,
@@ -604,6 +607,8 @@ var (
 	DefaultAreaCode string
 	// DefaultEmail holds the default value on creation for the "email" field.
 	DefaultEmail string
+	// DefaultGithubID holds the default value on creation for the "github_id" field.
+	DefaultGithubID int64
 	// DefaultCloudSpace holds the default value on creation for the "cloud_space" field.
 	DefaultCloudSpace int64
 	// DefaultBaiduAccessToken holds the default value on creation for the "baidu_access_token" field.
@@ -760,6 +765,11 @@ func ByAreaCode(opts ...sql.OrderTermOption) OrderOption {
 // ByEmail orders the results by the email field.
 func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEmail, opts...).ToFunc()
+}
+
+// ByGithubID orders the results by the github_id field.
+func ByGithubID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGithubID, opts...).ToFunc()
 }
 
 // ByCloudSpace orders the results by the cloud_space field.

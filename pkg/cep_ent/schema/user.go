@@ -33,6 +33,7 @@ func (User) Fields() []ent.Field {
 		field.String("pop_version").Default("").StructTag(`json:"pop_version"`).Comment("用户最新弹窗版本"),
 		field.String("area_code").Default("+86").StructTag(`json:"area_code"`).Comment("国家区号"),
 		field.String("email").Default("").StructTag(`json:"email"'`).Comment("邮箱"),
+		field.Int64("github_id").Default(0).StructTag(`json:"github_id"`).Comment("第三方登录github id"),
 		field.Int64("cloud_space").Default(0).StructTag(`json:"cloud_space"`).Comment("云盘空间"),
 		field.String("baidu_access_token").Default("").Sensitive().Comment("百度网盘 token"),
 		field.String("baidu_refresh_token").Default("").Sensitive().Comment("百度网盘刷新 token"),
@@ -107,6 +108,7 @@ func (User) Indexes() []ent.Index {
 		index.Fields("parent_id"),
 		index.Fields("applet_parent_id"),
 		index.Fields("channel"),
+		index.Fields("github_id"),
 	}
 }
 

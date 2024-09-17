@@ -342,6 +342,27 @@ func (uu *UserUpdate) SetNillableEmail(s *string) *UserUpdate {
 	return uu
 }
 
+// SetGithubID sets the "github_id" field.
+func (uu *UserUpdate) SetGithubID(i int64) *UserUpdate {
+	uu.mutation.ResetGithubID()
+	uu.mutation.SetGithubID(i)
+	return uu
+}
+
+// SetNillableGithubID sets the "github_id" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableGithubID(i *int64) *UserUpdate {
+	if i != nil {
+		uu.SetGithubID(*i)
+	}
+	return uu
+}
+
+// AddGithubID adds i to the "github_id" field.
+func (uu *UserUpdate) AddGithubID(i int64) *UserUpdate {
+	uu.mutation.AddGithubID(i)
+	return uu
+}
+
 // SetCloudSpace sets the "cloud_space" field.
 func (uu *UserUpdate) SetCloudSpace(i int64) *UserUpdate {
 	uu.mutation.ResetCloudSpace()
@@ -2354,6 +2375,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.GithubID(); ok {
+		_spec.SetField(user.FieldGithubID, field.TypeInt64, value)
+	}
+	if value, ok := uu.mutation.AddedGithubID(); ok {
+		_spec.AddField(user.FieldGithubID, field.TypeInt64, value)
 	}
 	if value, ok := uu.mutation.CloudSpace(); ok {
 		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)
@@ -4894,6 +4921,27 @@ func (uuo *UserUpdateOne) SetNillableEmail(s *string) *UserUpdateOne {
 	return uuo
 }
 
+// SetGithubID sets the "github_id" field.
+func (uuo *UserUpdateOne) SetGithubID(i int64) *UserUpdateOne {
+	uuo.mutation.ResetGithubID()
+	uuo.mutation.SetGithubID(i)
+	return uuo
+}
+
+// SetNillableGithubID sets the "github_id" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableGithubID(i *int64) *UserUpdateOne {
+	if i != nil {
+		uuo.SetGithubID(*i)
+	}
+	return uuo
+}
+
+// AddGithubID adds i to the "github_id" field.
+func (uuo *UserUpdateOne) AddGithubID(i int64) *UserUpdateOne {
+	uuo.mutation.AddGithubID(i)
+	return uuo
+}
+
 // SetCloudSpace sets the "cloud_space" field.
 func (uuo *UserUpdateOne) SetCloudSpace(i int64) *UserUpdateOne {
 	uuo.mutation.ResetCloudSpace()
@@ -6936,6 +6984,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.GithubID(); ok {
+		_spec.SetField(user.FieldGithubID, field.TypeInt64, value)
+	}
+	if value, ok := uuo.mutation.AddedGithubID(); ok {
+		_spec.AddField(user.FieldGithubID, field.TypeInt64, value)
 	}
 	if value, ok := uuo.mutation.CloudSpace(); ok {
 		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)

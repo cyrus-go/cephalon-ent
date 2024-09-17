@@ -62,6 +62,8 @@ type User struct {
 	AreaCode string `json:"area_code"`
 	// 邮箱
 	Email string `json:"email"'`
+	// 第三方登录github id
+	GithubID int64 `json:"github_id"`
 	// 云盘空间
 	CloudSpace int64 `json:"cloud_space"`
 	// 百度网盘 token
@@ -677,7 +679,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldIsFrozen, user.FieldIsRecharge:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID, user.FieldAppletParentID, user.FieldCloudSpace, user.FieldChannelRatio:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID, user.FieldAppletParentID, user.FieldGithubID, user.FieldCloudSpace, user.FieldChannelRatio:
 			values[i] = new(sql.NullInt64)
 		case user.FieldName, user.FieldNickName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion, user.FieldAreaCode, user.FieldEmail, user.FieldBaiduAccessToken, user.FieldBaiduRefreshToken, user.FieldUserStatus, user.FieldChannel:
 			values[i] = new(sql.NullString)
@@ -823,6 +825,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field email", values[i])
 			} else if value.Valid {
 				u.Email = value.String
+			}
+		case user.FieldGithubID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field github_id", values[i])
+			} else if value.Valid {
+				u.GithubID = value.Int64
 			}
 		case user.FieldCloudSpace:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -1215,6 +1223,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("email=")
 	builder.WriteString(u.Email)
+	builder.WriteString(", ")
+	builder.WriteString("github_id=")
+	builder.WriteString(fmt.Sprintf("%v", u.GithubID))
 	builder.WriteString(", ")
 	builder.WriteString("cloud_space=")
 	builder.WriteString(fmt.Sprintf("%v", u.CloudSpace))

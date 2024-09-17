@@ -151,6 +151,11 @@ func Email(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldEmail, v))
 }
 
+// GithubID applies equality check predicate on the "github_id" field. It's identical to GithubIDEQ.
+func GithubID(v int64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldGithubID, v))
+}
+
 // CloudSpace applies equality check predicate on the "cloud_space" field. It's identical to CloudSpaceEQ.
 func CloudSpace(v int64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCloudSpace, v))
@@ -1114,6 +1119,46 @@ func EmailEqualFold(v string) predicate.User {
 // EmailContainsFold applies the ContainsFold predicate on the "email" field.
 func EmailContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldEmail, v))
+}
+
+// GithubIDEQ applies the EQ predicate on the "github_id" field.
+func GithubIDEQ(v int64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldGithubID, v))
+}
+
+// GithubIDNEQ applies the NEQ predicate on the "github_id" field.
+func GithubIDNEQ(v int64) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldGithubID, v))
+}
+
+// GithubIDIn applies the In predicate on the "github_id" field.
+func GithubIDIn(vs ...int64) predicate.User {
+	return predicate.User(sql.FieldIn(FieldGithubID, vs...))
+}
+
+// GithubIDNotIn applies the NotIn predicate on the "github_id" field.
+func GithubIDNotIn(vs ...int64) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldGithubID, vs...))
+}
+
+// GithubIDGT applies the GT predicate on the "github_id" field.
+func GithubIDGT(v int64) predicate.User {
+	return predicate.User(sql.FieldGT(FieldGithubID, v))
+}
+
+// GithubIDGTE applies the GTE predicate on the "github_id" field.
+func GithubIDGTE(v int64) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldGithubID, v))
+}
+
+// GithubIDLT applies the LT predicate on the "github_id" field.
+func GithubIDLT(v int64) predicate.User {
+	return predicate.User(sql.FieldLT(FieldGithubID, v))
+}
+
+// GithubIDLTE applies the LTE predicate on the "github_id" field.
+func GithubIDLTE(v int64) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldGithubID, v))
 }
 
 // CloudSpaceEQ applies the EQ predicate on the "cloud_space" field.

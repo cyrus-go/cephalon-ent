@@ -343,6 +343,20 @@ func (uc *UserCreate) SetNillableEmail(s *string) *UserCreate {
 	return uc
 }
 
+// SetGithubID sets the "github_id" field.
+func (uc *UserCreate) SetGithubID(i int64) *UserCreate {
+	uc.mutation.SetGithubID(i)
+	return uc
+}
+
+// SetNillableGithubID sets the "github_id" field if the given value is not nil.
+func (uc *UserCreate) SetNillableGithubID(i *int64) *UserCreate {
+	if i != nil {
+		uc.SetGithubID(*i)
+	}
+	return uc
+}
+
 // SetCloudSpace sets the "cloud_space" field.
 func (uc *UserCreate) SetCloudSpace(i int64) *UserCreate {
 	uc.mutation.SetCloudSpace(i)
@@ -1327,6 +1341,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultEmail
 		uc.mutation.SetEmail(v)
 	}
+	if _, ok := uc.mutation.GithubID(); !ok {
+		v := user.DefaultGithubID
+		uc.mutation.SetGithubID(v)
+	}
 	if _, ok := uc.mutation.CloudSpace(); !ok {
 		v := user.DefaultCloudSpace
 		uc.mutation.SetCloudSpace(v)
@@ -1427,6 +1445,9 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`cep_ent: missing required field "User.email"`)}
+	}
+	if _, ok := uc.mutation.GithubID(); !ok {
+		return &ValidationError{Name: "github_id", err: errors.New(`cep_ent: missing required field "User.github_id"`)}
 	}
 	if _, ok := uc.mutation.CloudSpace(); !ok {
 		return &ValidationError{Name: "cloud_space", err: errors.New(`cep_ent: missing required field "User.cloud_space"`)}
@@ -1566,6 +1587,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 		_node.Email = value
+	}
+	if value, ok := uc.mutation.GithubID(); ok {
+		_spec.SetField(user.FieldGithubID, field.TypeInt64, value)
+		_node.GithubID = value
 	}
 	if value, ok := uc.mutation.CloudSpace(); ok {
 		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)
@@ -2705,6 +2730,24 @@ func (u *UserUpsert) UpdateEmail() *UserUpsert {
 	return u
 }
 
+// SetGithubID sets the "github_id" field.
+func (u *UserUpsert) SetGithubID(v int64) *UserUpsert {
+	u.Set(user.FieldGithubID, v)
+	return u
+}
+
+// UpdateGithubID sets the "github_id" field to the value that was provided on create.
+func (u *UserUpsert) UpdateGithubID() *UserUpsert {
+	u.SetExcluded(user.FieldGithubID)
+	return u
+}
+
+// AddGithubID adds v to the "github_id" field.
+func (u *UserUpsert) AddGithubID(v int64) *UserUpsert {
+	u.Add(user.FieldGithubID, v)
+	return u
+}
+
 // SetCloudSpace sets the "cloud_space" field.
 func (u *UserUpsert) SetCloudSpace(v int64) *UserUpsert {
 	u.Set(user.FieldCloudSpace, v)
@@ -3135,6 +3178,27 @@ func (u *UserUpsertOne) SetEmail(v string) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateEmail() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateEmail()
+	})
+}
+
+// SetGithubID sets the "github_id" field.
+func (u *UserUpsertOne) SetGithubID(v int64) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetGithubID(v)
+	})
+}
+
+// AddGithubID adds v to the "github_id" field.
+func (u *UserUpsertOne) AddGithubID(v int64) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.AddGithubID(v)
+	})
+}
+
+// UpdateGithubID sets the "github_id" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateGithubID() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateGithubID()
 	})
 }
 
@@ -3751,6 +3815,27 @@ func (u *UserUpsertBulk) SetEmail(v string) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateEmail() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateEmail()
+	})
+}
+
+// SetGithubID sets the "github_id" field.
+func (u *UserUpsertBulk) SetGithubID(v int64) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetGithubID(v)
+	})
+}
+
+// AddGithubID adds v to the "github_id" field.
+func (u *UserUpsertBulk) AddGithubID(v int64) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.AddGithubID(v)
+	})
+}
+
+// UpdateGithubID sets the "github_id" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateGithubID() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateGithubID()
 	})
 }
 
