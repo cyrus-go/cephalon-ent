@@ -2796,6 +2796,7 @@ var (
 		{Name: "area_code", Type: field.TypeString, Comment: "国家区号", Default: "+86"},
 		{Name: "email", Type: field.TypeString, Comment: "邮箱", Default: ""},
 		{Name: "github_id", Type: field.TypeString, Comment: "第三方登录github id", Default: ""},
+		{Name: "google_id", Type: field.TypeString, Comment: "第三方登录google id", Default: ""},
 		{Name: "cloud_space", Type: field.TypeInt64, Comment: "云盘空间", Default: 0},
 		{Name: "baidu_access_token", Type: field.TypeString, Comment: "百度网盘 token", Default: ""},
 		{Name: "baidu_refresh_token", Type: field.TypeString, Comment: "百度网盘刷新 token", Default: ""},
@@ -2815,13 +2816,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_users_children",
-				Columns:    []*schema.Column{UsersColumns[27]},
+				Columns:    []*schema.Column{UsersColumns[28]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "users_users_applet_children",
-				Columns:    []*schema.Column{UsersColumns[28]},
+				Columns:    []*schema.Column{UsersColumns[29]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2840,17 +2841,17 @@ var (
 			{
 				Name:    "user_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[27]},
+				Columns: []*schema.Column{UsersColumns[28]},
 			},
 			{
 				Name:    "user_applet_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[28]},
+				Columns: []*schema.Column{UsersColumns[29]},
 			},
 			{
 				Name:    "user_channel",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[25]},
+				Columns: []*schema.Column{UsersColumns[26]},
 			},
 			{
 				Name:    "user_github_id",

@@ -356,6 +356,20 @@ func (uu *UserUpdate) SetNillableGithubID(s *string) *UserUpdate {
 	return uu
 }
 
+// SetGoogleID sets the "google_id" field.
+func (uu *UserUpdate) SetGoogleID(s string) *UserUpdate {
+	uu.mutation.SetGoogleID(s)
+	return uu
+}
+
+// SetNillableGoogleID sets the "google_id" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableGoogleID(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetGoogleID(*s)
+	}
+	return uu
+}
+
 // SetCloudSpace sets the "cloud_space" field.
 func (uu *UserUpdate) SetCloudSpace(i int64) *UserUpdate {
 	uu.mutation.ResetCloudSpace()
@@ -2371,6 +2385,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.GithubID(); ok {
 		_spec.SetField(user.FieldGithubID, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.GoogleID(); ok {
+		_spec.SetField(user.FieldGoogleID, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.CloudSpace(); ok {
 		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)
@@ -4925,6 +4942,20 @@ func (uuo *UserUpdateOne) SetNillableGithubID(s *string) *UserUpdateOne {
 	return uuo
 }
 
+// SetGoogleID sets the "google_id" field.
+func (uuo *UserUpdateOne) SetGoogleID(s string) *UserUpdateOne {
+	uuo.mutation.SetGoogleID(s)
+	return uuo
+}
+
+// SetNillableGoogleID sets the "google_id" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableGoogleID(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetGoogleID(*s)
+	}
+	return uuo
+}
+
 // SetCloudSpace sets the "cloud_space" field.
 func (uuo *UserUpdateOne) SetCloudSpace(i int64) *UserUpdateOne {
 	uuo.mutation.ResetCloudSpace()
@@ -6970,6 +7001,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.GithubID(); ok {
 		_spec.SetField(user.FieldGithubID, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.GoogleID(); ok {
+		_spec.SetField(user.FieldGoogleID, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.CloudSpace(); ok {
 		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)

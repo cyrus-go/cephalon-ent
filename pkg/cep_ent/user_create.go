@@ -357,6 +357,20 @@ func (uc *UserCreate) SetNillableGithubID(s *string) *UserCreate {
 	return uc
 }
 
+// SetGoogleID sets the "google_id" field.
+func (uc *UserCreate) SetGoogleID(s string) *UserCreate {
+	uc.mutation.SetGoogleID(s)
+	return uc
+}
+
+// SetNillableGoogleID sets the "google_id" field if the given value is not nil.
+func (uc *UserCreate) SetNillableGoogleID(s *string) *UserCreate {
+	if s != nil {
+		uc.SetGoogleID(*s)
+	}
+	return uc
+}
+
 // SetCloudSpace sets the "cloud_space" field.
 func (uc *UserCreate) SetCloudSpace(i int64) *UserCreate {
 	uc.mutation.SetCloudSpace(i)
@@ -1345,6 +1359,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultGithubID
 		uc.mutation.SetGithubID(v)
 	}
+	if _, ok := uc.mutation.GoogleID(); !ok {
+		v := user.DefaultGoogleID
+		uc.mutation.SetGoogleID(v)
+	}
 	if _, ok := uc.mutation.CloudSpace(); !ok {
 		v := user.DefaultCloudSpace
 		uc.mutation.SetCloudSpace(v)
@@ -1448,6 +1466,9 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.GithubID(); !ok {
 		return &ValidationError{Name: "github_id", err: errors.New(`cep_ent: missing required field "User.github_id"`)}
+	}
+	if _, ok := uc.mutation.GoogleID(); !ok {
+		return &ValidationError{Name: "google_id", err: errors.New(`cep_ent: missing required field "User.google_id"`)}
 	}
 	if _, ok := uc.mutation.CloudSpace(); !ok {
 		return &ValidationError{Name: "cloud_space", err: errors.New(`cep_ent: missing required field "User.cloud_space"`)}
@@ -1591,6 +1612,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.GithubID(); ok {
 		_spec.SetField(user.FieldGithubID, field.TypeString, value)
 		_node.GithubID = value
+	}
+	if value, ok := uc.mutation.GoogleID(); ok {
+		_spec.SetField(user.FieldGoogleID, field.TypeString, value)
+		_node.GoogleID = value
 	}
 	if value, ok := uc.mutation.CloudSpace(); ok {
 		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)
@@ -2742,6 +2767,18 @@ func (u *UserUpsert) UpdateGithubID() *UserUpsert {
 	return u
 }
 
+// SetGoogleID sets the "google_id" field.
+func (u *UserUpsert) SetGoogleID(v string) *UserUpsert {
+	u.Set(user.FieldGoogleID, v)
+	return u
+}
+
+// UpdateGoogleID sets the "google_id" field to the value that was provided on create.
+func (u *UserUpsert) UpdateGoogleID() *UserUpsert {
+	u.SetExcluded(user.FieldGoogleID)
+	return u
+}
+
 // SetCloudSpace sets the "cloud_space" field.
 func (u *UserUpsert) SetCloudSpace(v int64) *UserUpsert {
 	u.Set(user.FieldCloudSpace, v)
@@ -3186,6 +3223,20 @@ func (u *UserUpsertOne) SetGithubID(v string) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateGithubID() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateGithubID()
+	})
+}
+
+// SetGoogleID sets the "google_id" field.
+func (u *UserUpsertOne) SetGoogleID(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetGoogleID(v)
+	})
+}
+
+// UpdateGoogleID sets the "google_id" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateGoogleID() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateGoogleID()
 	})
 }
 
@@ -3816,6 +3867,20 @@ func (u *UserUpsertBulk) SetGithubID(v string) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateGithubID() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateGithubID()
+	})
+}
+
+// SetGoogleID sets the "google_id" field.
+func (u *UserUpsertBulk) SetGoogleID(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetGoogleID(v)
+	})
+}
+
+// UpdateGoogleID sets the "google_id" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateGoogleID() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateGoogleID()
 	})
 }
 

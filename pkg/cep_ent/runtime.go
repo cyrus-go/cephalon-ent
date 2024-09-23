@@ -3802,24 +3802,28 @@ func init() {
 	userDescGithubID := userFields[15].Descriptor()
 	// user.DefaultGithubID holds the default value on creation for the github_id field.
 	user.DefaultGithubID = userDescGithubID.Default.(string)
+	// userDescGoogleID is the schema descriptor for google_id field.
+	userDescGoogleID := userFields[16].Descriptor()
+	// user.DefaultGoogleID holds the default value on creation for the google_id field.
+	user.DefaultGoogleID = userDescGoogleID.Default.(string)
 	// userDescCloudSpace is the schema descriptor for cloud_space field.
-	userDescCloudSpace := userFields[16].Descriptor()
+	userDescCloudSpace := userFields[17].Descriptor()
 	// user.DefaultCloudSpace holds the default value on creation for the cloud_space field.
 	user.DefaultCloudSpace = userDescCloudSpace.Default.(int64)
 	// userDescBaiduAccessToken is the schema descriptor for baidu_access_token field.
-	userDescBaiduAccessToken := userFields[17].Descriptor()
+	userDescBaiduAccessToken := userFields[18].Descriptor()
 	// user.DefaultBaiduAccessToken holds the default value on creation for the baidu_access_token field.
 	user.DefaultBaiduAccessToken = userDescBaiduAccessToken.Default.(string)
 	// userDescBaiduRefreshToken is the schema descriptor for baidu_refresh_token field.
-	userDescBaiduRefreshToken := userFields[18].Descriptor()
+	userDescBaiduRefreshToken := userFields[19].Descriptor()
 	// user.DefaultBaiduRefreshToken holds the default value on creation for the baidu_refresh_token field.
 	user.DefaultBaiduRefreshToken = userDescBaiduRefreshToken.Default.(string)
 	// userDescBoundAt is the schema descriptor for bound_at field.
-	userDescBoundAt := userFields[19].Descriptor()
+	userDescBoundAt := userFields[20].Descriptor()
 	// user.DefaultBoundAt holds the default value on creation for the bound_at field.
 	user.DefaultBoundAt = userDescBoundAt.Default.(time.Time)
 	// userDescChannelRatio is the schema descriptor for channel_ratio field.
-	userDescChannelRatio := userFields[22].Descriptor()
+	userDescChannelRatio := userFields[23].Descriptor()
 	// user.DefaultChannelRatio holds the default value on creation for the channel_ratio field.
 	user.DefaultChannelRatio = userDescChannelRatio.Default.(int64)
 	// userDescID is the schema descriptor for id field.

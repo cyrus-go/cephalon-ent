@@ -34,6 +34,7 @@ func (User) Fields() []ent.Field {
 		field.String("area_code").Default("+86").StructTag(`json:"area_code"`).Comment("国家区号"),
 		field.String("email").Default("").StructTag(`json:"email"'`).Comment("邮箱"),
 		field.String("github_id").Default("").StructTag(`json:"github_id"`).Comment("第三方登录github id"),
+		field.String("google_id").Default("").StructTag(`json:"google_id"`).Comment("第三方登录google id"),
 		field.Int64("cloud_space").Default(0).StructTag(`json:"cloud_space"`).Comment("云盘空间"),
 		field.String("baidu_access_token").Default("").Sensitive().Comment("百度网盘 token"),
 		field.String("baidu_refresh_token").Default("").Sensitive().Comment("百度网盘刷新 token"),
