@@ -2795,7 +2795,7 @@ var (
 		{Name: "pop_version", Type: field.TypeString, Comment: "用户最新弹窗版本", Default: ""},
 		{Name: "area_code", Type: field.TypeString, Comment: "国家区号", Default: "+86"},
 		{Name: "email", Type: field.TypeString, Comment: "邮箱", Default: ""},
-		{Name: "github_id", Type: field.TypeInt64, Comment: "第三方登录github id", Default: 0},
+		{Name: "github_id", Type: field.TypeString, Comment: "第三方登录github id", Default: ""},
 		{Name: "cloud_space", Type: field.TypeInt64, Comment: "云盘空间", Default: 0},
 		{Name: "baidu_access_token", Type: field.TypeString, Comment: "百度网盘 token", Default: ""},
 		{Name: "baidu_refresh_token", Type: field.TypeString, Comment: "百度网盘刷新 token", Default: ""},

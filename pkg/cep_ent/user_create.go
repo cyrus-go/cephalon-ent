@@ -344,15 +344,15 @@ func (uc *UserCreate) SetNillableEmail(s *string) *UserCreate {
 }
 
 // SetGithubID sets the "github_id" field.
-func (uc *UserCreate) SetGithubID(i int64) *UserCreate {
-	uc.mutation.SetGithubID(i)
+func (uc *UserCreate) SetGithubID(s string) *UserCreate {
+	uc.mutation.SetGithubID(s)
 	return uc
 }
 
 // SetNillableGithubID sets the "github_id" field if the given value is not nil.
-func (uc *UserCreate) SetNillableGithubID(i *int64) *UserCreate {
-	if i != nil {
-		uc.SetGithubID(*i)
+func (uc *UserCreate) SetNillableGithubID(s *string) *UserCreate {
+	if s != nil {
+		uc.SetGithubID(*s)
 	}
 	return uc
 }
@@ -1589,7 +1589,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.Email = value
 	}
 	if value, ok := uc.mutation.GithubID(); ok {
-		_spec.SetField(user.FieldGithubID, field.TypeInt64, value)
+		_spec.SetField(user.FieldGithubID, field.TypeString, value)
 		_node.GithubID = value
 	}
 	if value, ok := uc.mutation.CloudSpace(); ok {
@@ -2731,7 +2731,7 @@ func (u *UserUpsert) UpdateEmail() *UserUpsert {
 }
 
 // SetGithubID sets the "github_id" field.
-func (u *UserUpsert) SetGithubID(v int64) *UserUpsert {
+func (u *UserUpsert) SetGithubID(v string) *UserUpsert {
 	u.Set(user.FieldGithubID, v)
 	return u
 }
@@ -2739,12 +2739,6 @@ func (u *UserUpsert) SetGithubID(v int64) *UserUpsert {
 // UpdateGithubID sets the "github_id" field to the value that was provided on create.
 func (u *UserUpsert) UpdateGithubID() *UserUpsert {
 	u.SetExcluded(user.FieldGithubID)
-	return u
-}
-
-// AddGithubID adds v to the "github_id" field.
-func (u *UserUpsert) AddGithubID(v int64) *UserUpsert {
-	u.Add(user.FieldGithubID, v)
 	return u
 }
 
@@ -3182,16 +3176,9 @@ func (u *UserUpsertOne) UpdateEmail() *UserUpsertOne {
 }
 
 // SetGithubID sets the "github_id" field.
-func (u *UserUpsertOne) SetGithubID(v int64) *UserUpsertOne {
+func (u *UserUpsertOne) SetGithubID(v string) *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.SetGithubID(v)
-	})
-}
-
-// AddGithubID adds v to the "github_id" field.
-func (u *UserUpsertOne) AddGithubID(v int64) *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.AddGithubID(v)
 	})
 }
 
@@ -3819,16 +3806,9 @@ func (u *UserUpsertBulk) UpdateEmail() *UserUpsertBulk {
 }
 
 // SetGithubID sets the "github_id" field.
-func (u *UserUpsertBulk) SetGithubID(v int64) *UserUpsertBulk {
+func (u *UserUpsertBulk) SetGithubID(v string) *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.SetGithubID(v)
-	})
-}
-
-// AddGithubID adds v to the "github_id" field.
-func (u *UserUpsertBulk) AddGithubID(v int64) *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.AddGithubID(v)
 	})
 }
 

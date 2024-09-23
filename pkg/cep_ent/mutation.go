@@ -86147,8 +86147,7 @@ type UserMutation struct {
 	pop_version                     *string
 	area_code                       *string
 	email                           *string
-	github_id                       *int64
-	addgithub_id                    *int64
+	github_id                       *string
 	cloud_space                     *int64
 	addcloud_space                  *int64
 	baidu_access_token              *string
@@ -87177,13 +87176,12 @@ func (m *UserMutation) ResetEmail() {
 }
 
 // SetGithubID sets the "github_id" field.
-func (m *UserMutation) SetGithubID(i int64) {
-	m.github_id = &i
-	m.addgithub_id = nil
+func (m *UserMutation) SetGithubID(s string) {
+	m.github_id = &s
 }
 
 // GithubID returns the value of the "github_id" field in the mutation.
-func (m *UserMutation) GithubID() (r int64, exists bool) {
+func (m *UserMutation) GithubID() (r string, exists bool) {
 	v := m.github_id
 	if v == nil {
 		return
@@ -87194,7 +87192,7 @@ func (m *UserMutation) GithubID() (r int64, exists bool) {
 // OldGithubID returns the old "github_id" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldGithubID(ctx context.Context) (v int64, err error) {
+func (m *UserMutation) OldGithubID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldGithubID is only allowed on UpdateOne operations")
 	}
@@ -87208,28 +87206,9 @@ func (m *UserMutation) OldGithubID(ctx context.Context) (v int64, err error) {
 	return oldValue.GithubID, nil
 }
 
-// AddGithubID adds i to the "github_id" field.
-func (m *UserMutation) AddGithubID(i int64) {
-	if m.addgithub_id != nil {
-		*m.addgithub_id += i
-	} else {
-		m.addgithub_id = &i
-	}
-}
-
-// AddedGithubID returns the value that was added to the "github_id" field in this mutation.
-func (m *UserMutation) AddedGithubID() (r int64, exists bool) {
-	v := m.addgithub_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetGithubID resets all changes to the "github_id" field.
 func (m *UserMutation) ResetGithubID() {
 	m.github_id = nil
-	m.addgithub_id = nil
 }
 
 // SetCloudSpace sets the "cloud_space" field.
@@ -90590,7 +90569,7 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		m.SetEmail(v)
 		return nil
 	case user.FieldGithubID:
-		v, ok := value.(int64)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -90659,9 +90638,6 @@ func (m *UserMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, user.FieldUpdatedBy)
 	}
-	if m.addgithub_id != nil {
-		fields = append(fields, user.FieldGithubID)
-	}
 	if m.addcloud_space != nil {
 		fields = append(fields, user.FieldCloudSpace)
 	}
@@ -90680,8 +90656,6 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCreatedBy()
 	case user.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
-	case user.FieldGithubID:
-		return m.AddedGithubID()
 	case user.FieldCloudSpace:
 		return m.AddedCloudSpace()
 	case user.FieldChannelRatio:
@@ -90708,13 +90682,6 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedBy(v)
-		return nil
-	case user.FieldGithubID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddGithubID(v)
 		return nil
 	case user.FieldCloudSpace:
 		v, ok := value.(int64)

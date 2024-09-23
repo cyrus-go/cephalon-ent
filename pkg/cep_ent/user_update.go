@@ -343,23 +343,16 @@ func (uu *UserUpdate) SetNillableEmail(s *string) *UserUpdate {
 }
 
 // SetGithubID sets the "github_id" field.
-func (uu *UserUpdate) SetGithubID(i int64) *UserUpdate {
-	uu.mutation.ResetGithubID()
-	uu.mutation.SetGithubID(i)
+func (uu *UserUpdate) SetGithubID(s string) *UserUpdate {
+	uu.mutation.SetGithubID(s)
 	return uu
 }
 
 // SetNillableGithubID sets the "github_id" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableGithubID(i *int64) *UserUpdate {
-	if i != nil {
-		uu.SetGithubID(*i)
+func (uu *UserUpdate) SetNillableGithubID(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetGithubID(*s)
 	}
-	return uu
-}
-
-// AddGithubID adds i to the "github_id" field.
-func (uu *UserUpdate) AddGithubID(i int64) *UserUpdate {
-	uu.mutation.AddGithubID(i)
 	return uu
 }
 
@@ -2377,10 +2370,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.GithubID(); ok {
-		_spec.SetField(user.FieldGithubID, field.TypeInt64, value)
-	}
-	if value, ok := uu.mutation.AddedGithubID(); ok {
-		_spec.AddField(user.FieldGithubID, field.TypeInt64, value)
+		_spec.SetField(user.FieldGithubID, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.CloudSpace(); ok {
 		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)
@@ -4922,23 +4912,16 @@ func (uuo *UserUpdateOne) SetNillableEmail(s *string) *UserUpdateOne {
 }
 
 // SetGithubID sets the "github_id" field.
-func (uuo *UserUpdateOne) SetGithubID(i int64) *UserUpdateOne {
-	uuo.mutation.ResetGithubID()
-	uuo.mutation.SetGithubID(i)
+func (uuo *UserUpdateOne) SetGithubID(s string) *UserUpdateOne {
+	uuo.mutation.SetGithubID(s)
 	return uuo
 }
 
 // SetNillableGithubID sets the "github_id" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableGithubID(i *int64) *UserUpdateOne {
-	if i != nil {
-		uuo.SetGithubID(*i)
+func (uuo *UserUpdateOne) SetNillableGithubID(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetGithubID(*s)
 	}
-	return uuo
-}
-
-// AddGithubID adds i to the "github_id" field.
-func (uuo *UserUpdateOne) AddGithubID(i int64) *UserUpdateOne {
-	uuo.mutation.AddGithubID(i)
 	return uuo
 }
 
@@ -6986,10 +6969,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.GithubID(); ok {
-		_spec.SetField(user.FieldGithubID, field.TypeInt64, value)
-	}
-	if value, ok := uuo.mutation.AddedGithubID(); ok {
-		_spec.AddField(user.FieldGithubID, field.TypeInt64, value)
+		_spec.SetField(user.FieldGithubID, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.CloudSpace(); ok {
 		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)

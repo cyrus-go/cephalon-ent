@@ -608,7 +608,7 @@ var (
 	// DefaultEmail holds the default value on creation for the "email" field.
 	DefaultEmail string
 	// DefaultGithubID holds the default value on creation for the "github_id" field.
-	DefaultGithubID int64
+	DefaultGithubID string
 	// DefaultCloudSpace holds the default value on creation for the "cloud_space" field.
 	DefaultCloudSpace int64
 	// DefaultBaiduAccessToken holds the default value on creation for the "baidu_access_token" field.

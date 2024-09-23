@@ -3801,7 +3801,7 @@ func init() {
 	// userDescGithubID is the schema descriptor for github_id field.
 	userDescGithubID := userFields[15].Descriptor()
 	// user.DefaultGithubID holds the default value on creation for the github_id field.
-	user.DefaultGithubID = userDescGithubID.Default.(int64)
+	user.DefaultGithubID = userDescGithubID.Default.(string)
 	// userDescCloudSpace is the schema descriptor for cloud_space field.
 	userDescCloudSpace := userFields[16].Descriptor()
 	// user.DefaultCloudSpace holds the default value on creation for the cloud_space field.
