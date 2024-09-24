@@ -2655,7 +2655,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "status", Type: field.TypeEnum, Comment: "转账订单的状态，比如微信发起支付后可能没完成支付", Enums: []string{"pending", "canceled", "succeed", "failed", "reexchange", "pending_order", "approved", "reject"}, Default: "pending"},
 		{Name: "amount", Type: field.TypeInt64, Comment: "充值多少货币量", Default: 0},
-		{Name: "type", Type: field.TypeEnum, Comment: "充值订单的类型", Enums: []string{"withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "unknown", "recharge", "recharge_vx", "recharge_alipay", "recharge_airwallex", "manual", "withdraw", "recharge_refund", "withdraw_company"}, Default: "unknown"},
+		{Name: "type", Type: field.TypeEnum, Comment: "充值订单的类型", Enums: []string{"withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "unknown", "recharge", "recharge_vx", "recharge_alipay", "recharge_trx", "manual", "withdraw", "recharge_refund", "withdraw_company"}, Default: "unknown"},
 		{Name: "serial_number", Type: field.TypeString, Comment: "充值订单的序列号", Default: ""},
 		{Name: "third_api_resp", Type: field.TypeString, Comment: "第三方平台的返回，给到前端才能发起支付", Default: ""},
 		{Name: "out_transaction_id", Type: field.TypeString, Comment: "平台方订单号", Default: ""},
