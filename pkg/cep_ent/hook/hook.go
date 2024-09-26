@@ -693,6 +693,18 @@ func (f RechargeCampaignRuleFunc) Mutate(ctx context.Context, m cep_ent.Mutation
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.RechargeCampaignRuleMutation", m)
 }
 
+// The RechargeCampaignRuleOverseaFunc type is an adapter to allow the use of ordinary
+// function as RechargeCampaignRuleOversea mutator.
+type RechargeCampaignRuleOverseaFunc func(context.Context, *cep_ent.RechargeCampaignRuleOverseaMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RechargeCampaignRuleOverseaFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.RechargeCampaignRuleOverseaMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.RechargeCampaignRuleOverseaMutation", m)
+}
+
 // The RechargeOrderFunc type is an adapter to allow the use of ordinary
 // function as RechargeOrder mutator.
 type RechargeOrderFunc func(context.Context, *cep_ent.RechargeOrderMutation) (cep_ent.Value, error)

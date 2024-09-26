@@ -126,6 +126,8 @@ type Tx struct {
 	ProfitSetting *ProfitSettingClient
 	// RechargeCampaignRule is the client for interacting with the RechargeCampaignRule builders.
 	RechargeCampaignRule *RechargeCampaignRuleClient
+	// RechargeCampaignRuleOversea is the client for interacting with the RechargeCampaignRuleOversea builders.
+	RechargeCampaignRuleOversea *RechargeCampaignRuleOverseaClient
 	// RechargeOrder is the client for interacting with the RechargeOrder builders.
 	RechargeOrder *RechargeOrderClient
 	// RenewalAgreement is the client for interacting with the RenewalAgreement builders.
@@ -348,6 +350,7 @@ func (tx *Tx) init() {
 	tx.ProfitAccount = NewProfitAccountClient(tx.config)
 	tx.ProfitSetting = NewProfitSettingClient(tx.config)
 	tx.RechargeCampaignRule = NewRechargeCampaignRuleClient(tx.config)
+	tx.RechargeCampaignRuleOversea = NewRechargeCampaignRuleOverseaClient(tx.config)
 	tx.RechargeOrder = NewRechargeOrderClient(tx.config)
 	tx.RenewalAgreement = NewRenewalAgreementClient(tx.config)
 	tx.Survey = NewSurveyClient(tx.config)

@@ -2376,6 +2376,28 @@ var (
 		Columns:    RechargeCampaignRulesColumns,
 		PrimaryKey: []*schema.Column{RechargeCampaignRulesColumns[0]},
 	}
+	// RechargeCampaignRuleOverseasColumns holds the columns for the "recharge_campaign_rule_overseas" table.
+	RechargeCampaignRuleOverseasColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "dollar_price", Type: field.TypeFloat64, Comment: "美元价格", Default: 0},
+		{Name: "rmb_price", Type: field.TypeFloat64, Comment: "RMB 价格", Default: 0},
+		{Name: "original_rmb_price", Type: field.TypeFloat64, Comment: "RMB 原价", Default: 0},
+		{Name: "total_cep", Type: field.TypeInt64, Comment: "总共能获得的脑力值", Default: 0},
+		{Name: "before_discount_cep", Type: field.TypeInt64, Comment: "优惠前能获得的脑力值", Default: 0},
+		{Name: "discount_ratio", Type: field.TypeInt64, Comment: "优惠力度（现价基于原价的比例）", Default: 0},
+	}
+	// RechargeCampaignRuleOverseasTable holds the schema information for the "recharge_campaign_rule_overseas" table.
+	RechargeCampaignRuleOverseasTable = &schema.Table{
+		Name:       "recharge_campaign_rule_overseas",
+		Comment:    "海外充值活动的规则，死表，与国内区分，国内是赠送充值比例，海外是固定",
+		Columns:    RechargeCampaignRuleOverseasColumns,
+		PrimaryKey: []*schema.Column{RechargeCampaignRuleOverseasColumns[0]},
+	}
 	// RechargeOrdersColumns holds the columns for the "recharge_orders" table.
 	RechargeOrdersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -3235,6 +3257,7 @@ var (
 		ProfitAccountsTable,
 		ProfitSettingsTable,
 		RechargeCampaignRulesTable,
+		RechargeCampaignRuleOverseasTable,
 		RechargeOrdersTable,
 		RenewalAgreementsTable,
 		SurveysTable,
@@ -3413,6 +3436,7 @@ func init() {
 	ProfitSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	ProfitSettingsTable.Annotation = &entsql.Annotation{}
 	RechargeCampaignRulesTable.Annotation = &entsql.Annotation{}
+	RechargeCampaignRuleOverseasTable.Annotation = &entsql.Annotation{}
 	RechargeOrdersTable.ForeignKeys[0].RefTable = CampaignOrdersTable
 	RechargeOrdersTable.ForeignKeys[1].RefTable = UsersTable
 	RechargeOrdersTable.ForeignKeys[2].RefTable = VxSocialsTable

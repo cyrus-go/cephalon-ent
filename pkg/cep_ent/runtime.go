@@ -63,6 +63,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignruleoversea"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/schema"
@@ -3217,6 +3218,61 @@ func init() {
 	rechargecampaignruleDescID := rechargecampaignruleMixinFields0[0].Descriptor()
 	// rechargecampaignrule.DefaultID holds the default value on creation for the id field.
 	rechargecampaignrule.DefaultID = rechargecampaignruleDescID.Default.(func() int64)
+	rechargecampaignruleoverseaMixin := schema.RechargeCampaignRuleOversea{}.Mixin()
+	rechargecampaignruleoverseaMixinFields0 := rechargecampaignruleoverseaMixin[0].Fields()
+	_ = rechargecampaignruleoverseaMixinFields0
+	rechargecampaignruleoverseaFields := schema.RechargeCampaignRuleOversea{}.Fields()
+	_ = rechargecampaignruleoverseaFields
+	// rechargecampaignruleoverseaDescCreatedBy is the schema descriptor for created_by field.
+	rechargecampaignruleoverseaDescCreatedBy := rechargecampaignruleoverseaMixinFields0[1].Descriptor()
+	// rechargecampaignruleoversea.DefaultCreatedBy holds the default value on creation for the created_by field.
+	rechargecampaignruleoversea.DefaultCreatedBy = rechargecampaignruleoverseaDescCreatedBy.Default.(int64)
+	// rechargecampaignruleoverseaDescUpdatedBy is the schema descriptor for updated_by field.
+	rechargecampaignruleoverseaDescUpdatedBy := rechargecampaignruleoverseaMixinFields0[2].Descriptor()
+	// rechargecampaignruleoversea.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	rechargecampaignruleoversea.DefaultUpdatedBy = rechargecampaignruleoverseaDescUpdatedBy.Default.(int64)
+	// rechargecampaignruleoverseaDescCreatedAt is the schema descriptor for created_at field.
+	rechargecampaignruleoverseaDescCreatedAt := rechargecampaignruleoverseaMixinFields0[3].Descriptor()
+	// rechargecampaignruleoversea.DefaultCreatedAt holds the default value on creation for the created_at field.
+	rechargecampaignruleoversea.DefaultCreatedAt = rechargecampaignruleoverseaDescCreatedAt.Default.(func() time.Time)
+	// rechargecampaignruleoverseaDescUpdatedAt is the schema descriptor for updated_at field.
+	rechargecampaignruleoverseaDescUpdatedAt := rechargecampaignruleoverseaMixinFields0[4].Descriptor()
+	// rechargecampaignruleoversea.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	rechargecampaignruleoversea.DefaultUpdatedAt = rechargecampaignruleoverseaDescUpdatedAt.Default.(func() time.Time)
+	// rechargecampaignruleoversea.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	rechargecampaignruleoversea.UpdateDefaultUpdatedAt = rechargecampaignruleoverseaDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// rechargecampaignruleoverseaDescDeletedAt is the schema descriptor for deleted_at field.
+	rechargecampaignruleoverseaDescDeletedAt := rechargecampaignruleoverseaMixinFields0[5].Descriptor()
+	// rechargecampaignruleoversea.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	rechargecampaignruleoversea.DefaultDeletedAt = rechargecampaignruleoverseaDescDeletedAt.Default.(time.Time)
+	// rechargecampaignruleoverseaDescDollarPrice is the schema descriptor for dollar_price field.
+	rechargecampaignruleoverseaDescDollarPrice := rechargecampaignruleoverseaFields[0].Descriptor()
+	// rechargecampaignruleoversea.DefaultDollarPrice holds the default value on creation for the dollar_price field.
+	rechargecampaignruleoversea.DefaultDollarPrice = rechargecampaignruleoverseaDescDollarPrice.Default.(float64)
+	// rechargecampaignruleoverseaDescRmbPrice is the schema descriptor for rmb_price field.
+	rechargecampaignruleoverseaDescRmbPrice := rechargecampaignruleoverseaFields[1].Descriptor()
+	// rechargecampaignruleoversea.DefaultRmbPrice holds the default value on creation for the rmb_price field.
+	rechargecampaignruleoversea.DefaultRmbPrice = rechargecampaignruleoverseaDescRmbPrice.Default.(float64)
+	// rechargecampaignruleoverseaDescOriginalRmbPrice is the schema descriptor for original_rmb_price field.
+	rechargecampaignruleoverseaDescOriginalRmbPrice := rechargecampaignruleoverseaFields[2].Descriptor()
+	// rechargecampaignruleoversea.DefaultOriginalRmbPrice holds the default value on creation for the original_rmb_price field.
+	rechargecampaignruleoversea.DefaultOriginalRmbPrice = rechargecampaignruleoverseaDescOriginalRmbPrice.Default.(float64)
+	// rechargecampaignruleoverseaDescTotalCep is the schema descriptor for total_cep field.
+	rechargecampaignruleoverseaDescTotalCep := rechargecampaignruleoverseaFields[3].Descriptor()
+	// rechargecampaignruleoversea.DefaultTotalCep holds the default value on creation for the total_cep field.
+	rechargecampaignruleoversea.DefaultTotalCep = rechargecampaignruleoverseaDescTotalCep.Default.(int64)
+	// rechargecampaignruleoverseaDescBeforeDiscountCep is the schema descriptor for before_discount_cep field.
+	rechargecampaignruleoverseaDescBeforeDiscountCep := rechargecampaignruleoverseaFields[4].Descriptor()
+	// rechargecampaignruleoversea.DefaultBeforeDiscountCep holds the default value on creation for the before_discount_cep field.
+	rechargecampaignruleoversea.DefaultBeforeDiscountCep = rechargecampaignruleoverseaDescBeforeDiscountCep.Default.(int64)
+	// rechargecampaignruleoverseaDescDiscountRatio is the schema descriptor for discount_ratio field.
+	rechargecampaignruleoverseaDescDiscountRatio := rechargecampaignruleoverseaFields[5].Descriptor()
+	// rechargecampaignruleoversea.DefaultDiscountRatio holds the default value on creation for the discount_ratio field.
+	rechargecampaignruleoversea.DefaultDiscountRatio = rechargecampaignruleoverseaDescDiscountRatio.Default.(int64)
+	// rechargecampaignruleoverseaDescID is the schema descriptor for id field.
+	rechargecampaignruleoverseaDescID := rechargecampaignruleoverseaMixinFields0[0].Descriptor()
+	// rechargecampaignruleoversea.DefaultID holds the default value on creation for the id field.
+	rechargecampaignruleoversea.DefaultID = rechargecampaignruleoverseaDescID.Default.(func() int64)
 	rechargeorderMixin := schema.RechargeOrder{}.Mixin()
 	rechargeorderMixinFields0 := rechargeorderMixin[0].Fields()
 	_ = rechargeorderMixinFields0

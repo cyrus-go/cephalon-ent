@@ -69,6 +69,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignruleoversea"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/survey"
@@ -98,80 +99,81 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeApiToken              = "ApiToken"
-	TypeArtwork               = "Artwork"
-	TypeArtworkLike           = "ArtworkLike"
-	TypeBill                  = "Bill"
-	TypeCDKInfo               = "CDKInfo"
-	TypeCampaign              = "Campaign"
-	TypeCampaignOrder         = "CampaignOrder"
-	TypeCloudFile             = "CloudFile"
-	TypeCollect               = "Collect"
-	TypeCostAccount           = "CostAccount"
-	TypeCostBill              = "CostBill"
-	TypeDevice                = "Device"
-	TypeDeviceGpuMission      = "DeviceGpuMission"
-	TypeDeviceOfflineRecord   = "DeviceOfflineRecord"
-	TypeDeviceRebootTime      = "DeviceRebootTime"
-	TypeDeviceState           = "DeviceState"
-	TypeEarnBill              = "EarnBill"
-	TypeEnumCondition         = "EnumCondition"
-	TypeEnumMissionStatus     = "EnumMissionStatus"
-	TypeExtraService          = "ExtraService"
-	TypeExtraServiceOrder     = "ExtraServiceOrder"
-	TypeExtraServicePrice     = "ExtraServicePrice"
-	TypeFrpcInfo              = "FrpcInfo"
-	TypeFrpsInfo              = "FrpsInfo"
-	TypeGiftMissionConfig     = "GiftMissionConfig"
-	TypeGpu                   = "Gpu"
-	TypeHmacKeyPair           = "HmacKeyPair"
-	TypeIncomeManage          = "IncomeManage"
-	TypeInputLog              = "InputLog"
-	TypeInvite                = "Invite"
-	TypeInvokeModelOrder      = "InvokeModelOrder"
-	TypeLoginRecord           = "LoginRecord"
-	TypeLotto                 = "Lotto"
-	TypeLottoChanceRule       = "LottoChanceRule"
-	TypeLottoGetCountRecord   = "LottoGetCountRecord"
-	TypeLottoPrize            = "LottoPrize"
-	TypeLottoRecord           = "LottoRecord"
-	TypeLottoUserCount        = "LottoUserCount"
-	TypeMission               = "Mission"
-	TypeMissionBatch          = "MissionBatch"
-	TypeMissionCategory       = "MissionCategory"
-	TypeMissionConsumeOrder   = "MissionConsumeOrder"
-	TypeMissionExtraService   = "MissionExtraService"
-	TypeMissionFailedFeedback = "MissionFailedFeedback"
-	TypeMissionKeyPair        = "MissionKeyPair"
-	TypeMissionKind           = "MissionKind"
-	TypeMissionOrder          = "MissionOrder"
-	TypeMissionProduceOrder   = "MissionProduceOrder"
-	TypeMissionProduction     = "MissionProduction"
-	TypeModel                 = "Model"
-	TypeModelPrice            = "ModelPrice"
-	TypeOutputLog             = "OutputLog"
-	TypePlatformAccount       = "PlatformAccount"
-	TypePrice                 = "Price"
-	TypeProfitAccount         = "ProfitAccount"
-	TypeProfitSetting         = "ProfitSetting"
-	TypeRechargeCampaignRule  = "RechargeCampaignRule"
-	TypeRechargeOrder         = "RechargeOrder"
-	TypeRenewalAgreement      = "RenewalAgreement"
-	TypeSurvey                = "Survey"
-	TypeSurveyAnswer          = "SurveyAnswer"
-	TypeSurveyQuestion        = "SurveyQuestion"
-	TypeSurveyResponse        = "SurveyResponse"
-	TypeSymbol                = "Symbol"
-	TypeTransferOrder         = "TransferOrder"
-	TypeTroubleDeduct         = "TroubleDeduct"
-	TypeUser                  = "User"
-	TypeUserDevice            = "UserDevice"
-	TypeUserModel             = "UserModel"
-	TypeVXAccount             = "VXAccount"
-	TypeVXSocial              = "VXSocial"
-	TypeWallet                = "Wallet"
-	TypeWithdrawAccount       = "WithdrawAccount"
-	TypeWithdrawRecord        = "WithdrawRecord"
+	TypeApiToken                    = "ApiToken"
+	TypeArtwork                     = "Artwork"
+	TypeArtworkLike                 = "ArtworkLike"
+	TypeBill                        = "Bill"
+	TypeCDKInfo                     = "CDKInfo"
+	TypeCampaign                    = "Campaign"
+	TypeCampaignOrder               = "CampaignOrder"
+	TypeCloudFile                   = "CloudFile"
+	TypeCollect                     = "Collect"
+	TypeCostAccount                 = "CostAccount"
+	TypeCostBill                    = "CostBill"
+	TypeDevice                      = "Device"
+	TypeDeviceGpuMission            = "DeviceGpuMission"
+	TypeDeviceOfflineRecord         = "DeviceOfflineRecord"
+	TypeDeviceRebootTime            = "DeviceRebootTime"
+	TypeDeviceState                 = "DeviceState"
+	TypeEarnBill                    = "EarnBill"
+	TypeEnumCondition               = "EnumCondition"
+	TypeEnumMissionStatus           = "EnumMissionStatus"
+	TypeExtraService                = "ExtraService"
+	TypeExtraServiceOrder           = "ExtraServiceOrder"
+	TypeExtraServicePrice           = "ExtraServicePrice"
+	TypeFrpcInfo                    = "FrpcInfo"
+	TypeFrpsInfo                    = "FrpsInfo"
+	TypeGiftMissionConfig           = "GiftMissionConfig"
+	TypeGpu                         = "Gpu"
+	TypeHmacKeyPair                 = "HmacKeyPair"
+	TypeIncomeManage                = "IncomeManage"
+	TypeInputLog                    = "InputLog"
+	TypeInvite                      = "Invite"
+	TypeInvokeModelOrder            = "InvokeModelOrder"
+	TypeLoginRecord                 = "LoginRecord"
+	TypeLotto                       = "Lotto"
+	TypeLottoChanceRule             = "LottoChanceRule"
+	TypeLottoGetCountRecord         = "LottoGetCountRecord"
+	TypeLottoPrize                  = "LottoPrize"
+	TypeLottoRecord                 = "LottoRecord"
+	TypeLottoUserCount              = "LottoUserCount"
+	TypeMission                     = "Mission"
+	TypeMissionBatch                = "MissionBatch"
+	TypeMissionCategory             = "MissionCategory"
+	TypeMissionConsumeOrder         = "MissionConsumeOrder"
+	TypeMissionExtraService         = "MissionExtraService"
+	TypeMissionFailedFeedback       = "MissionFailedFeedback"
+	TypeMissionKeyPair              = "MissionKeyPair"
+	TypeMissionKind                 = "MissionKind"
+	TypeMissionOrder                = "MissionOrder"
+	TypeMissionProduceOrder         = "MissionProduceOrder"
+	TypeMissionProduction           = "MissionProduction"
+	TypeModel                       = "Model"
+	TypeModelPrice                  = "ModelPrice"
+	TypeOutputLog                   = "OutputLog"
+	TypePlatformAccount             = "PlatformAccount"
+	TypePrice                       = "Price"
+	TypeProfitAccount               = "ProfitAccount"
+	TypeProfitSetting               = "ProfitSetting"
+	TypeRechargeCampaignRule        = "RechargeCampaignRule"
+	TypeRechargeCampaignRuleOversea = "RechargeCampaignRuleOversea"
+	TypeRechargeOrder               = "RechargeOrder"
+	TypeRenewalAgreement            = "RenewalAgreement"
+	TypeSurvey                      = "Survey"
+	TypeSurveyAnswer                = "SurveyAnswer"
+	TypeSurveyQuestion              = "SurveyQuestion"
+	TypeSurveyResponse              = "SurveyResponse"
+	TypeSymbol                      = "Symbol"
+	TypeTransferOrder               = "TransferOrder"
+	TypeTroubleDeduct               = "TroubleDeduct"
+	TypeUser                        = "User"
+	TypeUserDevice                  = "UserDevice"
+	TypeUserModel                   = "UserModel"
+	TypeVXAccount                   = "VXAccount"
+	TypeVXSocial                    = "VXSocial"
+	TypeWallet                      = "Wallet"
+	TypeWithdrawAccount             = "WithdrawAccount"
+	TypeWithdrawRecord              = "WithdrawRecord"
 )
 
 // ApiTokenMutation represents an operation that mutates the ApiToken nodes in the graph.
@@ -74346,6 +74348,1145 @@ func (m *RechargeCampaignRuleMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *RechargeCampaignRuleMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown RechargeCampaignRule edge %s", name)
+}
+
+// RechargeCampaignRuleOverseaMutation represents an operation that mutates the RechargeCampaignRuleOversea nodes in the graph.
+type RechargeCampaignRuleOverseaMutation struct {
+	config
+	op                     Op
+	typ                    string
+	id                     *int64
+	created_by             *int64
+	addcreated_by          *int64
+	updated_by             *int64
+	addupdated_by          *int64
+	created_at             *time.Time
+	updated_at             *time.Time
+	deleted_at             *time.Time
+	dollar_price           *float64
+	adddollar_price        *float64
+	rmb_price              *float64
+	addrmb_price           *float64
+	original_rmb_price     *float64
+	addoriginal_rmb_price  *float64
+	total_cep              *int64
+	addtotal_cep           *int64
+	before_discount_cep    *int64
+	addbefore_discount_cep *int64
+	discount_ratio         *int64
+	adddiscount_ratio      *int64
+	clearedFields          map[string]struct{}
+	done                   bool
+	oldValue               func(context.Context) (*RechargeCampaignRuleOversea, error)
+	predicates             []predicate.RechargeCampaignRuleOversea
+}
+
+var _ ent.Mutation = (*RechargeCampaignRuleOverseaMutation)(nil)
+
+// rechargecampaignruleoverseaOption allows management of the mutation configuration using functional options.
+type rechargecampaignruleoverseaOption func(*RechargeCampaignRuleOverseaMutation)
+
+// newRechargeCampaignRuleOverseaMutation creates new mutation for the RechargeCampaignRuleOversea entity.
+func newRechargeCampaignRuleOverseaMutation(c config, op Op, opts ...rechargecampaignruleoverseaOption) *RechargeCampaignRuleOverseaMutation {
+	m := &RechargeCampaignRuleOverseaMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeRechargeCampaignRuleOversea,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withRechargeCampaignRuleOverseaID sets the ID field of the mutation.
+func withRechargeCampaignRuleOverseaID(id int64) rechargecampaignruleoverseaOption {
+	return func(m *RechargeCampaignRuleOverseaMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *RechargeCampaignRuleOversea
+		)
+		m.oldValue = func(ctx context.Context) (*RechargeCampaignRuleOversea, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().RechargeCampaignRuleOversea.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withRechargeCampaignRuleOversea sets the old RechargeCampaignRuleOversea of the mutation.
+func withRechargeCampaignRuleOversea(node *RechargeCampaignRuleOversea) rechargecampaignruleoverseaOption {
+	return func(m *RechargeCampaignRuleOverseaMutation) {
+		m.oldValue = func(context.Context) (*RechargeCampaignRuleOversea, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m RechargeCampaignRuleOverseaMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m RechargeCampaignRuleOverseaMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of RechargeCampaignRuleOversea entities.
+func (m *RechargeCampaignRuleOverseaMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *RechargeCampaignRuleOverseaMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *RechargeCampaignRuleOverseaMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().RechargeCampaignRuleOversea.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *RechargeCampaignRuleOverseaMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *RechargeCampaignRuleOverseaMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the RechargeCampaignRuleOversea entity.
+// If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleOverseaMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *RechargeCampaignRuleOverseaMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *RechargeCampaignRuleOverseaMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *RechargeCampaignRuleOverseaMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *RechargeCampaignRuleOverseaMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the RechargeCampaignRuleOversea entity.
+// If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleOverseaMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *RechargeCampaignRuleOverseaMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *RechargeCampaignRuleOverseaMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *RechargeCampaignRuleOverseaMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *RechargeCampaignRuleOverseaMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the RechargeCampaignRuleOversea entity.
+// If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleOverseaMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *RechargeCampaignRuleOverseaMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *RechargeCampaignRuleOverseaMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *RechargeCampaignRuleOverseaMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the RechargeCampaignRuleOversea entity.
+// If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleOverseaMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *RechargeCampaignRuleOverseaMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *RechargeCampaignRuleOverseaMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *RechargeCampaignRuleOverseaMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the RechargeCampaignRuleOversea entity.
+// If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleOverseaMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *RechargeCampaignRuleOverseaMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetDollarPrice sets the "dollar_price" field.
+func (m *RechargeCampaignRuleOverseaMutation) SetDollarPrice(f float64) {
+	m.dollar_price = &f
+	m.adddollar_price = nil
+}
+
+// DollarPrice returns the value of the "dollar_price" field in the mutation.
+func (m *RechargeCampaignRuleOverseaMutation) DollarPrice() (r float64, exists bool) {
+	v := m.dollar_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDollarPrice returns the old "dollar_price" field's value of the RechargeCampaignRuleOversea entity.
+// If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleOverseaMutation) OldDollarPrice(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDollarPrice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDollarPrice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDollarPrice: %w", err)
+	}
+	return oldValue.DollarPrice, nil
+}
+
+// AddDollarPrice adds f to the "dollar_price" field.
+func (m *RechargeCampaignRuleOverseaMutation) AddDollarPrice(f float64) {
+	if m.adddollar_price != nil {
+		*m.adddollar_price += f
+	} else {
+		m.adddollar_price = &f
+	}
+}
+
+// AddedDollarPrice returns the value that was added to the "dollar_price" field in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) AddedDollarPrice() (r float64, exists bool) {
+	v := m.adddollar_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDollarPrice resets all changes to the "dollar_price" field.
+func (m *RechargeCampaignRuleOverseaMutation) ResetDollarPrice() {
+	m.dollar_price = nil
+	m.adddollar_price = nil
+}
+
+// SetRmbPrice sets the "rmb_price" field.
+func (m *RechargeCampaignRuleOverseaMutation) SetRmbPrice(f float64) {
+	m.rmb_price = &f
+	m.addrmb_price = nil
+}
+
+// RmbPrice returns the value of the "rmb_price" field in the mutation.
+func (m *RechargeCampaignRuleOverseaMutation) RmbPrice() (r float64, exists bool) {
+	v := m.rmb_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRmbPrice returns the old "rmb_price" field's value of the RechargeCampaignRuleOversea entity.
+// If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleOverseaMutation) OldRmbPrice(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRmbPrice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRmbPrice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRmbPrice: %w", err)
+	}
+	return oldValue.RmbPrice, nil
+}
+
+// AddRmbPrice adds f to the "rmb_price" field.
+func (m *RechargeCampaignRuleOverseaMutation) AddRmbPrice(f float64) {
+	if m.addrmb_price != nil {
+		*m.addrmb_price += f
+	} else {
+		m.addrmb_price = &f
+	}
+}
+
+// AddedRmbPrice returns the value that was added to the "rmb_price" field in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) AddedRmbPrice() (r float64, exists bool) {
+	v := m.addrmb_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetRmbPrice resets all changes to the "rmb_price" field.
+func (m *RechargeCampaignRuleOverseaMutation) ResetRmbPrice() {
+	m.rmb_price = nil
+	m.addrmb_price = nil
+}
+
+// SetOriginalRmbPrice sets the "original_rmb_price" field.
+func (m *RechargeCampaignRuleOverseaMutation) SetOriginalRmbPrice(f float64) {
+	m.original_rmb_price = &f
+	m.addoriginal_rmb_price = nil
+}
+
+// OriginalRmbPrice returns the value of the "original_rmb_price" field in the mutation.
+func (m *RechargeCampaignRuleOverseaMutation) OriginalRmbPrice() (r float64, exists bool) {
+	v := m.original_rmb_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOriginalRmbPrice returns the old "original_rmb_price" field's value of the RechargeCampaignRuleOversea entity.
+// If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleOverseaMutation) OldOriginalRmbPrice(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOriginalRmbPrice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOriginalRmbPrice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOriginalRmbPrice: %w", err)
+	}
+	return oldValue.OriginalRmbPrice, nil
+}
+
+// AddOriginalRmbPrice adds f to the "original_rmb_price" field.
+func (m *RechargeCampaignRuleOverseaMutation) AddOriginalRmbPrice(f float64) {
+	if m.addoriginal_rmb_price != nil {
+		*m.addoriginal_rmb_price += f
+	} else {
+		m.addoriginal_rmb_price = &f
+	}
+}
+
+// AddedOriginalRmbPrice returns the value that was added to the "original_rmb_price" field in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) AddedOriginalRmbPrice() (r float64, exists bool) {
+	v := m.addoriginal_rmb_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetOriginalRmbPrice resets all changes to the "original_rmb_price" field.
+func (m *RechargeCampaignRuleOverseaMutation) ResetOriginalRmbPrice() {
+	m.original_rmb_price = nil
+	m.addoriginal_rmb_price = nil
+}
+
+// SetTotalCep sets the "total_cep" field.
+func (m *RechargeCampaignRuleOverseaMutation) SetTotalCep(i int64) {
+	m.total_cep = &i
+	m.addtotal_cep = nil
+}
+
+// TotalCep returns the value of the "total_cep" field in the mutation.
+func (m *RechargeCampaignRuleOverseaMutation) TotalCep() (r int64, exists bool) {
+	v := m.total_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTotalCep returns the old "total_cep" field's value of the RechargeCampaignRuleOversea entity.
+// If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleOverseaMutation) OldTotalCep(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTotalCep is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTotalCep requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTotalCep: %w", err)
+	}
+	return oldValue.TotalCep, nil
+}
+
+// AddTotalCep adds i to the "total_cep" field.
+func (m *RechargeCampaignRuleOverseaMutation) AddTotalCep(i int64) {
+	if m.addtotal_cep != nil {
+		*m.addtotal_cep += i
+	} else {
+		m.addtotal_cep = &i
+	}
+}
+
+// AddedTotalCep returns the value that was added to the "total_cep" field in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) AddedTotalCep() (r int64, exists bool) {
+	v := m.addtotal_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTotalCep resets all changes to the "total_cep" field.
+func (m *RechargeCampaignRuleOverseaMutation) ResetTotalCep() {
+	m.total_cep = nil
+	m.addtotal_cep = nil
+}
+
+// SetBeforeDiscountCep sets the "before_discount_cep" field.
+func (m *RechargeCampaignRuleOverseaMutation) SetBeforeDiscountCep(i int64) {
+	m.before_discount_cep = &i
+	m.addbefore_discount_cep = nil
+}
+
+// BeforeDiscountCep returns the value of the "before_discount_cep" field in the mutation.
+func (m *RechargeCampaignRuleOverseaMutation) BeforeDiscountCep() (r int64, exists bool) {
+	v := m.before_discount_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBeforeDiscountCep returns the old "before_discount_cep" field's value of the RechargeCampaignRuleOversea entity.
+// If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleOverseaMutation) OldBeforeDiscountCep(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBeforeDiscountCep is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBeforeDiscountCep requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBeforeDiscountCep: %w", err)
+	}
+	return oldValue.BeforeDiscountCep, nil
+}
+
+// AddBeforeDiscountCep adds i to the "before_discount_cep" field.
+func (m *RechargeCampaignRuleOverseaMutation) AddBeforeDiscountCep(i int64) {
+	if m.addbefore_discount_cep != nil {
+		*m.addbefore_discount_cep += i
+	} else {
+		m.addbefore_discount_cep = &i
+	}
+}
+
+// AddedBeforeDiscountCep returns the value that was added to the "before_discount_cep" field in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) AddedBeforeDiscountCep() (r int64, exists bool) {
+	v := m.addbefore_discount_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBeforeDiscountCep resets all changes to the "before_discount_cep" field.
+func (m *RechargeCampaignRuleOverseaMutation) ResetBeforeDiscountCep() {
+	m.before_discount_cep = nil
+	m.addbefore_discount_cep = nil
+}
+
+// SetDiscountRatio sets the "discount_ratio" field.
+func (m *RechargeCampaignRuleOverseaMutation) SetDiscountRatio(i int64) {
+	m.discount_ratio = &i
+	m.adddiscount_ratio = nil
+}
+
+// DiscountRatio returns the value of the "discount_ratio" field in the mutation.
+func (m *RechargeCampaignRuleOverseaMutation) DiscountRatio() (r int64, exists bool) {
+	v := m.discount_ratio
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDiscountRatio returns the old "discount_ratio" field's value of the RechargeCampaignRuleOversea entity.
+// If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleOverseaMutation) OldDiscountRatio(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDiscountRatio is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDiscountRatio requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDiscountRatio: %w", err)
+	}
+	return oldValue.DiscountRatio, nil
+}
+
+// AddDiscountRatio adds i to the "discount_ratio" field.
+func (m *RechargeCampaignRuleOverseaMutation) AddDiscountRatio(i int64) {
+	if m.adddiscount_ratio != nil {
+		*m.adddiscount_ratio += i
+	} else {
+		m.adddiscount_ratio = &i
+	}
+}
+
+// AddedDiscountRatio returns the value that was added to the "discount_ratio" field in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) AddedDiscountRatio() (r int64, exists bool) {
+	v := m.adddiscount_ratio
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDiscountRatio resets all changes to the "discount_ratio" field.
+func (m *RechargeCampaignRuleOverseaMutation) ResetDiscountRatio() {
+	m.discount_ratio = nil
+	m.adddiscount_ratio = nil
+}
+
+// Where appends a list predicates to the RechargeCampaignRuleOverseaMutation builder.
+func (m *RechargeCampaignRuleOverseaMutation) Where(ps ...predicate.RechargeCampaignRuleOversea) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the RechargeCampaignRuleOverseaMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *RechargeCampaignRuleOverseaMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.RechargeCampaignRuleOversea, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *RechargeCampaignRuleOverseaMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *RechargeCampaignRuleOverseaMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (RechargeCampaignRuleOversea).
+func (m *RechargeCampaignRuleOverseaMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *RechargeCampaignRuleOverseaMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_by != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldDeletedAt)
+	}
+	if m.dollar_price != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldDollarPrice)
+	}
+	if m.rmb_price != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldRmbPrice)
+	}
+	if m.original_rmb_price != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldOriginalRmbPrice)
+	}
+	if m.total_cep != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldTotalCep)
+	}
+	if m.before_discount_cep != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldBeforeDiscountCep)
+	}
+	if m.discount_ratio != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldDiscountRatio)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *RechargeCampaignRuleOverseaMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case rechargecampaignruleoversea.FieldCreatedBy:
+		return m.CreatedBy()
+	case rechargecampaignruleoversea.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case rechargecampaignruleoversea.FieldCreatedAt:
+		return m.CreatedAt()
+	case rechargecampaignruleoversea.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case rechargecampaignruleoversea.FieldDeletedAt:
+		return m.DeletedAt()
+	case rechargecampaignruleoversea.FieldDollarPrice:
+		return m.DollarPrice()
+	case rechargecampaignruleoversea.FieldRmbPrice:
+		return m.RmbPrice()
+	case rechargecampaignruleoversea.FieldOriginalRmbPrice:
+		return m.OriginalRmbPrice()
+	case rechargecampaignruleoversea.FieldTotalCep:
+		return m.TotalCep()
+	case rechargecampaignruleoversea.FieldBeforeDiscountCep:
+		return m.BeforeDiscountCep()
+	case rechargecampaignruleoversea.FieldDiscountRatio:
+		return m.DiscountRatio()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *RechargeCampaignRuleOverseaMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case rechargecampaignruleoversea.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case rechargecampaignruleoversea.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case rechargecampaignruleoversea.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case rechargecampaignruleoversea.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case rechargecampaignruleoversea.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case rechargecampaignruleoversea.FieldDollarPrice:
+		return m.OldDollarPrice(ctx)
+	case rechargecampaignruleoversea.FieldRmbPrice:
+		return m.OldRmbPrice(ctx)
+	case rechargecampaignruleoversea.FieldOriginalRmbPrice:
+		return m.OldOriginalRmbPrice(ctx)
+	case rechargecampaignruleoversea.FieldTotalCep:
+		return m.OldTotalCep(ctx)
+	case rechargecampaignruleoversea.FieldBeforeDiscountCep:
+		return m.OldBeforeDiscountCep(ctx)
+	case rechargecampaignruleoversea.FieldDiscountRatio:
+		return m.OldDiscountRatio(ctx)
+	}
+	return nil, fmt.Errorf("unknown RechargeCampaignRuleOversea field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RechargeCampaignRuleOverseaMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case rechargecampaignruleoversea.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case rechargecampaignruleoversea.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case rechargecampaignruleoversea.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case rechargecampaignruleoversea.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case rechargecampaignruleoversea.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case rechargecampaignruleoversea.FieldDollarPrice:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDollarPrice(v)
+		return nil
+	case rechargecampaignruleoversea.FieldRmbPrice:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRmbPrice(v)
+		return nil
+	case rechargecampaignruleoversea.FieldOriginalRmbPrice:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOriginalRmbPrice(v)
+		return nil
+	case rechargecampaignruleoversea.FieldTotalCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTotalCep(v)
+		return nil
+	case rechargecampaignruleoversea.FieldBeforeDiscountCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBeforeDiscountCep(v)
+		return nil
+	case rechargecampaignruleoversea.FieldDiscountRatio:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDiscountRatio(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RechargeCampaignRuleOversea field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldUpdatedBy)
+	}
+	if m.adddollar_price != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldDollarPrice)
+	}
+	if m.addrmb_price != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldRmbPrice)
+	}
+	if m.addoriginal_rmb_price != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldOriginalRmbPrice)
+	}
+	if m.addtotal_cep != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldTotalCep)
+	}
+	if m.addbefore_discount_cep != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldBeforeDiscountCep)
+	}
+	if m.adddiscount_ratio != nil {
+		fields = append(fields, rechargecampaignruleoversea.FieldDiscountRatio)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *RechargeCampaignRuleOverseaMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case rechargecampaignruleoversea.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case rechargecampaignruleoversea.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case rechargecampaignruleoversea.FieldDollarPrice:
+		return m.AddedDollarPrice()
+	case rechargecampaignruleoversea.FieldRmbPrice:
+		return m.AddedRmbPrice()
+	case rechargecampaignruleoversea.FieldOriginalRmbPrice:
+		return m.AddedOriginalRmbPrice()
+	case rechargecampaignruleoversea.FieldTotalCep:
+		return m.AddedTotalCep()
+	case rechargecampaignruleoversea.FieldBeforeDiscountCep:
+		return m.AddedBeforeDiscountCep()
+	case rechargecampaignruleoversea.FieldDiscountRatio:
+		return m.AddedDiscountRatio()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RechargeCampaignRuleOverseaMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case rechargecampaignruleoversea.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case rechargecampaignruleoversea.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case rechargecampaignruleoversea.FieldDollarPrice:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDollarPrice(v)
+		return nil
+	case rechargecampaignruleoversea.FieldRmbPrice:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRmbPrice(v)
+		return nil
+	case rechargecampaignruleoversea.FieldOriginalRmbPrice:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddOriginalRmbPrice(v)
+		return nil
+	case rechargecampaignruleoversea.FieldTotalCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTotalCep(v)
+		return nil
+	case rechargecampaignruleoversea.FieldBeforeDiscountCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBeforeDiscountCep(v)
+		return nil
+	case rechargecampaignruleoversea.FieldDiscountRatio:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDiscountRatio(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RechargeCampaignRuleOversea numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *RechargeCampaignRuleOverseaMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *RechargeCampaignRuleOverseaMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown RechargeCampaignRuleOversea nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *RechargeCampaignRuleOverseaMutation) ResetField(name string) error {
+	switch name {
+	case rechargecampaignruleoversea.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case rechargecampaignruleoversea.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case rechargecampaignruleoversea.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case rechargecampaignruleoversea.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case rechargecampaignruleoversea.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case rechargecampaignruleoversea.FieldDollarPrice:
+		m.ResetDollarPrice()
+		return nil
+	case rechargecampaignruleoversea.FieldRmbPrice:
+		m.ResetRmbPrice()
+		return nil
+	case rechargecampaignruleoversea.FieldOriginalRmbPrice:
+		m.ResetOriginalRmbPrice()
+		return nil
+	case rechargecampaignruleoversea.FieldTotalCep:
+		m.ResetTotalCep()
+		return nil
+	case rechargecampaignruleoversea.FieldBeforeDiscountCep:
+		m.ResetBeforeDiscountCep()
+		return nil
+	case rechargecampaignruleoversea.FieldDiscountRatio:
+		m.ResetDiscountRatio()
+		return nil
+	}
+	return fmt.Errorf("unknown RechargeCampaignRuleOversea field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *RechargeCampaignRuleOverseaMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *RechargeCampaignRuleOverseaMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown RechargeCampaignRuleOversea unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *RechargeCampaignRuleOverseaMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown RechargeCampaignRuleOversea edge %s", name)
 }
 
 // RechargeOrderMutation represents an operation that mutates the RechargeOrder nodes in the graph.
