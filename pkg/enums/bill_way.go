@@ -6,6 +6,7 @@ const (
 	BillWayUnknown                        BillWay = "unknown"
 	BillWayRechargeWechat                 BillWay = "recharge_wechat"
 	BillWayRechargeAlipay                 BillWay = "recharge_alipay"
+	BillWayRechargeTron                   BillWay = "recharge_tron" // TRON 链支付
 	BillWayMissionTime                    BillWay = "mission_time"
 	BillWayMissionTimePlanHour            BillWay = "mission_time_plan_hour"
 	BillWayMissionTimePlanDay             BillWay = "mission_time_plan_day"
@@ -57,6 +58,7 @@ func (BillWay) Values() []string {
 		string(BillWayUnknown),
 		string(BillWayRechargeWechat),
 		string(BillWayRechargeAlipay),
+		string(BillWayRechargeTron),
 		string(BillWayMissionTime),
 		string(BillWayMissionTimePlanHour),
 		string(BillWayMissionTimePlanDay),
