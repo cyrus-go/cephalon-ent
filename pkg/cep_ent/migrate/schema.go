@@ -1088,6 +1088,23 @@ var (
 		Columns:    GpusColumns,
 		PrimaryKey: []*schema.Column{GpusColumns[0]},
 	}
+	// GpuPeaksColumns holds the columns for the "gpu_peaks" table.
+	GpuPeaksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "RTX4090D", "A800", "A100", "V100", "ComputilityKing-I", "Ascend910ProB", "P40"}, Default: "RTX2060"},
+		{Name: "peak", Type: field.TypeInt, Comment: "每日同时占用峰值", Default: 0},
+	}
+	// GpuPeaksTable holds the schema information for the "gpu_peaks" table.
+	GpuPeaksTable = &schema.Table{
+		Name:       "gpu_peaks",
+		Columns:    GpuPeaksColumns,
+		PrimaryKey: []*schema.Column{GpuPeaksColumns[0]},
+	}
 	// HmacKeyPairsColumns holds the columns for the "hmac_key_pairs" table.
 	HmacKeyPairsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -3226,6 +3243,7 @@ var (
 		FrpsInfosTable,
 		GiftMissionConfigsTable,
 		GpusTable,
+		GpuPeaksTable,
 		HmacKeyPairsTable,
 		IncomeManagesTable,
 		InputLogsTable,
@@ -3351,6 +3369,7 @@ func init() {
 	FrpsInfosTable.Annotation = &entsql.Annotation{}
 	GiftMissionConfigsTable.Annotation = &entsql.Annotation{}
 	GpusTable.Annotation = &entsql.Annotation{}
+	GpuPeaksTable.Annotation = &entsql.Annotation{}
 	HmacKeyPairsTable.Annotation = &entsql.Annotation{}
 	IncomeManagesTable.ForeignKeys[0].RefTable = UsersTable
 	IncomeManagesTable.ForeignKeys[1].RefTable = UsersTable

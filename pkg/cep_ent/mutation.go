@@ -37,6 +37,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/giftmissionconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpupeak"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
@@ -125,6 +126,7 @@ const (
 	TypeFrpsInfo                    = "FrpsInfo"
 	TypeGiftMissionConfig           = "GiftMissionConfig"
 	TypeGpu                         = "Gpu"
+	TypeGpuPeak                     = "GpuPeak"
 	TypeHmacKeyPair                 = "HmacKeyPair"
 	TypeIncomeManage                = "IncomeManage"
 	TypeInputLog                    = "InputLog"
@@ -33316,6 +33318,764 @@ func (m *GpuMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Gpu edge %s", name)
+}
+
+// GpuPeakMutation represents an operation that mutates the GpuPeak nodes in the graph.
+type GpuPeakMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int64
+	created_by    *int64
+	addcreated_by *int64
+	updated_by    *int64
+	addupdated_by *int64
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	version       *enums.GpuVersion
+	peak          *int
+	addpeak       *int
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*GpuPeak, error)
+	predicates    []predicate.GpuPeak
+}
+
+var _ ent.Mutation = (*GpuPeakMutation)(nil)
+
+// gpupeakOption allows management of the mutation configuration using functional options.
+type gpupeakOption func(*GpuPeakMutation)
+
+// newGpuPeakMutation creates new mutation for the GpuPeak entity.
+func newGpuPeakMutation(c config, op Op, opts ...gpupeakOption) *GpuPeakMutation {
+	m := &GpuPeakMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeGpuPeak,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withGpuPeakID sets the ID field of the mutation.
+func withGpuPeakID(id int64) gpupeakOption {
+	return func(m *GpuPeakMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *GpuPeak
+		)
+		m.oldValue = func(ctx context.Context) (*GpuPeak, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().GpuPeak.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withGpuPeak sets the old GpuPeak of the mutation.
+func withGpuPeak(node *GpuPeak) gpupeakOption {
+	return func(m *GpuPeakMutation) {
+		m.oldValue = func(context.Context) (*GpuPeak, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m GpuPeakMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m GpuPeakMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of GpuPeak entities.
+func (m *GpuPeakMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *GpuPeakMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *GpuPeakMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().GpuPeak.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *GpuPeakMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *GpuPeakMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the GpuPeak entity.
+// If the GpuPeak object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuPeakMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *GpuPeakMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *GpuPeakMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *GpuPeakMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *GpuPeakMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *GpuPeakMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the GpuPeak entity.
+// If the GpuPeak object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuPeakMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *GpuPeakMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *GpuPeakMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *GpuPeakMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *GpuPeakMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *GpuPeakMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the GpuPeak entity.
+// If the GpuPeak object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuPeakMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *GpuPeakMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *GpuPeakMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *GpuPeakMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the GpuPeak entity.
+// If the GpuPeak object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuPeakMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *GpuPeakMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *GpuPeakMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *GpuPeakMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the GpuPeak entity.
+// If the GpuPeak object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuPeakMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *GpuPeakMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetVersion sets the "version" field.
+func (m *GpuPeakMutation) SetVersion(ev enums.GpuVersion) {
+	m.version = &ev
+}
+
+// Version returns the value of the "version" field in the mutation.
+func (m *GpuPeakMutation) Version() (r enums.GpuVersion, exists bool) {
+	v := m.version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersion returns the old "version" field's value of the GpuPeak entity.
+// If the GpuPeak object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuPeakMutation) OldVersion(ctx context.Context) (v enums.GpuVersion, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+	}
+	return oldValue.Version, nil
+}
+
+// ResetVersion resets all changes to the "version" field.
+func (m *GpuPeakMutation) ResetVersion() {
+	m.version = nil
+}
+
+// SetPeak sets the "peak" field.
+func (m *GpuPeakMutation) SetPeak(i int) {
+	m.peak = &i
+	m.addpeak = nil
+}
+
+// Peak returns the value of the "peak" field in the mutation.
+func (m *GpuPeakMutation) Peak() (r int, exists bool) {
+	v := m.peak
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPeak returns the old "peak" field's value of the GpuPeak entity.
+// If the GpuPeak object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuPeakMutation) OldPeak(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPeak is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPeak requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPeak: %w", err)
+	}
+	return oldValue.Peak, nil
+}
+
+// AddPeak adds i to the "peak" field.
+func (m *GpuPeakMutation) AddPeak(i int) {
+	if m.addpeak != nil {
+		*m.addpeak += i
+	} else {
+		m.addpeak = &i
+	}
+}
+
+// AddedPeak returns the value that was added to the "peak" field in this mutation.
+func (m *GpuPeakMutation) AddedPeak() (r int, exists bool) {
+	v := m.addpeak
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPeak resets all changes to the "peak" field.
+func (m *GpuPeakMutation) ResetPeak() {
+	m.peak = nil
+	m.addpeak = nil
+}
+
+// Where appends a list predicates to the GpuPeakMutation builder.
+func (m *GpuPeakMutation) Where(ps ...predicate.GpuPeak) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the GpuPeakMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *GpuPeakMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.GpuPeak, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *GpuPeakMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *GpuPeakMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (GpuPeak).
+func (m *GpuPeakMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *GpuPeakMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_by != nil {
+		fields = append(fields, gpupeak.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, gpupeak.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, gpupeak.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, gpupeak.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, gpupeak.FieldDeletedAt)
+	}
+	if m.version != nil {
+		fields = append(fields, gpupeak.FieldVersion)
+	}
+	if m.peak != nil {
+		fields = append(fields, gpupeak.FieldPeak)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *GpuPeakMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case gpupeak.FieldCreatedBy:
+		return m.CreatedBy()
+	case gpupeak.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case gpupeak.FieldCreatedAt:
+		return m.CreatedAt()
+	case gpupeak.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case gpupeak.FieldDeletedAt:
+		return m.DeletedAt()
+	case gpupeak.FieldVersion:
+		return m.Version()
+	case gpupeak.FieldPeak:
+		return m.Peak()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *GpuPeakMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case gpupeak.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case gpupeak.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case gpupeak.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case gpupeak.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case gpupeak.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case gpupeak.FieldVersion:
+		return m.OldVersion(ctx)
+	case gpupeak.FieldPeak:
+		return m.OldPeak(ctx)
+	}
+	return nil, fmt.Errorf("unknown GpuPeak field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *GpuPeakMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case gpupeak.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case gpupeak.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case gpupeak.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case gpupeak.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case gpupeak.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case gpupeak.FieldVersion:
+		v, ok := value.(enums.GpuVersion)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersion(v)
+		return nil
+	case gpupeak.FieldPeak:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPeak(v)
+		return nil
+	}
+	return fmt.Errorf("unknown GpuPeak field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *GpuPeakMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, gpupeak.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, gpupeak.FieldUpdatedBy)
+	}
+	if m.addpeak != nil {
+		fields = append(fields, gpupeak.FieldPeak)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *GpuPeakMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case gpupeak.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case gpupeak.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case gpupeak.FieldPeak:
+		return m.AddedPeak()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *GpuPeakMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case gpupeak.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case gpupeak.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case gpupeak.FieldPeak:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPeak(v)
+		return nil
+	}
+	return fmt.Errorf("unknown GpuPeak numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *GpuPeakMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *GpuPeakMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *GpuPeakMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown GpuPeak nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *GpuPeakMutation) ResetField(name string) error {
+	switch name {
+	case gpupeak.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case gpupeak.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case gpupeak.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case gpupeak.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case gpupeak.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case gpupeak.FieldVersion:
+		m.ResetVersion()
+		return nil
+	case gpupeak.FieldPeak:
+		m.ResetPeak()
+		return nil
+	}
+	return fmt.Errorf("unknown GpuPeak field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *GpuPeakMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *GpuPeakMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *GpuPeakMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *GpuPeakMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *GpuPeakMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *GpuPeakMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *GpuPeakMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown GpuPeak unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *GpuPeakMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown GpuPeak edge %s", name)
 }
 
 // HmacKeyPairMutation represents an operation that mutates the HmacKeyPair nodes in the graph.

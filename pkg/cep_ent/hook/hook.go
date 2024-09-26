@@ -321,6 +321,18 @@ func (f GpuFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.GpuMutation", m)
 }
 
+// The GpuPeakFunc type is an adapter to allow the use of ordinary
+// function as GpuPeak mutator.
+type GpuPeakFunc func(context.Context, *cep_ent.GpuPeakMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GpuPeakFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.GpuPeakMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.GpuPeakMutation", m)
+}
+
 // The HmacKeyPairFunc type is an adapter to allow the use of ordinary
 // function as HmacKeyPair mutator.
 type HmacKeyPairFunc func(context.Context, *cep_ent.HmacKeyPairMutation) (cep_ent.Value, error)

@@ -106,6 +106,9 @@ type GiftMissionConfig func(*sql.Selector)
 // Gpu is the predicate function for gpu builders.
 type Gpu func(*sql.Selector)
 
+// GpuPeak is the predicate function for gpupeak builders.
+type GpuPeak func(*sql.Selector)
+
 // HmacKeyPair is the predicate function for hmackeypair builders.
 type HmacKeyPair func(*sql.Selector)
 

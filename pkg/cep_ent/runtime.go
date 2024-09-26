@@ -32,6 +32,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/giftmissionconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpupeak"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
@@ -1535,6 +1536,41 @@ func init() {
 	gpuDescID := gpuMixinFields0[0].Descriptor()
 	// gpu.DefaultID holds the default value on creation for the id field.
 	gpu.DefaultID = gpuDescID.Default.(func() int64)
+	gpupeakMixin := schema.GpuPeak{}.Mixin()
+	gpupeakMixinFields0 := gpupeakMixin[0].Fields()
+	_ = gpupeakMixinFields0
+	gpupeakFields := schema.GpuPeak{}.Fields()
+	_ = gpupeakFields
+	// gpupeakDescCreatedBy is the schema descriptor for created_by field.
+	gpupeakDescCreatedBy := gpupeakMixinFields0[1].Descriptor()
+	// gpupeak.DefaultCreatedBy holds the default value on creation for the created_by field.
+	gpupeak.DefaultCreatedBy = gpupeakDescCreatedBy.Default.(int64)
+	// gpupeakDescUpdatedBy is the schema descriptor for updated_by field.
+	gpupeakDescUpdatedBy := gpupeakMixinFields0[2].Descriptor()
+	// gpupeak.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	gpupeak.DefaultUpdatedBy = gpupeakDescUpdatedBy.Default.(int64)
+	// gpupeakDescCreatedAt is the schema descriptor for created_at field.
+	gpupeakDescCreatedAt := gpupeakMixinFields0[3].Descriptor()
+	// gpupeak.DefaultCreatedAt holds the default value on creation for the created_at field.
+	gpupeak.DefaultCreatedAt = gpupeakDescCreatedAt.Default.(func() time.Time)
+	// gpupeakDescUpdatedAt is the schema descriptor for updated_at field.
+	gpupeakDescUpdatedAt := gpupeakMixinFields0[4].Descriptor()
+	// gpupeak.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	gpupeak.DefaultUpdatedAt = gpupeakDescUpdatedAt.Default.(func() time.Time)
+	// gpupeak.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	gpupeak.UpdateDefaultUpdatedAt = gpupeakDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// gpupeakDescDeletedAt is the schema descriptor for deleted_at field.
+	gpupeakDescDeletedAt := gpupeakMixinFields0[5].Descriptor()
+	// gpupeak.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	gpupeak.DefaultDeletedAt = gpupeakDescDeletedAt.Default.(time.Time)
+	// gpupeakDescPeak is the schema descriptor for peak field.
+	gpupeakDescPeak := gpupeakFields[1].Descriptor()
+	// gpupeak.DefaultPeak holds the default value on creation for the peak field.
+	gpupeak.DefaultPeak = gpupeakDescPeak.Default.(int)
+	// gpupeakDescID is the schema descriptor for id field.
+	gpupeakDescID := gpupeakMixinFields0[0].Descriptor()
+	// gpupeak.DefaultID holds the default value on creation for the id field.
+	gpupeak.DefaultID = gpupeakDescID.Default.(func() int64)
 	hmackeypairMixin := schema.HmacKeyPair{}.Mixin()
 	hmackeypairMixinFields0 := hmackeypairMixin[0].Fields()
 	_ = hmackeypairMixinFields0

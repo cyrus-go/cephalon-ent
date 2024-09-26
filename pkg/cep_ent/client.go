@@ -41,6 +41,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/giftmissionconfig"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpupeak"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
@@ -149,6 +150,8 @@ type Client struct {
 	GiftMissionConfig *GiftMissionConfigClient
 	// Gpu is the client for interacting with the Gpu builders.
 	Gpu *GpuClient
+	// GpuPeak is the client for interacting with the GpuPeak builders.
+	GpuPeak *GpuPeakClient
 	// HmacKeyPair is the client for interacting with the HmacKeyPair builders.
 	HmacKeyPair *HmacKeyPairClient
 	// IncomeManage is the client for interacting with the IncomeManage builders.
@@ -286,6 +289,7 @@ func (c *Client) init() {
 	c.FrpsInfo = NewFrpsInfoClient(c.config)
 	c.GiftMissionConfig = NewGiftMissionConfigClient(c.config)
 	c.Gpu = NewGpuClient(c.config)
+	c.GpuPeak = NewGpuPeakClient(c.config)
 	c.HmacKeyPair = NewHmacKeyPairClient(c.config)
 	c.IncomeManage = NewIncomeManageClient(c.config)
 	c.InputLog = NewInputLogClient(c.config)
@@ -446,6 +450,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		FrpsInfo:                    NewFrpsInfoClient(cfg),
 		GiftMissionConfig:           NewGiftMissionConfigClient(cfg),
 		Gpu:                         NewGpuClient(cfg),
+		GpuPeak:                     NewGpuPeakClient(cfg),
 		HmacKeyPair:                 NewHmacKeyPairClient(cfg),
 		IncomeManage:                NewIncomeManageClient(cfg),
 		InputLog:                    NewInputLogClient(cfg),
@@ -540,6 +545,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		FrpsInfo:                    NewFrpsInfoClient(cfg),
 		GiftMissionConfig:           NewGiftMissionConfigClient(cfg),
 		Gpu:                         NewGpuClient(cfg),
+		GpuPeak:                     NewGpuPeakClient(cfg),
 		HmacKeyPair:                 NewHmacKeyPairClient(cfg),
 		IncomeManage:                NewIncomeManageClient(cfg),
 		InputLog:                    NewInputLogClient(cfg),
@@ -623,14 +629,14 @@ func (c *Client) Use(hooks ...Hook) {
 		c.DeviceGpuMission, c.DeviceOfflineRecord, c.DeviceRebootTime, c.DeviceState,
 		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.ExtraService,
 		c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo,
-		c.GiftMissionConfig, c.Gpu, c.HmacKeyPair, c.IncomeManage, c.InputLog,
-		c.Invite, c.InvokeModelOrder, c.LoginRecord, c.Lotto, c.LottoChanceRule,
-		c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord, c.LottoUserCount,
-		c.Mission, c.MissionBatch, c.MissionCategory, c.MissionConsumeOrder,
-		c.MissionExtraService, c.MissionFailedFeedback, c.MissionKeyPair,
-		c.MissionKind, c.MissionOrder, c.MissionProduceOrder, c.MissionProduction,
-		c.Model, c.ModelPrice, c.OutputLog, c.PlatformAccount, c.Price,
-		c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
+		c.GiftMissionConfig, c.Gpu, c.GpuPeak, c.HmacKeyPair, c.IncomeManage,
+		c.InputLog, c.Invite, c.InvokeModelOrder, c.LoginRecord, c.Lotto,
+		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
+		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
+		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
+		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
+		c.MissionProduction, c.Model, c.ModelPrice, c.OutputLog, c.PlatformAccount,
+		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
 		c.RechargeCampaignRuleOversea, c.RechargeOrder, c.RenewalAgreement, c.Survey,
 		c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol, c.TransferOrder,
 		c.TroubleDeduct, c.User, c.UserDevice, c.UserModel, c.VXAccount, c.VXSocial,
@@ -649,14 +655,14 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.DeviceGpuMission, c.DeviceOfflineRecord, c.DeviceRebootTime, c.DeviceState,
 		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.ExtraService,
 		c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo,
-		c.GiftMissionConfig, c.Gpu, c.HmacKeyPair, c.IncomeManage, c.InputLog,
-		c.Invite, c.InvokeModelOrder, c.LoginRecord, c.Lotto, c.LottoChanceRule,
-		c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord, c.LottoUserCount,
-		c.Mission, c.MissionBatch, c.MissionCategory, c.MissionConsumeOrder,
-		c.MissionExtraService, c.MissionFailedFeedback, c.MissionKeyPair,
-		c.MissionKind, c.MissionOrder, c.MissionProduceOrder, c.MissionProduction,
-		c.Model, c.ModelPrice, c.OutputLog, c.PlatformAccount, c.Price,
-		c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
+		c.GiftMissionConfig, c.Gpu, c.GpuPeak, c.HmacKeyPair, c.IncomeManage,
+		c.InputLog, c.Invite, c.InvokeModelOrder, c.LoginRecord, c.Lotto,
+		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
+		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
+		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
+		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
+		c.MissionProduction, c.Model, c.ModelPrice, c.OutputLog, c.PlatformAccount,
+		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
 		c.RechargeCampaignRuleOversea, c.RechargeOrder, c.RenewalAgreement, c.Survey,
 		c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol, c.TransferOrder,
 		c.TroubleDeduct, c.User, c.UserDevice, c.UserModel, c.VXAccount, c.VXSocial,
@@ -721,6 +727,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.GiftMissionConfig.mutate(ctx, m)
 	case *GpuMutation:
 		return c.Gpu.mutate(ctx, m)
+	case *GpuPeakMutation:
+		return c.GpuPeak.mutate(ctx, m)
 	case *HmacKeyPairMutation:
 		return c.HmacKeyPair.mutate(ctx, m)
 	case *IncomeManageMutation:
@@ -5367,6 +5375,139 @@ func (c *GpuClient) mutate(ctx context.Context, m *GpuMutation) (Value, error) {
 		return (&GpuDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown Gpu mutation op: %q", m.Op())
+	}
+}
+
+// GpuPeakClient is a client for the GpuPeak schema.
+type GpuPeakClient struct {
+	config
+}
+
+// NewGpuPeakClient returns a client for the GpuPeak from the given config.
+func NewGpuPeakClient(c config) *GpuPeakClient {
+	return &GpuPeakClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `gpupeak.Hooks(f(g(h())))`.
+func (c *GpuPeakClient) Use(hooks ...Hook) {
+	c.hooks.GpuPeak = append(c.hooks.GpuPeak, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `gpupeak.Intercept(f(g(h())))`.
+func (c *GpuPeakClient) Intercept(interceptors ...Interceptor) {
+	c.inters.GpuPeak = append(c.inters.GpuPeak, interceptors...)
+}
+
+// Create returns a builder for creating a GpuPeak entity.
+func (c *GpuPeakClient) Create() *GpuPeakCreate {
+	mutation := newGpuPeakMutation(c.config, OpCreate)
+	return &GpuPeakCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of GpuPeak entities.
+func (c *GpuPeakClient) CreateBulk(builders ...*GpuPeakCreate) *GpuPeakCreateBulk {
+	return &GpuPeakCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *GpuPeakClient) MapCreateBulk(slice any, setFunc func(*GpuPeakCreate, int)) *GpuPeakCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &GpuPeakCreateBulk{err: fmt.Errorf("calling to GpuPeakClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*GpuPeakCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &GpuPeakCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for GpuPeak.
+func (c *GpuPeakClient) Update() *GpuPeakUpdate {
+	mutation := newGpuPeakMutation(c.config, OpUpdate)
+	return &GpuPeakUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *GpuPeakClient) UpdateOne(gp *GpuPeak) *GpuPeakUpdateOne {
+	mutation := newGpuPeakMutation(c.config, OpUpdateOne, withGpuPeak(gp))
+	return &GpuPeakUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *GpuPeakClient) UpdateOneID(id int64) *GpuPeakUpdateOne {
+	mutation := newGpuPeakMutation(c.config, OpUpdateOne, withGpuPeakID(id))
+	return &GpuPeakUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for GpuPeak.
+func (c *GpuPeakClient) Delete() *GpuPeakDelete {
+	mutation := newGpuPeakMutation(c.config, OpDelete)
+	return &GpuPeakDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *GpuPeakClient) DeleteOne(gp *GpuPeak) *GpuPeakDeleteOne {
+	return c.DeleteOneID(gp.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *GpuPeakClient) DeleteOneID(id int64) *GpuPeakDeleteOne {
+	builder := c.Delete().Where(gpupeak.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &GpuPeakDeleteOne{builder}
+}
+
+// Query returns a query builder for GpuPeak.
+func (c *GpuPeakClient) Query() *GpuPeakQuery {
+	return &GpuPeakQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeGpuPeak},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a GpuPeak entity by its id.
+func (c *GpuPeakClient) Get(ctx context.Context, id int64) (*GpuPeak, error) {
+	return c.Query().Where(gpupeak.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *GpuPeakClient) GetX(ctx context.Context, id int64) *GpuPeak {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *GpuPeakClient) Hooks() []Hook {
+	return c.hooks.GpuPeak
+}
+
+// Interceptors returns the client interceptors.
+func (c *GpuPeakClient) Interceptors() []Interceptor {
+	return c.inters.GpuPeak
+}
+
+func (c *GpuPeakClient) mutate(ctx context.Context, m *GpuPeakMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&GpuPeakCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&GpuPeakUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&GpuPeakUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&GpuPeakDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown GpuPeak mutation op: %q", m.Op())
 	}
 }
 
@@ -14822,7 +14963,7 @@ type (
 		CloudFile, Collect, CostAccount, CostBill, Device, DeviceGpuMission,
 		DeviceOfflineRecord, DeviceRebootTime, DeviceState, EarnBill, EnumCondition,
 		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
-		FrpcInfo, FrpsInfo, GiftMissionConfig, Gpu, HmacKeyPair, IncomeManage,
+		FrpcInfo, FrpsInfo, GiftMissionConfig, Gpu, GpuPeak, HmacKeyPair, IncomeManage,
 		InputLog, Invite, InvokeModelOrder, LoginRecord, Lotto, LottoChanceRule,
 		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
 		MissionBatch, MissionCategory, MissionConsumeOrder, MissionExtraService,
@@ -14839,7 +14980,7 @@ type (
 		CloudFile, Collect, CostAccount, CostBill, Device, DeviceGpuMission,
 		DeviceOfflineRecord, DeviceRebootTime, DeviceState, EarnBill, EnumCondition,
 		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
-		FrpcInfo, FrpsInfo, GiftMissionConfig, Gpu, HmacKeyPair, IncomeManage,
+		FrpcInfo, FrpsInfo, GiftMissionConfig, Gpu, GpuPeak, HmacKeyPair, IncomeManage,
 		InputLog, Invite, InvokeModelOrder, LoginRecord, Lotto, LottoChanceRule,
 		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
 		MissionBatch, MissionCategory, MissionConsumeOrder, MissionExtraService,

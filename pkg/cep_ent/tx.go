@@ -64,6 +64,8 @@ type Tx struct {
 	GiftMissionConfig *GiftMissionConfigClient
 	// Gpu is the client for interacting with the Gpu builders.
 	Gpu *GpuClient
+	// GpuPeak is the client for interacting with the GpuPeak builders.
+	GpuPeak *GpuPeakClient
 	// HmacKeyPair is the client for interacting with the HmacKeyPair builders.
 	HmacKeyPair *HmacKeyPairClient
 	// IncomeManage is the client for interacting with the IncomeManage builders.
@@ -319,6 +321,7 @@ func (tx *Tx) init() {
 	tx.FrpsInfo = NewFrpsInfoClient(tx.config)
 	tx.GiftMissionConfig = NewGiftMissionConfigClient(tx.config)
 	tx.Gpu = NewGpuClient(tx.config)
+	tx.GpuPeak = NewGpuPeakClient(tx.config)
 	tx.HmacKeyPair = NewHmacKeyPairClient(tx.config)
 	tx.IncomeManage = NewIncomeManageClient(tx.config)
 	tx.InputLog = NewInputLogClient(tx.config)
