@@ -39,10 +39,13 @@ const (
 	MissionTypeSdLangTime         MissionType = "sd_lang_time"
 	MissionTypeSdZhiDaoTime       MissionType = "sd_zhi_dao_time"
 	MissionTypeComfyuiKeTime      MissionType = "comfyui_ke_time"
+	MissionTypeComfyuiAShuoTime   MissionType = "comfyui_a_shuo_time"
+	MissionTypeComfyuiJiaMingTime MissionType = "comfyui_jia_ming_time"
 	MissionTypeChatchatTime       MissionType = "chatchat_time"
 	MissionTypeChatTTSTime        MissionType = "chat_tts_time"
 	MissionTypeLoraTime           MissionType = "lora_time"
 	MissionTypeLoraFluxTime       MissionType = "lora_flux_time"
+	MissionTypeLoraFluxGymTime    MissionType = "lora_flux_gym_time"
 	MissionTypeFooocusWuTime      MissionType = "fooocus_wu_time"
 	MissionTypeSvdBackTime        MissionType = "svd_back_time"
 	MissionTypeSdJiTime           MissionType = "sd_ji_time"
@@ -58,7 +61,7 @@ const (
 	MissionTypeComfyuiStarTime    MissionType = "comfyui_star_time"
 	MissionTypeWaitingTime        MissionType = "waiting_time"     // 等待任务
 	MissionTypeWaitingAlTime      MissionType = "waiting_al_time"  // 等待任务
-	MissionTypeOpenCLTime         MissionType = "opencl_core_time" //监控任务 不需要显卡
+	MissionTypeOpenCLTime         MissionType = "opencl_core_time" // 监控任务 不需要显卡
 	MissionTypeIOPaintTime        MissionType = "io_paint_time"
 
 	MissionTypeSdTimePlan             MissionType = "sd_time_plan"
@@ -91,10 +94,13 @@ const (
 	MissionTypeSdLangTimePlan         MissionType = "sd_lang_time_plan"
 	MissionTypeSdZhiDaoTimePlan       MissionType = "sd_zhi_dao_time_plan"
 	MissionTypeComfyuiKeTimePlan      MissionType = "comfyui_ke_time_plan"
+	MissionTypeComfyuiAShuoTimePlan   MissionType = "comfyui_a_shuo_time_plan"
+	MissionTypeComfyuiJiaMingTimePlan MissionType = "comfyui_jia_ming_time_plan"
 	MissionTypeChatchatTimePlan       MissionType = "chatchat_time_plan"
 	MissionTypeChatTTSTimePlan        MissionType = "chat_tts_time_plan"
 	MissionTypeLoraTimePlan           MissionType = "lora_time_plan"
 	MissionTypeLoraFluxTimePlan       MissionType = "lora_flux_time_plan"
+	MissionTypeLoraFluxGymTimePlan    MissionType = "lora_flux_gym_time_plan"
 	MissionTypeFooocusWuTimePlan      MissionType = "fooocus_wu_time_plan"
 	MissionTypeSvdBackTimePlan        MissionType = "svd_back_time_plan"
 	MissionTypeSdJiTimePlan           MissionType = "sd_ji_time_plan"
@@ -110,7 +116,7 @@ const (
 	MissionTypeComfyuiStarTimePlan    MissionType = "comfyui_star_time_plan"
 	MissionTypeWaitingTimePlan        MissionType = "waiting_time_plan"     // 等待任务
 	MissionTypeWaitingAlTimePlan      MissionType = "waiting_al_time_plan"  // 等待任务
-	MissionTypeOpenCLTimePlan         MissionType = "opencl_core_time_plan" //监控任务 不需要显卡
+	MissionTypeOpenCLTimePlan         MissionType = "opencl_core_time_plan" // 监控任务 不需要显卡
 	MissionTypeIOPaintTimePlan        MissionType = "io_paint_time_plan"
 )
 
@@ -182,6 +188,10 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeSdZhiDaoTimePlan),
 		string(MissionTypeComfyuiKeTime),
 		string(MissionTypeComfyuiKeTimePlan),
+		string(MissionTypeComfyuiAShuoTime),
+		string(MissionTypeComfyuiAShuoTimePlan),
+		string(MissionTypeComfyuiJiaMingTime),
+		string(MissionTypeComfyuiJiaMingTimePlan),
 		string(MissionTypeChatchatTime),
 		string(MissionTypeChatchatTimePlan),
 		string(MissionTypeChatTTSTime),
@@ -190,6 +200,8 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeLoraTimePlan),
 		string(MissionTypeLoraFluxTime),
 		string(MissionTypeLoraFluxTimePlan),
+		string(MissionTypeLoraFluxGymTime),
+		string(MissionTypeLoraFluxGymTimePlan),
 		string(MissionTypeFooocusWuTime),
 		string(MissionTypeFooocusWuTimePlan),
 		string(MissionTypeSvdBackTime),
