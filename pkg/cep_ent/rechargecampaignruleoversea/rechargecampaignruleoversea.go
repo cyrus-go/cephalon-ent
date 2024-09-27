@@ -79,11 +79,11 @@ var (
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt time.Time
 	// DefaultDollarPrice holds the default value on creation for the "dollar_price" field.
-	DefaultDollarPrice float64
+	DefaultDollarPrice string
 	// DefaultRmbPrice holds the default value on creation for the "rmb_price" field.
-	DefaultRmbPrice float64
+	DefaultRmbPrice string
 	// DefaultOriginalRmbPrice holds the default value on creation for the "original_rmb_price" field.
-	DefaultOriginalRmbPrice float64
+	DefaultOriginalRmbPrice string
 	// DefaultTotalCep holds the default value on creation for the "total_cep" field.
 	DefaultTotalCep int64
 	// DefaultBeforeDiscountCep holds the default value on creation for the "before_discount_cep" field.

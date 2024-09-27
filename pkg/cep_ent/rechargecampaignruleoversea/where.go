@@ -80,17 +80,17 @@ func DeletedAt(v time.Time) predicate.RechargeCampaignRuleOversea {
 }
 
 // DollarPrice applies equality check predicate on the "dollar_price" field. It's identical to DollarPriceEQ.
-func DollarPrice(v float64) predicate.RechargeCampaignRuleOversea {
+func DollarPrice(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldEQ(FieldDollarPrice, v))
 }
 
 // RmbPrice applies equality check predicate on the "rmb_price" field. It's identical to RmbPriceEQ.
-func RmbPrice(v float64) predicate.RechargeCampaignRuleOversea {
+func RmbPrice(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldEQ(FieldRmbPrice, v))
 }
 
 // OriginalRmbPrice applies equality check predicate on the "original_rmb_price" field. It's identical to OriginalRmbPriceEQ.
-func OriginalRmbPrice(v float64) predicate.RechargeCampaignRuleOversea {
+func OriginalRmbPrice(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldEQ(FieldOriginalRmbPrice, v))
 }
 
@@ -310,123 +310,198 @@ func DeletedAtLTE(v time.Time) predicate.RechargeCampaignRuleOversea {
 }
 
 // DollarPriceEQ applies the EQ predicate on the "dollar_price" field.
-func DollarPriceEQ(v float64) predicate.RechargeCampaignRuleOversea {
+func DollarPriceEQ(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldEQ(FieldDollarPrice, v))
 }
 
 // DollarPriceNEQ applies the NEQ predicate on the "dollar_price" field.
-func DollarPriceNEQ(v float64) predicate.RechargeCampaignRuleOversea {
+func DollarPriceNEQ(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldNEQ(FieldDollarPrice, v))
 }
 
 // DollarPriceIn applies the In predicate on the "dollar_price" field.
-func DollarPriceIn(vs ...float64) predicate.RechargeCampaignRuleOversea {
+func DollarPriceIn(vs ...string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldIn(FieldDollarPrice, vs...))
 }
 
 // DollarPriceNotIn applies the NotIn predicate on the "dollar_price" field.
-func DollarPriceNotIn(vs ...float64) predicate.RechargeCampaignRuleOversea {
+func DollarPriceNotIn(vs ...string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldNotIn(FieldDollarPrice, vs...))
 }
 
 // DollarPriceGT applies the GT predicate on the "dollar_price" field.
-func DollarPriceGT(v float64) predicate.RechargeCampaignRuleOversea {
+func DollarPriceGT(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldGT(FieldDollarPrice, v))
 }
 
 // DollarPriceGTE applies the GTE predicate on the "dollar_price" field.
-func DollarPriceGTE(v float64) predicate.RechargeCampaignRuleOversea {
+func DollarPriceGTE(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldGTE(FieldDollarPrice, v))
 }
 
 // DollarPriceLT applies the LT predicate on the "dollar_price" field.
-func DollarPriceLT(v float64) predicate.RechargeCampaignRuleOversea {
+func DollarPriceLT(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldLT(FieldDollarPrice, v))
 }
 
 // DollarPriceLTE applies the LTE predicate on the "dollar_price" field.
-func DollarPriceLTE(v float64) predicate.RechargeCampaignRuleOversea {
+func DollarPriceLTE(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldLTE(FieldDollarPrice, v))
 }
 
+// DollarPriceContains applies the Contains predicate on the "dollar_price" field.
+func DollarPriceContains(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldContains(FieldDollarPrice, v))
+}
+
+// DollarPriceHasPrefix applies the HasPrefix predicate on the "dollar_price" field.
+func DollarPriceHasPrefix(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldHasPrefix(FieldDollarPrice, v))
+}
+
+// DollarPriceHasSuffix applies the HasSuffix predicate on the "dollar_price" field.
+func DollarPriceHasSuffix(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldHasSuffix(FieldDollarPrice, v))
+}
+
+// DollarPriceEqualFold applies the EqualFold predicate on the "dollar_price" field.
+func DollarPriceEqualFold(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldEqualFold(FieldDollarPrice, v))
+}
+
+// DollarPriceContainsFold applies the ContainsFold predicate on the "dollar_price" field.
+func DollarPriceContainsFold(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldContainsFold(FieldDollarPrice, v))
+}
+
 // RmbPriceEQ applies the EQ predicate on the "rmb_price" field.
-func RmbPriceEQ(v float64) predicate.RechargeCampaignRuleOversea {
+func RmbPriceEQ(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldEQ(FieldRmbPrice, v))
 }
 
 // RmbPriceNEQ applies the NEQ predicate on the "rmb_price" field.
-func RmbPriceNEQ(v float64) predicate.RechargeCampaignRuleOversea {
+func RmbPriceNEQ(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldNEQ(FieldRmbPrice, v))
 }
 
 // RmbPriceIn applies the In predicate on the "rmb_price" field.
-func RmbPriceIn(vs ...float64) predicate.RechargeCampaignRuleOversea {
+func RmbPriceIn(vs ...string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldIn(FieldRmbPrice, vs...))
 }
 
 // RmbPriceNotIn applies the NotIn predicate on the "rmb_price" field.
-func RmbPriceNotIn(vs ...float64) predicate.RechargeCampaignRuleOversea {
+func RmbPriceNotIn(vs ...string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldNotIn(FieldRmbPrice, vs...))
 }
 
 // RmbPriceGT applies the GT predicate on the "rmb_price" field.
-func RmbPriceGT(v float64) predicate.RechargeCampaignRuleOversea {
+func RmbPriceGT(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldGT(FieldRmbPrice, v))
 }
 
 // RmbPriceGTE applies the GTE predicate on the "rmb_price" field.
-func RmbPriceGTE(v float64) predicate.RechargeCampaignRuleOversea {
+func RmbPriceGTE(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldGTE(FieldRmbPrice, v))
 }
 
 // RmbPriceLT applies the LT predicate on the "rmb_price" field.
-func RmbPriceLT(v float64) predicate.RechargeCampaignRuleOversea {
+func RmbPriceLT(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldLT(FieldRmbPrice, v))
 }
 
 // RmbPriceLTE applies the LTE predicate on the "rmb_price" field.
-func RmbPriceLTE(v float64) predicate.RechargeCampaignRuleOversea {
+func RmbPriceLTE(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldLTE(FieldRmbPrice, v))
 }
 
+// RmbPriceContains applies the Contains predicate on the "rmb_price" field.
+func RmbPriceContains(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldContains(FieldRmbPrice, v))
+}
+
+// RmbPriceHasPrefix applies the HasPrefix predicate on the "rmb_price" field.
+func RmbPriceHasPrefix(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldHasPrefix(FieldRmbPrice, v))
+}
+
+// RmbPriceHasSuffix applies the HasSuffix predicate on the "rmb_price" field.
+func RmbPriceHasSuffix(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldHasSuffix(FieldRmbPrice, v))
+}
+
+// RmbPriceEqualFold applies the EqualFold predicate on the "rmb_price" field.
+func RmbPriceEqualFold(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldEqualFold(FieldRmbPrice, v))
+}
+
+// RmbPriceContainsFold applies the ContainsFold predicate on the "rmb_price" field.
+func RmbPriceContainsFold(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldContainsFold(FieldRmbPrice, v))
+}
+
 // OriginalRmbPriceEQ applies the EQ predicate on the "original_rmb_price" field.
-func OriginalRmbPriceEQ(v float64) predicate.RechargeCampaignRuleOversea {
+func OriginalRmbPriceEQ(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldEQ(FieldOriginalRmbPrice, v))
 }
 
 // OriginalRmbPriceNEQ applies the NEQ predicate on the "original_rmb_price" field.
-func OriginalRmbPriceNEQ(v float64) predicate.RechargeCampaignRuleOversea {
+func OriginalRmbPriceNEQ(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldNEQ(FieldOriginalRmbPrice, v))
 }
 
 // OriginalRmbPriceIn applies the In predicate on the "original_rmb_price" field.
-func OriginalRmbPriceIn(vs ...float64) predicate.RechargeCampaignRuleOversea {
+func OriginalRmbPriceIn(vs ...string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldIn(FieldOriginalRmbPrice, vs...))
 }
 
 // OriginalRmbPriceNotIn applies the NotIn predicate on the "original_rmb_price" field.
-func OriginalRmbPriceNotIn(vs ...float64) predicate.RechargeCampaignRuleOversea {
+func OriginalRmbPriceNotIn(vs ...string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldNotIn(FieldOriginalRmbPrice, vs...))
 }
 
 // OriginalRmbPriceGT applies the GT predicate on the "original_rmb_price" field.
-func OriginalRmbPriceGT(v float64) predicate.RechargeCampaignRuleOversea {
+func OriginalRmbPriceGT(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldGT(FieldOriginalRmbPrice, v))
 }
 
 // OriginalRmbPriceGTE applies the GTE predicate on the "original_rmb_price" field.
-func OriginalRmbPriceGTE(v float64) predicate.RechargeCampaignRuleOversea {
+func OriginalRmbPriceGTE(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldGTE(FieldOriginalRmbPrice, v))
 }
 
 // OriginalRmbPriceLT applies the LT predicate on the "original_rmb_price" field.
-func OriginalRmbPriceLT(v float64) predicate.RechargeCampaignRuleOversea {
+func OriginalRmbPriceLT(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldLT(FieldOriginalRmbPrice, v))
 }
 
 // OriginalRmbPriceLTE applies the LTE predicate on the "original_rmb_price" field.
-func OriginalRmbPriceLTE(v float64) predicate.RechargeCampaignRuleOversea {
+func OriginalRmbPriceLTE(v string) predicate.RechargeCampaignRuleOversea {
 	return predicate.RechargeCampaignRuleOversea(sql.FieldLTE(FieldOriginalRmbPrice, v))
+}
+
+// OriginalRmbPriceContains applies the Contains predicate on the "original_rmb_price" field.
+func OriginalRmbPriceContains(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldContains(FieldOriginalRmbPrice, v))
+}
+
+// OriginalRmbPriceHasPrefix applies the HasPrefix predicate on the "original_rmb_price" field.
+func OriginalRmbPriceHasPrefix(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldHasPrefix(FieldOriginalRmbPrice, v))
+}
+
+// OriginalRmbPriceHasSuffix applies the HasSuffix predicate on the "original_rmb_price" field.
+func OriginalRmbPriceHasSuffix(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldHasSuffix(FieldOriginalRmbPrice, v))
+}
+
+// OriginalRmbPriceEqualFold applies the EqualFold predicate on the "original_rmb_price" field.
+func OriginalRmbPriceEqualFold(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldEqualFold(FieldOriginalRmbPrice, v))
+}
+
+// OriginalRmbPriceContainsFold applies the ContainsFold predicate on the "original_rmb_price" field.
+func OriginalRmbPriceContainsFold(v string) predicate.RechargeCampaignRuleOversea {
+	return predicate.RechargeCampaignRuleOversea(sql.FieldContainsFold(FieldOriginalRmbPrice, v))
 }
 
 // TotalCepEQ applies the EQ predicate on the "total_cep" field.

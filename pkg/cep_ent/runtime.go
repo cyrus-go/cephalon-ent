@@ -3284,15 +3284,15 @@ func init() {
 	// rechargecampaignruleoverseaDescDollarPrice is the schema descriptor for dollar_price field.
 	rechargecampaignruleoverseaDescDollarPrice := rechargecampaignruleoverseaFields[0].Descriptor()
 	// rechargecampaignruleoversea.DefaultDollarPrice holds the default value on creation for the dollar_price field.
-	rechargecampaignruleoversea.DefaultDollarPrice = rechargecampaignruleoverseaDescDollarPrice.Default.(float64)
+	rechargecampaignruleoversea.DefaultDollarPrice = rechargecampaignruleoverseaDescDollarPrice.Default.(string)
 	// rechargecampaignruleoverseaDescRmbPrice is the schema descriptor for rmb_price field.
 	rechargecampaignruleoverseaDescRmbPrice := rechargecampaignruleoverseaFields[1].Descriptor()
 	// rechargecampaignruleoversea.DefaultRmbPrice holds the default value on creation for the rmb_price field.
-	rechargecampaignruleoversea.DefaultRmbPrice = rechargecampaignruleoverseaDescRmbPrice.Default.(float64)
+	rechargecampaignruleoversea.DefaultRmbPrice = rechargecampaignruleoverseaDescRmbPrice.Default.(string)
 	// rechargecampaignruleoverseaDescOriginalRmbPrice is the schema descriptor for original_rmb_price field.
 	rechargecampaignruleoverseaDescOriginalRmbPrice := rechargecampaignruleoverseaFields[2].Descriptor()
 	// rechargecampaignruleoversea.DefaultOriginalRmbPrice holds the default value on creation for the original_rmb_price field.
-	rechargecampaignruleoversea.DefaultOriginalRmbPrice = rechargecampaignruleoverseaDescOriginalRmbPrice.Default.(float64)
+	rechargecampaignruleoversea.DefaultOriginalRmbPrice = rechargecampaignruleoverseaDescOriginalRmbPrice.Default.(string)
 	// rechargecampaignruleoverseaDescTotalCep is the schema descriptor for total_cep field.
 	rechargecampaignruleoverseaDescTotalCep := rechargecampaignruleoverseaFields[3].Descriptor()
 	// rechargecampaignruleoversea.DefaultTotalCep holds the default value on creation for the total_cep field.

@@ -28,12 +28,12 @@ type RechargeCampaignRuleOversea struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	// 软删除时刻，带时区
 	DeletedAt time.Time `json:"deleted_at"`
-	// 美元价格
-	DollarPrice float64 `json:"dollar_price"`
+	// 美元价格，为了大数计算，都用字符串存
+	DollarPrice string `json:"dollar_price"`
 	// RMB 价格
-	RmbPrice float64 `json:"rmb_price"`
+	RmbPrice string `json:"rmb_price"`
 	// RMB 原价
-	OriginalRmbPrice float64 `json:"original_rmb_price"`
+	OriginalRmbPrice string `json:"original_rmb_price"`
 	// 总共能获得的脑力值
 	TotalCep int64 `json:"total_cep"`
 	// 优惠前能获得的脑力值
@@ -48,10 +48,10 @@ func (*RechargeCampaignRuleOversea) scanValues(columns []string) ([]any, error) 
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case rechargecampaignruleoversea.FieldDollarPrice, rechargecampaignruleoversea.FieldRmbPrice, rechargecampaignruleoversea.FieldOriginalRmbPrice:
-			values[i] = new(sql.NullFloat64)
 		case rechargecampaignruleoversea.FieldID, rechargecampaignruleoversea.FieldCreatedBy, rechargecampaignruleoversea.FieldUpdatedBy, rechargecampaignruleoversea.FieldTotalCep, rechargecampaignruleoversea.FieldBeforeDiscountCep, rechargecampaignruleoversea.FieldDiscountRatio:
 			values[i] = new(sql.NullInt64)
+		case rechargecampaignruleoversea.FieldDollarPrice, rechargecampaignruleoversea.FieldRmbPrice, rechargecampaignruleoversea.FieldOriginalRmbPrice:
+			values[i] = new(sql.NullString)
 		case rechargecampaignruleoversea.FieldCreatedAt, rechargecampaignruleoversea.FieldUpdatedAt, rechargecampaignruleoversea.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
@@ -106,22 +106,22 @@ func (rcro *RechargeCampaignRuleOversea) assignValues(columns []string, values [
 				rcro.DeletedAt = value.Time
 			}
 		case rechargecampaignruleoversea.FieldDollarPrice:
-			if value, ok := values[i].(*sql.NullFloat64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field dollar_price", values[i])
 			} else if value.Valid {
-				rcro.DollarPrice = value.Float64
+				rcro.DollarPrice = value.String
 			}
 		case rechargecampaignruleoversea.FieldRmbPrice:
-			if value, ok := values[i].(*sql.NullFloat64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field rmb_price", values[i])
 			} else if value.Valid {
-				rcro.RmbPrice = value.Float64
+				rcro.RmbPrice = value.String
 			}
 		case rechargecampaignruleoversea.FieldOriginalRmbPrice:
-			if value, ok := values[i].(*sql.NullFloat64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field original_rmb_price", values[i])
 			} else if value.Valid {
-				rcro.OriginalRmbPrice = value.Float64
+				rcro.OriginalRmbPrice = value.String
 			}
 		case rechargecampaignruleoversea.FieldTotalCep:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -193,13 +193,13 @@ func (rcro *RechargeCampaignRuleOversea) String() string {
 	builder.WriteString(rcro.DeletedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("dollar_price=")
-	builder.WriteString(fmt.Sprintf("%v", rcro.DollarPrice))
+	builder.WriteString(rcro.DollarPrice)
 	builder.WriteString(", ")
 	builder.WriteString("rmb_price=")
-	builder.WriteString(fmt.Sprintf("%v", rcro.RmbPrice))
+	builder.WriteString(rcro.RmbPrice)
 	builder.WriteString(", ")
 	builder.WriteString("original_rmb_price=")
-	builder.WriteString(fmt.Sprintf("%v", rcro.OriginalRmbPrice))
+	builder.WriteString(rcro.OriginalRmbPrice)
 	builder.WriteString(", ")
 	builder.WriteString("total_cep=")
 	builder.WriteString(fmt.Sprintf("%v", rcro.TotalCep))

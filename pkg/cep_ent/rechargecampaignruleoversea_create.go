@@ -93,43 +93,43 @@ func (rcroc *RechargeCampaignRuleOverseaCreate) SetNillableDeletedAt(t *time.Tim
 }
 
 // SetDollarPrice sets the "dollar_price" field.
-func (rcroc *RechargeCampaignRuleOverseaCreate) SetDollarPrice(f float64) *RechargeCampaignRuleOverseaCreate {
-	rcroc.mutation.SetDollarPrice(f)
+func (rcroc *RechargeCampaignRuleOverseaCreate) SetDollarPrice(s string) *RechargeCampaignRuleOverseaCreate {
+	rcroc.mutation.SetDollarPrice(s)
 	return rcroc
 }
 
 // SetNillableDollarPrice sets the "dollar_price" field if the given value is not nil.
-func (rcroc *RechargeCampaignRuleOverseaCreate) SetNillableDollarPrice(f *float64) *RechargeCampaignRuleOverseaCreate {
-	if f != nil {
-		rcroc.SetDollarPrice(*f)
+func (rcroc *RechargeCampaignRuleOverseaCreate) SetNillableDollarPrice(s *string) *RechargeCampaignRuleOverseaCreate {
+	if s != nil {
+		rcroc.SetDollarPrice(*s)
 	}
 	return rcroc
 }
 
 // SetRmbPrice sets the "rmb_price" field.
-func (rcroc *RechargeCampaignRuleOverseaCreate) SetRmbPrice(f float64) *RechargeCampaignRuleOverseaCreate {
-	rcroc.mutation.SetRmbPrice(f)
+func (rcroc *RechargeCampaignRuleOverseaCreate) SetRmbPrice(s string) *RechargeCampaignRuleOverseaCreate {
+	rcroc.mutation.SetRmbPrice(s)
 	return rcroc
 }
 
 // SetNillableRmbPrice sets the "rmb_price" field if the given value is not nil.
-func (rcroc *RechargeCampaignRuleOverseaCreate) SetNillableRmbPrice(f *float64) *RechargeCampaignRuleOverseaCreate {
-	if f != nil {
-		rcroc.SetRmbPrice(*f)
+func (rcroc *RechargeCampaignRuleOverseaCreate) SetNillableRmbPrice(s *string) *RechargeCampaignRuleOverseaCreate {
+	if s != nil {
+		rcroc.SetRmbPrice(*s)
 	}
 	return rcroc
 }
 
 // SetOriginalRmbPrice sets the "original_rmb_price" field.
-func (rcroc *RechargeCampaignRuleOverseaCreate) SetOriginalRmbPrice(f float64) *RechargeCampaignRuleOverseaCreate {
-	rcroc.mutation.SetOriginalRmbPrice(f)
+func (rcroc *RechargeCampaignRuleOverseaCreate) SetOriginalRmbPrice(s string) *RechargeCampaignRuleOverseaCreate {
+	rcroc.mutation.SetOriginalRmbPrice(s)
 	return rcroc
 }
 
 // SetNillableOriginalRmbPrice sets the "original_rmb_price" field if the given value is not nil.
-func (rcroc *RechargeCampaignRuleOverseaCreate) SetNillableOriginalRmbPrice(f *float64) *RechargeCampaignRuleOverseaCreate {
-	if f != nil {
-		rcroc.SetOriginalRmbPrice(*f)
+func (rcroc *RechargeCampaignRuleOverseaCreate) SetNillableOriginalRmbPrice(s *string) *RechargeCampaignRuleOverseaCreate {
+	if s != nil {
+		rcroc.SetOriginalRmbPrice(*s)
 	}
 	return rcroc
 }
@@ -364,15 +364,15 @@ func (rcroc *RechargeCampaignRuleOverseaCreate) createSpec() (*RechargeCampaignR
 		_node.DeletedAt = value
 	}
 	if value, ok := rcroc.mutation.DollarPrice(); ok {
-		_spec.SetField(rechargecampaignruleoversea.FieldDollarPrice, field.TypeFloat64, value)
+		_spec.SetField(rechargecampaignruleoversea.FieldDollarPrice, field.TypeString, value)
 		_node.DollarPrice = value
 	}
 	if value, ok := rcroc.mutation.RmbPrice(); ok {
-		_spec.SetField(rechargecampaignruleoversea.FieldRmbPrice, field.TypeFloat64, value)
+		_spec.SetField(rechargecampaignruleoversea.FieldRmbPrice, field.TypeString, value)
 		_node.RmbPrice = value
 	}
 	if value, ok := rcroc.mutation.OriginalRmbPrice(); ok {
-		_spec.SetField(rechargecampaignruleoversea.FieldOriginalRmbPrice, field.TypeFloat64, value)
+		_spec.SetField(rechargecampaignruleoversea.FieldOriginalRmbPrice, field.TypeString, value)
 		_node.OriginalRmbPrice = value
 	}
 	if value, ok := rcroc.mutation.TotalCep(); ok {
@@ -500,7 +500,7 @@ func (u *RechargeCampaignRuleOverseaUpsert) UpdateDeletedAt() *RechargeCampaignR
 }
 
 // SetDollarPrice sets the "dollar_price" field.
-func (u *RechargeCampaignRuleOverseaUpsert) SetDollarPrice(v float64) *RechargeCampaignRuleOverseaUpsert {
+func (u *RechargeCampaignRuleOverseaUpsert) SetDollarPrice(v string) *RechargeCampaignRuleOverseaUpsert {
 	u.Set(rechargecampaignruleoversea.FieldDollarPrice, v)
 	return u
 }
@@ -511,14 +511,8 @@ func (u *RechargeCampaignRuleOverseaUpsert) UpdateDollarPrice() *RechargeCampaig
 	return u
 }
 
-// AddDollarPrice adds v to the "dollar_price" field.
-func (u *RechargeCampaignRuleOverseaUpsert) AddDollarPrice(v float64) *RechargeCampaignRuleOverseaUpsert {
-	u.Add(rechargecampaignruleoversea.FieldDollarPrice, v)
-	return u
-}
-
 // SetRmbPrice sets the "rmb_price" field.
-func (u *RechargeCampaignRuleOverseaUpsert) SetRmbPrice(v float64) *RechargeCampaignRuleOverseaUpsert {
+func (u *RechargeCampaignRuleOverseaUpsert) SetRmbPrice(v string) *RechargeCampaignRuleOverseaUpsert {
 	u.Set(rechargecampaignruleoversea.FieldRmbPrice, v)
 	return u
 }
@@ -529,14 +523,8 @@ func (u *RechargeCampaignRuleOverseaUpsert) UpdateRmbPrice() *RechargeCampaignRu
 	return u
 }
 
-// AddRmbPrice adds v to the "rmb_price" field.
-func (u *RechargeCampaignRuleOverseaUpsert) AddRmbPrice(v float64) *RechargeCampaignRuleOverseaUpsert {
-	u.Add(rechargecampaignruleoversea.FieldRmbPrice, v)
-	return u
-}
-
 // SetOriginalRmbPrice sets the "original_rmb_price" field.
-func (u *RechargeCampaignRuleOverseaUpsert) SetOriginalRmbPrice(v float64) *RechargeCampaignRuleOverseaUpsert {
+func (u *RechargeCampaignRuleOverseaUpsert) SetOriginalRmbPrice(v string) *RechargeCampaignRuleOverseaUpsert {
 	u.Set(rechargecampaignruleoversea.FieldOriginalRmbPrice, v)
 	return u
 }
@@ -544,12 +532,6 @@ func (u *RechargeCampaignRuleOverseaUpsert) SetOriginalRmbPrice(v float64) *Rech
 // UpdateOriginalRmbPrice sets the "original_rmb_price" field to the value that was provided on create.
 func (u *RechargeCampaignRuleOverseaUpsert) UpdateOriginalRmbPrice() *RechargeCampaignRuleOverseaUpsert {
 	u.SetExcluded(rechargecampaignruleoversea.FieldOriginalRmbPrice)
-	return u
-}
-
-// AddOriginalRmbPrice adds v to the "original_rmb_price" field.
-func (u *RechargeCampaignRuleOverseaUpsert) AddOriginalRmbPrice(v float64) *RechargeCampaignRuleOverseaUpsert {
-	u.Add(rechargecampaignruleoversea.FieldOriginalRmbPrice, v)
 	return u
 }
 
@@ -729,16 +711,9 @@ func (u *RechargeCampaignRuleOverseaUpsertOne) UpdateDeletedAt() *RechargeCampai
 }
 
 // SetDollarPrice sets the "dollar_price" field.
-func (u *RechargeCampaignRuleOverseaUpsertOne) SetDollarPrice(v float64) *RechargeCampaignRuleOverseaUpsertOne {
+func (u *RechargeCampaignRuleOverseaUpsertOne) SetDollarPrice(v string) *RechargeCampaignRuleOverseaUpsertOne {
 	return u.Update(func(s *RechargeCampaignRuleOverseaUpsert) {
 		s.SetDollarPrice(v)
-	})
-}
-
-// AddDollarPrice adds v to the "dollar_price" field.
-func (u *RechargeCampaignRuleOverseaUpsertOne) AddDollarPrice(v float64) *RechargeCampaignRuleOverseaUpsertOne {
-	return u.Update(func(s *RechargeCampaignRuleOverseaUpsert) {
-		s.AddDollarPrice(v)
 	})
 }
 
@@ -750,16 +725,9 @@ func (u *RechargeCampaignRuleOverseaUpsertOne) UpdateDollarPrice() *RechargeCamp
 }
 
 // SetRmbPrice sets the "rmb_price" field.
-func (u *RechargeCampaignRuleOverseaUpsertOne) SetRmbPrice(v float64) *RechargeCampaignRuleOverseaUpsertOne {
+func (u *RechargeCampaignRuleOverseaUpsertOne) SetRmbPrice(v string) *RechargeCampaignRuleOverseaUpsertOne {
 	return u.Update(func(s *RechargeCampaignRuleOverseaUpsert) {
 		s.SetRmbPrice(v)
-	})
-}
-
-// AddRmbPrice adds v to the "rmb_price" field.
-func (u *RechargeCampaignRuleOverseaUpsertOne) AddRmbPrice(v float64) *RechargeCampaignRuleOverseaUpsertOne {
-	return u.Update(func(s *RechargeCampaignRuleOverseaUpsert) {
-		s.AddRmbPrice(v)
 	})
 }
 
@@ -771,16 +739,9 @@ func (u *RechargeCampaignRuleOverseaUpsertOne) UpdateRmbPrice() *RechargeCampaig
 }
 
 // SetOriginalRmbPrice sets the "original_rmb_price" field.
-func (u *RechargeCampaignRuleOverseaUpsertOne) SetOriginalRmbPrice(v float64) *RechargeCampaignRuleOverseaUpsertOne {
+func (u *RechargeCampaignRuleOverseaUpsertOne) SetOriginalRmbPrice(v string) *RechargeCampaignRuleOverseaUpsertOne {
 	return u.Update(func(s *RechargeCampaignRuleOverseaUpsert) {
 		s.SetOriginalRmbPrice(v)
-	})
-}
-
-// AddOriginalRmbPrice adds v to the "original_rmb_price" field.
-func (u *RechargeCampaignRuleOverseaUpsertOne) AddOriginalRmbPrice(v float64) *RechargeCampaignRuleOverseaUpsertOne {
-	return u.Update(func(s *RechargeCampaignRuleOverseaUpsert) {
-		s.AddOriginalRmbPrice(v)
 	})
 }
 
@@ -1142,16 +1103,9 @@ func (u *RechargeCampaignRuleOverseaUpsertBulk) UpdateDeletedAt() *RechargeCampa
 }
 
 // SetDollarPrice sets the "dollar_price" field.
-func (u *RechargeCampaignRuleOverseaUpsertBulk) SetDollarPrice(v float64) *RechargeCampaignRuleOverseaUpsertBulk {
+func (u *RechargeCampaignRuleOverseaUpsertBulk) SetDollarPrice(v string) *RechargeCampaignRuleOverseaUpsertBulk {
 	return u.Update(func(s *RechargeCampaignRuleOverseaUpsert) {
 		s.SetDollarPrice(v)
-	})
-}
-
-// AddDollarPrice adds v to the "dollar_price" field.
-func (u *RechargeCampaignRuleOverseaUpsertBulk) AddDollarPrice(v float64) *RechargeCampaignRuleOverseaUpsertBulk {
-	return u.Update(func(s *RechargeCampaignRuleOverseaUpsert) {
-		s.AddDollarPrice(v)
 	})
 }
 
@@ -1163,16 +1117,9 @@ func (u *RechargeCampaignRuleOverseaUpsertBulk) UpdateDollarPrice() *RechargeCam
 }
 
 // SetRmbPrice sets the "rmb_price" field.
-func (u *RechargeCampaignRuleOverseaUpsertBulk) SetRmbPrice(v float64) *RechargeCampaignRuleOverseaUpsertBulk {
+func (u *RechargeCampaignRuleOverseaUpsertBulk) SetRmbPrice(v string) *RechargeCampaignRuleOverseaUpsertBulk {
 	return u.Update(func(s *RechargeCampaignRuleOverseaUpsert) {
 		s.SetRmbPrice(v)
-	})
-}
-
-// AddRmbPrice adds v to the "rmb_price" field.
-func (u *RechargeCampaignRuleOverseaUpsertBulk) AddRmbPrice(v float64) *RechargeCampaignRuleOverseaUpsertBulk {
-	return u.Update(func(s *RechargeCampaignRuleOverseaUpsert) {
-		s.AddRmbPrice(v)
 	})
 }
 
@@ -1184,16 +1131,9 @@ func (u *RechargeCampaignRuleOverseaUpsertBulk) UpdateRmbPrice() *RechargeCampai
 }
 
 // SetOriginalRmbPrice sets the "original_rmb_price" field.
-func (u *RechargeCampaignRuleOverseaUpsertBulk) SetOriginalRmbPrice(v float64) *RechargeCampaignRuleOverseaUpsertBulk {
+func (u *RechargeCampaignRuleOverseaUpsertBulk) SetOriginalRmbPrice(v string) *RechargeCampaignRuleOverseaUpsertBulk {
 	return u.Update(func(s *RechargeCampaignRuleOverseaUpsert) {
 		s.SetOriginalRmbPrice(v)
-	})
-}
-
-// AddOriginalRmbPrice adds v to the "original_rmb_price" field.
-func (u *RechargeCampaignRuleOverseaUpsertBulk) AddOriginalRmbPrice(v float64) *RechargeCampaignRuleOverseaUpsertBulk {
-	return u.Update(func(s *RechargeCampaignRuleOverseaUpsert) {
-		s.AddOriginalRmbPrice(v)
 	})
 }
 

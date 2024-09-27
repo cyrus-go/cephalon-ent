@@ -75123,12 +75123,9 @@ type RechargeCampaignRuleOverseaMutation struct {
 	created_at             *time.Time
 	updated_at             *time.Time
 	deleted_at             *time.Time
-	dollar_price           *float64
-	adddollar_price        *float64
-	rmb_price              *float64
-	addrmb_price           *float64
-	original_rmb_price     *float64
-	addoriginal_rmb_price  *float64
+	dollar_price           *string
+	rmb_price              *string
+	original_rmb_price     *string
 	total_cep              *int64
 	addtotal_cep           *int64
 	before_discount_cep    *int64
@@ -75466,13 +75463,12 @@ func (m *RechargeCampaignRuleOverseaMutation) ResetDeletedAt() {
 }
 
 // SetDollarPrice sets the "dollar_price" field.
-func (m *RechargeCampaignRuleOverseaMutation) SetDollarPrice(f float64) {
-	m.dollar_price = &f
-	m.adddollar_price = nil
+func (m *RechargeCampaignRuleOverseaMutation) SetDollarPrice(s string) {
+	m.dollar_price = &s
 }
 
 // DollarPrice returns the value of the "dollar_price" field in the mutation.
-func (m *RechargeCampaignRuleOverseaMutation) DollarPrice() (r float64, exists bool) {
+func (m *RechargeCampaignRuleOverseaMutation) DollarPrice() (r string, exists bool) {
 	v := m.dollar_price
 	if v == nil {
 		return
@@ -75483,7 +75479,7 @@ func (m *RechargeCampaignRuleOverseaMutation) DollarPrice() (r float64, exists b
 // OldDollarPrice returns the old "dollar_price" field's value of the RechargeCampaignRuleOversea entity.
 // If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RechargeCampaignRuleOverseaMutation) OldDollarPrice(ctx context.Context) (v float64, err error) {
+func (m *RechargeCampaignRuleOverseaMutation) OldDollarPrice(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDollarPrice is only allowed on UpdateOne operations")
 	}
@@ -75497,38 +75493,18 @@ func (m *RechargeCampaignRuleOverseaMutation) OldDollarPrice(ctx context.Context
 	return oldValue.DollarPrice, nil
 }
 
-// AddDollarPrice adds f to the "dollar_price" field.
-func (m *RechargeCampaignRuleOverseaMutation) AddDollarPrice(f float64) {
-	if m.adddollar_price != nil {
-		*m.adddollar_price += f
-	} else {
-		m.adddollar_price = &f
-	}
-}
-
-// AddedDollarPrice returns the value that was added to the "dollar_price" field in this mutation.
-func (m *RechargeCampaignRuleOverseaMutation) AddedDollarPrice() (r float64, exists bool) {
-	v := m.adddollar_price
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetDollarPrice resets all changes to the "dollar_price" field.
 func (m *RechargeCampaignRuleOverseaMutation) ResetDollarPrice() {
 	m.dollar_price = nil
-	m.adddollar_price = nil
 }
 
 // SetRmbPrice sets the "rmb_price" field.
-func (m *RechargeCampaignRuleOverseaMutation) SetRmbPrice(f float64) {
-	m.rmb_price = &f
-	m.addrmb_price = nil
+func (m *RechargeCampaignRuleOverseaMutation) SetRmbPrice(s string) {
+	m.rmb_price = &s
 }
 
 // RmbPrice returns the value of the "rmb_price" field in the mutation.
-func (m *RechargeCampaignRuleOverseaMutation) RmbPrice() (r float64, exists bool) {
+func (m *RechargeCampaignRuleOverseaMutation) RmbPrice() (r string, exists bool) {
 	v := m.rmb_price
 	if v == nil {
 		return
@@ -75539,7 +75515,7 @@ func (m *RechargeCampaignRuleOverseaMutation) RmbPrice() (r float64, exists bool
 // OldRmbPrice returns the old "rmb_price" field's value of the RechargeCampaignRuleOversea entity.
 // If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RechargeCampaignRuleOverseaMutation) OldRmbPrice(ctx context.Context) (v float64, err error) {
+func (m *RechargeCampaignRuleOverseaMutation) OldRmbPrice(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldRmbPrice is only allowed on UpdateOne operations")
 	}
@@ -75553,38 +75529,18 @@ func (m *RechargeCampaignRuleOverseaMutation) OldRmbPrice(ctx context.Context) (
 	return oldValue.RmbPrice, nil
 }
 
-// AddRmbPrice adds f to the "rmb_price" field.
-func (m *RechargeCampaignRuleOverseaMutation) AddRmbPrice(f float64) {
-	if m.addrmb_price != nil {
-		*m.addrmb_price += f
-	} else {
-		m.addrmb_price = &f
-	}
-}
-
-// AddedRmbPrice returns the value that was added to the "rmb_price" field in this mutation.
-func (m *RechargeCampaignRuleOverseaMutation) AddedRmbPrice() (r float64, exists bool) {
-	v := m.addrmb_price
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetRmbPrice resets all changes to the "rmb_price" field.
 func (m *RechargeCampaignRuleOverseaMutation) ResetRmbPrice() {
 	m.rmb_price = nil
-	m.addrmb_price = nil
 }
 
 // SetOriginalRmbPrice sets the "original_rmb_price" field.
-func (m *RechargeCampaignRuleOverseaMutation) SetOriginalRmbPrice(f float64) {
-	m.original_rmb_price = &f
-	m.addoriginal_rmb_price = nil
+func (m *RechargeCampaignRuleOverseaMutation) SetOriginalRmbPrice(s string) {
+	m.original_rmb_price = &s
 }
 
 // OriginalRmbPrice returns the value of the "original_rmb_price" field in the mutation.
-func (m *RechargeCampaignRuleOverseaMutation) OriginalRmbPrice() (r float64, exists bool) {
+func (m *RechargeCampaignRuleOverseaMutation) OriginalRmbPrice() (r string, exists bool) {
 	v := m.original_rmb_price
 	if v == nil {
 		return
@@ -75595,7 +75551,7 @@ func (m *RechargeCampaignRuleOverseaMutation) OriginalRmbPrice() (r float64, exi
 // OldOriginalRmbPrice returns the old "original_rmb_price" field's value of the RechargeCampaignRuleOversea entity.
 // If the RechargeCampaignRuleOversea object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RechargeCampaignRuleOverseaMutation) OldOriginalRmbPrice(ctx context.Context) (v float64, err error) {
+func (m *RechargeCampaignRuleOverseaMutation) OldOriginalRmbPrice(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldOriginalRmbPrice is only allowed on UpdateOne operations")
 	}
@@ -75609,28 +75565,9 @@ func (m *RechargeCampaignRuleOverseaMutation) OldOriginalRmbPrice(ctx context.Co
 	return oldValue.OriginalRmbPrice, nil
 }
 
-// AddOriginalRmbPrice adds f to the "original_rmb_price" field.
-func (m *RechargeCampaignRuleOverseaMutation) AddOriginalRmbPrice(f float64) {
-	if m.addoriginal_rmb_price != nil {
-		*m.addoriginal_rmb_price += f
-	} else {
-		m.addoriginal_rmb_price = &f
-	}
-}
-
-// AddedOriginalRmbPrice returns the value that was added to the "original_rmb_price" field in this mutation.
-func (m *RechargeCampaignRuleOverseaMutation) AddedOriginalRmbPrice() (r float64, exists bool) {
-	v := m.addoriginal_rmb_price
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetOriginalRmbPrice resets all changes to the "original_rmb_price" field.
 func (m *RechargeCampaignRuleOverseaMutation) ResetOriginalRmbPrice() {
 	m.original_rmb_price = nil
-	m.addoriginal_rmb_price = nil
 }
 
 // SetTotalCep sets the "total_cep" field.
@@ -75975,21 +75912,21 @@ func (m *RechargeCampaignRuleOverseaMutation) SetField(name string, value ent.Va
 		m.SetDeletedAt(v)
 		return nil
 	case rechargecampaignruleoversea.FieldDollarPrice:
-		v, ok := value.(float64)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDollarPrice(v)
 		return nil
 	case rechargecampaignruleoversea.FieldRmbPrice:
-		v, ok := value.(float64)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetRmbPrice(v)
 		return nil
 	case rechargecampaignruleoversea.FieldOriginalRmbPrice:
-		v, ok := value.(float64)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -76030,15 +75967,6 @@ func (m *RechargeCampaignRuleOverseaMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, rechargecampaignruleoversea.FieldUpdatedBy)
 	}
-	if m.adddollar_price != nil {
-		fields = append(fields, rechargecampaignruleoversea.FieldDollarPrice)
-	}
-	if m.addrmb_price != nil {
-		fields = append(fields, rechargecampaignruleoversea.FieldRmbPrice)
-	}
-	if m.addoriginal_rmb_price != nil {
-		fields = append(fields, rechargecampaignruleoversea.FieldOriginalRmbPrice)
-	}
 	if m.addtotal_cep != nil {
 		fields = append(fields, rechargecampaignruleoversea.FieldTotalCep)
 	}
@@ -76060,12 +75988,6 @@ func (m *RechargeCampaignRuleOverseaMutation) AddedField(name string) (ent.Value
 		return m.AddedCreatedBy()
 	case rechargecampaignruleoversea.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
-	case rechargecampaignruleoversea.FieldDollarPrice:
-		return m.AddedDollarPrice()
-	case rechargecampaignruleoversea.FieldRmbPrice:
-		return m.AddedRmbPrice()
-	case rechargecampaignruleoversea.FieldOriginalRmbPrice:
-		return m.AddedOriginalRmbPrice()
 	case rechargecampaignruleoversea.FieldTotalCep:
 		return m.AddedTotalCep()
 	case rechargecampaignruleoversea.FieldBeforeDiscountCep:
@@ -76094,27 +76016,6 @@ func (m *RechargeCampaignRuleOverseaMutation) AddField(name string, value ent.Va
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedBy(v)
-		return nil
-	case rechargecampaignruleoversea.FieldDollarPrice:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddDollarPrice(v)
-		return nil
-	case rechargecampaignruleoversea.FieldRmbPrice:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddRmbPrice(v)
-		return nil
-	case rechargecampaignruleoversea.FieldOriginalRmbPrice:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddOriginalRmbPrice(v)
 		return nil
 	case rechargecampaignruleoversea.FieldTotalCep:
 		v, ok := value.(int64)

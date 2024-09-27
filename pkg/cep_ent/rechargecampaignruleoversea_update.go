@@ -92,65 +92,44 @@ func (rcrou *RechargeCampaignRuleOverseaUpdate) SetNillableDeletedAt(t *time.Tim
 }
 
 // SetDollarPrice sets the "dollar_price" field.
-func (rcrou *RechargeCampaignRuleOverseaUpdate) SetDollarPrice(f float64) *RechargeCampaignRuleOverseaUpdate {
-	rcrou.mutation.ResetDollarPrice()
-	rcrou.mutation.SetDollarPrice(f)
+func (rcrou *RechargeCampaignRuleOverseaUpdate) SetDollarPrice(s string) *RechargeCampaignRuleOverseaUpdate {
+	rcrou.mutation.SetDollarPrice(s)
 	return rcrou
 }
 
 // SetNillableDollarPrice sets the "dollar_price" field if the given value is not nil.
-func (rcrou *RechargeCampaignRuleOverseaUpdate) SetNillableDollarPrice(f *float64) *RechargeCampaignRuleOverseaUpdate {
-	if f != nil {
-		rcrou.SetDollarPrice(*f)
+func (rcrou *RechargeCampaignRuleOverseaUpdate) SetNillableDollarPrice(s *string) *RechargeCampaignRuleOverseaUpdate {
+	if s != nil {
+		rcrou.SetDollarPrice(*s)
 	}
-	return rcrou
-}
-
-// AddDollarPrice adds f to the "dollar_price" field.
-func (rcrou *RechargeCampaignRuleOverseaUpdate) AddDollarPrice(f float64) *RechargeCampaignRuleOverseaUpdate {
-	rcrou.mutation.AddDollarPrice(f)
 	return rcrou
 }
 
 // SetRmbPrice sets the "rmb_price" field.
-func (rcrou *RechargeCampaignRuleOverseaUpdate) SetRmbPrice(f float64) *RechargeCampaignRuleOverseaUpdate {
-	rcrou.mutation.ResetRmbPrice()
-	rcrou.mutation.SetRmbPrice(f)
+func (rcrou *RechargeCampaignRuleOverseaUpdate) SetRmbPrice(s string) *RechargeCampaignRuleOverseaUpdate {
+	rcrou.mutation.SetRmbPrice(s)
 	return rcrou
 }
 
 // SetNillableRmbPrice sets the "rmb_price" field if the given value is not nil.
-func (rcrou *RechargeCampaignRuleOverseaUpdate) SetNillableRmbPrice(f *float64) *RechargeCampaignRuleOverseaUpdate {
-	if f != nil {
-		rcrou.SetRmbPrice(*f)
+func (rcrou *RechargeCampaignRuleOverseaUpdate) SetNillableRmbPrice(s *string) *RechargeCampaignRuleOverseaUpdate {
+	if s != nil {
+		rcrou.SetRmbPrice(*s)
 	}
-	return rcrou
-}
-
-// AddRmbPrice adds f to the "rmb_price" field.
-func (rcrou *RechargeCampaignRuleOverseaUpdate) AddRmbPrice(f float64) *RechargeCampaignRuleOverseaUpdate {
-	rcrou.mutation.AddRmbPrice(f)
 	return rcrou
 }
 
 // SetOriginalRmbPrice sets the "original_rmb_price" field.
-func (rcrou *RechargeCampaignRuleOverseaUpdate) SetOriginalRmbPrice(f float64) *RechargeCampaignRuleOverseaUpdate {
-	rcrou.mutation.ResetOriginalRmbPrice()
-	rcrou.mutation.SetOriginalRmbPrice(f)
+func (rcrou *RechargeCampaignRuleOverseaUpdate) SetOriginalRmbPrice(s string) *RechargeCampaignRuleOverseaUpdate {
+	rcrou.mutation.SetOriginalRmbPrice(s)
 	return rcrou
 }
 
 // SetNillableOriginalRmbPrice sets the "original_rmb_price" field if the given value is not nil.
-func (rcrou *RechargeCampaignRuleOverseaUpdate) SetNillableOriginalRmbPrice(f *float64) *RechargeCampaignRuleOverseaUpdate {
-	if f != nil {
-		rcrou.SetOriginalRmbPrice(*f)
+func (rcrou *RechargeCampaignRuleOverseaUpdate) SetNillableOriginalRmbPrice(s *string) *RechargeCampaignRuleOverseaUpdate {
+	if s != nil {
+		rcrou.SetOriginalRmbPrice(*s)
 	}
-	return rcrou
-}
-
-// AddOriginalRmbPrice adds f to the "original_rmb_price" field.
-func (rcrou *RechargeCampaignRuleOverseaUpdate) AddOriginalRmbPrice(f float64) *RechargeCampaignRuleOverseaUpdate {
-	rcrou.mutation.AddOriginalRmbPrice(f)
 	return rcrou
 }
 
@@ -292,22 +271,13 @@ func (rcrou *RechargeCampaignRuleOverseaUpdate) sqlSave(ctx context.Context) (n 
 		_spec.SetField(rechargecampaignruleoversea.FieldDeletedAt, field.TypeTime, value)
 	}
 	if value, ok := rcrou.mutation.DollarPrice(); ok {
-		_spec.SetField(rechargecampaignruleoversea.FieldDollarPrice, field.TypeFloat64, value)
-	}
-	if value, ok := rcrou.mutation.AddedDollarPrice(); ok {
-		_spec.AddField(rechargecampaignruleoversea.FieldDollarPrice, field.TypeFloat64, value)
+		_spec.SetField(rechargecampaignruleoversea.FieldDollarPrice, field.TypeString, value)
 	}
 	if value, ok := rcrou.mutation.RmbPrice(); ok {
-		_spec.SetField(rechargecampaignruleoversea.FieldRmbPrice, field.TypeFloat64, value)
-	}
-	if value, ok := rcrou.mutation.AddedRmbPrice(); ok {
-		_spec.AddField(rechargecampaignruleoversea.FieldRmbPrice, field.TypeFloat64, value)
+		_spec.SetField(rechargecampaignruleoversea.FieldRmbPrice, field.TypeString, value)
 	}
 	if value, ok := rcrou.mutation.OriginalRmbPrice(); ok {
-		_spec.SetField(rechargecampaignruleoversea.FieldOriginalRmbPrice, field.TypeFloat64, value)
-	}
-	if value, ok := rcrou.mutation.AddedOriginalRmbPrice(); ok {
-		_spec.AddField(rechargecampaignruleoversea.FieldOriginalRmbPrice, field.TypeFloat64, value)
+		_spec.SetField(rechargecampaignruleoversea.FieldOriginalRmbPrice, field.TypeString, value)
 	}
 	if value, ok := rcrou.mutation.TotalCep(); ok {
 		_spec.SetField(rechargecampaignruleoversea.FieldTotalCep, field.TypeInt64, value)
@@ -412,65 +382,44 @@ func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) SetNillableDeletedAt(t *time
 }
 
 // SetDollarPrice sets the "dollar_price" field.
-func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) SetDollarPrice(f float64) *RechargeCampaignRuleOverseaUpdateOne {
-	rcrouo.mutation.ResetDollarPrice()
-	rcrouo.mutation.SetDollarPrice(f)
+func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) SetDollarPrice(s string) *RechargeCampaignRuleOverseaUpdateOne {
+	rcrouo.mutation.SetDollarPrice(s)
 	return rcrouo
 }
 
 // SetNillableDollarPrice sets the "dollar_price" field if the given value is not nil.
-func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) SetNillableDollarPrice(f *float64) *RechargeCampaignRuleOverseaUpdateOne {
-	if f != nil {
-		rcrouo.SetDollarPrice(*f)
+func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) SetNillableDollarPrice(s *string) *RechargeCampaignRuleOverseaUpdateOne {
+	if s != nil {
+		rcrouo.SetDollarPrice(*s)
 	}
-	return rcrouo
-}
-
-// AddDollarPrice adds f to the "dollar_price" field.
-func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) AddDollarPrice(f float64) *RechargeCampaignRuleOverseaUpdateOne {
-	rcrouo.mutation.AddDollarPrice(f)
 	return rcrouo
 }
 
 // SetRmbPrice sets the "rmb_price" field.
-func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) SetRmbPrice(f float64) *RechargeCampaignRuleOverseaUpdateOne {
-	rcrouo.mutation.ResetRmbPrice()
-	rcrouo.mutation.SetRmbPrice(f)
+func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) SetRmbPrice(s string) *RechargeCampaignRuleOverseaUpdateOne {
+	rcrouo.mutation.SetRmbPrice(s)
 	return rcrouo
 }
 
 // SetNillableRmbPrice sets the "rmb_price" field if the given value is not nil.
-func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) SetNillableRmbPrice(f *float64) *RechargeCampaignRuleOverseaUpdateOne {
-	if f != nil {
-		rcrouo.SetRmbPrice(*f)
+func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) SetNillableRmbPrice(s *string) *RechargeCampaignRuleOverseaUpdateOne {
+	if s != nil {
+		rcrouo.SetRmbPrice(*s)
 	}
-	return rcrouo
-}
-
-// AddRmbPrice adds f to the "rmb_price" field.
-func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) AddRmbPrice(f float64) *RechargeCampaignRuleOverseaUpdateOne {
-	rcrouo.mutation.AddRmbPrice(f)
 	return rcrouo
 }
 
 // SetOriginalRmbPrice sets the "original_rmb_price" field.
-func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) SetOriginalRmbPrice(f float64) *RechargeCampaignRuleOverseaUpdateOne {
-	rcrouo.mutation.ResetOriginalRmbPrice()
-	rcrouo.mutation.SetOriginalRmbPrice(f)
+func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) SetOriginalRmbPrice(s string) *RechargeCampaignRuleOverseaUpdateOne {
+	rcrouo.mutation.SetOriginalRmbPrice(s)
 	return rcrouo
 }
 
 // SetNillableOriginalRmbPrice sets the "original_rmb_price" field if the given value is not nil.
-func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) SetNillableOriginalRmbPrice(f *float64) *RechargeCampaignRuleOverseaUpdateOne {
-	if f != nil {
-		rcrouo.SetOriginalRmbPrice(*f)
+func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) SetNillableOriginalRmbPrice(s *string) *RechargeCampaignRuleOverseaUpdateOne {
+	if s != nil {
+		rcrouo.SetOriginalRmbPrice(*s)
 	}
-	return rcrouo
-}
-
-// AddOriginalRmbPrice adds f to the "original_rmb_price" field.
-func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) AddOriginalRmbPrice(f float64) *RechargeCampaignRuleOverseaUpdateOne {
-	rcrouo.mutation.AddOriginalRmbPrice(f)
 	return rcrouo
 }
 
@@ -642,22 +591,13 @@ func (rcrouo *RechargeCampaignRuleOverseaUpdateOne) sqlSave(ctx context.Context)
 		_spec.SetField(rechargecampaignruleoversea.FieldDeletedAt, field.TypeTime, value)
 	}
 	if value, ok := rcrouo.mutation.DollarPrice(); ok {
-		_spec.SetField(rechargecampaignruleoversea.FieldDollarPrice, field.TypeFloat64, value)
-	}
-	if value, ok := rcrouo.mutation.AddedDollarPrice(); ok {
-		_spec.AddField(rechargecampaignruleoversea.FieldDollarPrice, field.TypeFloat64, value)
+		_spec.SetField(rechargecampaignruleoversea.FieldDollarPrice, field.TypeString, value)
 	}
 	if value, ok := rcrouo.mutation.RmbPrice(); ok {
-		_spec.SetField(rechargecampaignruleoversea.FieldRmbPrice, field.TypeFloat64, value)
-	}
-	if value, ok := rcrouo.mutation.AddedRmbPrice(); ok {
-		_spec.AddField(rechargecampaignruleoversea.FieldRmbPrice, field.TypeFloat64, value)
+		_spec.SetField(rechargecampaignruleoversea.FieldRmbPrice, field.TypeString, value)
 	}
 	if value, ok := rcrouo.mutation.OriginalRmbPrice(); ok {
-		_spec.SetField(rechargecampaignruleoversea.FieldOriginalRmbPrice, field.TypeFloat64, value)
-	}
-	if value, ok := rcrouo.mutation.AddedOriginalRmbPrice(); ok {
-		_spec.AddField(rechargecampaignruleoversea.FieldOriginalRmbPrice, field.TypeFloat64, value)
+		_spec.SetField(rechargecampaignruleoversea.FieldOriginalRmbPrice, field.TypeString, value)
 	}
 	if value, ok := rcrouo.mutation.TotalCep(); ok {
 		_spec.SetField(rechargecampaignruleoversea.FieldTotalCep, field.TypeInt64, value)
