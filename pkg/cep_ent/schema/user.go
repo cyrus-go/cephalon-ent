@@ -109,7 +109,7 @@ func (User) Indexes() []ent.Index {
 		index.Fields("parent_id"),
 		index.Fields("applet_parent_id"),
 		index.Fields("channel"),
-		index.Fields("github_id"),
+		index.Fields("phone", "deleted_at", "email", "github_id", "google_id").Unique(),
 	}
 }
 

@@ -2893,9 +2893,9 @@ var (
 				Columns: []*schema.Column{UsersColumns[26]},
 			},
 			{
-				Name:    "user_github_id",
-				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[19]},
+				Name:    "user_phone_deleted_at_email_github_id_google_id",
+				Unique:  true,
+				Columns: []*schema.Column{UsersColumns[11], UsersColumns[5], UsersColumns[18], UsersColumns[19], UsersColumns[20]},
 			},
 		},
 	}
