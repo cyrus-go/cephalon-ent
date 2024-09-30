@@ -1916,6 +1916,10 @@ func init() {
 	lottoDescEndedAt := lottoFields[3].Descriptor()
 	// lotto.DefaultEndedAt holds the default value on creation for the ended_at field.
 	lotto.DefaultEndedAt = lottoDescEndedAt.Default.(time.Time)
+	// lottoDescRemark is the schema descriptor for remark field.
+	lottoDescRemark := lottoFields[5].Descriptor()
+	// lotto.DefaultRemark holds the default value on creation for the remark field.
+	lotto.DefaultRemark = lottoDescRemark.Default.(string)
 	// lottoDescID is the schema descriptor for id field.
 	lottoDescID := lottoMixinFields0[0].Descriptor()
 	// lotto.DefaultID holds the default value on creation for the id field.

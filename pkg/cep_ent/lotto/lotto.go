@@ -36,6 +36,8 @@ const (
 	FieldEndedAt = "ended_at"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldRemark holds the string denoting the remark field in the database.
+	FieldRemark = "remark"
 	// EdgeLottoPrizes holds the string denoting the lotto_prizes edge name in mutations.
 	EdgeLottoPrizes = "lotto_prizes"
 	// EdgeLottoRecords holds the string denoting the lotto_records edge name in mutations.
@@ -98,6 +100,7 @@ var Columns = []string{
 	FieldStartedAt,
 	FieldEndedAt,
 	FieldStatus,
+	FieldRemark,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -131,6 +134,8 @@ var (
 	DefaultStartedAt time.Time
 	// DefaultEndedAt holds the default value on creation for the "ended_at" field.
 	DefaultEndedAt time.Time
+	// DefaultRemark holds the default value on creation for the "remark" field.
+	DefaultRemark string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -203,6 +208,11 @@ func ByEndedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByRemark orders the results by the remark field.
+func ByRemark(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRemark, opts...).ToFunc()
 }
 
 // ByLottoPrizesCount orders the results by lotto_prizes count.

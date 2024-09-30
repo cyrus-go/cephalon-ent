@@ -1355,6 +1355,7 @@ var (
 		{Name: "started_at", Type: field.TypeTime, Comment: "活动开始时间"},
 		{Name: "ended_at", Type: field.TypeTime, Comment: "活动结束时间"},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"unknown", "normal", "canceled"}, Default: "unknown"},
+		{Name: "remark", Type: field.TypeString, Comment: "备注信息", Default: ""},
 	}
 	// LottosTable holds the schema information for the "lottos" table.
 	LottosTable = &schema.Table{
@@ -2891,11 +2892,6 @@ var (
 				Name:    "user_channel",
 				Unique:  false,
 				Columns: []*schema.Column{UsersColumns[26]},
-			},
-			{
-				Name:    "user_phone_deleted_at_email_github_id_google_id",
-				Unique:  true,
-				Columns: []*schema.Column{UsersColumns[11], UsersColumns[5], UsersColumns[18], UsersColumns[19], UsersColumns[20]},
 			},
 		},
 	}
