@@ -39,8 +39,6 @@ type Lotto struct {
 	EndedAt time.Time `json:"ended_at"`
 	// 状态
 	Status enums.LottoStatus `json:"status"`
-	// 备注信息
-	Remark string `json:"remark"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the LottoQuery when eager-loading is set.
 	Edges        LottoEdges `json:"edges"`
@@ -116,7 +114,7 @@ func (*Lotto) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case lotto.FieldID, lotto.FieldCreatedBy, lotto.FieldUpdatedBy, lotto.FieldTotalWeight:
 			values[i] = new(sql.NullInt64)
-		case lotto.FieldName, lotto.FieldStatus, lotto.FieldRemark:
+		case lotto.FieldName, lotto.FieldStatus:
 			values[i] = new(sql.NullString)
 		case lotto.FieldCreatedAt, lotto.FieldUpdatedAt, lotto.FieldDeletedAt, lotto.FieldStartedAt, lotto.FieldEndedAt:
 			values[i] = new(sql.NullTime)
@@ -200,12 +198,6 @@ func (l *Lotto) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
 				l.Status = enums.LottoStatus(value.String)
-			}
-		case lotto.FieldRemark:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field remark", values[i])
-			} else if value.Valid {
-				l.Remark = value.String
 			}
 		default:
 			l.selectValues.Set(columns[i], values[i])
@@ -297,9 +289,6 @@ func (l *Lotto) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", l.Status))
-	builder.WriteString(", ")
-	builder.WriteString("remark=")
-	builder.WriteString(l.Remark)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -41290,7 +41290,6 @@ type LottoMutation struct {
 	started_at                     *time.Time
 	ended_at                       *time.Time
 	status                         *enums.LottoStatus
-	remark                         *string
 	clearedFields                  map[string]struct{}
 	lotto_prizes                   map[int64]struct{}
 	removedlotto_prizes            map[int64]struct{}
@@ -41836,42 +41835,6 @@ func (m *LottoMutation) ResetStatus() {
 	m.status = nil
 }
 
-// SetRemark sets the "remark" field.
-func (m *LottoMutation) SetRemark(s string) {
-	m.remark = &s
-}
-
-// Remark returns the value of the "remark" field in the mutation.
-func (m *LottoMutation) Remark() (r string, exists bool) {
-	v := m.remark
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRemark returns the old "remark" field's value of the Lotto entity.
-// If the Lotto object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LottoMutation) OldRemark(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRemark requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
-	}
-	return oldValue.Remark, nil
-}
-
-// ResetRemark resets all changes to the "remark" field.
-func (m *LottoMutation) ResetRemark() {
-	m.remark = nil
-}
-
 // AddLottoPrizeIDs adds the "lotto_prizes" edge to the LottoPrize entity by ids.
 func (m *LottoMutation) AddLottoPrizeIDs(ids ...int64) {
 	if m.lotto_prizes == nil {
@@ -42176,7 +42139,7 @@ func (m *LottoMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *LottoMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 10)
 	if m.created_by != nil {
 		fields = append(fields, lotto.FieldCreatedBy)
 	}
@@ -42207,9 +42170,6 @@ func (m *LottoMutation) Fields() []string {
 	if m.status != nil {
 		fields = append(fields, lotto.FieldStatus)
 	}
-	if m.remark != nil {
-		fields = append(fields, lotto.FieldRemark)
-	}
 	return fields
 }
 
@@ -42238,8 +42198,6 @@ func (m *LottoMutation) Field(name string) (ent.Value, bool) {
 		return m.EndedAt()
 	case lotto.FieldStatus:
 		return m.Status()
-	case lotto.FieldRemark:
-		return m.Remark()
 	}
 	return nil, false
 }
@@ -42269,8 +42227,6 @@ func (m *LottoMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldEndedAt(ctx)
 	case lotto.FieldStatus:
 		return m.OldStatus(ctx)
-	case lotto.FieldRemark:
-		return m.OldRemark(ctx)
 	}
 	return nil, fmt.Errorf("unknown Lotto field %s", name)
 }
@@ -42349,13 +42305,6 @@ func (m *LottoMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
-		return nil
-	case lotto.FieldRemark:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRemark(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Lotto field %s", name)
@@ -42474,9 +42423,6 @@ func (m *LottoMutation) ResetField(name string) error {
 		return nil
 	case lotto.FieldStatus:
 		m.ResetStatus()
-		return nil
-	case lotto.FieldRemark:
-		m.ResetRemark()
 		return nil
 	}
 	return fmt.Errorf("unknown Lotto field %s", name)

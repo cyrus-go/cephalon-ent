@@ -174,20 +174,6 @@ func (lu *LottoUpdate) SetNillableStatus(es *enums.LottoStatus) *LottoUpdate {
 	return lu
 }
 
-// SetRemark sets the "remark" field.
-func (lu *LottoUpdate) SetRemark(s string) *LottoUpdate {
-	lu.mutation.SetRemark(s)
-	return lu
-}
-
-// SetNillableRemark sets the "remark" field if the given value is not nil.
-func (lu *LottoUpdate) SetNillableRemark(s *string) *LottoUpdate {
-	if s != nil {
-		lu.SetRemark(*s)
-	}
-	return lu
-}
-
 // AddLottoPrizeIDs adds the "lotto_prizes" edge to the LottoPrize entity by IDs.
 func (lu *LottoUpdate) AddLottoPrizeIDs(ids ...int64) *LottoUpdate {
 	lu.mutation.AddLottoPrizeIDs(ids...)
@@ -472,9 +458,6 @@ func (lu *LottoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := lu.mutation.Status(); ok {
 		_spec.SetField(lotto.FieldStatus, field.TypeEnum, value)
-	}
-	if value, ok := lu.mutation.Remark(); ok {
-		_spec.SetField(lotto.FieldRemark, field.TypeString, value)
 	}
 	if lu.mutation.LottoPrizesCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -862,20 +845,6 @@ func (luo *LottoUpdateOne) SetNillableStatus(es *enums.LottoStatus) *LottoUpdate
 	return luo
 }
 
-// SetRemark sets the "remark" field.
-func (luo *LottoUpdateOne) SetRemark(s string) *LottoUpdateOne {
-	luo.mutation.SetRemark(s)
-	return luo
-}
-
-// SetNillableRemark sets the "remark" field if the given value is not nil.
-func (luo *LottoUpdateOne) SetNillableRemark(s *string) *LottoUpdateOne {
-	if s != nil {
-		luo.SetRemark(*s)
-	}
-	return luo
-}
-
 // AddLottoPrizeIDs adds the "lotto_prizes" edge to the LottoPrize entity by IDs.
 func (luo *LottoUpdateOne) AddLottoPrizeIDs(ids ...int64) *LottoUpdateOne {
 	luo.mutation.AddLottoPrizeIDs(ids...)
@@ -1190,9 +1159,6 @@ func (luo *LottoUpdateOne) sqlSave(ctx context.Context) (_node *Lotto, err error
 	}
 	if value, ok := luo.mutation.Status(); ok {
 		_spec.SetField(lotto.FieldStatus, field.TypeEnum, value)
-	}
-	if value, ok := luo.mutation.Remark(); ok {
-		_spec.SetField(lotto.FieldRemark, field.TypeString, value)
 	}
 	if luo.mutation.LottoPrizesCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -21,7 +21,6 @@ func (Lotto) Fields() []ent.Field {
 		field.Time("started_at").Default(common.ZeroTime).StructTag(`json:"started_at"`).Comment("活动开始时间"),
 		field.Time("ended_at").Default(common.ZeroTime).StructTag(`json:"ended_at"`).Comment("活动结束时间"),
 		field.Enum("status").GoType(enums.LottoStatusNormal).Default(string(enums.LottoStatusUnknown)).StructTag(`json:"status"`).Comment("状态"),
-		field.String("remark").StructTag(`json:"remark"`).Default("").Comment("备注信息"),
 	}
 }
 

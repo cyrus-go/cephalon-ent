@@ -168,20 +168,6 @@ func (lc *LottoCreate) SetNillableStatus(es *enums.LottoStatus) *LottoCreate {
 	return lc
 }
 
-// SetRemark sets the "remark" field.
-func (lc *LottoCreate) SetRemark(s string) *LottoCreate {
-	lc.mutation.SetRemark(s)
-	return lc
-}
-
-// SetNillableRemark sets the "remark" field if the given value is not nil.
-func (lc *LottoCreate) SetNillableRemark(s *string) *LottoCreate {
-	if s != nil {
-		lc.SetRemark(*s)
-	}
-	return lc
-}
-
 // SetID sets the "id" field.
 func (lc *LottoCreate) SetID(i int64) *LottoCreate {
 	lc.mutation.SetID(i)
@@ -346,10 +332,6 @@ func (lc *LottoCreate) defaults() {
 		v := lotto.DefaultStatus
 		lc.mutation.SetStatus(v)
 	}
-	if _, ok := lc.mutation.Remark(); !ok {
-		v := lotto.DefaultRemark
-		lc.mutation.SetRemark(v)
-	}
 	if _, ok := lc.mutation.ID(); !ok {
 		v := lotto.DefaultID()
 		lc.mutation.SetID(v)
@@ -392,9 +374,6 @@ func (lc *LottoCreate) check() error {
 		if err := lotto.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "Lotto.status": %w`, err)}
 		}
-	}
-	if _, ok := lc.mutation.Remark(); !ok {
-		return &ValidationError{Name: "remark", err: errors.New(`cep_ent: missing required field "Lotto.remark"`)}
 	}
 	return nil
 }
@@ -468,10 +447,6 @@ func (lc *LottoCreate) createSpec() (*Lotto, *sqlgraph.CreateSpec) {
 	if value, ok := lc.mutation.Status(); ok {
 		_spec.SetField(lotto.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
-	}
-	if value, ok := lc.mutation.Remark(); ok {
-		_spec.SetField(lotto.FieldRemark, field.TypeString, value)
-		_node.Remark = value
 	}
 	if nodes := lc.mutation.LottoPrizesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -731,18 +706,6 @@ func (u *LottoUpsert) UpdateStatus() *LottoUpsert {
 	return u
 }
 
-// SetRemark sets the "remark" field.
-func (u *LottoUpsert) SetRemark(v string) *LottoUpsert {
-	u.Set(lotto.FieldRemark, v)
-	return u
-}
-
-// UpdateRemark sets the "remark" field to the value that was provided on create.
-func (u *LottoUpsert) UpdateRemark() *LottoUpsert {
-	u.SetExcluded(lotto.FieldRemark)
-	return u
-}
-
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -938,20 +901,6 @@ func (u *LottoUpsertOne) SetStatus(v enums.LottoStatus) *LottoUpsertOne {
 func (u *LottoUpsertOne) UpdateStatus() *LottoUpsertOne {
 	return u.Update(func(s *LottoUpsert) {
 		s.UpdateStatus()
-	})
-}
-
-// SetRemark sets the "remark" field.
-func (u *LottoUpsertOne) SetRemark(v string) *LottoUpsertOne {
-	return u.Update(func(s *LottoUpsert) {
-		s.SetRemark(v)
-	})
-}
-
-// UpdateRemark sets the "remark" field to the value that was provided on create.
-func (u *LottoUpsertOne) UpdateRemark() *LottoUpsertOne {
-	return u.Update(func(s *LottoUpsert) {
-		s.UpdateRemark()
 	})
 }
 
@@ -1316,20 +1265,6 @@ func (u *LottoUpsertBulk) SetStatus(v enums.LottoStatus) *LottoUpsertBulk {
 func (u *LottoUpsertBulk) UpdateStatus() *LottoUpsertBulk {
 	return u.Update(func(s *LottoUpsert) {
 		s.UpdateStatus()
-	})
-}
-
-// SetRemark sets the "remark" field.
-func (u *LottoUpsertBulk) SetRemark(v string) *LottoUpsertBulk {
-	return u.Update(func(s *LottoUpsert) {
-		s.SetRemark(v)
-	})
-}
-
-// UpdateRemark sets the "remark" field to the value that was provided on create.
-func (u *LottoUpsertBulk) UpdateRemark() *LottoUpsertBulk {
-	return u.Update(func(s *LottoUpsert) {
-		s.UpdateRemark()
 	})
 }
 
