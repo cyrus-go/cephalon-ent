@@ -62,6 +62,8 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionloadbalance"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionloadbalanceaccess"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
@@ -192,6 +194,10 @@ type Client struct {
 	MissionKeyPair *MissionKeyPairClient
 	// MissionKind is the client for interacting with the MissionKind builders.
 	MissionKind *MissionKindClient
+	// MissionLoadBalance is the client for interacting with the MissionLoadBalance builders.
+	MissionLoadBalance *MissionLoadBalanceClient
+	// MissionLoadBalanceAccess is the client for interacting with the MissionLoadBalanceAccess builders.
+	MissionLoadBalanceAccess *MissionLoadBalanceAccessClient
 	// MissionOrder is the client for interacting with the MissionOrder builders.
 	MissionOrder *MissionOrderClient
 	// MissionProduceOrder is the client for interacting with the MissionProduceOrder builders.
@@ -310,6 +316,8 @@ func (c *Client) init() {
 	c.MissionFailedFeedback = NewMissionFailedFeedbackClient(c.config)
 	c.MissionKeyPair = NewMissionKeyPairClient(c.config)
 	c.MissionKind = NewMissionKindClient(c.config)
+	c.MissionLoadBalance = NewMissionLoadBalanceClient(c.config)
+	c.MissionLoadBalanceAccess = NewMissionLoadBalanceAccessClient(c.config)
 	c.MissionOrder = NewMissionOrderClient(c.config)
 	c.MissionProduceOrder = NewMissionProduceOrderClient(c.config)
 	c.MissionProduction = NewMissionProductionClient(c.config)
@@ -471,6 +479,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MissionFailedFeedback:       NewMissionFailedFeedbackClient(cfg),
 		MissionKeyPair:              NewMissionKeyPairClient(cfg),
 		MissionKind:                 NewMissionKindClient(cfg),
+		MissionLoadBalance:          NewMissionLoadBalanceClient(cfg),
+		MissionLoadBalanceAccess:    NewMissionLoadBalanceAccessClient(cfg),
 		MissionOrder:                NewMissionOrderClient(cfg),
 		MissionProduceOrder:         NewMissionProduceOrderClient(cfg),
 		MissionProduction:           NewMissionProductionClient(cfg),
@@ -566,6 +576,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MissionFailedFeedback:       NewMissionFailedFeedbackClient(cfg),
 		MissionKeyPair:              NewMissionKeyPairClient(cfg),
 		MissionKind:                 NewMissionKindClient(cfg),
+		MissionLoadBalance:          NewMissionLoadBalanceClient(cfg),
+		MissionLoadBalanceAccess:    NewMissionLoadBalanceAccessClient(cfg),
 		MissionOrder:                NewMissionOrderClient(cfg),
 		MissionProduceOrder:         NewMissionProduceOrderClient(cfg),
 		MissionProduction:           NewMissionProductionClient(cfg),
@@ -634,7 +646,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
 		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
-		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
+		c.MissionKeyPair, c.MissionKind, c.MissionLoadBalance,
+		c.MissionLoadBalanceAccess, c.MissionOrder, c.MissionProduceOrder,
 		c.MissionProduction, c.Model, c.ModelPrice, c.OutputLog, c.PlatformAccount,
 		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
 		c.RechargeCampaignRuleOversea, c.RechargeOrder, c.RenewalAgreement, c.Survey,
@@ -660,7 +673,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
 		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
-		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
+		c.MissionKeyPair, c.MissionKind, c.MissionLoadBalance,
+		c.MissionLoadBalanceAccess, c.MissionOrder, c.MissionProduceOrder,
 		c.MissionProduction, c.Model, c.ModelPrice, c.OutputLog, c.PlatformAccount,
 		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
 		c.RechargeCampaignRuleOversea, c.RechargeOrder, c.RenewalAgreement, c.Survey,
@@ -769,6 +783,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MissionKeyPair.mutate(ctx, m)
 	case *MissionKindMutation:
 		return c.MissionKind.mutate(ctx, m)
+	case *MissionLoadBalanceMutation:
+		return c.MissionLoadBalance.mutate(ctx, m)
+	case *MissionLoadBalanceAccessMutation:
+		return c.MissionLoadBalanceAccess.mutate(ctx, m)
 	case *MissionOrderMutation:
 		return c.MissionOrder.mutate(ctx, m)
 	case *MissionProduceOrderMutation:
@@ -9147,6 +9165,272 @@ func (c *MissionKindClient) mutate(ctx context.Context, m *MissionKindMutation) 
 	}
 }
 
+// MissionLoadBalanceClient is a client for the MissionLoadBalance schema.
+type MissionLoadBalanceClient struct {
+	config
+}
+
+// NewMissionLoadBalanceClient returns a client for the MissionLoadBalance from the given config.
+func NewMissionLoadBalanceClient(c config) *MissionLoadBalanceClient {
+	return &MissionLoadBalanceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `missionloadbalance.Hooks(f(g(h())))`.
+func (c *MissionLoadBalanceClient) Use(hooks ...Hook) {
+	c.hooks.MissionLoadBalance = append(c.hooks.MissionLoadBalance, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `missionloadbalance.Intercept(f(g(h())))`.
+func (c *MissionLoadBalanceClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MissionLoadBalance = append(c.inters.MissionLoadBalance, interceptors...)
+}
+
+// Create returns a builder for creating a MissionLoadBalance entity.
+func (c *MissionLoadBalanceClient) Create() *MissionLoadBalanceCreate {
+	mutation := newMissionLoadBalanceMutation(c.config, OpCreate)
+	return &MissionLoadBalanceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MissionLoadBalance entities.
+func (c *MissionLoadBalanceClient) CreateBulk(builders ...*MissionLoadBalanceCreate) *MissionLoadBalanceCreateBulk {
+	return &MissionLoadBalanceCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MissionLoadBalanceClient) MapCreateBulk(slice any, setFunc func(*MissionLoadBalanceCreate, int)) *MissionLoadBalanceCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MissionLoadBalanceCreateBulk{err: fmt.Errorf("calling to MissionLoadBalanceClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MissionLoadBalanceCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MissionLoadBalanceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MissionLoadBalance.
+func (c *MissionLoadBalanceClient) Update() *MissionLoadBalanceUpdate {
+	mutation := newMissionLoadBalanceMutation(c.config, OpUpdate)
+	return &MissionLoadBalanceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MissionLoadBalanceClient) UpdateOne(mlb *MissionLoadBalance) *MissionLoadBalanceUpdateOne {
+	mutation := newMissionLoadBalanceMutation(c.config, OpUpdateOne, withMissionLoadBalance(mlb))
+	return &MissionLoadBalanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MissionLoadBalanceClient) UpdateOneID(id int64) *MissionLoadBalanceUpdateOne {
+	mutation := newMissionLoadBalanceMutation(c.config, OpUpdateOne, withMissionLoadBalanceID(id))
+	return &MissionLoadBalanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MissionLoadBalance.
+func (c *MissionLoadBalanceClient) Delete() *MissionLoadBalanceDelete {
+	mutation := newMissionLoadBalanceMutation(c.config, OpDelete)
+	return &MissionLoadBalanceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MissionLoadBalanceClient) DeleteOne(mlb *MissionLoadBalance) *MissionLoadBalanceDeleteOne {
+	return c.DeleteOneID(mlb.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MissionLoadBalanceClient) DeleteOneID(id int64) *MissionLoadBalanceDeleteOne {
+	builder := c.Delete().Where(missionloadbalance.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MissionLoadBalanceDeleteOne{builder}
+}
+
+// Query returns a query builder for MissionLoadBalance.
+func (c *MissionLoadBalanceClient) Query() *MissionLoadBalanceQuery {
+	return &MissionLoadBalanceQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMissionLoadBalance},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MissionLoadBalance entity by its id.
+func (c *MissionLoadBalanceClient) Get(ctx context.Context, id int64) (*MissionLoadBalance, error) {
+	return c.Query().Where(missionloadbalance.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MissionLoadBalanceClient) GetX(ctx context.Context, id int64) *MissionLoadBalance {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *MissionLoadBalanceClient) Hooks() []Hook {
+	return c.hooks.MissionLoadBalance
+}
+
+// Interceptors returns the client interceptors.
+func (c *MissionLoadBalanceClient) Interceptors() []Interceptor {
+	return c.inters.MissionLoadBalance
+}
+
+func (c *MissionLoadBalanceClient) mutate(ctx context.Context, m *MissionLoadBalanceMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MissionLoadBalanceCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MissionLoadBalanceUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MissionLoadBalanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MissionLoadBalanceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown MissionLoadBalance mutation op: %q", m.Op())
+	}
+}
+
+// MissionLoadBalanceAccessClient is a client for the MissionLoadBalanceAccess schema.
+type MissionLoadBalanceAccessClient struct {
+	config
+}
+
+// NewMissionLoadBalanceAccessClient returns a client for the MissionLoadBalanceAccess from the given config.
+func NewMissionLoadBalanceAccessClient(c config) *MissionLoadBalanceAccessClient {
+	return &MissionLoadBalanceAccessClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `missionloadbalanceaccess.Hooks(f(g(h())))`.
+func (c *MissionLoadBalanceAccessClient) Use(hooks ...Hook) {
+	c.hooks.MissionLoadBalanceAccess = append(c.hooks.MissionLoadBalanceAccess, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `missionloadbalanceaccess.Intercept(f(g(h())))`.
+func (c *MissionLoadBalanceAccessClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MissionLoadBalanceAccess = append(c.inters.MissionLoadBalanceAccess, interceptors...)
+}
+
+// Create returns a builder for creating a MissionLoadBalanceAccess entity.
+func (c *MissionLoadBalanceAccessClient) Create() *MissionLoadBalanceAccessCreate {
+	mutation := newMissionLoadBalanceAccessMutation(c.config, OpCreate)
+	return &MissionLoadBalanceAccessCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MissionLoadBalanceAccess entities.
+func (c *MissionLoadBalanceAccessClient) CreateBulk(builders ...*MissionLoadBalanceAccessCreate) *MissionLoadBalanceAccessCreateBulk {
+	return &MissionLoadBalanceAccessCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MissionLoadBalanceAccessClient) MapCreateBulk(slice any, setFunc func(*MissionLoadBalanceAccessCreate, int)) *MissionLoadBalanceAccessCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MissionLoadBalanceAccessCreateBulk{err: fmt.Errorf("calling to MissionLoadBalanceAccessClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MissionLoadBalanceAccessCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MissionLoadBalanceAccessCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MissionLoadBalanceAccess.
+func (c *MissionLoadBalanceAccessClient) Update() *MissionLoadBalanceAccessUpdate {
+	mutation := newMissionLoadBalanceAccessMutation(c.config, OpUpdate)
+	return &MissionLoadBalanceAccessUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MissionLoadBalanceAccessClient) UpdateOne(mlba *MissionLoadBalanceAccess) *MissionLoadBalanceAccessUpdateOne {
+	mutation := newMissionLoadBalanceAccessMutation(c.config, OpUpdateOne, withMissionLoadBalanceAccess(mlba))
+	return &MissionLoadBalanceAccessUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MissionLoadBalanceAccessClient) UpdateOneID(id int64) *MissionLoadBalanceAccessUpdateOne {
+	mutation := newMissionLoadBalanceAccessMutation(c.config, OpUpdateOne, withMissionLoadBalanceAccessID(id))
+	return &MissionLoadBalanceAccessUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MissionLoadBalanceAccess.
+func (c *MissionLoadBalanceAccessClient) Delete() *MissionLoadBalanceAccessDelete {
+	mutation := newMissionLoadBalanceAccessMutation(c.config, OpDelete)
+	return &MissionLoadBalanceAccessDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MissionLoadBalanceAccessClient) DeleteOne(mlba *MissionLoadBalanceAccess) *MissionLoadBalanceAccessDeleteOne {
+	return c.DeleteOneID(mlba.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MissionLoadBalanceAccessClient) DeleteOneID(id int64) *MissionLoadBalanceAccessDeleteOne {
+	builder := c.Delete().Where(missionloadbalanceaccess.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MissionLoadBalanceAccessDeleteOne{builder}
+}
+
+// Query returns a query builder for MissionLoadBalanceAccess.
+func (c *MissionLoadBalanceAccessClient) Query() *MissionLoadBalanceAccessQuery {
+	return &MissionLoadBalanceAccessQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMissionLoadBalanceAccess},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MissionLoadBalanceAccess entity by its id.
+func (c *MissionLoadBalanceAccessClient) Get(ctx context.Context, id int64) (*MissionLoadBalanceAccess, error) {
+	return c.Query().Where(missionloadbalanceaccess.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MissionLoadBalanceAccessClient) GetX(ctx context.Context, id int64) *MissionLoadBalanceAccess {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *MissionLoadBalanceAccessClient) Hooks() []Hook {
+	return c.hooks.MissionLoadBalanceAccess
+}
+
+// Interceptors returns the client interceptors.
+func (c *MissionLoadBalanceAccessClient) Interceptors() []Interceptor {
+	return c.inters.MissionLoadBalanceAccess
+}
+
+func (c *MissionLoadBalanceAccessClient) mutate(ctx context.Context, m *MissionLoadBalanceAccessMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MissionLoadBalanceAccessCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MissionLoadBalanceAccessUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MissionLoadBalanceAccessUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MissionLoadBalanceAccessDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown MissionLoadBalanceAccess mutation op: %q", m.Op())
+	}
+}
+
 // MissionOrderClient is a client for the MissionOrder schema.
 type MissionOrderClient struct {
 	config
@@ -14967,13 +15251,14 @@ type (
 		InputLog, Invite, InvokeModelOrder, LoginRecord, Lotto, LottoChanceRule,
 		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
 		MissionBatch, MissionCategory, MissionConsumeOrder, MissionExtraService,
-		MissionFailedFeedback, MissionKeyPair, MissionKind, MissionOrder,
-		MissionProduceOrder, MissionProduction, Model, ModelPrice, OutputLog,
-		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
-		RechargeCampaignRuleOversea, RechargeOrder, RenewalAgreement, Survey,
-		SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol, TransferOrder,
-		TroubleDeduct, User, UserDevice, UserModel, VXAccount, VXSocial, Wallet,
-		WithdrawAccount, WithdrawRecord []ent.Hook
+		MissionFailedFeedback, MissionKeyPair, MissionKind, MissionLoadBalance,
+		MissionLoadBalanceAccess, MissionOrder, MissionProduceOrder, MissionProduction,
+		Model, ModelPrice, OutputLog, PlatformAccount, Price, ProfitAccount,
+		ProfitSetting, RechargeCampaignRule, RechargeCampaignRuleOversea,
+		RechargeOrder, RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion,
+		SurveyResponse, Symbol, TransferOrder, TroubleDeduct, User, UserDevice,
+		UserModel, VXAccount, VXSocial, Wallet, WithdrawAccount,
+		WithdrawRecord []ent.Hook
 	}
 	inters struct {
 		ApiToken, Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder,
@@ -14984,12 +15269,13 @@ type (
 		InputLog, Invite, InvokeModelOrder, LoginRecord, Lotto, LottoChanceRule,
 		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
 		MissionBatch, MissionCategory, MissionConsumeOrder, MissionExtraService,
-		MissionFailedFeedback, MissionKeyPair, MissionKind, MissionOrder,
-		MissionProduceOrder, MissionProduction, Model, ModelPrice, OutputLog,
-		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
-		RechargeCampaignRuleOversea, RechargeOrder, RenewalAgreement, Survey,
-		SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol, TransferOrder,
-		TroubleDeduct, User, UserDevice, UserModel, VXAccount, VXSocial, Wallet,
-		WithdrawAccount, WithdrawRecord []ent.Interceptor
+		MissionFailedFeedback, MissionKeyPair, MissionKind, MissionLoadBalance,
+		MissionLoadBalanceAccess, MissionOrder, MissionProduceOrder, MissionProduction,
+		Model, ModelPrice, OutputLog, PlatformAccount, Price, ProfitAccount,
+		ProfitSetting, RechargeCampaignRule, RechargeCampaignRuleOversea,
+		RechargeOrder, RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion,
+		SurveyResponse, Symbol, TransferOrder, TroubleDeduct, User, UserDevice,
+		UserModel, VXAccount, VXSocial, Wallet, WithdrawAccount,
+		WithdrawRecord []ent.Interceptor
 	}
 )

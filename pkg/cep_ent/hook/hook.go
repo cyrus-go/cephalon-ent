@@ -573,6 +573,30 @@ func (f MissionKindFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_en
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionKindMutation", m)
 }
 
+// The MissionLoadBalanceFunc type is an adapter to allow the use of ordinary
+// function as MissionLoadBalance mutator.
+type MissionLoadBalanceFunc func(context.Context, *cep_ent.MissionLoadBalanceMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MissionLoadBalanceFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.MissionLoadBalanceMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionLoadBalanceMutation", m)
+}
+
+// The MissionLoadBalanceAccessFunc type is an adapter to allow the use of ordinary
+// function as MissionLoadBalanceAccess mutator.
+type MissionLoadBalanceAccessFunc func(context.Context, *cep_ent.MissionLoadBalanceAccessMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MissionLoadBalanceAccessFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.MissionLoadBalanceAccessMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionLoadBalanceAccessMutation", m)
+}
+
 // The MissionOrderFunc type is an adapter to allow the use of ordinary
 // function as MissionOrder mutator.
 type MissionOrderFunc func(context.Context, *cep_ent.MissionOrderMutation) (cep_ent.Value, error)

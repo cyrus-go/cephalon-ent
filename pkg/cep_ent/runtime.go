@@ -53,6 +53,8 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionloadbalance"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionloadbalanceaccess"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
@@ -2609,6 +2611,104 @@ func init() {
 	missionkindDescID := missionkindMixinFields0[0].Descriptor()
 	// missionkind.DefaultID holds the default value on creation for the id field.
 	missionkind.DefaultID = missionkindDescID.Default.(func() int64)
+	missionloadbalanceMixin := schema.MissionLoadBalance{}.Mixin()
+	missionloadbalanceMixinFields0 := missionloadbalanceMixin[0].Fields()
+	_ = missionloadbalanceMixinFields0
+	missionloadbalanceFields := schema.MissionLoadBalance{}.Fields()
+	_ = missionloadbalanceFields
+	// missionloadbalanceDescCreatedBy is the schema descriptor for created_by field.
+	missionloadbalanceDescCreatedBy := missionloadbalanceMixinFields0[1].Descriptor()
+	// missionloadbalance.DefaultCreatedBy holds the default value on creation for the created_by field.
+	missionloadbalance.DefaultCreatedBy = missionloadbalanceDescCreatedBy.Default.(int64)
+	// missionloadbalanceDescUpdatedBy is the schema descriptor for updated_by field.
+	missionloadbalanceDescUpdatedBy := missionloadbalanceMixinFields0[2].Descriptor()
+	// missionloadbalance.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	missionloadbalance.DefaultUpdatedBy = missionloadbalanceDescUpdatedBy.Default.(int64)
+	// missionloadbalanceDescCreatedAt is the schema descriptor for created_at field.
+	missionloadbalanceDescCreatedAt := missionloadbalanceMixinFields0[3].Descriptor()
+	// missionloadbalance.DefaultCreatedAt holds the default value on creation for the created_at field.
+	missionloadbalance.DefaultCreatedAt = missionloadbalanceDescCreatedAt.Default.(func() time.Time)
+	// missionloadbalanceDescUpdatedAt is the schema descriptor for updated_at field.
+	missionloadbalanceDescUpdatedAt := missionloadbalanceMixinFields0[4].Descriptor()
+	// missionloadbalance.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	missionloadbalance.DefaultUpdatedAt = missionloadbalanceDescUpdatedAt.Default.(func() time.Time)
+	// missionloadbalance.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	missionloadbalance.UpdateDefaultUpdatedAt = missionloadbalanceDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// missionloadbalanceDescDeletedAt is the schema descriptor for deleted_at field.
+	missionloadbalanceDescDeletedAt := missionloadbalanceMixinFields0[5].Descriptor()
+	// missionloadbalance.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	missionloadbalance.DefaultDeletedAt = missionloadbalanceDescDeletedAt.Default.(time.Time)
+	// missionloadbalanceDescStartedAt is the schema descriptor for started_at field.
+	missionloadbalanceDescStartedAt := missionloadbalanceFields[2].Descriptor()
+	// missionloadbalance.DefaultStartedAt holds the default value on creation for the started_at field.
+	missionloadbalance.DefaultStartedAt = missionloadbalanceDescStartedAt.Default.(time.Time)
+	// missionloadbalanceDescFinishedAt is the schema descriptor for finished_at field.
+	missionloadbalanceDescFinishedAt := missionloadbalanceFields[3].Descriptor()
+	// missionloadbalance.DefaultFinishedAt holds the default value on creation for the finished_at field.
+	missionloadbalance.DefaultFinishedAt = missionloadbalanceDescFinishedAt.Default.(time.Time)
+	// missionloadbalanceDescGpuNum is the schema descriptor for gpu_num field.
+	missionloadbalanceDescGpuNum := missionloadbalanceFields[5].Descriptor()
+	// missionloadbalance.DefaultGpuNum holds the default value on creation for the gpu_num field.
+	missionloadbalance.DefaultGpuNum = missionloadbalanceDescGpuNum.Default.(int8)
+	// missionloadbalanceDescMaxMissionCount is the schema descriptor for max_mission_count field.
+	missionloadbalanceDescMaxMissionCount := missionloadbalanceFields[6].Descriptor()
+	// missionloadbalance.DefaultMaxMissionCount holds the default value on creation for the max_mission_count field.
+	missionloadbalance.DefaultMaxMissionCount = missionloadbalanceDescMaxMissionCount.Default.(int8)
+	// missionloadbalanceDescMinMissionCount is the schema descriptor for min_mission_count field.
+	missionloadbalanceDescMinMissionCount := missionloadbalanceFields[7].Descriptor()
+	// missionloadbalance.DefaultMinMissionCount holds the default value on creation for the min_mission_count field.
+	missionloadbalance.DefaultMinMissionCount = missionloadbalanceDescMinMissionCount.Default.(int8)
+	// missionloadbalanceDescMissionBatchID is the schema descriptor for mission_batch_id field.
+	missionloadbalanceDescMissionBatchID := missionloadbalanceFields[8].Descriptor()
+	// missionloadbalance.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
+	missionloadbalance.DefaultMissionBatchID = missionloadbalanceDescMissionBatchID.Default.(int64)
+	// missionloadbalanceDescMissionBatchNumber is the schema descriptor for mission_batch_number field.
+	missionloadbalanceDescMissionBatchNumber := missionloadbalanceFields[9].Descriptor()
+	// missionloadbalance.DefaultMissionBatchNumber holds the default value on creation for the mission_batch_number field.
+	missionloadbalance.DefaultMissionBatchNumber = missionloadbalanceDescMissionBatchNumber.Default.(string)
+	// missionloadbalanceDescID is the schema descriptor for id field.
+	missionloadbalanceDescID := missionloadbalanceMixinFields0[0].Descriptor()
+	// missionloadbalance.DefaultID holds the default value on creation for the id field.
+	missionloadbalance.DefaultID = missionloadbalanceDescID.Default.(func() int64)
+	missionloadbalanceaccessMixin := schema.MissionLoadBalanceAccess{}.Mixin()
+	missionloadbalanceaccessMixinFields0 := missionloadbalanceaccessMixin[0].Fields()
+	_ = missionloadbalanceaccessMixinFields0
+	missionloadbalanceaccessFields := schema.MissionLoadBalanceAccess{}.Fields()
+	_ = missionloadbalanceaccessFields
+	// missionloadbalanceaccessDescCreatedBy is the schema descriptor for created_by field.
+	missionloadbalanceaccessDescCreatedBy := missionloadbalanceaccessMixinFields0[1].Descriptor()
+	// missionloadbalanceaccess.DefaultCreatedBy holds the default value on creation for the created_by field.
+	missionloadbalanceaccess.DefaultCreatedBy = missionloadbalanceaccessDescCreatedBy.Default.(int64)
+	// missionloadbalanceaccessDescUpdatedBy is the schema descriptor for updated_by field.
+	missionloadbalanceaccessDescUpdatedBy := missionloadbalanceaccessMixinFields0[2].Descriptor()
+	// missionloadbalanceaccess.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	missionloadbalanceaccess.DefaultUpdatedBy = missionloadbalanceaccessDescUpdatedBy.Default.(int64)
+	// missionloadbalanceaccessDescCreatedAt is the schema descriptor for created_at field.
+	missionloadbalanceaccessDescCreatedAt := missionloadbalanceaccessMixinFields0[3].Descriptor()
+	// missionloadbalanceaccess.DefaultCreatedAt holds the default value on creation for the created_at field.
+	missionloadbalanceaccess.DefaultCreatedAt = missionloadbalanceaccessDescCreatedAt.Default.(func() time.Time)
+	// missionloadbalanceaccessDescUpdatedAt is the schema descriptor for updated_at field.
+	missionloadbalanceaccessDescUpdatedAt := missionloadbalanceaccessMixinFields0[4].Descriptor()
+	// missionloadbalanceaccess.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	missionloadbalanceaccess.DefaultUpdatedAt = missionloadbalanceaccessDescUpdatedAt.Default.(func() time.Time)
+	// missionloadbalanceaccess.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	missionloadbalanceaccess.UpdateDefaultUpdatedAt = missionloadbalanceaccessDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// missionloadbalanceaccessDescDeletedAt is the schema descriptor for deleted_at field.
+	missionloadbalanceaccessDescDeletedAt := missionloadbalanceaccessMixinFields0[5].Descriptor()
+	// missionloadbalanceaccess.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	missionloadbalanceaccess.DefaultDeletedAt = missionloadbalanceaccessDescDeletedAt.Default.(time.Time)
+	// missionloadbalanceaccessDescLastAccess is the schema descriptor for last_access field.
+	missionloadbalanceaccessDescLastAccess := missionloadbalanceaccessFields[2].Descriptor()
+	// missionloadbalanceaccess.DefaultLastAccess holds the default value on creation for the last_access field.
+	missionloadbalanceaccess.DefaultLastAccess = missionloadbalanceaccessDescLastAccess.Default.(time.Time)
+	// missionloadbalanceaccessDescAccessCount is the schema descriptor for access_count field.
+	missionloadbalanceaccessDescAccessCount := missionloadbalanceaccessFields[3].Descriptor()
+	// missionloadbalanceaccess.DefaultAccessCount holds the default value on creation for the access_count field.
+	missionloadbalanceaccess.DefaultAccessCount = missionloadbalanceaccessDescAccessCount.Default.(int32)
+	// missionloadbalanceaccessDescID is the schema descriptor for id field.
+	missionloadbalanceaccessDescID := missionloadbalanceaccessMixinFields0[0].Descriptor()
+	// missionloadbalanceaccess.DefaultID holds the default value on creation for the id field.
+	missionloadbalanceaccess.DefaultID = missionloadbalanceaccessDescID.Default.(func() int64)
 	missionorderMixin := schema.MissionOrder{}.Mixin()
 	missionorderMixinFields0 := missionorderMixin[0].Fields()
 	_ = missionorderMixinFields0

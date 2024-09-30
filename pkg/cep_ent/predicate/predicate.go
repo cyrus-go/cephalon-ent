@@ -180,6 +180,12 @@ type MissionKeyPair func(*sql.Selector)
 // MissionKind is the predicate function for missionkind builders.
 type MissionKind func(*sql.Selector)
 
+// MissionLoadBalance is the predicate function for missionloadbalance builders.
+type MissionLoadBalance func(*sql.Selector)
+
+// MissionLoadBalanceAccess is the predicate function for missionloadbalanceaccess builders.
+type MissionLoadBalanceAccess func(*sql.Selector)
+
 // MissionOrder is the predicate function for missionorder builders.
 type MissionOrder func(*sql.Selector)
 

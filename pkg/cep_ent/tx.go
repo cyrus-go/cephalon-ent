@@ -106,6 +106,10 @@ type Tx struct {
 	MissionKeyPair *MissionKeyPairClient
 	// MissionKind is the client for interacting with the MissionKind builders.
 	MissionKind *MissionKindClient
+	// MissionLoadBalance is the client for interacting with the MissionLoadBalance builders.
+	MissionLoadBalance *MissionLoadBalanceClient
+	// MissionLoadBalanceAccess is the client for interacting with the MissionLoadBalanceAccess builders.
+	MissionLoadBalanceAccess *MissionLoadBalanceAccessClient
 	// MissionOrder is the client for interacting with the MissionOrder builders.
 	MissionOrder *MissionOrderClient
 	// MissionProduceOrder is the client for interacting with the MissionProduceOrder builders.
@@ -342,6 +346,8 @@ func (tx *Tx) init() {
 	tx.MissionFailedFeedback = NewMissionFailedFeedbackClient(tx.config)
 	tx.MissionKeyPair = NewMissionKeyPairClient(tx.config)
 	tx.MissionKind = NewMissionKindClient(tx.config)
+	tx.MissionLoadBalance = NewMissionLoadBalanceClient(tx.config)
+	tx.MissionLoadBalanceAccess = NewMissionLoadBalanceAccessClient(tx.config)
 	tx.MissionOrder = NewMissionOrderClient(tx.config)
 	tx.MissionProduceOrder = NewMissionProduceOrderClient(tx.config)
 	tx.MissionProduction = NewMissionProductionClient(tx.config)

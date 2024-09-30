@@ -58,6 +58,8 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionloadbalance"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionloadbalanceaccess"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
@@ -147,6 +149,8 @@ const (
 	TypeMissionFailedFeedback       = "MissionFailedFeedback"
 	TypeMissionKeyPair              = "MissionKeyPair"
 	TypeMissionKind                 = "MissionKind"
+	TypeMissionLoadBalance          = "MissionLoadBalance"
+	TypeMissionLoadBalanceAccess    = "MissionLoadBalanceAccess"
 	TypeMissionOrder                = "MissionOrder"
 	TypeMissionProduceOrder         = "MissionProduceOrder"
 	TypeMissionProduction           = "MissionProduction"
@@ -59705,6 +59709,2260 @@ func (m *MissionKindMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown MissionKind edge %s", name)
+}
+
+// MissionLoadBalanceMutation represents an operation that mutates the MissionLoadBalance nodes in the graph.
+type MissionLoadBalanceMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int64
+	created_by           *int64
+	addcreated_by        *int64
+	updated_by           *int64
+	addupdated_by        *int64
+	created_at           *time.Time
+	updated_at           *time.Time
+	deleted_at           *time.Time
+	mission_type         *enums.MissionType
+	user_id              *int64
+	adduser_id           *int64
+	started_at           *time.Time
+	finished_at          *time.Time
+	gpu_version          *enums.GpuVersion
+	gpu_num              *int8
+	addgpu_num           *int8
+	max_mission_count    *int8
+	addmax_mission_count *int8
+	min_mission_count    *int8
+	addmin_mission_count *int8
+	mission_batch_id     *int64
+	addmission_batch_id  *int64
+	mission_batch_number *string
+	clearedFields        map[string]struct{}
+	done                 bool
+	oldValue             func(context.Context) (*MissionLoadBalance, error)
+	predicates           []predicate.MissionLoadBalance
+}
+
+var _ ent.Mutation = (*MissionLoadBalanceMutation)(nil)
+
+// missionloadbalanceOption allows management of the mutation configuration using functional options.
+type missionloadbalanceOption func(*MissionLoadBalanceMutation)
+
+// newMissionLoadBalanceMutation creates new mutation for the MissionLoadBalance entity.
+func newMissionLoadBalanceMutation(c config, op Op, opts ...missionloadbalanceOption) *MissionLoadBalanceMutation {
+	m := &MissionLoadBalanceMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMissionLoadBalance,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMissionLoadBalanceID sets the ID field of the mutation.
+func withMissionLoadBalanceID(id int64) missionloadbalanceOption {
+	return func(m *MissionLoadBalanceMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MissionLoadBalance
+		)
+		m.oldValue = func(ctx context.Context) (*MissionLoadBalance, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MissionLoadBalance.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMissionLoadBalance sets the old MissionLoadBalance of the mutation.
+func withMissionLoadBalance(node *MissionLoadBalance) missionloadbalanceOption {
+	return func(m *MissionLoadBalanceMutation) {
+		m.oldValue = func(context.Context) (*MissionLoadBalance, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MissionLoadBalanceMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MissionLoadBalanceMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of MissionLoadBalance entities.
+func (m *MissionLoadBalanceMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MissionLoadBalanceMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MissionLoadBalanceMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MissionLoadBalance.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *MissionLoadBalanceMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *MissionLoadBalanceMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *MissionLoadBalanceMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *MissionLoadBalanceMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *MissionLoadBalanceMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *MissionLoadBalanceMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *MissionLoadBalanceMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *MissionLoadBalanceMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *MissionLoadBalanceMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *MissionLoadBalanceMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *MissionLoadBalanceMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *MissionLoadBalanceMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *MissionLoadBalanceMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MissionLoadBalanceMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MissionLoadBalanceMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MissionLoadBalanceMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *MissionLoadBalanceMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *MissionLoadBalanceMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *MissionLoadBalanceMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetMissionType sets the "mission_type" field.
+func (m *MissionLoadBalanceMutation) SetMissionType(et enums.MissionType) {
+	m.mission_type = &et
+}
+
+// MissionType returns the value of the "mission_type" field in the mutation.
+func (m *MissionLoadBalanceMutation) MissionType() (r enums.MissionType, exists bool) {
+	v := m.mission_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionType returns the old "mission_type" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldMissionType(ctx context.Context) (v enums.MissionType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionType: %w", err)
+	}
+	return oldValue.MissionType, nil
+}
+
+// ResetMissionType resets all changes to the "mission_type" field.
+func (m *MissionLoadBalanceMutation) ResetMissionType() {
+	m.mission_type = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *MissionLoadBalanceMutation) SetUserID(i int64) {
+	m.user_id = &i
+	m.adduser_id = nil
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *MissionLoadBalanceMutation) UserID() (r int64, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// AddUserID adds i to the "user_id" field.
+func (m *MissionLoadBalanceMutation) AddUserID(i int64) {
+	if m.adduser_id != nil {
+		*m.adduser_id += i
+	} else {
+		m.adduser_id = &i
+	}
+}
+
+// AddedUserID returns the value that was added to the "user_id" field in this mutation.
+func (m *MissionLoadBalanceMutation) AddedUserID() (r int64, exists bool) {
+	v := m.adduser_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *MissionLoadBalanceMutation) ResetUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+}
+
+// SetStartedAt sets the "started_at" field.
+func (m *MissionLoadBalanceMutation) SetStartedAt(t time.Time) {
+	m.started_at = &t
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *MissionLoadBalanceMutation) StartedAt() (r time.Time, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldStartedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *MissionLoadBalanceMutation) ResetStartedAt() {
+	m.started_at = nil
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (m *MissionLoadBalanceMutation) SetFinishedAt(t time.Time) {
+	m.finished_at = &t
+}
+
+// FinishedAt returns the value of the "finished_at" field in the mutation.
+func (m *MissionLoadBalanceMutation) FinishedAt() (r time.Time, exists bool) {
+	v := m.finished_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFinishedAt returns the old "finished_at" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldFinishedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFinishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFinishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFinishedAt: %w", err)
+	}
+	return oldValue.FinishedAt, nil
+}
+
+// ResetFinishedAt resets all changes to the "finished_at" field.
+func (m *MissionLoadBalanceMutation) ResetFinishedAt() {
+	m.finished_at = nil
+}
+
+// SetGpuVersion sets the "gpu_version" field.
+func (m *MissionLoadBalanceMutation) SetGpuVersion(ev enums.GpuVersion) {
+	m.gpu_version = &ev
+}
+
+// GpuVersion returns the value of the "gpu_version" field in the mutation.
+func (m *MissionLoadBalanceMutation) GpuVersion() (r enums.GpuVersion, exists bool) {
+	v := m.gpu_version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGpuVersion returns the old "gpu_version" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldGpuVersion(ctx context.Context) (v enums.GpuVersion, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGpuVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGpuVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGpuVersion: %w", err)
+	}
+	return oldValue.GpuVersion, nil
+}
+
+// ResetGpuVersion resets all changes to the "gpu_version" field.
+func (m *MissionLoadBalanceMutation) ResetGpuVersion() {
+	m.gpu_version = nil
+}
+
+// SetGpuNum sets the "gpu_num" field.
+func (m *MissionLoadBalanceMutation) SetGpuNum(i int8) {
+	m.gpu_num = &i
+	m.addgpu_num = nil
+}
+
+// GpuNum returns the value of the "gpu_num" field in the mutation.
+func (m *MissionLoadBalanceMutation) GpuNum() (r int8, exists bool) {
+	v := m.gpu_num
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGpuNum returns the old "gpu_num" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldGpuNum(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGpuNum is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGpuNum requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGpuNum: %w", err)
+	}
+	return oldValue.GpuNum, nil
+}
+
+// AddGpuNum adds i to the "gpu_num" field.
+func (m *MissionLoadBalanceMutation) AddGpuNum(i int8) {
+	if m.addgpu_num != nil {
+		*m.addgpu_num += i
+	} else {
+		m.addgpu_num = &i
+	}
+}
+
+// AddedGpuNum returns the value that was added to the "gpu_num" field in this mutation.
+func (m *MissionLoadBalanceMutation) AddedGpuNum() (r int8, exists bool) {
+	v := m.addgpu_num
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGpuNum resets all changes to the "gpu_num" field.
+func (m *MissionLoadBalanceMutation) ResetGpuNum() {
+	m.gpu_num = nil
+	m.addgpu_num = nil
+}
+
+// SetMaxMissionCount sets the "max_mission_count" field.
+func (m *MissionLoadBalanceMutation) SetMaxMissionCount(i int8) {
+	m.max_mission_count = &i
+	m.addmax_mission_count = nil
+}
+
+// MaxMissionCount returns the value of the "max_mission_count" field in the mutation.
+func (m *MissionLoadBalanceMutation) MaxMissionCount() (r int8, exists bool) {
+	v := m.max_mission_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaxMissionCount returns the old "max_mission_count" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldMaxMissionCount(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMaxMissionCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMaxMissionCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaxMissionCount: %w", err)
+	}
+	return oldValue.MaxMissionCount, nil
+}
+
+// AddMaxMissionCount adds i to the "max_mission_count" field.
+func (m *MissionLoadBalanceMutation) AddMaxMissionCount(i int8) {
+	if m.addmax_mission_count != nil {
+		*m.addmax_mission_count += i
+	} else {
+		m.addmax_mission_count = &i
+	}
+}
+
+// AddedMaxMissionCount returns the value that was added to the "max_mission_count" field in this mutation.
+func (m *MissionLoadBalanceMutation) AddedMaxMissionCount() (r int8, exists bool) {
+	v := m.addmax_mission_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMaxMissionCount resets all changes to the "max_mission_count" field.
+func (m *MissionLoadBalanceMutation) ResetMaxMissionCount() {
+	m.max_mission_count = nil
+	m.addmax_mission_count = nil
+}
+
+// SetMinMissionCount sets the "min_mission_count" field.
+func (m *MissionLoadBalanceMutation) SetMinMissionCount(i int8) {
+	m.min_mission_count = &i
+	m.addmin_mission_count = nil
+}
+
+// MinMissionCount returns the value of the "min_mission_count" field in the mutation.
+func (m *MissionLoadBalanceMutation) MinMissionCount() (r int8, exists bool) {
+	v := m.min_mission_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMinMissionCount returns the old "min_mission_count" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldMinMissionCount(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMinMissionCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMinMissionCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMinMissionCount: %w", err)
+	}
+	return oldValue.MinMissionCount, nil
+}
+
+// AddMinMissionCount adds i to the "min_mission_count" field.
+func (m *MissionLoadBalanceMutation) AddMinMissionCount(i int8) {
+	if m.addmin_mission_count != nil {
+		*m.addmin_mission_count += i
+	} else {
+		m.addmin_mission_count = &i
+	}
+}
+
+// AddedMinMissionCount returns the value that was added to the "min_mission_count" field in this mutation.
+func (m *MissionLoadBalanceMutation) AddedMinMissionCount() (r int8, exists bool) {
+	v := m.addmin_mission_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMinMissionCount resets all changes to the "min_mission_count" field.
+func (m *MissionLoadBalanceMutation) ResetMinMissionCount() {
+	m.min_mission_count = nil
+	m.addmin_mission_count = nil
+}
+
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (m *MissionLoadBalanceMutation) SetMissionBatchID(i int64) {
+	m.mission_batch_id = &i
+	m.addmission_batch_id = nil
+}
+
+// MissionBatchID returns the value of the "mission_batch_id" field in the mutation.
+func (m *MissionLoadBalanceMutation) MissionBatchID() (r int64, exists bool) {
+	v := m.mission_batch_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionBatchID returns the old "mission_batch_id" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldMissionBatchID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionBatchID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionBatchID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionBatchID: %w", err)
+	}
+	return oldValue.MissionBatchID, nil
+}
+
+// AddMissionBatchID adds i to the "mission_batch_id" field.
+func (m *MissionLoadBalanceMutation) AddMissionBatchID(i int64) {
+	if m.addmission_batch_id != nil {
+		*m.addmission_batch_id += i
+	} else {
+		m.addmission_batch_id = &i
+	}
+}
+
+// AddedMissionBatchID returns the value that was added to the "mission_batch_id" field in this mutation.
+func (m *MissionLoadBalanceMutation) AddedMissionBatchID() (r int64, exists bool) {
+	v := m.addmission_batch_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMissionBatchID resets all changes to the "mission_batch_id" field.
+func (m *MissionLoadBalanceMutation) ResetMissionBatchID() {
+	m.mission_batch_id = nil
+	m.addmission_batch_id = nil
+}
+
+// SetMissionBatchNumber sets the "mission_batch_number" field.
+func (m *MissionLoadBalanceMutation) SetMissionBatchNumber(s string) {
+	m.mission_batch_number = &s
+}
+
+// MissionBatchNumber returns the value of the "mission_batch_number" field in the mutation.
+func (m *MissionLoadBalanceMutation) MissionBatchNumber() (r string, exists bool) {
+	v := m.mission_batch_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionBatchNumber returns the old "mission_batch_number" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldMissionBatchNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionBatchNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionBatchNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionBatchNumber: %w", err)
+	}
+	return oldValue.MissionBatchNumber, nil
+}
+
+// ResetMissionBatchNumber resets all changes to the "mission_batch_number" field.
+func (m *MissionLoadBalanceMutation) ResetMissionBatchNumber() {
+	m.mission_batch_number = nil
+}
+
+// Where appends a list predicates to the MissionLoadBalanceMutation builder.
+func (m *MissionLoadBalanceMutation) Where(ps ...predicate.MissionLoadBalance) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MissionLoadBalanceMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MissionLoadBalanceMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MissionLoadBalance, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MissionLoadBalanceMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MissionLoadBalanceMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MissionLoadBalance).
+func (m *MissionLoadBalanceMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MissionLoadBalanceMutation) Fields() []string {
+	fields := make([]string, 0, 15)
+	if m.created_by != nil {
+		fields = append(fields, missionloadbalance.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, missionloadbalance.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, missionloadbalance.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, missionloadbalance.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, missionloadbalance.FieldDeletedAt)
+	}
+	if m.mission_type != nil {
+		fields = append(fields, missionloadbalance.FieldMissionType)
+	}
+	if m.user_id != nil {
+		fields = append(fields, missionloadbalance.FieldUserID)
+	}
+	if m.started_at != nil {
+		fields = append(fields, missionloadbalance.FieldStartedAt)
+	}
+	if m.finished_at != nil {
+		fields = append(fields, missionloadbalance.FieldFinishedAt)
+	}
+	if m.gpu_version != nil {
+		fields = append(fields, missionloadbalance.FieldGpuVersion)
+	}
+	if m.gpu_num != nil {
+		fields = append(fields, missionloadbalance.FieldGpuNum)
+	}
+	if m.max_mission_count != nil {
+		fields = append(fields, missionloadbalance.FieldMaxMissionCount)
+	}
+	if m.min_mission_count != nil {
+		fields = append(fields, missionloadbalance.FieldMinMissionCount)
+	}
+	if m.mission_batch_id != nil {
+		fields = append(fields, missionloadbalance.FieldMissionBatchID)
+	}
+	if m.mission_batch_number != nil {
+		fields = append(fields, missionloadbalance.FieldMissionBatchNumber)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MissionLoadBalanceMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case missionloadbalance.FieldCreatedBy:
+		return m.CreatedBy()
+	case missionloadbalance.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case missionloadbalance.FieldCreatedAt:
+		return m.CreatedAt()
+	case missionloadbalance.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case missionloadbalance.FieldDeletedAt:
+		return m.DeletedAt()
+	case missionloadbalance.FieldMissionType:
+		return m.MissionType()
+	case missionloadbalance.FieldUserID:
+		return m.UserID()
+	case missionloadbalance.FieldStartedAt:
+		return m.StartedAt()
+	case missionloadbalance.FieldFinishedAt:
+		return m.FinishedAt()
+	case missionloadbalance.FieldGpuVersion:
+		return m.GpuVersion()
+	case missionloadbalance.FieldGpuNum:
+		return m.GpuNum()
+	case missionloadbalance.FieldMaxMissionCount:
+		return m.MaxMissionCount()
+	case missionloadbalance.FieldMinMissionCount:
+		return m.MinMissionCount()
+	case missionloadbalance.FieldMissionBatchID:
+		return m.MissionBatchID()
+	case missionloadbalance.FieldMissionBatchNumber:
+		return m.MissionBatchNumber()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MissionLoadBalanceMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case missionloadbalance.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case missionloadbalance.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case missionloadbalance.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case missionloadbalance.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case missionloadbalance.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case missionloadbalance.FieldMissionType:
+		return m.OldMissionType(ctx)
+	case missionloadbalance.FieldUserID:
+		return m.OldUserID(ctx)
+	case missionloadbalance.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case missionloadbalance.FieldFinishedAt:
+		return m.OldFinishedAt(ctx)
+	case missionloadbalance.FieldGpuVersion:
+		return m.OldGpuVersion(ctx)
+	case missionloadbalance.FieldGpuNum:
+		return m.OldGpuNum(ctx)
+	case missionloadbalance.FieldMaxMissionCount:
+		return m.OldMaxMissionCount(ctx)
+	case missionloadbalance.FieldMinMissionCount:
+		return m.OldMinMissionCount(ctx)
+	case missionloadbalance.FieldMissionBatchID:
+		return m.OldMissionBatchID(ctx)
+	case missionloadbalance.FieldMissionBatchNumber:
+		return m.OldMissionBatchNumber(ctx)
+	}
+	return nil, fmt.Errorf("unknown MissionLoadBalance field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MissionLoadBalanceMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case missionloadbalance.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case missionloadbalance.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case missionloadbalance.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case missionloadbalance.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case missionloadbalance.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case missionloadbalance.FieldMissionType:
+		v, ok := value.(enums.MissionType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionType(v)
+		return nil
+	case missionloadbalance.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case missionloadbalance.FieldStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case missionloadbalance.FieldFinishedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFinishedAt(v)
+		return nil
+	case missionloadbalance.FieldGpuVersion:
+		v, ok := value.(enums.GpuVersion)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGpuVersion(v)
+		return nil
+	case missionloadbalance.FieldGpuNum:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGpuNum(v)
+		return nil
+	case missionloadbalance.FieldMaxMissionCount:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaxMissionCount(v)
+		return nil
+	case missionloadbalance.FieldMinMissionCount:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMinMissionCount(v)
+		return nil
+	case missionloadbalance.FieldMissionBatchID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionBatchID(v)
+		return nil
+	case missionloadbalance.FieldMissionBatchNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionBatchNumber(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MissionLoadBalance field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MissionLoadBalanceMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, missionloadbalance.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, missionloadbalance.FieldUpdatedBy)
+	}
+	if m.adduser_id != nil {
+		fields = append(fields, missionloadbalance.FieldUserID)
+	}
+	if m.addgpu_num != nil {
+		fields = append(fields, missionloadbalance.FieldGpuNum)
+	}
+	if m.addmax_mission_count != nil {
+		fields = append(fields, missionloadbalance.FieldMaxMissionCount)
+	}
+	if m.addmin_mission_count != nil {
+		fields = append(fields, missionloadbalance.FieldMinMissionCount)
+	}
+	if m.addmission_batch_id != nil {
+		fields = append(fields, missionloadbalance.FieldMissionBatchID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MissionLoadBalanceMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case missionloadbalance.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case missionloadbalance.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case missionloadbalance.FieldUserID:
+		return m.AddedUserID()
+	case missionloadbalance.FieldGpuNum:
+		return m.AddedGpuNum()
+	case missionloadbalance.FieldMaxMissionCount:
+		return m.AddedMaxMissionCount()
+	case missionloadbalance.FieldMinMissionCount:
+		return m.AddedMinMissionCount()
+	case missionloadbalance.FieldMissionBatchID:
+		return m.AddedMissionBatchID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MissionLoadBalanceMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case missionloadbalance.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case missionloadbalance.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case missionloadbalance.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUserID(v)
+		return nil
+	case missionloadbalance.FieldGpuNum:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGpuNum(v)
+		return nil
+	case missionloadbalance.FieldMaxMissionCount:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMaxMissionCount(v)
+		return nil
+	case missionloadbalance.FieldMinMissionCount:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMinMissionCount(v)
+		return nil
+	case missionloadbalance.FieldMissionBatchID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMissionBatchID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MissionLoadBalance numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MissionLoadBalanceMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MissionLoadBalanceMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MissionLoadBalanceMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown MissionLoadBalance nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MissionLoadBalanceMutation) ResetField(name string) error {
+	switch name {
+	case missionloadbalance.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case missionloadbalance.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case missionloadbalance.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case missionloadbalance.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case missionloadbalance.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case missionloadbalance.FieldMissionType:
+		m.ResetMissionType()
+		return nil
+	case missionloadbalance.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case missionloadbalance.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case missionloadbalance.FieldFinishedAt:
+		m.ResetFinishedAt()
+		return nil
+	case missionloadbalance.FieldGpuVersion:
+		m.ResetGpuVersion()
+		return nil
+	case missionloadbalance.FieldGpuNum:
+		m.ResetGpuNum()
+		return nil
+	case missionloadbalance.FieldMaxMissionCount:
+		m.ResetMaxMissionCount()
+		return nil
+	case missionloadbalance.FieldMinMissionCount:
+		m.ResetMinMissionCount()
+		return nil
+	case missionloadbalance.FieldMissionBatchID:
+		m.ResetMissionBatchID()
+		return nil
+	case missionloadbalance.FieldMissionBatchNumber:
+		m.ResetMissionBatchNumber()
+		return nil
+	}
+	return fmt.Errorf("unknown MissionLoadBalance field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MissionLoadBalanceMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MissionLoadBalanceMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MissionLoadBalanceMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MissionLoadBalanceMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MissionLoadBalanceMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MissionLoadBalanceMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MissionLoadBalanceMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown MissionLoadBalance unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MissionLoadBalanceMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown MissionLoadBalance edge %s", name)
+}
+
+// MissionLoadBalanceAccessMutation represents an operation that mutates the MissionLoadBalanceAccess nodes in the graph.
+type MissionLoadBalanceAccessMutation struct {
+	config
+	op                         Op
+	typ                        string
+	id                         *int64
+	created_by                 *int64
+	addcreated_by              *int64
+	updated_by                 *int64
+	addupdated_by              *int64
+	created_at                 *time.Time
+	updated_at                 *time.Time
+	deleted_at                 *time.Time
+	mission_id                 *int64
+	addmission_id              *int64
+	mission_load_balance_id    *int64
+	addmission_load_balance_id *int64
+	last_access                *time.Time
+	access_count               *int32
+	addaccess_count            *int32
+	clearedFields              map[string]struct{}
+	done                       bool
+	oldValue                   func(context.Context) (*MissionLoadBalanceAccess, error)
+	predicates                 []predicate.MissionLoadBalanceAccess
+}
+
+var _ ent.Mutation = (*MissionLoadBalanceAccessMutation)(nil)
+
+// missionloadbalanceaccessOption allows management of the mutation configuration using functional options.
+type missionloadbalanceaccessOption func(*MissionLoadBalanceAccessMutation)
+
+// newMissionLoadBalanceAccessMutation creates new mutation for the MissionLoadBalanceAccess entity.
+func newMissionLoadBalanceAccessMutation(c config, op Op, opts ...missionloadbalanceaccessOption) *MissionLoadBalanceAccessMutation {
+	m := &MissionLoadBalanceAccessMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMissionLoadBalanceAccess,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMissionLoadBalanceAccessID sets the ID field of the mutation.
+func withMissionLoadBalanceAccessID(id int64) missionloadbalanceaccessOption {
+	return func(m *MissionLoadBalanceAccessMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MissionLoadBalanceAccess
+		)
+		m.oldValue = func(ctx context.Context) (*MissionLoadBalanceAccess, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MissionLoadBalanceAccess.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMissionLoadBalanceAccess sets the old MissionLoadBalanceAccess of the mutation.
+func withMissionLoadBalanceAccess(node *MissionLoadBalanceAccess) missionloadbalanceaccessOption {
+	return func(m *MissionLoadBalanceAccessMutation) {
+		m.oldValue = func(context.Context) (*MissionLoadBalanceAccess, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MissionLoadBalanceAccessMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MissionLoadBalanceAccessMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of MissionLoadBalanceAccess entities.
+func (m *MissionLoadBalanceAccessMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MissionLoadBalanceAccessMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MissionLoadBalanceAccessMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MissionLoadBalanceAccess.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *MissionLoadBalanceAccessMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *MissionLoadBalanceAccessMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the MissionLoadBalanceAccess entity.
+// If the MissionLoadBalanceAccess object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceAccessMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *MissionLoadBalanceAccessMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *MissionLoadBalanceAccessMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *MissionLoadBalanceAccessMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *MissionLoadBalanceAccessMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *MissionLoadBalanceAccessMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the MissionLoadBalanceAccess entity.
+// If the MissionLoadBalanceAccess object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceAccessMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *MissionLoadBalanceAccessMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *MissionLoadBalanceAccessMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *MissionLoadBalanceAccessMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *MissionLoadBalanceAccessMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *MissionLoadBalanceAccessMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the MissionLoadBalanceAccess entity.
+// If the MissionLoadBalanceAccess object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceAccessMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *MissionLoadBalanceAccessMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MissionLoadBalanceAccessMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MissionLoadBalanceAccessMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MissionLoadBalanceAccess entity.
+// If the MissionLoadBalanceAccess object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceAccessMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MissionLoadBalanceAccessMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *MissionLoadBalanceAccessMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *MissionLoadBalanceAccessMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the MissionLoadBalanceAccess entity.
+// If the MissionLoadBalanceAccess object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceAccessMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *MissionLoadBalanceAccessMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetMissionID sets the "mission_id" field.
+func (m *MissionLoadBalanceAccessMutation) SetMissionID(i int64) {
+	m.mission_id = &i
+	m.addmission_id = nil
+}
+
+// MissionID returns the value of the "mission_id" field in the mutation.
+func (m *MissionLoadBalanceAccessMutation) MissionID() (r int64, exists bool) {
+	v := m.mission_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionID returns the old "mission_id" field's value of the MissionLoadBalanceAccess entity.
+// If the MissionLoadBalanceAccess object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceAccessMutation) OldMissionID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionID: %w", err)
+	}
+	return oldValue.MissionID, nil
+}
+
+// AddMissionID adds i to the "mission_id" field.
+func (m *MissionLoadBalanceAccessMutation) AddMissionID(i int64) {
+	if m.addmission_id != nil {
+		*m.addmission_id += i
+	} else {
+		m.addmission_id = &i
+	}
+}
+
+// AddedMissionID returns the value that was added to the "mission_id" field in this mutation.
+func (m *MissionLoadBalanceAccessMutation) AddedMissionID() (r int64, exists bool) {
+	v := m.addmission_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMissionID resets all changes to the "mission_id" field.
+func (m *MissionLoadBalanceAccessMutation) ResetMissionID() {
+	m.mission_id = nil
+	m.addmission_id = nil
+}
+
+// SetMissionLoadBalanceID sets the "mission_load_balance_id" field.
+func (m *MissionLoadBalanceAccessMutation) SetMissionLoadBalanceID(i int64) {
+	m.mission_load_balance_id = &i
+	m.addmission_load_balance_id = nil
+}
+
+// MissionLoadBalanceID returns the value of the "mission_load_balance_id" field in the mutation.
+func (m *MissionLoadBalanceAccessMutation) MissionLoadBalanceID() (r int64, exists bool) {
+	v := m.mission_load_balance_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionLoadBalanceID returns the old "mission_load_balance_id" field's value of the MissionLoadBalanceAccess entity.
+// If the MissionLoadBalanceAccess object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceAccessMutation) OldMissionLoadBalanceID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionLoadBalanceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionLoadBalanceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionLoadBalanceID: %w", err)
+	}
+	return oldValue.MissionLoadBalanceID, nil
+}
+
+// AddMissionLoadBalanceID adds i to the "mission_load_balance_id" field.
+func (m *MissionLoadBalanceAccessMutation) AddMissionLoadBalanceID(i int64) {
+	if m.addmission_load_balance_id != nil {
+		*m.addmission_load_balance_id += i
+	} else {
+		m.addmission_load_balance_id = &i
+	}
+}
+
+// AddedMissionLoadBalanceID returns the value that was added to the "mission_load_balance_id" field in this mutation.
+func (m *MissionLoadBalanceAccessMutation) AddedMissionLoadBalanceID() (r int64, exists bool) {
+	v := m.addmission_load_balance_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMissionLoadBalanceID resets all changes to the "mission_load_balance_id" field.
+func (m *MissionLoadBalanceAccessMutation) ResetMissionLoadBalanceID() {
+	m.mission_load_balance_id = nil
+	m.addmission_load_balance_id = nil
+}
+
+// SetLastAccess sets the "last_access" field.
+func (m *MissionLoadBalanceAccessMutation) SetLastAccess(t time.Time) {
+	m.last_access = &t
+}
+
+// LastAccess returns the value of the "last_access" field in the mutation.
+func (m *MissionLoadBalanceAccessMutation) LastAccess() (r time.Time, exists bool) {
+	v := m.last_access
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastAccess returns the old "last_access" field's value of the MissionLoadBalanceAccess entity.
+// If the MissionLoadBalanceAccess object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceAccessMutation) OldLastAccess(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastAccess is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastAccess requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastAccess: %w", err)
+	}
+	return oldValue.LastAccess, nil
+}
+
+// ResetLastAccess resets all changes to the "last_access" field.
+func (m *MissionLoadBalanceAccessMutation) ResetLastAccess() {
+	m.last_access = nil
+}
+
+// SetAccessCount sets the "access_count" field.
+func (m *MissionLoadBalanceAccessMutation) SetAccessCount(i int32) {
+	m.access_count = &i
+	m.addaccess_count = nil
+}
+
+// AccessCount returns the value of the "access_count" field in the mutation.
+func (m *MissionLoadBalanceAccessMutation) AccessCount() (r int32, exists bool) {
+	v := m.access_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAccessCount returns the old "access_count" field's value of the MissionLoadBalanceAccess entity.
+// If the MissionLoadBalanceAccess object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceAccessMutation) OldAccessCount(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAccessCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAccessCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAccessCount: %w", err)
+	}
+	return oldValue.AccessCount, nil
+}
+
+// AddAccessCount adds i to the "access_count" field.
+func (m *MissionLoadBalanceAccessMutation) AddAccessCount(i int32) {
+	if m.addaccess_count != nil {
+		*m.addaccess_count += i
+	} else {
+		m.addaccess_count = &i
+	}
+}
+
+// AddedAccessCount returns the value that was added to the "access_count" field in this mutation.
+func (m *MissionLoadBalanceAccessMutation) AddedAccessCount() (r int32, exists bool) {
+	v := m.addaccess_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAccessCount resets all changes to the "access_count" field.
+func (m *MissionLoadBalanceAccessMutation) ResetAccessCount() {
+	m.access_count = nil
+	m.addaccess_count = nil
+}
+
+// Where appends a list predicates to the MissionLoadBalanceAccessMutation builder.
+func (m *MissionLoadBalanceAccessMutation) Where(ps ...predicate.MissionLoadBalanceAccess) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MissionLoadBalanceAccessMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MissionLoadBalanceAccessMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MissionLoadBalanceAccess, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MissionLoadBalanceAccessMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MissionLoadBalanceAccessMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MissionLoadBalanceAccess).
+func (m *MissionLoadBalanceAccessMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MissionLoadBalanceAccessMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.created_by != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldDeletedAt)
+	}
+	if m.mission_id != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldMissionID)
+	}
+	if m.mission_load_balance_id != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldMissionLoadBalanceID)
+	}
+	if m.last_access != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldLastAccess)
+	}
+	if m.access_count != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldAccessCount)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MissionLoadBalanceAccessMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case missionloadbalanceaccess.FieldCreatedBy:
+		return m.CreatedBy()
+	case missionloadbalanceaccess.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case missionloadbalanceaccess.FieldCreatedAt:
+		return m.CreatedAt()
+	case missionloadbalanceaccess.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case missionloadbalanceaccess.FieldDeletedAt:
+		return m.DeletedAt()
+	case missionloadbalanceaccess.FieldMissionID:
+		return m.MissionID()
+	case missionloadbalanceaccess.FieldMissionLoadBalanceID:
+		return m.MissionLoadBalanceID()
+	case missionloadbalanceaccess.FieldLastAccess:
+		return m.LastAccess()
+	case missionloadbalanceaccess.FieldAccessCount:
+		return m.AccessCount()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MissionLoadBalanceAccessMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case missionloadbalanceaccess.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case missionloadbalanceaccess.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case missionloadbalanceaccess.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case missionloadbalanceaccess.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case missionloadbalanceaccess.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case missionloadbalanceaccess.FieldMissionID:
+		return m.OldMissionID(ctx)
+	case missionloadbalanceaccess.FieldMissionLoadBalanceID:
+		return m.OldMissionLoadBalanceID(ctx)
+	case missionloadbalanceaccess.FieldLastAccess:
+		return m.OldLastAccess(ctx)
+	case missionloadbalanceaccess.FieldAccessCount:
+		return m.OldAccessCount(ctx)
+	}
+	return nil, fmt.Errorf("unknown MissionLoadBalanceAccess field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MissionLoadBalanceAccessMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case missionloadbalanceaccess.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case missionloadbalanceaccess.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case missionloadbalanceaccess.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case missionloadbalanceaccess.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case missionloadbalanceaccess.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case missionloadbalanceaccess.FieldMissionID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionID(v)
+		return nil
+	case missionloadbalanceaccess.FieldMissionLoadBalanceID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionLoadBalanceID(v)
+		return nil
+	case missionloadbalanceaccess.FieldLastAccess:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastAccess(v)
+		return nil
+	case missionloadbalanceaccess.FieldAccessCount:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAccessCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MissionLoadBalanceAccess field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MissionLoadBalanceAccessMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldUpdatedBy)
+	}
+	if m.addmission_id != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldMissionID)
+	}
+	if m.addmission_load_balance_id != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldMissionLoadBalanceID)
+	}
+	if m.addaccess_count != nil {
+		fields = append(fields, missionloadbalanceaccess.FieldAccessCount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MissionLoadBalanceAccessMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case missionloadbalanceaccess.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case missionloadbalanceaccess.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case missionloadbalanceaccess.FieldMissionID:
+		return m.AddedMissionID()
+	case missionloadbalanceaccess.FieldMissionLoadBalanceID:
+		return m.AddedMissionLoadBalanceID()
+	case missionloadbalanceaccess.FieldAccessCount:
+		return m.AddedAccessCount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MissionLoadBalanceAccessMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case missionloadbalanceaccess.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case missionloadbalanceaccess.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case missionloadbalanceaccess.FieldMissionID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMissionID(v)
+		return nil
+	case missionloadbalanceaccess.FieldMissionLoadBalanceID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMissionLoadBalanceID(v)
+		return nil
+	case missionloadbalanceaccess.FieldAccessCount:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAccessCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MissionLoadBalanceAccess numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MissionLoadBalanceAccessMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MissionLoadBalanceAccessMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MissionLoadBalanceAccessMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown MissionLoadBalanceAccess nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MissionLoadBalanceAccessMutation) ResetField(name string) error {
+	switch name {
+	case missionloadbalanceaccess.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case missionloadbalanceaccess.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case missionloadbalanceaccess.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case missionloadbalanceaccess.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case missionloadbalanceaccess.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case missionloadbalanceaccess.FieldMissionID:
+		m.ResetMissionID()
+		return nil
+	case missionloadbalanceaccess.FieldMissionLoadBalanceID:
+		m.ResetMissionLoadBalanceID()
+		return nil
+	case missionloadbalanceaccess.FieldLastAccess:
+		m.ResetLastAccess()
+		return nil
+	case missionloadbalanceaccess.FieldAccessCount:
+		m.ResetAccessCount()
+		return nil
+	}
+	return fmt.Errorf("unknown MissionLoadBalanceAccess field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MissionLoadBalanceAccessMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MissionLoadBalanceAccessMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MissionLoadBalanceAccessMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MissionLoadBalanceAccessMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MissionLoadBalanceAccessMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MissionLoadBalanceAccessMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MissionLoadBalanceAccessMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown MissionLoadBalanceAccess unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MissionLoadBalanceAccessMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown MissionLoadBalanceAccess edge %s", name)
 }
 
 // MissionOrderMutation represents an operation that mutates the MissionOrder nodes in the graph.

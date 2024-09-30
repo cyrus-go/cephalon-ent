@@ -59,6 +59,8 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionloadbalance"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionloadbalanceaccess"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
@@ -195,6 +197,8 @@ func checkColumn(table, column string) error {
 			missionfailedfeedback.Table:       missionfailedfeedback.ValidColumn,
 			missionkeypair.Table:              missionkeypair.ValidColumn,
 			missionkind.Table:                 missionkind.ValidColumn,
+			missionloadbalance.Table:          missionloadbalance.ValidColumn,
+			missionloadbalanceaccess.Table:    missionloadbalanceaccess.ValidColumn,
 			missionorder.Table:                missionorder.ValidColumn,
 			missionproduceorder.Table:         missionproduceorder.ValidColumn,
 			missionproduction.Table:           missionproduction.ValidColumn,
