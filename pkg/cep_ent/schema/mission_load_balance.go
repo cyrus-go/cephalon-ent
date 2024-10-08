@@ -19,6 +19,7 @@ func (MissionLoadBalance) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("mission_type").GoType(enums.MissionTypeSdTxt2Img).Default(string(enums.MissionTypeUnknown)).StructTag(`json:"type"`).Comment("任务类型"),
 		field.Int64("user_id").StructTag(`json:"user_id,string"`).Comment("用户 ID"),
+		field.Enum("state").GoType(enums.MissionLoadBalanceStateWaiting).Default(string(enums.MissionLoadBalanceStateUnknown)).StructTag(`json:"state"`).Comment("mission 负载均衡总状态"),
 		field.Time("started_at").Default(common.ZeroTime).StructTag(`json:"started_at"`).Comment("任务开始时刻"),
 		field.Time("finished_at").Default(common.ZeroTime).StructTag(`json:"finished_at"`).Comment("任务完成时刻"),
 		field.Enum("gpu_version").Default(string(enums.GpuVersionUnknown)).GoType(enums.GpuVersion3080).StructTag(`json:"gpu_version"`).Comment("任务使用什么显卡在执行"),
