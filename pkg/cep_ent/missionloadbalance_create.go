@@ -211,6 +211,20 @@ func (mlbc *MissionLoadBalanceCreate) SetNillableMinMissionCount(i *int8) *Missi
 	return mlbc
 }
 
+// SetCurrentMissionCount sets the "current_mission_count" field.
+func (mlbc *MissionLoadBalanceCreate) SetCurrentMissionCount(i int8) *MissionLoadBalanceCreate {
+	mlbc.mutation.SetCurrentMissionCount(i)
+	return mlbc
+}
+
+// SetNillableCurrentMissionCount sets the "current_mission_count" field if the given value is not nil.
+func (mlbc *MissionLoadBalanceCreate) SetNillableCurrentMissionCount(i *int8) *MissionLoadBalanceCreate {
+	if i != nil {
+		mlbc.SetCurrentMissionCount(*i)
+	}
+	return mlbc
+}
+
 // SetMissionBatchID sets the "mission_batch_id" field.
 func (mlbc *MissionLoadBalanceCreate) SetMissionBatchID(i int64) *MissionLoadBalanceCreate {
 	mlbc.mutation.SetMissionBatchID(i)
@@ -340,6 +354,10 @@ func (mlbc *MissionLoadBalanceCreate) defaults() {
 		v := missionloadbalance.DefaultMinMissionCount
 		mlbc.mutation.SetMinMissionCount(v)
 	}
+	if _, ok := mlbc.mutation.CurrentMissionCount(); !ok {
+		v := missionloadbalance.DefaultCurrentMissionCount
+		mlbc.mutation.SetCurrentMissionCount(v)
+	}
 	if _, ok := mlbc.mutation.MissionBatchID(); !ok {
 		v := missionloadbalance.DefaultMissionBatchID
 		mlbc.mutation.SetMissionBatchID(v)
@@ -412,6 +430,9 @@ func (mlbc *MissionLoadBalanceCreate) check() error {
 	}
 	if _, ok := mlbc.mutation.MinMissionCount(); !ok {
 		return &ValidationError{Name: "min_mission_count", err: errors.New(`cep_ent: missing required field "MissionLoadBalance.min_mission_count"`)}
+	}
+	if _, ok := mlbc.mutation.CurrentMissionCount(); !ok {
+		return &ValidationError{Name: "current_mission_count", err: errors.New(`cep_ent: missing required field "MissionLoadBalance.current_mission_count"`)}
 	}
 	if _, ok := mlbc.mutation.MissionBatchID(); !ok {
 		return &ValidationError{Name: "mission_batch_id", err: errors.New(`cep_ent: missing required field "MissionLoadBalance.mission_batch_id"`)}
@@ -507,6 +528,10 @@ func (mlbc *MissionLoadBalanceCreate) createSpec() (*MissionLoadBalance, *sqlgra
 	if value, ok := mlbc.mutation.MinMissionCount(); ok {
 		_spec.SetField(missionloadbalance.FieldMinMissionCount, field.TypeInt8, value)
 		_node.MinMissionCount = value
+	}
+	if value, ok := mlbc.mutation.CurrentMissionCount(); ok {
+		_spec.SetField(missionloadbalance.FieldCurrentMissionCount, field.TypeInt8, value)
+		_node.CurrentMissionCount = value
 	}
 	if value, ok := mlbc.mutation.MissionBatchID(); ok {
 		_spec.SetField(missionloadbalance.FieldMissionBatchID, field.TypeInt64, value)
@@ -757,6 +782,24 @@ func (u *MissionLoadBalanceUpsert) UpdateMinMissionCount() *MissionLoadBalanceUp
 // AddMinMissionCount adds v to the "min_mission_count" field.
 func (u *MissionLoadBalanceUpsert) AddMinMissionCount(v int8) *MissionLoadBalanceUpsert {
 	u.Add(missionloadbalance.FieldMinMissionCount, v)
+	return u
+}
+
+// SetCurrentMissionCount sets the "current_mission_count" field.
+func (u *MissionLoadBalanceUpsert) SetCurrentMissionCount(v int8) *MissionLoadBalanceUpsert {
+	u.Set(missionloadbalance.FieldCurrentMissionCount, v)
+	return u
+}
+
+// UpdateCurrentMissionCount sets the "current_mission_count" field to the value that was provided on create.
+func (u *MissionLoadBalanceUpsert) UpdateCurrentMissionCount() *MissionLoadBalanceUpsert {
+	u.SetExcluded(missionloadbalance.FieldCurrentMissionCount)
+	return u
+}
+
+// AddCurrentMissionCount adds v to the "current_mission_count" field.
+func (u *MissionLoadBalanceUpsert) AddCurrentMissionCount(v int8) *MissionLoadBalanceUpsert {
+	u.Add(missionloadbalance.FieldCurrentMissionCount, v)
 	return u
 }
 
@@ -1062,6 +1105,27 @@ func (u *MissionLoadBalanceUpsertOne) AddMinMissionCount(v int8) *MissionLoadBal
 func (u *MissionLoadBalanceUpsertOne) UpdateMinMissionCount() *MissionLoadBalanceUpsertOne {
 	return u.Update(func(s *MissionLoadBalanceUpsert) {
 		s.UpdateMinMissionCount()
+	})
+}
+
+// SetCurrentMissionCount sets the "current_mission_count" field.
+func (u *MissionLoadBalanceUpsertOne) SetCurrentMissionCount(v int8) *MissionLoadBalanceUpsertOne {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.SetCurrentMissionCount(v)
+	})
+}
+
+// AddCurrentMissionCount adds v to the "current_mission_count" field.
+func (u *MissionLoadBalanceUpsertOne) AddCurrentMissionCount(v int8) *MissionLoadBalanceUpsertOne {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.AddCurrentMissionCount(v)
+	})
+}
+
+// UpdateCurrentMissionCount sets the "current_mission_count" field to the value that was provided on create.
+func (u *MissionLoadBalanceUpsertOne) UpdateCurrentMissionCount() *MissionLoadBalanceUpsertOne {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.UpdateCurrentMissionCount()
 	})
 }
 
@@ -1538,6 +1602,27 @@ func (u *MissionLoadBalanceUpsertBulk) AddMinMissionCount(v int8) *MissionLoadBa
 func (u *MissionLoadBalanceUpsertBulk) UpdateMinMissionCount() *MissionLoadBalanceUpsertBulk {
 	return u.Update(func(s *MissionLoadBalanceUpsert) {
 		s.UpdateMinMissionCount()
+	})
+}
+
+// SetCurrentMissionCount sets the "current_mission_count" field.
+func (u *MissionLoadBalanceUpsertBulk) SetCurrentMissionCount(v int8) *MissionLoadBalanceUpsertBulk {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.SetCurrentMissionCount(v)
+	})
+}
+
+// AddCurrentMissionCount adds v to the "current_mission_count" field.
+func (u *MissionLoadBalanceUpsertBulk) AddCurrentMissionCount(v int8) *MissionLoadBalanceUpsertBulk {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.AddCurrentMissionCount(v)
+	})
+}
+
+// UpdateCurrentMissionCount sets the "current_mission_count" field to the value that was provided on create.
+func (u *MissionLoadBalanceUpsertBulk) UpdateCurrentMissionCount() *MissionLoadBalanceUpsertBulk {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.UpdateCurrentMissionCount()
 	})
 }
 

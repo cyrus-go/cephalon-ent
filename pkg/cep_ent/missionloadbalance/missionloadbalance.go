@@ -43,6 +43,8 @@ const (
 	FieldMaxMissionCount = "max_mission_count"
 	// FieldMinMissionCount holds the string denoting the min_mission_count field in the database.
 	FieldMinMissionCount = "min_mission_count"
+	// FieldCurrentMissionCount holds the string denoting the current_mission_count field in the database.
+	FieldCurrentMissionCount = "current_mission_count"
 	// FieldMissionBatchID holds the string denoting the mission_batch_id field in the database.
 	FieldMissionBatchID = "mission_batch_id"
 	// FieldMissionBatchNumber holds the string denoting the mission_batch_number field in the database.
@@ -68,6 +70,7 @@ var Columns = []string{
 	FieldGpuNum,
 	FieldMaxMissionCount,
 	FieldMinMissionCount,
+	FieldCurrentMissionCount,
 	FieldMissionBatchID,
 	FieldMissionBatchNumber,
 }
@@ -105,6 +108,8 @@ var (
 	DefaultMaxMissionCount int8
 	// DefaultMinMissionCount holds the default value on creation for the "min_mission_count" field.
 	DefaultMinMissionCount int8
+	// DefaultCurrentMissionCount holds the default value on creation for the "current_mission_count" field.
+	DefaultCurrentMissionCount int8
 	// DefaultMissionBatchID holds the default value on creation for the "mission_batch_id" field.
 	DefaultMissionBatchID int64
 	// DefaultMissionBatchNumber holds the default value on creation for the "mission_batch_number" field.
@@ -225,6 +230,11 @@ func ByMaxMissionCount(opts ...sql.OrderTermOption) OrderOption {
 // ByMinMissionCount orders the results by the min_mission_count field.
 func ByMinMissionCount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMinMissionCount, opts...).ToFunc()
+}
+
+// ByCurrentMissionCount orders the results by the current_mission_count field.
+func ByCurrentMissionCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrentMissionCount, opts...).ToFunc()
 }
 
 // ByMissionBatchID orders the results by the mission_batch_id field.

@@ -47,6 +47,8 @@ type MissionLoadBalance struct {
 	MaxMissionCount int8 `json:"max_mission_count"`
 	// 应用数浮动下限
 	MinMissionCount int8 `json:"min_mission_count"`
+	// 当前应用数（调整中的以此为依据）
+	CurrentMissionCount int8 `json:"current_mission_count"`
 	// 外键关联任务批次
 	MissionBatchID int64 `json:"mission_batch_id,string"`
 	// 任务批次号
@@ -59,7 +61,7 @@ func (*MissionLoadBalance) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case missionloadbalance.FieldID, missionloadbalance.FieldCreatedBy, missionloadbalance.FieldUpdatedBy, missionloadbalance.FieldUserID, missionloadbalance.FieldGpuNum, missionloadbalance.FieldMaxMissionCount, missionloadbalance.FieldMinMissionCount, missionloadbalance.FieldMissionBatchID:
+		case missionloadbalance.FieldID, missionloadbalance.FieldCreatedBy, missionloadbalance.FieldUpdatedBy, missionloadbalance.FieldUserID, missionloadbalance.FieldGpuNum, missionloadbalance.FieldMaxMissionCount, missionloadbalance.FieldMinMissionCount, missionloadbalance.FieldCurrentMissionCount, missionloadbalance.FieldMissionBatchID:
 			values[i] = new(sql.NullInt64)
 		case missionloadbalance.FieldMissionType, missionloadbalance.FieldState, missionloadbalance.FieldGpuVersion, missionloadbalance.FieldMissionBatchNumber:
 			values[i] = new(sql.NullString)
@@ -170,6 +172,12 @@ func (mlb *MissionLoadBalance) assignValues(columns []string, values []any) erro
 			} else if value.Valid {
 				mlb.MinMissionCount = int8(value.Int64)
 			}
+		case missionloadbalance.FieldCurrentMissionCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field current_mission_count", values[i])
+			} else if value.Valid {
+				mlb.CurrentMissionCount = int8(value.Int64)
+			}
 		case missionloadbalance.FieldMissionBatchID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field mission_batch_id", values[i])
@@ -259,6 +267,9 @@ func (mlb *MissionLoadBalance) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("min_mission_count=")
 	builder.WriteString(fmt.Sprintf("%v", mlb.MinMissionCount))
+	builder.WriteString(", ")
+	builder.WriteString("current_mission_count=")
+	builder.WriteString(fmt.Sprintf("%v", mlb.CurrentMissionCount))
 	builder.WriteString(", ")
 	builder.WriteString("mission_batch_id=")
 	builder.WriteString(fmt.Sprintf("%v", mlb.MissionBatchID))

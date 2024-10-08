@@ -1941,6 +1941,7 @@ var (
 		{Name: "gpu_num", Type: field.TypeInt8, Comment: "使用显卡数量", Default: 0},
 		{Name: "max_mission_count", Type: field.TypeInt8, Comment: "应用数浮动上限", Default: 1},
 		{Name: "min_mission_count", Type: field.TypeInt8, Comment: "应用数浮动下限", Default: 1},
+		{Name: "current_mission_count", Type: field.TypeInt8, Comment: "当前应用数（调整中的以此为依据）", Default: 1},
 		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "外键关联任务批次", Default: 0},
 		{Name: "mission_batch_number", Type: field.TypeString, Comment: "任务批次号", Default: ""},
 	}
@@ -1954,12 +1955,12 @@ var (
 			{
 				Name:    "missionloadbalance_mission_batch_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionLoadBalancesColumns[15]},
+				Columns: []*schema.Column{MissionLoadBalancesColumns[16]},
 			},
 			{
 				Name:    "missionloadbalance_mission_batch_number",
 				Unique:  false,
-				Columns: []*schema.Column{MissionLoadBalancesColumns[16]},
+				Columns: []*schema.Column{MissionLoadBalancesColumns[17]},
 			},
 		},
 	}

@@ -26,6 +26,7 @@ func (MissionLoadBalance) Fields() []ent.Field {
 		field.Int8("gpu_num").Default(0).StructTag(`json:"gpu_num"`).Comment("使用显卡数量"),
 		field.Int8("max_mission_count").Default(1).StructTag(`json:"max_mission_count"`).Comment("应用数浮动上限"),
 		field.Int8("min_mission_count").Default(1).StructTag(`json:"min_mission_count"`).Comment("应用数浮动下限"),
+		field.Int8("current_mission_count").Default(1).StructTag(`json:"current_mission_count"`).Comment("当前应用数（调整中的以此为依据）"),
 		field.Int64("mission_batch_id").Default(0).StructTag(`json:"mission_batch_id,string"`).Comment("外键关联任务批次"),
 		field.String("mission_batch_number").Default("").StructTag(`json:"mission_batch_number"`).Comment("任务批次号"),
 	}

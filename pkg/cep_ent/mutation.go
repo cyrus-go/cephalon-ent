@@ -59714,36 +59714,38 @@ func (m *MissionKindMutation) ResetEdge(name string) error {
 // MissionLoadBalanceMutation represents an operation that mutates the MissionLoadBalance nodes in the graph.
 type MissionLoadBalanceMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *int64
-	created_by           *int64
-	addcreated_by        *int64
-	updated_by           *int64
-	addupdated_by        *int64
-	created_at           *time.Time
-	updated_at           *time.Time
-	deleted_at           *time.Time
-	mission_type         *enums.MissionType
-	user_id              *int64
-	adduser_id           *int64
-	state                *enums.MissionLoadBalanceState
-	started_at           *time.Time
-	finished_at          *time.Time
-	gpu_version          *enums.GpuVersion
-	gpu_num              *int8
-	addgpu_num           *int8
-	max_mission_count    *int8
-	addmax_mission_count *int8
-	min_mission_count    *int8
-	addmin_mission_count *int8
-	mission_batch_id     *int64
-	addmission_batch_id  *int64
-	mission_batch_number *string
-	clearedFields        map[string]struct{}
-	done                 bool
-	oldValue             func(context.Context) (*MissionLoadBalance, error)
-	predicates           []predicate.MissionLoadBalance
+	op                       Op
+	typ                      string
+	id                       *int64
+	created_by               *int64
+	addcreated_by            *int64
+	updated_by               *int64
+	addupdated_by            *int64
+	created_at               *time.Time
+	updated_at               *time.Time
+	deleted_at               *time.Time
+	mission_type             *enums.MissionType
+	user_id                  *int64
+	adduser_id               *int64
+	state                    *enums.MissionLoadBalanceState
+	started_at               *time.Time
+	finished_at              *time.Time
+	gpu_version              *enums.GpuVersion
+	gpu_num                  *int8
+	addgpu_num               *int8
+	max_mission_count        *int8
+	addmax_mission_count     *int8
+	min_mission_count        *int8
+	addmin_mission_count     *int8
+	current_mission_count    *int8
+	addcurrent_mission_count *int8
+	mission_batch_id         *int64
+	addmission_batch_id      *int64
+	mission_batch_number     *string
+	clearedFields            map[string]struct{}
+	done                     bool
+	oldValue                 func(context.Context) (*MissionLoadBalance, error)
+	predicates               []predicate.MissionLoadBalance
 }
 
 var _ ent.Mutation = (*MissionLoadBalanceMutation)(nil)
@@ -60474,6 +60476,62 @@ func (m *MissionLoadBalanceMutation) ResetMinMissionCount() {
 	m.addmin_mission_count = nil
 }
 
+// SetCurrentMissionCount sets the "current_mission_count" field.
+func (m *MissionLoadBalanceMutation) SetCurrentMissionCount(i int8) {
+	m.current_mission_count = &i
+	m.addcurrent_mission_count = nil
+}
+
+// CurrentMissionCount returns the value of the "current_mission_count" field in the mutation.
+func (m *MissionLoadBalanceMutation) CurrentMissionCount() (r int8, exists bool) {
+	v := m.current_mission_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrentMissionCount returns the old "current_mission_count" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldCurrentMissionCount(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrentMissionCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrentMissionCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrentMissionCount: %w", err)
+	}
+	return oldValue.CurrentMissionCount, nil
+}
+
+// AddCurrentMissionCount adds i to the "current_mission_count" field.
+func (m *MissionLoadBalanceMutation) AddCurrentMissionCount(i int8) {
+	if m.addcurrent_mission_count != nil {
+		*m.addcurrent_mission_count += i
+	} else {
+		m.addcurrent_mission_count = &i
+	}
+}
+
+// AddedCurrentMissionCount returns the value that was added to the "current_mission_count" field in this mutation.
+func (m *MissionLoadBalanceMutation) AddedCurrentMissionCount() (r int8, exists bool) {
+	v := m.addcurrent_mission_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCurrentMissionCount resets all changes to the "current_mission_count" field.
+func (m *MissionLoadBalanceMutation) ResetCurrentMissionCount() {
+	m.current_mission_count = nil
+	m.addcurrent_mission_count = nil
+}
+
 // SetMissionBatchID sets the "mission_batch_id" field.
 func (m *MissionLoadBalanceMutation) SetMissionBatchID(i int64) {
 	m.mission_batch_id = &i
@@ -60600,7 +60658,7 @@ func (m *MissionLoadBalanceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionLoadBalanceMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.created_by != nil {
 		fields = append(fields, missionloadbalance.FieldCreatedBy)
 	}
@@ -60642,6 +60700,9 @@ func (m *MissionLoadBalanceMutation) Fields() []string {
 	}
 	if m.min_mission_count != nil {
 		fields = append(fields, missionloadbalance.FieldMinMissionCount)
+	}
+	if m.current_mission_count != nil {
+		fields = append(fields, missionloadbalance.FieldCurrentMissionCount)
 	}
 	if m.mission_batch_id != nil {
 		fields = append(fields, missionloadbalance.FieldMissionBatchID)
@@ -60685,6 +60746,8 @@ func (m *MissionLoadBalanceMutation) Field(name string) (ent.Value, bool) {
 		return m.MaxMissionCount()
 	case missionloadbalance.FieldMinMissionCount:
 		return m.MinMissionCount()
+	case missionloadbalance.FieldCurrentMissionCount:
+		return m.CurrentMissionCount()
 	case missionloadbalance.FieldMissionBatchID:
 		return m.MissionBatchID()
 	case missionloadbalance.FieldMissionBatchNumber:
@@ -60726,6 +60789,8 @@ func (m *MissionLoadBalanceMutation) OldField(ctx context.Context, name string) 
 		return m.OldMaxMissionCount(ctx)
 	case missionloadbalance.FieldMinMissionCount:
 		return m.OldMinMissionCount(ctx)
+	case missionloadbalance.FieldCurrentMissionCount:
+		return m.OldCurrentMissionCount(ctx)
 	case missionloadbalance.FieldMissionBatchID:
 		return m.OldMissionBatchID(ctx)
 	case missionloadbalance.FieldMissionBatchNumber:
@@ -60837,6 +60902,13 @@ func (m *MissionLoadBalanceMutation) SetField(name string, value ent.Value) erro
 		}
 		m.SetMinMissionCount(v)
 		return nil
+	case missionloadbalance.FieldCurrentMissionCount:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrentMissionCount(v)
+		return nil
 	case missionloadbalance.FieldMissionBatchID:
 		v, ok := value.(int64)
 		if !ok {
@@ -60877,6 +60949,9 @@ func (m *MissionLoadBalanceMutation) AddedFields() []string {
 	if m.addmin_mission_count != nil {
 		fields = append(fields, missionloadbalance.FieldMinMissionCount)
 	}
+	if m.addcurrent_mission_count != nil {
+		fields = append(fields, missionloadbalance.FieldCurrentMissionCount)
+	}
 	if m.addmission_batch_id != nil {
 		fields = append(fields, missionloadbalance.FieldMissionBatchID)
 	}
@@ -60900,6 +60975,8 @@ func (m *MissionLoadBalanceMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedMaxMissionCount()
 	case missionloadbalance.FieldMinMissionCount:
 		return m.AddedMinMissionCount()
+	case missionloadbalance.FieldCurrentMissionCount:
+		return m.AddedCurrentMissionCount()
 	case missionloadbalance.FieldMissionBatchID:
 		return m.AddedMissionBatchID()
 	}
@@ -60952,6 +61029,13 @@ func (m *MissionLoadBalanceMutation) AddField(name string, value ent.Value) erro
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddMinMissionCount(v)
+		return nil
+	case missionloadbalance.FieldCurrentMissionCount:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCurrentMissionCount(v)
 		return nil
 	case missionloadbalance.FieldMissionBatchID:
 		v, ok := value.(int64)
@@ -61028,6 +61112,9 @@ func (m *MissionLoadBalanceMutation) ResetField(name string) error {
 		return nil
 	case missionloadbalance.FieldMinMissionCount:
 		m.ResetMinMissionCount()
+		return nil
+	case missionloadbalance.FieldCurrentMissionCount:
+		m.ResetCurrentMissionCount()
 		return nil
 	case missionloadbalance.FieldMissionBatchID:
 		m.ResetMissionBatchID()

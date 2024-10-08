@@ -238,6 +238,27 @@ func (mlbu *MissionLoadBalanceUpdate) AddMinMissionCount(i int8) *MissionLoadBal
 	return mlbu
 }
 
+// SetCurrentMissionCount sets the "current_mission_count" field.
+func (mlbu *MissionLoadBalanceUpdate) SetCurrentMissionCount(i int8) *MissionLoadBalanceUpdate {
+	mlbu.mutation.ResetCurrentMissionCount()
+	mlbu.mutation.SetCurrentMissionCount(i)
+	return mlbu
+}
+
+// SetNillableCurrentMissionCount sets the "current_mission_count" field if the given value is not nil.
+func (mlbu *MissionLoadBalanceUpdate) SetNillableCurrentMissionCount(i *int8) *MissionLoadBalanceUpdate {
+	if i != nil {
+		mlbu.SetCurrentMissionCount(*i)
+	}
+	return mlbu
+}
+
+// AddCurrentMissionCount adds i to the "current_mission_count" field.
+func (mlbu *MissionLoadBalanceUpdate) AddCurrentMissionCount(i int8) *MissionLoadBalanceUpdate {
+	mlbu.mutation.AddCurrentMissionCount(i)
+	return mlbu
+}
+
 // SetMissionBatchID sets the "mission_batch_id" field.
 func (mlbu *MissionLoadBalanceUpdate) SetMissionBatchID(i int64) *MissionLoadBalanceUpdate {
 	mlbu.mutation.ResetMissionBatchID()
@@ -408,6 +429,12 @@ func (mlbu *MissionLoadBalanceUpdate) sqlSave(ctx context.Context) (n int, err e
 	}
 	if value, ok := mlbu.mutation.AddedMinMissionCount(); ok {
 		_spec.AddField(missionloadbalance.FieldMinMissionCount, field.TypeInt8, value)
+	}
+	if value, ok := mlbu.mutation.CurrentMissionCount(); ok {
+		_spec.SetField(missionloadbalance.FieldCurrentMissionCount, field.TypeInt8, value)
+	}
+	if value, ok := mlbu.mutation.AddedCurrentMissionCount(); ok {
+		_spec.AddField(missionloadbalance.FieldCurrentMissionCount, field.TypeInt8, value)
 	}
 	if value, ok := mlbu.mutation.MissionBatchID(); ok {
 		_spec.SetField(missionloadbalance.FieldMissionBatchID, field.TypeInt64, value)
@@ -648,6 +675,27 @@ func (mlbuo *MissionLoadBalanceUpdateOne) AddMinMissionCount(i int8) *MissionLoa
 	return mlbuo
 }
 
+// SetCurrentMissionCount sets the "current_mission_count" field.
+func (mlbuo *MissionLoadBalanceUpdateOne) SetCurrentMissionCount(i int8) *MissionLoadBalanceUpdateOne {
+	mlbuo.mutation.ResetCurrentMissionCount()
+	mlbuo.mutation.SetCurrentMissionCount(i)
+	return mlbuo
+}
+
+// SetNillableCurrentMissionCount sets the "current_mission_count" field if the given value is not nil.
+func (mlbuo *MissionLoadBalanceUpdateOne) SetNillableCurrentMissionCount(i *int8) *MissionLoadBalanceUpdateOne {
+	if i != nil {
+		mlbuo.SetCurrentMissionCount(*i)
+	}
+	return mlbuo
+}
+
+// AddCurrentMissionCount adds i to the "current_mission_count" field.
+func (mlbuo *MissionLoadBalanceUpdateOne) AddCurrentMissionCount(i int8) *MissionLoadBalanceUpdateOne {
+	mlbuo.mutation.AddCurrentMissionCount(i)
+	return mlbuo
+}
+
 // SetMissionBatchID sets the "mission_batch_id" field.
 func (mlbuo *MissionLoadBalanceUpdateOne) SetMissionBatchID(i int64) *MissionLoadBalanceUpdateOne {
 	mlbuo.mutation.ResetMissionBatchID()
@@ -848,6 +896,12 @@ func (mlbuo *MissionLoadBalanceUpdateOne) sqlSave(ctx context.Context) (_node *M
 	}
 	if value, ok := mlbuo.mutation.AddedMinMissionCount(); ok {
 		_spec.AddField(missionloadbalance.FieldMinMissionCount, field.TypeInt8, value)
+	}
+	if value, ok := mlbuo.mutation.CurrentMissionCount(); ok {
+		_spec.SetField(missionloadbalance.FieldCurrentMissionCount, field.TypeInt8, value)
+	}
+	if value, ok := mlbuo.mutation.AddedCurrentMissionCount(); ok {
+		_spec.AddField(missionloadbalance.FieldCurrentMissionCount, field.TypeInt8, value)
 	}
 	if value, ok := mlbuo.mutation.MissionBatchID(); ok {
 		_spec.SetField(missionloadbalance.FieldMissionBatchID, field.TypeInt64, value)

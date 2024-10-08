@@ -110,6 +110,11 @@ func MinMissionCount(v int8) predicate.MissionLoadBalance {
 	return predicate.MissionLoadBalance(sql.FieldEQ(FieldMinMissionCount, v))
 }
 
+// CurrentMissionCount applies equality check predicate on the "current_mission_count" field. It's identical to CurrentMissionCountEQ.
+func CurrentMissionCount(v int8) predicate.MissionLoadBalance {
+	return predicate.MissionLoadBalance(sql.FieldEQ(FieldCurrentMissionCount, v))
+}
+
 // MissionBatchID applies equality check predicate on the "mission_batch_id" field. It's identical to MissionBatchIDEQ.
 func MissionBatchID(v int64) predicate.MissionLoadBalance {
 	return predicate.MissionLoadBalance(sql.FieldEQ(FieldMissionBatchID, v))
@@ -648,6 +653,46 @@ func MinMissionCountLT(v int8) predicate.MissionLoadBalance {
 // MinMissionCountLTE applies the LTE predicate on the "min_mission_count" field.
 func MinMissionCountLTE(v int8) predicate.MissionLoadBalance {
 	return predicate.MissionLoadBalance(sql.FieldLTE(FieldMinMissionCount, v))
+}
+
+// CurrentMissionCountEQ applies the EQ predicate on the "current_mission_count" field.
+func CurrentMissionCountEQ(v int8) predicate.MissionLoadBalance {
+	return predicate.MissionLoadBalance(sql.FieldEQ(FieldCurrentMissionCount, v))
+}
+
+// CurrentMissionCountNEQ applies the NEQ predicate on the "current_mission_count" field.
+func CurrentMissionCountNEQ(v int8) predicate.MissionLoadBalance {
+	return predicate.MissionLoadBalance(sql.FieldNEQ(FieldCurrentMissionCount, v))
+}
+
+// CurrentMissionCountIn applies the In predicate on the "current_mission_count" field.
+func CurrentMissionCountIn(vs ...int8) predicate.MissionLoadBalance {
+	return predicate.MissionLoadBalance(sql.FieldIn(FieldCurrentMissionCount, vs...))
+}
+
+// CurrentMissionCountNotIn applies the NotIn predicate on the "current_mission_count" field.
+func CurrentMissionCountNotIn(vs ...int8) predicate.MissionLoadBalance {
+	return predicate.MissionLoadBalance(sql.FieldNotIn(FieldCurrentMissionCount, vs...))
+}
+
+// CurrentMissionCountGT applies the GT predicate on the "current_mission_count" field.
+func CurrentMissionCountGT(v int8) predicate.MissionLoadBalance {
+	return predicate.MissionLoadBalance(sql.FieldGT(FieldCurrentMissionCount, v))
+}
+
+// CurrentMissionCountGTE applies the GTE predicate on the "current_mission_count" field.
+func CurrentMissionCountGTE(v int8) predicate.MissionLoadBalance {
+	return predicate.MissionLoadBalance(sql.FieldGTE(FieldCurrentMissionCount, v))
+}
+
+// CurrentMissionCountLT applies the LT predicate on the "current_mission_count" field.
+func CurrentMissionCountLT(v int8) predicate.MissionLoadBalance {
+	return predicate.MissionLoadBalance(sql.FieldLT(FieldCurrentMissionCount, v))
+}
+
+// CurrentMissionCountLTE applies the LTE predicate on the "current_mission_count" field.
+func CurrentMissionCountLTE(v int8) predicate.MissionLoadBalance {
+	return predicate.MissionLoadBalance(sql.FieldLTE(FieldCurrentMissionCount, v))
 }
 
 // MissionBatchIDEQ applies the EQ predicate on the "mission_batch_id" field.

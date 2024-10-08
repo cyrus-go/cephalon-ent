@@ -2658,12 +2658,16 @@ func init() {
 	missionloadbalanceDescMinMissionCount := missionloadbalanceFields[8].Descriptor()
 	// missionloadbalance.DefaultMinMissionCount holds the default value on creation for the min_mission_count field.
 	missionloadbalance.DefaultMinMissionCount = missionloadbalanceDescMinMissionCount.Default.(int8)
+	// missionloadbalanceDescCurrentMissionCount is the schema descriptor for current_mission_count field.
+	missionloadbalanceDescCurrentMissionCount := missionloadbalanceFields[9].Descriptor()
+	// missionloadbalance.DefaultCurrentMissionCount holds the default value on creation for the current_mission_count field.
+	missionloadbalance.DefaultCurrentMissionCount = missionloadbalanceDescCurrentMissionCount.Default.(int8)
 	// missionloadbalanceDescMissionBatchID is the schema descriptor for mission_batch_id field.
-	missionloadbalanceDescMissionBatchID := missionloadbalanceFields[9].Descriptor()
+	missionloadbalanceDescMissionBatchID := missionloadbalanceFields[10].Descriptor()
 	// missionloadbalance.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
 	missionloadbalance.DefaultMissionBatchID = missionloadbalanceDescMissionBatchID.Default.(int64)
 	// missionloadbalanceDescMissionBatchNumber is the schema descriptor for mission_batch_number field.
-	missionloadbalanceDescMissionBatchNumber := missionloadbalanceFields[10].Descriptor()
+	missionloadbalanceDescMissionBatchNumber := missionloadbalanceFields[11].Descriptor()
 	// missionloadbalance.DefaultMissionBatchNumber holds the default value on creation for the mission_batch_number field.
 	missionloadbalance.DefaultMissionBatchNumber = missionloadbalanceDescMissionBatchNumber.Default.(string)
 	// missionloadbalanceDescID is the schema descriptor for id field.
