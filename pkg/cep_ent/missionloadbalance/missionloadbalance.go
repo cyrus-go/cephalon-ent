@@ -29,6 +29,8 @@ const (
 	FieldMissionType = "mission_type"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
+	// FieldState holds the string denoting the state field in the database.
+	FieldState = "state"
 	// FieldStartedAt holds the string denoting the started_at field in the database.
 	FieldStartedAt = "started_at"
 	// FieldFinishedAt holds the string denoting the finished_at field in the database.
@@ -59,6 +61,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldMissionType,
 	FieldUserID,
+	FieldState,
 	FieldStartedAt,
 	FieldFinishedAt,
 	FieldGpuVersion,
@@ -122,6 +125,18 @@ func MissionTypeValidator(mt enums.MissionType) error {
 	}
 }
 
+const DefaultState enums.MissionLoadBalanceState = "unknown"
+
+// StateValidator is a validator for the "state" field enum values. It is called by the builders before save.
+func StateValidator(s enums.MissionLoadBalanceState) error {
+	switch s {
+	case "unknown", "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed", "paused", "resuming", "contracting", "expanding":
+		return nil
+	default:
+		return fmt.Errorf("missionloadbalance: invalid enum value for state field: %q", s)
+	}
+}
+
 const DefaultGpuVersion enums.GpuVersion = "unknown"
 
 // GpuVersionValidator is a validator for the "gpu_version" field enum values. It is called by the builders before save.
@@ -175,6 +190,11 @@ func ByMissionType(opts ...sql.OrderTermOption) OrderOption {
 // ByUserID orders the results by the user_id field.
 func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
+// ByState orders the results by the state field.
+func ByState(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldState, opts...).ToFunc()
 }
 
 // ByStartedAt orders the results by the started_at field.

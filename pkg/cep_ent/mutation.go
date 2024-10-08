@@ -59727,6 +59727,7 @@ type MissionLoadBalanceMutation struct {
 	mission_type         *enums.MissionType
 	user_id              *int64
 	adduser_id           *int64
+	state                *enums.MissionLoadBalanceState
 	started_at           *time.Time
 	finished_at          *time.Time
 	gpu_version          *enums.GpuVersion
@@ -60161,6 +60162,42 @@ func (m *MissionLoadBalanceMutation) ResetUserID() {
 	m.adduser_id = nil
 }
 
+// SetState sets the "state" field.
+func (m *MissionLoadBalanceMutation) SetState(elbs enums.MissionLoadBalanceState) {
+	m.state = &elbs
+}
+
+// State returns the value of the "state" field in the mutation.
+func (m *MissionLoadBalanceMutation) State() (r enums.MissionLoadBalanceState, exists bool) {
+	v := m.state
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldState returns the old "state" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldState(ctx context.Context) (v enums.MissionLoadBalanceState, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldState is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldState requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldState: %w", err)
+	}
+	return oldValue.State, nil
+}
+
+// ResetState resets all changes to the "state" field.
+func (m *MissionLoadBalanceMutation) ResetState() {
+	m.state = nil
+}
+
 // SetStartedAt sets the "started_at" field.
 func (m *MissionLoadBalanceMutation) SetStartedAt(t time.Time) {
 	m.started_at = &t
@@ -60563,7 +60600,7 @@ func (m *MissionLoadBalanceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionLoadBalanceMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, missionloadbalance.FieldCreatedBy)
 	}
@@ -60584,6 +60621,9 @@ func (m *MissionLoadBalanceMutation) Fields() []string {
 	}
 	if m.user_id != nil {
 		fields = append(fields, missionloadbalance.FieldUserID)
+	}
+	if m.state != nil {
+		fields = append(fields, missionloadbalance.FieldState)
 	}
 	if m.started_at != nil {
 		fields = append(fields, missionloadbalance.FieldStartedAt)
@@ -60631,6 +60671,8 @@ func (m *MissionLoadBalanceMutation) Field(name string) (ent.Value, bool) {
 		return m.MissionType()
 	case missionloadbalance.FieldUserID:
 		return m.UserID()
+	case missionloadbalance.FieldState:
+		return m.State()
 	case missionloadbalance.FieldStartedAt:
 		return m.StartedAt()
 	case missionloadbalance.FieldFinishedAt:
@@ -60670,6 +60712,8 @@ func (m *MissionLoadBalanceMutation) OldField(ctx context.Context, name string) 
 		return m.OldMissionType(ctx)
 	case missionloadbalance.FieldUserID:
 		return m.OldUserID(ctx)
+	case missionloadbalance.FieldState:
+		return m.OldState(ctx)
 	case missionloadbalance.FieldStartedAt:
 		return m.OldStartedAt(ctx)
 	case missionloadbalance.FieldFinishedAt:
@@ -60743,6 +60787,13 @@ func (m *MissionLoadBalanceMutation) SetField(name string, value ent.Value) erro
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUserID(v)
+		return nil
+	case missionloadbalance.FieldState:
+		v, ok := value.(enums.MissionLoadBalanceState)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetState(v)
 		return nil
 	case missionloadbalance.FieldStartedAt:
 		v, ok := value.(time.Time)
@@ -60956,6 +61007,9 @@ func (m *MissionLoadBalanceMutation) ResetField(name string) error {
 		return nil
 	case missionloadbalance.FieldUserID:
 		m.ResetUserID()
+		return nil
+	case missionloadbalance.FieldState:
+		m.ResetState()
 		return nil
 	case missionloadbalance.FieldStartedAt:
 		m.ResetStartedAt()

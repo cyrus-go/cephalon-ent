@@ -1934,6 +1934,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"unknown", "sd_time", "sd_pro_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "sd_pro_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_tian_time", "sd_tian_time_plan", "sd_bingo_time", "sd_bingo_time_plan", "fooocus_time", "fooocus_time_plan", "fooocus_lan_que_time", "fooocus_lan_que_time_plan", "fooocus_sha_api_time", "fooocus_sha_api_time_plan", "tabby_time", "tabby_time_plan", "ollama_time", "ollama_time_plan", "jp_conda_time", "jp_conda_time_plan", "jp_ml_time", "jp_ml_time_plan", "sd_cat_time", "sd_cat_time_plan", "sd_fire_time", "sd_fire_time_plan", "comfyui_time", "comfyui_time_plan", "comfyui_pro_time", "comfyui_pro_time_plan", "comfyui_advance_time", "comfyui_advance_time_plan", "jp_dk_3_time", "jp_dk_3_time_plan", "sd_xl_time", "sd_xl_time_plan", "sd_chick_time", "sd_chick_time_plan", "ascend_time", "ascend_time_plan", "sd_wu_shan_time", "sd_wu_shan_time_plan", "sd_lang_time", "sd_lang_time_plan", "sd_zhi_dao_time", "sd_zhi_dao_time_plan", "comfyui_ke_time", "comfyui_ke_time_plan", "comfyui_a_shuo_time", "comfyui_a_shuo_time_plan", "comfyui_jia_ming_time", "comfyui_jia_ming_time_plan", "chatchat_time", "chatchat_time_plan", "chat_tts_time", "chat_tts_time_plan", "lora_time", "lora_time_plan", "lora_flux_time", "lora_flux_time_plan", "lora_flux_gym_time", "lora_flux_gym_time_plan", "fooocus_wu_time", "fooocus_wu_time_plan", "svd_back_time", "svd_back_time_plan", "sd_ji_time", "sd_ji_time_plan", "sd_shang_jin_time", "sd_shang_jin_time_plan", "sd_xiao_chun_time", "sd_xiao_chun_time_plan", "comfyui_wu_time", "comfyui_wu_time_plan", "comfyui_liu_time", "comfyui_liu_time_plan", "comfyui_li_time", "comfyui_li_time_plan", "comfyui_nenly_time", "comfyui_nenly_time_plan", "comfyui_ou_time", "comfyui_ou_time_plan", "comfyui_lu_time", "comfyui_lu_time_plan", "comfyui_jiang_time", "comfyui_jiang_time_plan", "comfyui_star_time", "comfyui_star_time_plan", "waiting_time", "waiting_time_plan", "waiting_al_time", "waiting_al_time_plan", "opencl_core_time", "opencl_core_time_plan", "io_paint_time", "io_paint_time_plan"}, Default: "unknown"},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "用户 ID"},
+		{Name: "state", Type: field.TypeEnum, Comment: "mission 负载均衡总状态", Enums: []string{"unknown", "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed", "paused", "resuming", "contracting", "expanding"}, Default: "unknown"},
 		{Name: "started_at", Type: field.TypeTime, Comment: "任务开始时刻"},
 		{Name: "finished_at", Type: field.TypeTime, Comment: "任务完成时刻"},
 		{Name: "gpu_version", Type: field.TypeEnum, Comment: "任务使用什么显卡在执行", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "RTX4090D", "A800", "A100", "V100", "ComputilityKing-I", "Ascend910ProB", "P40"}, Default: "unknown"},
@@ -1953,12 +1954,12 @@ var (
 			{
 				Name:    "missionloadbalance_mission_batch_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionLoadBalancesColumns[14]},
+				Columns: []*schema.Column{MissionLoadBalancesColumns[15]},
 			},
 			{
 				Name:    "missionloadbalance_mission_batch_number",
 				Unique:  false,
-				Columns: []*schema.Column{MissionLoadBalancesColumns[15]},
+				Columns: []*schema.Column{MissionLoadBalancesColumns[16]},
 			},
 		},
 	}

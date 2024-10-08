@@ -33,6 +33,8 @@ type MissionLoadBalance struct {
 	MissionType enums.MissionType `json:"type"`
 	// 用户 ID
 	UserID int64 `json:"user_id,string"`
+	// mission 负载均衡总状态
+	State enums.MissionLoadBalanceState `json:"state"`
 	// 任务开始时刻
 	StartedAt time.Time `json:"started_at"`
 	// 任务完成时刻
@@ -59,7 +61,7 @@ func (*MissionLoadBalance) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case missionloadbalance.FieldID, missionloadbalance.FieldCreatedBy, missionloadbalance.FieldUpdatedBy, missionloadbalance.FieldUserID, missionloadbalance.FieldGpuNum, missionloadbalance.FieldMaxMissionCount, missionloadbalance.FieldMinMissionCount, missionloadbalance.FieldMissionBatchID:
 			values[i] = new(sql.NullInt64)
-		case missionloadbalance.FieldMissionType, missionloadbalance.FieldGpuVersion, missionloadbalance.FieldMissionBatchNumber:
+		case missionloadbalance.FieldMissionType, missionloadbalance.FieldState, missionloadbalance.FieldGpuVersion, missionloadbalance.FieldMissionBatchNumber:
 			values[i] = new(sql.NullString)
 		case missionloadbalance.FieldCreatedAt, missionloadbalance.FieldUpdatedAt, missionloadbalance.FieldDeletedAt, missionloadbalance.FieldStartedAt, missionloadbalance.FieldFinishedAt:
 			values[i] = new(sql.NullTime)
@@ -125,6 +127,12 @@ func (mlb *MissionLoadBalance) assignValues(columns []string, values []any) erro
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
 				mlb.UserID = value.Int64
+			}
+		case missionloadbalance.FieldState:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field state", values[i])
+			} else if value.Valid {
+				mlb.State = enums.MissionLoadBalanceState(value.String)
 			}
 		case missionloadbalance.FieldStartedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -230,6 +238,9 @@ func (mlb *MissionLoadBalance) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", mlb.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("state=")
+	builder.WriteString(fmt.Sprintf("%v", mlb.State))
 	builder.WriteString(", ")
 	builder.WriteString("started_at=")
 	builder.WriteString(mlb.StartedAt.Format(time.ANSIC))

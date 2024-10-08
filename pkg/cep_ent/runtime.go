@@ -2639,31 +2639,31 @@ func init() {
 	// missionloadbalance.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	missionloadbalance.DefaultDeletedAt = missionloadbalanceDescDeletedAt.Default.(time.Time)
 	// missionloadbalanceDescStartedAt is the schema descriptor for started_at field.
-	missionloadbalanceDescStartedAt := missionloadbalanceFields[2].Descriptor()
+	missionloadbalanceDescStartedAt := missionloadbalanceFields[3].Descriptor()
 	// missionloadbalance.DefaultStartedAt holds the default value on creation for the started_at field.
 	missionloadbalance.DefaultStartedAt = missionloadbalanceDescStartedAt.Default.(time.Time)
 	// missionloadbalanceDescFinishedAt is the schema descriptor for finished_at field.
-	missionloadbalanceDescFinishedAt := missionloadbalanceFields[3].Descriptor()
+	missionloadbalanceDescFinishedAt := missionloadbalanceFields[4].Descriptor()
 	// missionloadbalance.DefaultFinishedAt holds the default value on creation for the finished_at field.
 	missionloadbalance.DefaultFinishedAt = missionloadbalanceDescFinishedAt.Default.(time.Time)
 	// missionloadbalanceDescGpuNum is the schema descriptor for gpu_num field.
-	missionloadbalanceDescGpuNum := missionloadbalanceFields[5].Descriptor()
+	missionloadbalanceDescGpuNum := missionloadbalanceFields[6].Descriptor()
 	// missionloadbalance.DefaultGpuNum holds the default value on creation for the gpu_num field.
 	missionloadbalance.DefaultGpuNum = missionloadbalanceDescGpuNum.Default.(int8)
 	// missionloadbalanceDescMaxMissionCount is the schema descriptor for max_mission_count field.
-	missionloadbalanceDescMaxMissionCount := missionloadbalanceFields[6].Descriptor()
+	missionloadbalanceDescMaxMissionCount := missionloadbalanceFields[7].Descriptor()
 	// missionloadbalance.DefaultMaxMissionCount holds the default value on creation for the max_mission_count field.
 	missionloadbalance.DefaultMaxMissionCount = missionloadbalanceDescMaxMissionCount.Default.(int8)
 	// missionloadbalanceDescMinMissionCount is the schema descriptor for min_mission_count field.
-	missionloadbalanceDescMinMissionCount := missionloadbalanceFields[7].Descriptor()
+	missionloadbalanceDescMinMissionCount := missionloadbalanceFields[8].Descriptor()
 	// missionloadbalance.DefaultMinMissionCount holds the default value on creation for the min_mission_count field.
 	missionloadbalance.DefaultMinMissionCount = missionloadbalanceDescMinMissionCount.Default.(int8)
 	// missionloadbalanceDescMissionBatchID is the schema descriptor for mission_batch_id field.
-	missionloadbalanceDescMissionBatchID := missionloadbalanceFields[8].Descriptor()
+	missionloadbalanceDescMissionBatchID := missionloadbalanceFields[9].Descriptor()
 	// missionloadbalance.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
 	missionloadbalance.DefaultMissionBatchID = missionloadbalanceDescMissionBatchID.Default.(int64)
 	// missionloadbalanceDescMissionBatchNumber is the schema descriptor for mission_batch_number field.
-	missionloadbalanceDescMissionBatchNumber := missionloadbalanceFields[9].Descriptor()
+	missionloadbalanceDescMissionBatchNumber := missionloadbalanceFields[10].Descriptor()
 	// missionloadbalance.DefaultMissionBatchNumber holds the default value on creation for the mission_batch_number field.
 	missionloadbalance.DefaultMissionBatchNumber = missionloadbalanceDescMissionBatchNumber.Default.(string)
 	// missionloadbalanceDescID is the schema descriptor for id field.

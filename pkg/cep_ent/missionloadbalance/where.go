@@ -390,6 +390,36 @@ func UserIDLTE(v int64) predicate.MissionLoadBalance {
 	return predicate.MissionLoadBalance(sql.FieldLTE(FieldUserID, v))
 }
 
+// StateEQ applies the EQ predicate on the "state" field.
+func StateEQ(v enums.MissionLoadBalanceState) predicate.MissionLoadBalance {
+	vc := v
+	return predicate.MissionLoadBalance(sql.FieldEQ(FieldState, vc))
+}
+
+// StateNEQ applies the NEQ predicate on the "state" field.
+func StateNEQ(v enums.MissionLoadBalanceState) predicate.MissionLoadBalance {
+	vc := v
+	return predicate.MissionLoadBalance(sql.FieldNEQ(FieldState, vc))
+}
+
+// StateIn applies the In predicate on the "state" field.
+func StateIn(vs ...enums.MissionLoadBalanceState) predicate.MissionLoadBalance {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionLoadBalance(sql.FieldIn(FieldState, v...))
+}
+
+// StateNotIn applies the NotIn predicate on the "state" field.
+func StateNotIn(vs ...enums.MissionLoadBalanceState) predicate.MissionLoadBalance {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionLoadBalance(sql.FieldNotIn(FieldState, v...))
+}
+
 // StartedAtEQ applies the EQ predicate on the "started_at" field.
 func StartedAtEQ(v time.Time) predicate.MissionLoadBalance {
 	return predicate.MissionLoadBalance(sql.FieldEQ(FieldStartedAt, v))

@@ -113,6 +113,20 @@ func (mlbc *MissionLoadBalanceCreate) SetUserID(i int64) *MissionLoadBalanceCrea
 	return mlbc
 }
 
+// SetState sets the "state" field.
+func (mlbc *MissionLoadBalanceCreate) SetState(elbs enums.MissionLoadBalanceState) *MissionLoadBalanceCreate {
+	mlbc.mutation.SetState(elbs)
+	return mlbc
+}
+
+// SetNillableState sets the "state" field if the given value is not nil.
+func (mlbc *MissionLoadBalanceCreate) SetNillableState(elbs *enums.MissionLoadBalanceState) *MissionLoadBalanceCreate {
+	if elbs != nil {
+		mlbc.SetState(*elbs)
+	}
+	return mlbc
+}
+
 // SetStartedAt sets the "started_at" field.
 func (mlbc *MissionLoadBalanceCreate) SetStartedAt(t time.Time) *MissionLoadBalanceCreate {
 	mlbc.mutation.SetStartedAt(t)
@@ -298,6 +312,10 @@ func (mlbc *MissionLoadBalanceCreate) defaults() {
 		v := missionloadbalance.DefaultMissionType
 		mlbc.mutation.SetMissionType(v)
 	}
+	if _, ok := mlbc.mutation.State(); !ok {
+		v := missionloadbalance.DefaultState
+		mlbc.mutation.SetState(v)
+	}
 	if _, ok := mlbc.mutation.StartedAt(); !ok {
 		v := missionloadbalance.DefaultStartedAt
 		mlbc.mutation.SetStartedAt(v)
@@ -363,6 +381,14 @@ func (mlbc *MissionLoadBalanceCreate) check() error {
 	}
 	if _, ok := mlbc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`cep_ent: missing required field "MissionLoadBalance.user_id"`)}
+	}
+	if _, ok := mlbc.mutation.State(); !ok {
+		return &ValidationError{Name: "state", err: errors.New(`cep_ent: missing required field "MissionLoadBalance.state"`)}
+	}
+	if v, ok := mlbc.mutation.State(); ok {
+		if err := missionloadbalance.StateValidator(v); err != nil {
+			return &ValidationError{Name: "state", err: fmt.Errorf(`cep_ent: validator failed for field "MissionLoadBalance.state": %w`, err)}
+		}
 	}
 	if _, ok := mlbc.mutation.StartedAt(); !ok {
 		return &ValidationError{Name: "started_at", err: errors.New(`cep_ent: missing required field "MissionLoadBalance.started_at"`)}
@@ -453,6 +479,10 @@ func (mlbc *MissionLoadBalanceCreate) createSpec() (*MissionLoadBalance, *sqlgra
 	if value, ok := mlbc.mutation.UserID(); ok {
 		_spec.SetField(missionloadbalance.FieldUserID, field.TypeInt64, value)
 		_node.UserID = value
+	}
+	if value, ok := mlbc.mutation.State(); ok {
+		_spec.SetField(missionloadbalance.FieldState, field.TypeEnum, value)
+		_node.State = value
 	}
 	if value, ok := mlbc.mutation.StartedAt(); ok {
 		_spec.SetField(missionloadbalance.FieldStartedAt, field.TypeTime, value)
@@ -625,6 +655,18 @@ func (u *MissionLoadBalanceUpsert) UpdateUserID() *MissionLoadBalanceUpsert {
 // AddUserID adds v to the "user_id" field.
 func (u *MissionLoadBalanceUpsert) AddUserID(v int64) *MissionLoadBalanceUpsert {
 	u.Add(missionloadbalance.FieldUserID, v)
+	return u
+}
+
+// SetState sets the "state" field.
+func (u *MissionLoadBalanceUpsert) SetState(v enums.MissionLoadBalanceState) *MissionLoadBalanceUpsert {
+	u.Set(missionloadbalance.FieldState, v)
+	return u
+}
+
+// UpdateState sets the "state" field to the value that was provided on create.
+func (u *MissionLoadBalanceUpsert) UpdateState() *MissionLoadBalanceUpsert {
+	u.SetExcluded(missionloadbalance.FieldState)
 	return u
 }
 
@@ -901,6 +943,20 @@ func (u *MissionLoadBalanceUpsertOne) AddUserID(v int64) *MissionLoadBalanceUpse
 func (u *MissionLoadBalanceUpsertOne) UpdateUserID() *MissionLoadBalanceUpsertOne {
 	return u.Update(func(s *MissionLoadBalanceUpsert) {
 		s.UpdateUserID()
+	})
+}
+
+// SetState sets the "state" field.
+func (u *MissionLoadBalanceUpsertOne) SetState(v enums.MissionLoadBalanceState) *MissionLoadBalanceUpsertOne {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.SetState(v)
+	})
+}
+
+// UpdateState sets the "state" field to the value that was provided on create.
+func (u *MissionLoadBalanceUpsertOne) UpdateState() *MissionLoadBalanceUpsertOne {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.UpdateState()
 	})
 }
 
@@ -1363,6 +1419,20 @@ func (u *MissionLoadBalanceUpsertBulk) AddUserID(v int64) *MissionLoadBalanceUps
 func (u *MissionLoadBalanceUpsertBulk) UpdateUserID() *MissionLoadBalanceUpsertBulk {
 	return u.Update(func(s *MissionLoadBalanceUpsert) {
 		s.UpdateUserID()
+	})
+}
+
+// SetState sets the "state" field.
+func (u *MissionLoadBalanceUpsertBulk) SetState(v enums.MissionLoadBalanceState) *MissionLoadBalanceUpsertBulk {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.SetState(v)
+	})
+}
+
+// UpdateState sets the "state" field to the value that was provided on create.
+func (u *MissionLoadBalanceUpsertBulk) UpdateState() *MissionLoadBalanceUpsertBulk {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.UpdateState()
 	})
 }
 

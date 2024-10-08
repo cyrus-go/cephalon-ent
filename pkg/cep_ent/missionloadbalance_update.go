@@ -119,6 +119,20 @@ func (mlbu *MissionLoadBalanceUpdate) AddUserID(i int64) *MissionLoadBalanceUpda
 	return mlbu
 }
 
+// SetState sets the "state" field.
+func (mlbu *MissionLoadBalanceUpdate) SetState(elbs enums.MissionLoadBalanceState) *MissionLoadBalanceUpdate {
+	mlbu.mutation.SetState(elbs)
+	return mlbu
+}
+
+// SetNillableState sets the "state" field if the given value is not nil.
+func (mlbu *MissionLoadBalanceUpdate) SetNillableState(elbs *enums.MissionLoadBalanceState) *MissionLoadBalanceUpdate {
+	if elbs != nil {
+		mlbu.SetState(*elbs)
+	}
+	return mlbu
+}
+
 // SetStartedAt sets the "started_at" field.
 func (mlbu *MissionLoadBalanceUpdate) SetStartedAt(t time.Time) *MissionLoadBalanceUpdate {
 	mlbu.mutation.SetStartedAt(t)
@@ -307,6 +321,11 @@ func (mlbu *MissionLoadBalanceUpdate) check() error {
 			return &ValidationError{Name: "mission_type", err: fmt.Errorf(`cep_ent: validator failed for field "MissionLoadBalance.mission_type": %w`, err)}
 		}
 	}
+	if v, ok := mlbu.mutation.State(); ok {
+		if err := missionloadbalance.StateValidator(v); err != nil {
+			return &ValidationError{Name: "state", err: fmt.Errorf(`cep_ent: validator failed for field "MissionLoadBalance.state": %w`, err)}
+		}
+	}
 	if v, ok := mlbu.mutation.GpuVersion(); ok {
 		if err := missionloadbalance.GpuVersionValidator(v); err != nil {
 			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "MissionLoadBalance.gpu_version": %w`, err)}
@@ -359,6 +378,9 @@ func (mlbu *MissionLoadBalanceUpdate) sqlSave(ctx context.Context) (n int, err e
 	}
 	if value, ok := mlbu.mutation.AddedUserID(); ok {
 		_spec.AddField(missionloadbalance.FieldUserID, field.TypeInt64, value)
+	}
+	if value, ok := mlbu.mutation.State(); ok {
+		_spec.SetField(missionloadbalance.FieldState, field.TypeEnum, value)
 	}
 	if value, ok := mlbu.mutation.StartedAt(); ok {
 		_spec.SetField(missionloadbalance.FieldStartedAt, field.TypeTime, value)
@@ -504,6 +526,20 @@ func (mlbuo *MissionLoadBalanceUpdateOne) SetUserID(i int64) *MissionLoadBalance
 // AddUserID adds i to the "user_id" field.
 func (mlbuo *MissionLoadBalanceUpdateOne) AddUserID(i int64) *MissionLoadBalanceUpdateOne {
 	mlbuo.mutation.AddUserID(i)
+	return mlbuo
+}
+
+// SetState sets the "state" field.
+func (mlbuo *MissionLoadBalanceUpdateOne) SetState(elbs enums.MissionLoadBalanceState) *MissionLoadBalanceUpdateOne {
+	mlbuo.mutation.SetState(elbs)
+	return mlbuo
+}
+
+// SetNillableState sets the "state" field if the given value is not nil.
+func (mlbuo *MissionLoadBalanceUpdateOne) SetNillableState(elbs *enums.MissionLoadBalanceState) *MissionLoadBalanceUpdateOne {
+	if elbs != nil {
+		mlbuo.SetState(*elbs)
+	}
 	return mlbuo
 }
 
@@ -708,6 +744,11 @@ func (mlbuo *MissionLoadBalanceUpdateOne) check() error {
 			return &ValidationError{Name: "mission_type", err: fmt.Errorf(`cep_ent: validator failed for field "MissionLoadBalance.mission_type": %w`, err)}
 		}
 	}
+	if v, ok := mlbuo.mutation.State(); ok {
+		if err := missionloadbalance.StateValidator(v); err != nil {
+			return &ValidationError{Name: "state", err: fmt.Errorf(`cep_ent: validator failed for field "MissionLoadBalance.state": %w`, err)}
+		}
+	}
 	if v, ok := mlbuo.mutation.GpuVersion(); ok {
 		if err := missionloadbalance.GpuVersionValidator(v); err != nil {
 			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "MissionLoadBalance.gpu_version": %w`, err)}
@@ -777,6 +818,9 @@ func (mlbuo *MissionLoadBalanceUpdateOne) sqlSave(ctx context.Context) (_node *M
 	}
 	if value, ok := mlbuo.mutation.AddedUserID(); ok {
 		_spec.AddField(missionloadbalance.FieldUserID, field.TypeInt64, value)
+	}
+	if value, ok := mlbuo.mutation.State(); ok {
+		_spec.SetField(missionloadbalance.FieldState, field.TypeEnum, value)
 	}
 	if value, ok := mlbuo.mutation.StartedAt(); ok {
 		_spec.SetField(missionloadbalance.FieldStartedAt, field.TypeTime, value)
