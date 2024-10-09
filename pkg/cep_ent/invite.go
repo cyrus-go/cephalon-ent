@@ -41,6 +41,8 @@ type Invite struct {
 	FirstRechargeCep int64 `json:"first_recharge_cep"`
 	// 邀请码类型（可以用来区分不同的活动）
 	Type enums.InviteType `json:"type"`
+	// 渠道分成比例
+	ChannelRatio int64 `json:"channel_ratio"`
 	// 外键用户 id
 	UserID int64 `json:"user_id,string"`
 	// 外键活动 id
@@ -104,7 +106,7 @@ func (*Invite) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case invite.FieldID, invite.FieldCreatedBy, invite.FieldUpdatedBy, invite.FieldShareCep, invite.FieldRegCep, invite.FieldFirstRechargeCep, invite.FieldUserID, invite.FieldCampaignID:
+		case invite.FieldID, invite.FieldCreatedBy, invite.FieldUpdatedBy, invite.FieldShareCep, invite.FieldRegCep, invite.FieldFirstRechargeCep, invite.FieldChannelRatio, invite.FieldUserID, invite.FieldCampaignID:
 			values[i] = new(sql.NullInt64)
 		case invite.FieldInviteCode, invite.FieldType:
 			values[i] = new(sql.NullString)
@@ -190,6 +192,12 @@ func (i *Invite) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field type", values[j])
 			} else if value.Valid {
 				i.Type = enums.InviteType(value.String)
+			}
+		case invite.FieldChannelRatio:
+			if value, ok := values[j].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field channel_ratio", values[j])
+			} else if value.Valid {
+				i.ChannelRatio = value.Int64
 			}
 		case invite.FieldUserID:
 			if value, ok := values[j].(*sql.NullInt64); !ok {
@@ -283,6 +291,9 @@ func (i *Invite) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", i.Type))
+	builder.WriteString(", ")
+	builder.WriteString("channel_ratio=")
+	builder.WriteString(fmt.Sprintf("%v", i.ChannelRatio))
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", i.UserID))

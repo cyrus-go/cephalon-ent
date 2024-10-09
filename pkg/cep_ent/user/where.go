@@ -181,11 +181,6 @@ func BoundAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldBoundAt, v))
 }
 
-// ChannelRatio applies equality check predicate on the "channel_ratio" field. It's identical to ChannelRatioEQ.
-func ChannelRatio(v int64) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldChannelRatio, v))
-}
-
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedBy, v))
@@ -1534,46 +1529,6 @@ func ChannelNotIn(vs ...enums.UserChannelType) predicate.User {
 		v[i] = vs[i]
 	}
 	return predicate.User(sql.FieldNotIn(FieldChannel, v...))
-}
-
-// ChannelRatioEQ applies the EQ predicate on the "channel_ratio" field.
-func ChannelRatioEQ(v int64) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldChannelRatio, v))
-}
-
-// ChannelRatioNEQ applies the NEQ predicate on the "channel_ratio" field.
-func ChannelRatioNEQ(v int64) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldChannelRatio, v))
-}
-
-// ChannelRatioIn applies the In predicate on the "channel_ratio" field.
-func ChannelRatioIn(vs ...int64) predicate.User {
-	return predicate.User(sql.FieldIn(FieldChannelRatio, vs...))
-}
-
-// ChannelRatioNotIn applies the NotIn predicate on the "channel_ratio" field.
-func ChannelRatioNotIn(vs ...int64) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldChannelRatio, vs...))
-}
-
-// ChannelRatioGT applies the GT predicate on the "channel_ratio" field.
-func ChannelRatioGT(v int64) predicate.User {
-	return predicate.User(sql.FieldGT(FieldChannelRatio, v))
-}
-
-// ChannelRatioGTE applies the GTE predicate on the "channel_ratio" field.
-func ChannelRatioGTE(v int64) predicate.User {
-	return predicate.User(sql.FieldGTE(FieldChannelRatio, v))
-}
-
-// ChannelRatioLT applies the LT predicate on the "channel_ratio" field.
-func ChannelRatioLT(v int64) predicate.User {
-	return predicate.User(sql.FieldLT(FieldChannelRatio, v))
-}
-
-// ChannelRatioLTE applies the LTE predicate on the "channel_ratio" field.
-func ChannelRatioLTE(v int64) predicate.User {
-	return predicate.User(sql.FieldLTE(FieldChannelRatio, v))
 }
 
 // HasVxAccounts applies the HasEdge predicate on the "vx_accounts" edge.

@@ -101,6 +101,11 @@ func FirstRechargeCep(v int64) predicate.Invite {
 	return predicate.Invite(sql.FieldEQ(FieldFirstRechargeCep, v))
 }
 
+// ChannelRatio applies equality check predicate on the "channel_ratio" field. It's identical to ChannelRatioEQ.
+func ChannelRatio(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldEQ(FieldChannelRatio, v))
+}
+
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
 func UserID(v int64) predicate.Invite {
 	return predicate.Invite(sql.FieldEQ(FieldUserID, v))
@@ -524,6 +529,46 @@ func TypeNotIn(vs ...enums.InviteType) predicate.Invite {
 		v[i] = vs[i]
 	}
 	return predicate.Invite(sql.FieldNotIn(FieldType, v...))
+}
+
+// ChannelRatioEQ applies the EQ predicate on the "channel_ratio" field.
+func ChannelRatioEQ(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldEQ(FieldChannelRatio, v))
+}
+
+// ChannelRatioNEQ applies the NEQ predicate on the "channel_ratio" field.
+func ChannelRatioNEQ(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldNEQ(FieldChannelRatio, v))
+}
+
+// ChannelRatioIn applies the In predicate on the "channel_ratio" field.
+func ChannelRatioIn(vs ...int64) predicate.Invite {
+	return predicate.Invite(sql.FieldIn(FieldChannelRatio, vs...))
+}
+
+// ChannelRatioNotIn applies the NotIn predicate on the "channel_ratio" field.
+func ChannelRatioNotIn(vs ...int64) predicate.Invite {
+	return predicate.Invite(sql.FieldNotIn(FieldChannelRatio, vs...))
+}
+
+// ChannelRatioGT applies the GT predicate on the "channel_ratio" field.
+func ChannelRatioGT(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldGT(FieldChannelRatio, v))
+}
+
+// ChannelRatioGTE applies the GTE predicate on the "channel_ratio" field.
+func ChannelRatioGTE(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldGTE(FieldChannelRatio, v))
+}
+
+// ChannelRatioLT applies the LT predicate on the "channel_ratio" field.
+func ChannelRatioLT(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldLT(FieldChannelRatio, v))
+}
+
+// ChannelRatioLTE applies the LTE predicate on the "channel_ratio" field.
+func ChannelRatioLTE(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldLTE(FieldChannelRatio, v))
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.

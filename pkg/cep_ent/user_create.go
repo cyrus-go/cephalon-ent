@@ -455,20 +455,6 @@ func (uc *UserCreate) SetNillableChannel(ect *enums.UserChannelType) *UserCreate
 	return uc
 }
 
-// SetChannelRatio sets the "channel_ratio" field.
-func (uc *UserCreate) SetChannelRatio(i int64) *UserCreate {
-	uc.mutation.SetChannelRatio(i)
-	return uc
-}
-
-// SetNillableChannelRatio sets the "channel_ratio" field if the given value is not nil.
-func (uc *UserCreate) SetNillableChannelRatio(i *int64) *UserCreate {
-	if i != nil {
-		uc.SetChannelRatio(*i)
-	}
-	return uc
-}
-
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(i int64) *UserCreate {
 	uc.mutation.SetID(i)
@@ -1387,10 +1373,6 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultChannel
 		uc.mutation.SetChannel(v)
 	}
-	if _, ok := uc.mutation.ChannelRatio(); !ok {
-		v := user.DefaultChannelRatio
-		uc.mutation.SetChannelRatio(v)
-	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
 		uc.mutation.SetID(v)
@@ -1494,9 +1476,6 @@ func (uc *UserCreate) check() error {
 		if err := user.ChannelValidator(v); err != nil {
 			return &ValidationError{Name: "channel", err: fmt.Errorf(`cep_ent: validator failed for field "User.channel": %w`, err)}
 		}
-	}
-	if _, ok := uc.mutation.ChannelRatio(); !ok {
-		return &ValidationError{Name: "channel_ratio", err: errors.New(`cep_ent: missing required field "User.channel_ratio"`)}
 	}
 	if _, ok := uc.mutation.ParentID(); !ok {
 		return &ValidationError{Name: "parent", err: errors.New(`cep_ent: missing required edge "User.parent"`)}
@@ -1640,10 +1619,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Channel(); ok {
 		_spec.SetField(user.FieldChannel, field.TypeEnum, value)
 		_node.Channel = value
-	}
-	if value, ok := uc.mutation.ChannelRatio(); ok {
-		_spec.SetField(user.FieldChannelRatio, field.TypeInt64, value)
-		_node.ChannelRatio = value
 	}
 	if nodes := uc.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -2863,24 +2838,6 @@ func (u *UserUpsert) UpdateChannel() *UserUpsert {
 	return u
 }
 
-// SetChannelRatio sets the "channel_ratio" field.
-func (u *UserUpsert) SetChannelRatio(v int64) *UserUpsert {
-	u.Set(user.FieldChannelRatio, v)
-	return u
-}
-
-// UpdateChannelRatio sets the "channel_ratio" field to the value that was provided on create.
-func (u *UserUpsert) UpdateChannelRatio() *UserUpsert {
-	u.SetExcluded(user.FieldChannelRatio)
-	return u
-}
-
-// AddChannelRatio adds v to the "channel_ratio" field.
-func (u *UserUpsert) AddChannelRatio(v int64) *UserUpsert {
-	u.Add(user.FieldChannelRatio, v)
-	return u
-}
-
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -3335,27 +3292,6 @@ func (u *UserUpsertOne) SetChannel(v enums.UserChannelType) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateChannel() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateChannel()
-	})
-}
-
-// SetChannelRatio sets the "channel_ratio" field.
-func (u *UserUpsertOne) SetChannelRatio(v int64) *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.SetChannelRatio(v)
-	})
-}
-
-// AddChannelRatio adds v to the "channel_ratio" field.
-func (u *UserUpsertOne) AddChannelRatio(v int64) *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.AddChannelRatio(v)
-	})
-}
-
-// UpdateChannelRatio sets the "channel_ratio" field to the value that was provided on create.
-func (u *UserUpsertOne) UpdateChannelRatio() *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.UpdateChannelRatio()
 	})
 }
 
@@ -3979,27 +3915,6 @@ func (u *UserUpsertBulk) SetChannel(v enums.UserChannelType) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateChannel() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateChannel()
-	})
-}
-
-// SetChannelRatio sets the "channel_ratio" field.
-func (u *UserUpsertBulk) SetChannelRatio(v int64) *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.SetChannelRatio(v)
-	})
-}
-
-// AddChannelRatio adds v to the "channel_ratio" field.
-func (u *UserUpsertBulk) AddChannelRatio(v int64) *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.AddChannelRatio(v)
-	})
-}
-
-// UpdateChannelRatio sets the "channel_ratio" field to the value that was provided on create.
-func (u *UserUpsertBulk) UpdateChannelRatio() *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.UpdateChannelRatio()
 	})
 }
 

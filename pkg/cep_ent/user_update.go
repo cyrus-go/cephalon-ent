@@ -467,27 +467,6 @@ func (uu *UserUpdate) SetNillableChannel(ect *enums.UserChannelType) *UserUpdate
 	return uu
 }
 
-// SetChannelRatio sets the "channel_ratio" field.
-func (uu *UserUpdate) SetChannelRatio(i int64) *UserUpdate {
-	uu.mutation.ResetChannelRatio()
-	uu.mutation.SetChannelRatio(i)
-	return uu
-}
-
-// SetNillableChannelRatio sets the "channel_ratio" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableChannelRatio(i *int64) *UserUpdate {
-	if i != nil {
-		uu.SetChannelRatio(*i)
-	}
-	return uu
-}
-
-// AddChannelRatio adds i to the "channel_ratio" field.
-func (uu *UserUpdate) AddChannelRatio(i int64) *UserUpdate {
-	uu.mutation.AddChannelRatio(i)
-	return uu
-}
-
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uu *UserUpdate) AddVxAccountIDs(ids ...int64) *UserUpdate {
 	uu.mutation.AddVxAccountIDs(ids...)
@@ -2412,12 +2391,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Channel(); ok {
 		_spec.SetField(user.FieldChannel, field.TypeEnum, value)
-	}
-	if value, ok := uu.mutation.ChannelRatio(); ok {
-		_spec.SetField(user.FieldChannelRatio, field.TypeInt64, value)
-	}
-	if value, ok := uu.mutation.AddedChannelRatio(); ok {
-		_spec.AddField(user.FieldChannelRatio, field.TypeInt64, value)
 	}
 	if uu.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -5053,27 +5026,6 @@ func (uuo *UserUpdateOne) SetNillableChannel(ect *enums.UserChannelType) *UserUp
 	return uuo
 }
 
-// SetChannelRatio sets the "channel_ratio" field.
-func (uuo *UserUpdateOne) SetChannelRatio(i int64) *UserUpdateOne {
-	uuo.mutation.ResetChannelRatio()
-	uuo.mutation.SetChannelRatio(i)
-	return uuo
-}
-
-// SetNillableChannelRatio sets the "channel_ratio" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableChannelRatio(i *int64) *UserUpdateOne {
-	if i != nil {
-		uuo.SetChannelRatio(*i)
-	}
-	return uuo
-}
-
-// AddChannelRatio adds i to the "channel_ratio" field.
-func (uuo *UserUpdateOne) AddChannelRatio(i int64) *UserUpdateOne {
-	uuo.mutation.AddChannelRatio(i)
-	return uuo
-}
-
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uuo *UserUpdateOne) AddVxAccountIDs(ids ...int64) *UserUpdateOne {
 	uuo.mutation.AddVxAccountIDs(ids...)
@@ -7028,12 +6980,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Channel(); ok {
 		_spec.SetField(user.FieldChannel, field.TypeEnum, value)
-	}
-	if value, ok := uuo.mutation.ChannelRatio(); ok {
-		_spec.SetField(user.FieldChannelRatio, field.TypeInt64, value)
-	}
-	if value, ok := uuo.mutation.AddedChannelRatio(); ok {
-		_spec.AddField(user.FieldChannelRatio, field.TypeInt64, value)
 	}
 	if uuo.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{

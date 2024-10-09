@@ -37577,6 +37577,8 @@ type InviteMutation struct {
 	first_recharge_cep    *int64
 	addfirst_recharge_cep *int64
 	_type                 *enums.InviteType
+	channel_ratio         *int64
+	addchannel_ratio      *int64
 	clearedFields         map[string]struct{}
 	user                  *int64
 	cleareduser           bool
@@ -38154,6 +38156,62 @@ func (m *InviteMutation) ResetType() {
 	m._type = nil
 }
 
+// SetChannelRatio sets the "channel_ratio" field.
+func (m *InviteMutation) SetChannelRatio(i int64) {
+	m.channel_ratio = &i
+	m.addchannel_ratio = nil
+}
+
+// ChannelRatio returns the value of the "channel_ratio" field in the mutation.
+func (m *InviteMutation) ChannelRatio() (r int64, exists bool) {
+	v := m.channel_ratio
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChannelRatio returns the old "channel_ratio" field's value of the Invite entity.
+// If the Invite object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InviteMutation) OldChannelRatio(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChannelRatio is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChannelRatio requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChannelRatio: %w", err)
+	}
+	return oldValue.ChannelRatio, nil
+}
+
+// AddChannelRatio adds i to the "channel_ratio" field.
+func (m *InviteMutation) AddChannelRatio(i int64) {
+	if m.addchannel_ratio != nil {
+		*m.addchannel_ratio += i
+	} else {
+		m.addchannel_ratio = &i
+	}
+}
+
+// AddedChannelRatio returns the value that was added to the "channel_ratio" field in this mutation.
+func (m *InviteMutation) AddedChannelRatio() (r int64, exists bool) {
+	v := m.addchannel_ratio
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetChannelRatio resets all changes to the "channel_ratio" field.
+func (m *InviteMutation) ResetChannelRatio() {
+	m.channel_ratio = nil
+	m.addchannel_ratio = nil
+}
+
 // SetUserID sets the "user_id" field.
 func (m *InviteMutation) SetUserID(i int64) {
 	m.user = &i
@@ -38368,7 +38426,7 @@ func (m *InviteMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InviteMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_by != nil {
 		fields = append(fields, invite.FieldCreatedBy)
 	}
@@ -38398,6 +38456,9 @@ func (m *InviteMutation) Fields() []string {
 	}
 	if m._type != nil {
 		fields = append(fields, invite.FieldType)
+	}
+	if m.channel_ratio != nil {
+		fields = append(fields, invite.FieldChannelRatio)
 	}
 	if m.user != nil {
 		fields = append(fields, invite.FieldUserID)
@@ -38433,6 +38494,8 @@ func (m *InviteMutation) Field(name string) (ent.Value, bool) {
 		return m.FirstRechargeCep()
 	case invite.FieldType:
 		return m.GetType()
+	case invite.FieldChannelRatio:
+		return m.ChannelRatio()
 	case invite.FieldUserID:
 		return m.UserID()
 	case invite.FieldCampaignID:
@@ -38466,6 +38529,8 @@ func (m *InviteMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldFirstRechargeCep(ctx)
 	case invite.FieldType:
 		return m.OldType(ctx)
+	case invite.FieldChannelRatio:
+		return m.OldChannelRatio(ctx)
 	case invite.FieldUserID:
 		return m.OldUserID(ctx)
 	case invite.FieldCampaignID:
@@ -38549,6 +38614,13 @@ func (m *InviteMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetType(v)
 		return nil
+	case invite.FieldChannelRatio:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChannelRatio(v)
+		return nil
 	case invite.FieldUserID:
 		v, ok := value.(int64)
 		if !ok {
@@ -38586,6 +38658,9 @@ func (m *InviteMutation) AddedFields() []string {
 	if m.addfirst_recharge_cep != nil {
 		fields = append(fields, invite.FieldFirstRechargeCep)
 	}
+	if m.addchannel_ratio != nil {
+		fields = append(fields, invite.FieldChannelRatio)
+	}
 	return fields
 }
 
@@ -38604,6 +38679,8 @@ func (m *InviteMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedRegCep()
 	case invite.FieldFirstRechargeCep:
 		return m.AddedFirstRechargeCep()
+	case invite.FieldChannelRatio:
+		return m.AddedChannelRatio()
 	}
 	return nil, false
 }
@@ -38647,6 +38724,13 @@ func (m *InviteMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddFirstRechargeCep(v)
+		return nil
+	case invite.FieldChannelRatio:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddChannelRatio(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Invite numeric field %s", name)
@@ -38704,6 +38788,9 @@ func (m *InviteMutation) ResetField(name string) error {
 		return nil
 	case invite.FieldType:
 		m.ResetType()
+		return nil
+	case invite.FieldChannelRatio:
+		m.ResetChannelRatio()
 		return nil
 	case invite.FieldUserID:
 		m.ResetUserID()
@@ -90357,8 +90444,6 @@ type UserMutation struct {
 	bound_at                        *time.Time
 	user_status                     *enums.UserStatus
 	channel                         *enums.UserChannelType
-	channel_ratio                   *int64
-	addchannel_ratio                *int64
 	clearedFields                   map[string]struct{}
 	vx_accounts                     map[int64]struct{}
 	removedvx_accounts              map[int64]struct{}
@@ -91696,62 +91781,6 @@ func (m *UserMutation) OldChannel(ctx context.Context) (v enums.UserChannelType,
 // ResetChannel resets all changes to the "channel" field.
 func (m *UserMutation) ResetChannel() {
 	m.channel = nil
-}
-
-// SetChannelRatio sets the "channel_ratio" field.
-func (m *UserMutation) SetChannelRatio(i int64) {
-	m.channel_ratio = &i
-	m.addchannel_ratio = nil
-}
-
-// ChannelRatio returns the value of the "channel_ratio" field in the mutation.
-func (m *UserMutation) ChannelRatio() (r int64, exists bool) {
-	v := m.channel_ratio
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldChannelRatio returns the old "channel_ratio" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldChannelRatio(ctx context.Context) (v int64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldChannelRatio is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldChannelRatio requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldChannelRatio: %w", err)
-	}
-	return oldValue.ChannelRatio, nil
-}
-
-// AddChannelRatio adds i to the "channel_ratio" field.
-func (m *UserMutation) AddChannelRatio(i int64) {
-	if m.addchannel_ratio != nil {
-		*m.addchannel_ratio += i
-	} else {
-		m.addchannel_ratio = &i
-	}
-}
-
-// AddedChannelRatio returns the value that was added to the "channel_ratio" field in this mutation.
-func (m *UserMutation) AddedChannelRatio() (r int64, exists bool) {
-	v := m.addchannel_ratio
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetChannelRatio resets all changes to the "channel_ratio" field.
-func (m *UserMutation) ResetChannelRatio() {
-	m.channel_ratio = nil
-	m.addchannel_ratio = nil
 }
 
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by ids.
@@ -94443,7 +94472,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 29)
+	fields := make([]string, 0, 28)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -94528,9 +94557,6 @@ func (m *UserMutation) Fields() []string {
 	if m.channel != nil {
 		fields = append(fields, user.FieldChannel)
 	}
-	if m.channel_ratio != nil {
-		fields = append(fields, user.FieldChannelRatio)
-	}
 	return fields
 }
 
@@ -94595,8 +94621,6 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.UserStatus()
 	case user.FieldChannel:
 		return m.Channel()
-	case user.FieldChannelRatio:
-		return m.ChannelRatio()
 	}
 	return nil, false
 }
@@ -94662,8 +94686,6 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldUserStatus(ctx)
 	case user.FieldChannel:
 		return m.OldChannel(ctx)
-	case user.FieldChannelRatio:
-		return m.OldChannelRatio(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -94869,13 +94891,6 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetChannel(v)
 		return nil
-	case user.FieldChannelRatio:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetChannelRatio(v)
-		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -94893,9 +94908,6 @@ func (m *UserMutation) AddedFields() []string {
 	if m.addcloud_space != nil {
 		fields = append(fields, user.FieldCloudSpace)
 	}
-	if m.addchannel_ratio != nil {
-		fields = append(fields, user.FieldChannelRatio)
-	}
 	return fields
 }
 
@@ -94910,8 +94922,6 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case user.FieldCloudSpace:
 		return m.AddedCloudSpace()
-	case user.FieldChannelRatio:
-		return m.AddedChannelRatio()
 	}
 	return nil, false
 }
@@ -94941,13 +94951,6 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddCloudSpace(v)
-		return nil
-	case user.FieldChannelRatio:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddChannelRatio(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User numeric field %s", name)
@@ -95068,9 +95071,6 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldChannel:
 		m.ResetChannel()
-		return nil
-	case user.FieldChannelRatio:
-		m.ResetChannelRatio()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

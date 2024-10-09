@@ -41,7 +41,7 @@ func (User) Fields() []ent.Field {
 		field.Time("bound_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"bound_at"`).Comment("用户绑定邀请码的时间"),
 		field.Enum("user_status").GoType(enums.UserStatusNormal).Default(string(enums.UserStatusNormal)).StructTag(`json:"user_status"`).Comment("用户状态"),
 		field.Enum("channel").GoType(enums.UserChannelTypeNoChannel).Default(string(enums.UserChannelTypeNoChannel)).StructTag(`json:"channel"`).Comment("渠道身份，默认为非渠道用户"),
-		field.Int64("channel_ratio").StructTag(`json:"channel_ratio"`).Default(0).Comment("渠道分成比例"),
+		//field.Int64("channel_ratio").StructTag(`json:"channel_ratio"`).Default(0).Comment("渠道分成比例"),
 	}
 }
 

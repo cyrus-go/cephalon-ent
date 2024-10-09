@@ -166,6 +166,20 @@ func (ic *InviteCreate) SetNillableType(et *enums.InviteType) *InviteCreate {
 	return ic
 }
 
+// SetChannelRatio sets the "channel_ratio" field.
+func (ic *InviteCreate) SetChannelRatio(i int64) *InviteCreate {
+	ic.mutation.SetChannelRatio(i)
+	return ic
+}
+
+// SetNillableChannelRatio sets the "channel_ratio" field if the given value is not nil.
+func (ic *InviteCreate) SetNillableChannelRatio(i *int64) *InviteCreate {
+	if i != nil {
+		ic.SetChannelRatio(*i)
+	}
+	return ic
+}
+
 // SetUserID sets the "user_id" field.
 func (ic *InviteCreate) SetUserID(i int64) *InviteCreate {
 	ic.mutation.SetUserID(i)
@@ -308,6 +322,10 @@ func (ic *InviteCreate) defaults() {
 		v := invite.DefaultType
 		ic.mutation.SetType(v)
 	}
+	if _, ok := ic.mutation.ChannelRatio(); !ok {
+		v := invite.DefaultChannelRatio
+		ic.mutation.SetChannelRatio(v)
+	}
 	if _, ok := ic.mutation.UserID(); !ok {
 		v := invite.DefaultUserID
 		ic.mutation.SetUserID(v)
@@ -358,6 +376,9 @@ func (ic *InviteCreate) check() error {
 		if err := invite.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "Invite.type": %w`, err)}
 		}
+	}
+	if _, ok := ic.mutation.ChannelRatio(); !ok {
+		return &ValidationError{Name: "channel_ratio", err: errors.New(`cep_ent: missing required field "Invite.channel_ratio"`)}
 	}
 	if _, ok := ic.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`cep_ent: missing required field "Invite.user_id"`)}
@@ -443,6 +464,10 @@ func (ic *InviteCreate) createSpec() (*Invite, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.GetType(); ok {
 		_spec.SetField(invite.FieldType, field.TypeEnum, value)
 		_node.Type = value
+	}
+	if value, ok := ic.mutation.ChannelRatio(); ok {
+		_spec.SetField(invite.FieldChannelRatio, field.TypeInt64, value)
+		_node.ChannelRatio = value
 	}
 	if nodes := ic.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -684,6 +709,24 @@ func (u *InviteUpsert) UpdateType() *InviteUpsert {
 	return u
 }
 
+// SetChannelRatio sets the "channel_ratio" field.
+func (u *InviteUpsert) SetChannelRatio(v int64) *InviteUpsert {
+	u.Set(invite.FieldChannelRatio, v)
+	return u
+}
+
+// UpdateChannelRatio sets the "channel_ratio" field to the value that was provided on create.
+func (u *InviteUpsert) UpdateChannelRatio() *InviteUpsert {
+	u.SetExcluded(invite.FieldChannelRatio)
+	return u
+}
+
+// AddChannelRatio adds v to the "channel_ratio" field.
+func (u *InviteUpsert) AddChannelRatio(v int64) *InviteUpsert {
+	u.Add(invite.FieldChannelRatio, v)
+	return u
+}
+
 // SetUserID sets the "user_id" field.
 func (u *InviteUpsert) SetUserID(v int64) *InviteUpsert {
 	u.Set(invite.FieldUserID, v)
@@ -917,6 +960,27 @@ func (u *InviteUpsertOne) SetType(v enums.InviteType) *InviteUpsertOne {
 func (u *InviteUpsertOne) UpdateType() *InviteUpsertOne {
 	return u.Update(func(s *InviteUpsert) {
 		s.UpdateType()
+	})
+}
+
+// SetChannelRatio sets the "channel_ratio" field.
+func (u *InviteUpsertOne) SetChannelRatio(v int64) *InviteUpsertOne {
+	return u.Update(func(s *InviteUpsert) {
+		s.SetChannelRatio(v)
+	})
+}
+
+// AddChannelRatio adds v to the "channel_ratio" field.
+func (u *InviteUpsertOne) AddChannelRatio(v int64) *InviteUpsertOne {
+	return u.Update(func(s *InviteUpsert) {
+		s.AddChannelRatio(v)
+	})
+}
+
+// UpdateChannelRatio sets the "channel_ratio" field to the value that was provided on create.
+func (u *InviteUpsertOne) UpdateChannelRatio() *InviteUpsertOne {
+	return u.Update(func(s *InviteUpsert) {
+		s.UpdateChannelRatio()
 	})
 }
 
@@ -1323,6 +1387,27 @@ func (u *InviteUpsertBulk) SetType(v enums.InviteType) *InviteUpsertBulk {
 func (u *InviteUpsertBulk) UpdateType() *InviteUpsertBulk {
 	return u.Update(func(s *InviteUpsert) {
 		s.UpdateType()
+	})
+}
+
+// SetChannelRatio sets the "channel_ratio" field.
+func (u *InviteUpsertBulk) SetChannelRatio(v int64) *InviteUpsertBulk {
+	return u.Update(func(s *InviteUpsert) {
+		s.SetChannelRatio(v)
+	})
+}
+
+// AddChannelRatio adds v to the "channel_ratio" field.
+func (u *InviteUpsertBulk) AddChannelRatio(v int64) *InviteUpsertBulk {
+	return u.Update(func(s *InviteUpsert) {
+		s.AddChannelRatio(v)
+	})
+}
+
+// UpdateChannelRatio sets the "channel_ratio" field to the value that was provided on create.
+func (u *InviteUpsertBulk) UpdateChannelRatio() *InviteUpsertBulk {
+	return u.Update(func(s *InviteUpsert) {
+		s.UpdateChannelRatio()
 	})
 }
 

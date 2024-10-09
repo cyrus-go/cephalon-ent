@@ -36,6 +36,8 @@ const (
 	FieldFirstRechargeCep = "first_recharge_cep"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// FieldChannelRatio holds the string denoting the channel_ratio field in the database.
+	FieldChannelRatio = "channel_ratio"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
 	// FieldCampaignID holds the string denoting the campaign_id field in the database.
@@ -84,6 +86,7 @@ var Columns = []string{
 	FieldRegCep,
 	FieldFirstRechargeCep,
 	FieldType,
+	FieldChannelRatio,
 	FieldUserID,
 	FieldCampaignID,
 }
@@ -119,6 +122,8 @@ var (
 	DefaultRegCep int64
 	// DefaultFirstRechargeCep holds the default value on creation for the "first_recharge_cep" field.
 	DefaultFirstRechargeCep int64
+	// DefaultChannelRatio holds the default value on creation for the "channel_ratio" field.
+	DefaultChannelRatio int64
 	// DefaultUserID holds the default value on creation for the "user_id" field.
 	DefaultUserID int64
 	// DefaultCampaignID holds the default value on creation for the "campaign_id" field.
@@ -195,6 +200,11 @@ func ByFirstRechargeCep(opts ...sql.OrderTermOption) OrderOption {
 // ByType orders the results by the type field.
 func ByType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByChannelRatio orders the results by the channel_ratio field.
+func ByChannelRatio(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldChannelRatio, opts...).ToFunc()
 }
 
 // ByUserID orders the results by the user_id field.

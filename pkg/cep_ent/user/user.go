@@ -72,8 +72,6 @@ const (
 	FieldUserStatus = "user_status"
 	// FieldChannel holds the string denoting the channel field in the database.
 	FieldChannel = "channel"
-	// FieldChannelRatio holds the string denoting the channel_ratio field in the database.
-	FieldChannelRatio = "channel_ratio"
 	// EdgeVxAccounts holds the string denoting the vx_accounts edge name in mutations.
 	EdgeVxAccounts = "vx_accounts"
 	// EdgeCollects holds the string denoting the collects edge name in mutations.
@@ -556,7 +554,6 @@ var Columns = []string{
 	FieldBoundAt,
 	FieldUserStatus,
 	FieldChannel,
-	FieldChannelRatio,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -622,8 +619,6 @@ var (
 	DefaultBaiduRefreshToken string
 	// DefaultBoundAt holds the default value on creation for the "bound_at" field.
 	DefaultBoundAt time.Time
-	// DefaultChannelRatio holds the default value on creation for the "channel_ratio" field.
-	DefaultChannelRatio int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -810,11 +805,6 @@ func ByUserStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByChannel orders the results by the channel field.
 func ByChannel(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldChannel, opts...).ToFunc()
-}
-
-// ByChannelRatio orders the results by the channel_ratio field.
-func ByChannelRatio(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldChannelRatio, opts...).ToFunc()
 }
 
 // ByVxAccountsCount orders the results by vx_accounts count.

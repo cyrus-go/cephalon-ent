@@ -1221,6 +1221,7 @@ var (
 		{Name: "reg_cep", Type: field.TypeInt64, Comment: "通过此邀请码注册能获得的收益", Default: 0},
 		{Name: "first_recharge_cep", Type: field.TypeInt64, Comment: "通过此邀请码邀请用户注册并首次充值能获得的收益", Default: 0},
 		{Name: "type", Type: field.TypeEnum, Comment: "邀请码类型（可以用来区分不同的活动）", Enums: []string{"unknown", "share_register", "app_invite"}, Default: "unknown"},
+		{Name: "channel_ratio", Type: field.TypeInt64, Comment: "渠道分成比例", Default: 0},
 		{Name: "campaign_id", Type: field.TypeInt64, Comment: "外键活动 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
@@ -1233,13 +1234,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "invites_campaigns_invites",
-				Columns:    []*schema.Column{InvitesColumns[11]},
+				Columns:    []*schema.Column{InvitesColumns[12]},
 				RefColumns: []*schema.Column{CampaignsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "invites_users_invites",
-				Columns:    []*schema.Column{InvitesColumns[12]},
+				Columns:    []*schema.Column{InvitesColumns[13]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -1253,12 +1254,12 @@ var (
 			{
 				Name:    "invite_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{InvitesColumns[12]},
+				Columns: []*schema.Column{InvitesColumns[13]},
 			},
 			{
 				Name:    "invite_campaign_id",
 				Unique:  false,
-				Columns: []*schema.Column{InvitesColumns[11]},
+				Columns: []*schema.Column{InvitesColumns[12]},
 			},
 		},
 	}
@@ -2914,7 +2915,6 @@ var (
 		{Name: "bound_at", Type: field.TypeTime, Nullable: true, Comment: "用户绑定邀请码的时间"},
 		{Name: "user_status", Type: field.TypeEnum, Comment: "用户状态", Enums: []string{"normal", "frozen", "closed"}, Default: "normal"},
 		{Name: "channel", Type: field.TypeEnum, Comment: "渠道身份，默认为非渠道用户", Enums: []string{"no_channel", "normal_channel"}, Default: "no_channel"},
-		{Name: "channel_ratio", Type: field.TypeInt64, Comment: "渠道分成比例", Default: 0},
 		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "邀请人用户 id", Default: 0},
 		{Name: "applet_parent_id", Type: field.TypeInt64, Nullable: true, Comment: "小程序邀请人用户 id", Default: 0},
 	}
@@ -2927,13 +2927,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_users_children",
-				Columns:    []*schema.Column{UsersColumns[28]},
+				Columns:    []*schema.Column{UsersColumns[27]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "users_users_applet_children",
-				Columns:    []*schema.Column{UsersColumns[29]},
+				Columns:    []*schema.Column{UsersColumns[28]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2952,12 +2952,12 @@ var (
 			{
 				Name:    "user_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[28]},
+				Columns: []*schema.Column{UsersColumns[27]},
 			},
 			{
 				Name:    "user_applet_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[29]},
+				Columns: []*schema.Column{UsersColumns[28]},
 			},
 			{
 				Name:    "user_channel",

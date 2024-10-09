@@ -186,6 +186,27 @@ func (iu *InviteUpdate) SetNillableType(et *enums.InviteType) *InviteUpdate {
 	return iu
 }
 
+// SetChannelRatio sets the "channel_ratio" field.
+func (iu *InviteUpdate) SetChannelRatio(i int64) *InviteUpdate {
+	iu.mutation.ResetChannelRatio()
+	iu.mutation.SetChannelRatio(i)
+	return iu
+}
+
+// SetNillableChannelRatio sets the "channel_ratio" field if the given value is not nil.
+func (iu *InviteUpdate) SetNillableChannelRatio(i *int64) *InviteUpdate {
+	if i != nil {
+		iu.SetChannelRatio(*i)
+	}
+	return iu
+}
+
+// AddChannelRatio adds i to the "channel_ratio" field.
+func (iu *InviteUpdate) AddChannelRatio(i int64) *InviteUpdate {
+	iu.mutation.AddChannelRatio(i)
+	return iu
+}
+
 // SetUserID sets the "user_id" field.
 func (iu *InviteUpdate) SetUserID(i int64) *InviteUpdate {
 	iu.mutation.SetUserID(i)
@@ -388,6 +409,12 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := iu.mutation.GetType(); ok {
 		_spec.SetField(invite.FieldType, field.TypeEnum, value)
+	}
+	if value, ok := iu.mutation.ChannelRatio(); ok {
+		_spec.SetField(invite.FieldChannelRatio, field.TypeInt64, value)
+	}
+	if value, ok := iu.mutation.AddedChannelRatio(); ok {
+		_spec.AddField(invite.FieldChannelRatio, field.TypeInt64, value)
 	}
 	if iu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -667,6 +694,27 @@ func (iuo *InviteUpdateOne) SetNillableType(et *enums.InviteType) *InviteUpdateO
 	return iuo
 }
 
+// SetChannelRatio sets the "channel_ratio" field.
+func (iuo *InviteUpdateOne) SetChannelRatio(i int64) *InviteUpdateOne {
+	iuo.mutation.ResetChannelRatio()
+	iuo.mutation.SetChannelRatio(i)
+	return iuo
+}
+
+// SetNillableChannelRatio sets the "channel_ratio" field if the given value is not nil.
+func (iuo *InviteUpdateOne) SetNillableChannelRatio(i *int64) *InviteUpdateOne {
+	if i != nil {
+		iuo.SetChannelRatio(*i)
+	}
+	return iuo
+}
+
+// AddChannelRatio adds i to the "channel_ratio" field.
+func (iuo *InviteUpdateOne) AddChannelRatio(i int64) *InviteUpdateOne {
+	iuo.mutation.AddChannelRatio(i)
+	return iuo
+}
+
 // SetUserID sets the "user_id" field.
 func (iuo *InviteUpdateOne) SetUserID(i int64) *InviteUpdateOne {
 	iuo.mutation.SetUserID(i)
@@ -899,6 +947,12 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 	}
 	if value, ok := iuo.mutation.GetType(); ok {
 		_spec.SetField(invite.FieldType, field.TypeEnum, value)
+	}
+	if value, ok := iuo.mutation.ChannelRatio(); ok {
+		_spec.SetField(invite.FieldChannelRatio, field.TypeInt64, value)
+	}
+	if value, ok := iuo.mutation.AddedChannelRatio(); ok {
+		_spec.AddField(invite.FieldChannelRatio, field.TypeInt64, value)
 	}
 	if iuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

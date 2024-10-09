@@ -1765,12 +1765,16 @@ func init() {
 	inviteDescFirstRechargeCep := inviteFields[3].Descriptor()
 	// invite.DefaultFirstRechargeCep holds the default value on creation for the first_recharge_cep field.
 	invite.DefaultFirstRechargeCep = inviteDescFirstRechargeCep.Default.(int64)
+	// inviteDescChannelRatio is the schema descriptor for channel_ratio field.
+	inviteDescChannelRatio := inviteFields[5].Descriptor()
+	// invite.DefaultChannelRatio holds the default value on creation for the channel_ratio field.
+	invite.DefaultChannelRatio = inviteDescChannelRatio.Default.(int64)
 	// inviteDescUserID is the schema descriptor for user_id field.
-	inviteDescUserID := inviteFields[5].Descriptor()
+	inviteDescUserID := inviteFields[6].Descriptor()
 	// invite.DefaultUserID holds the default value on creation for the user_id field.
 	invite.DefaultUserID = inviteDescUserID.Default.(int64)
 	// inviteDescCampaignID is the schema descriptor for campaign_id field.
-	inviteDescCampaignID := inviteFields[6].Descriptor()
+	inviteDescCampaignID := inviteFields[7].Descriptor()
 	// invite.DefaultCampaignID holds the default value on creation for the campaign_id field.
 	invite.DefaultCampaignID = inviteDescCampaignID.Default.(int64)
 	// inviteDescID is the schema descriptor for id field.
@@ -4018,10 +4022,6 @@ func init() {
 	userDescBoundAt := userFields[20].Descriptor()
 	// user.DefaultBoundAt holds the default value on creation for the bound_at field.
 	user.DefaultBoundAt = userDescBoundAt.Default.(time.Time)
-	// userDescChannelRatio is the schema descriptor for channel_ratio field.
-	userDescChannelRatio := userFields[23].Descriptor()
-	// user.DefaultChannelRatio holds the default value on creation for the channel_ratio field.
-	user.DefaultChannelRatio = userDescChannelRatio.Default.(int64)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
