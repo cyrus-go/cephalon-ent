@@ -591,6 +591,20 @@ func (mu *MissionUpdate) SetNillableFreeAt(t *time.Time) *MissionUpdate {
 	return mu
 }
 
+// SetCreateWay sets the "create_way" field.
+func (mu *MissionUpdate) SetCreateWay(ew enums.CreateWay) *MissionUpdate {
+	mu.mutation.SetCreateWay(ew)
+	return mu
+}
+
+// SetNillableCreateWay sets the "create_way" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableCreateWay(ew *enums.CreateWay) *MissionUpdate {
+	if ew != nil {
+		mu.SetCreateWay(*ew)
+	}
+	return mu
+}
+
 // SetCloseWay sets the "close_way" field.
 func (mu *MissionUpdate) SetCloseWay(ew enums.CloseWay) *MissionUpdate {
 	mu.mutation.SetCloseWay(ew)
@@ -1231,6 +1245,11 @@ func (mu *MissionUpdate) check() error {
 			return &ValidationError{Name: "inner_method", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.inner_method": %w`, err)}
 		}
 	}
+	if v, ok := mu.mutation.CreateWay(); ok {
+		if err := mission.CreateWayValidator(v); err != nil {
+			return &ValidationError{Name: "create_way", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.create_way": %w`, err)}
+		}
+	}
 	if v, ok := mu.mutation.CloseWay(); ok {
 		if err := mission.CloseWayValidator(v); err != nil {
 			return &ValidationError{Name: "close_way", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.close_way": %w`, err)}
@@ -1416,6 +1435,9 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.FreeAt(); ok {
 		_spec.SetField(mission.FieldFreeAt, field.TypeTime, value)
+	}
+	if value, ok := mu.mutation.CreateWay(); ok {
+		_spec.SetField(mission.FieldCreateWay, field.TypeEnum, value)
 	}
 	if value, ok := mu.mutation.CloseWay(); ok {
 		_spec.SetField(mission.FieldCloseWay, field.TypeEnum, value)
@@ -2626,6 +2648,20 @@ func (muo *MissionUpdateOne) SetNillableFreeAt(t *time.Time) *MissionUpdateOne {
 	return muo
 }
 
+// SetCreateWay sets the "create_way" field.
+func (muo *MissionUpdateOne) SetCreateWay(ew enums.CreateWay) *MissionUpdateOne {
+	muo.mutation.SetCreateWay(ew)
+	return muo
+}
+
+// SetNillableCreateWay sets the "create_way" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableCreateWay(ew *enums.CreateWay) *MissionUpdateOne {
+	if ew != nil {
+		muo.SetCreateWay(*ew)
+	}
+	return muo
+}
+
 // SetCloseWay sets the "close_way" field.
 func (muo *MissionUpdateOne) SetCloseWay(ew enums.CloseWay) *MissionUpdateOne {
 	muo.mutation.SetCloseWay(ew)
@@ -3279,6 +3315,11 @@ func (muo *MissionUpdateOne) check() error {
 			return &ValidationError{Name: "inner_method", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.inner_method": %w`, err)}
 		}
 	}
+	if v, ok := muo.mutation.CreateWay(); ok {
+		if err := mission.CreateWayValidator(v); err != nil {
+			return &ValidationError{Name: "create_way", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.create_way": %w`, err)}
+		}
+	}
 	if v, ok := muo.mutation.CloseWay(); ok {
 		if err := mission.CloseWayValidator(v); err != nil {
 			return &ValidationError{Name: "close_way", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.close_way": %w`, err)}
@@ -3481,6 +3522,9 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if value, ok := muo.mutation.FreeAt(); ok {
 		_spec.SetField(mission.FieldFreeAt, field.TypeTime, value)
+	}
+	if value, ok := muo.mutation.CreateWay(); ok {
+		_spec.SetField(mission.FieldCreateWay, field.TypeEnum, value)
 	}
 	if value, ok := muo.mutation.CloseWay(); ok {
 		_spec.SetField(mission.FieldCloseWay, field.TypeEnum, value)

@@ -91,6 +91,8 @@ const (
 	FieldExpiredAt = "expired_at"
 	// FieldFreeAt holds the string denoting the free_at field in the database.
 	FieldFreeAt = "free_at"
+	// FieldCreateWay holds the string denoting the create_way field in the database.
+	FieldCreateWay = "create_way"
 	// FieldCloseWay holds the string denoting the close_way field in the database.
 	FieldCloseWay = "close_way"
 	// FieldClosedAt holds the string denoting the closed_at field in the database.
@@ -289,6 +291,7 @@ var Columns = []string{
 	FieldFinishedAt,
 	FieldExpiredAt,
 	FieldFreeAt,
+	FieldCreateWay,
 	FieldCloseWay,
 	FieldClosedAt,
 	FieldWarningTimes,
@@ -467,6 +470,18 @@ func InnerMethodValidator(im enums.InnerMethod) error {
 		return nil
 	default:
 		return fmt.Errorf("mission: invalid enum value for inner_method field: %q", im)
+	}
+}
+
+const DefaultCreateWay enums.CreateWay = "unknown"
+
+// CreateWayValidator is a validator for the "create_way" field enum values. It is called by the builders before save.
+func CreateWayValidator(cw enums.CreateWay) error {
+	switch cw {
+	case "unknown", "user", "load_balance":
+		return nil
+	default:
+		return fmt.Errorf("mission: invalid enum value for create_way field: %q", cw)
 	}
 }
 
@@ -663,6 +678,11 @@ func ByExpiredAt(opts ...sql.OrderTermOption) OrderOption {
 // ByFreeAt orders the results by the free_at field.
 func ByFreeAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldFreeAt, opts...).ToFunc()
+}
+
+// ByCreateWay orders the results by the create_way field.
+func ByCreateWay(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreateWay, opts...).ToFunc()
 }
 
 // ByCloseWay orders the results by the close_way field.

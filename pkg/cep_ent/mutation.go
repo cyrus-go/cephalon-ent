@@ -48089,6 +48089,7 @@ type MissionMutation struct {
 	finished_at                    *time.Time
 	expired_at                     *time.Time
 	free_at                        *time.Time
+	create_way                     *enums.CreateWay
 	close_way                      *enums.CloseWay
 	closed_at                      *time.Time
 	warning_times                  *int64
@@ -49781,6 +49782,42 @@ func (m *MissionMutation) ResetFreeAt() {
 	m.free_at = nil
 }
 
+// SetCreateWay sets the "create_way" field.
+func (m *MissionMutation) SetCreateWay(ew enums.CreateWay) {
+	m.create_way = &ew
+}
+
+// CreateWay returns the value of the "create_way" field in the mutation.
+func (m *MissionMutation) CreateWay() (r enums.CreateWay, exists bool) {
+	v := m.create_way
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateWay returns the old "create_way" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldCreateWay(ctx context.Context) (v enums.CreateWay, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreateWay is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreateWay requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateWay: %w", err)
+	}
+	return oldValue.CreateWay, nil
+}
+
+// ResetCreateWay resets all changes to the "create_way" field.
+func (m *MissionMutation) ResetCreateWay() {
+	m.create_way = nil
+}
+
 // SetCloseWay sets the "close_way" field.
 func (m *MissionMutation) SetCloseWay(ew enums.CloseWay) {
 	m.close_way = &ew
@@ -50868,7 +50905,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 45)
+	fields := make([]string, 0, 46)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -50980,6 +51017,9 @@ func (m *MissionMutation) Fields() []string {
 	if m.free_at != nil {
 		fields = append(fields, mission.FieldFreeAt)
 	}
+	if m.create_way != nil {
+		fields = append(fields, mission.FieldCreateWay)
+	}
 	if m.close_way != nil {
 		fields = append(fields, mission.FieldCloseWay)
 	}
@@ -51086,6 +51126,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.ExpiredAt()
 	case mission.FieldFreeAt:
 		return m.FreeAt()
+	case mission.FieldCreateWay:
+		return m.CreateWay()
 	case mission.FieldCloseWay:
 		return m.CloseWay()
 	case mission.FieldClosedAt:
@@ -51185,6 +51227,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldExpiredAt(ctx)
 	case mission.FieldFreeAt:
 		return m.OldFreeAt(ctx)
+	case mission.FieldCreateWay:
+		return m.OldCreateWay(ctx)
 	case mission.FieldCloseWay:
 		return m.OldCloseWay(ctx)
 	case mission.FieldClosedAt:
@@ -51468,6 +51512,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetFreeAt(v)
+		return nil
+	case mission.FieldCreateWay:
+		v, ok := value.(enums.CreateWay)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateWay(v)
 		return nil
 	case mission.FieldCloseWay:
 		v, ok := value.(enums.CloseWay)
@@ -51822,6 +51873,9 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldFreeAt:
 		m.ResetFreeAt()
+		return nil
+	case mission.FieldCreateWay:
+		m.ResetCreateWay()
 		return nil
 	case mission.FieldCloseWay:
 		m.ResetCloseWay()

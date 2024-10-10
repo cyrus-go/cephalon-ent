@@ -2279,31 +2279,31 @@ func init() {
 	// mission.DefaultFreeAt holds the default value on creation for the free_at field.
 	mission.DefaultFreeAt = missionDescFreeAt.Default.(time.Time)
 	// missionDescClosedAt is the schema descriptor for closed_at field.
-	missionDescClosedAt := missionFields[33].Descriptor()
+	missionDescClosedAt := missionFields[34].Descriptor()
 	// mission.DefaultClosedAt holds the default value on creation for the closed_at field.
 	mission.DefaultClosedAt = missionDescClosedAt.Default.(time.Time)
 	// missionDescWarningTimes is the schema descriptor for warning_times field.
-	missionDescWarningTimes := missionFields[34].Descriptor()
+	missionDescWarningTimes := missionFields[35].Descriptor()
 	// mission.DefaultWarningTimes holds the default value on creation for the warning_times field.
 	mission.DefaultWarningTimes = missionDescWarningTimes.Default.(int64)
 	// missionDescRemark is the schema descriptor for remark field.
-	missionDescRemark := missionFields[35].Descriptor()
+	missionDescRemark := missionFields[36].Descriptor()
 	// mission.DefaultRemark holds the default value on creation for the remark field.
 	mission.DefaultRemark = missionDescRemark.Default.(string)
 	// missionDescUseAuth is the schema descriptor for use_auth field.
-	missionDescUseAuth := missionFields[36].Descriptor()
+	missionDescUseAuth := missionFields[37].Descriptor()
 	// mission.DefaultUseAuth holds the default value on creation for the use_auth field.
 	mission.DefaultUseAuth = missionDescUseAuth.Default.(bool)
 	// missionDescOldMissionID is the schema descriptor for old_mission_id field.
-	missionDescOldMissionID := missionFields[37].Descriptor()
+	missionDescOldMissionID := missionFields[38].Descriptor()
 	// mission.DefaultOldMissionID holds the default value on creation for the old_mission_id field.
 	mission.DefaultOldMissionID = missionDescOldMissionID.Default.(int64)
 	// missionDescTimedShutdown is the schema descriptor for timed_shutdown field.
-	missionDescTimedShutdown := missionFields[38].Descriptor()
+	missionDescTimedShutdown := missionFields[39].Descriptor()
 	// mission.DefaultTimedShutdown holds the default value on creation for the timed_shutdown field.
 	mission.DefaultTimedShutdown = missionDescTimedShutdown.Default.(time.Time)
 	// missionDescGpuNum is the schema descriptor for gpu_num field.
-	missionDescGpuNum := missionFields[39].Descriptor()
+	missionDescGpuNum := missionFields[40].Descriptor()
 	// mission.DefaultGpuNum holds the default value on creation for the gpu_num field.
 	mission.DefaultGpuNum = missionDescGpuNum.Default.(int)
 	// missionDescID is the schema descriptor for id field.

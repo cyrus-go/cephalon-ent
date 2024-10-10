@@ -100,6 +100,8 @@ type Mission struct {
 	ExpiredAt *time.Time `json:"expired_at"`
 	// 任务释放时刻
 	FreeAt time.Time `json:"free_at"`
+	// 任务创建方式，user：用户自己通过官网页面创建，load_balance：用户通过创建 Loadbalance 自动创建
+	CreateWay enums.CreateWay `json:"create_way"`
 	// 任务关闭方式，user：用户自己关闭，balance_not_enough：余额不足自动关闭
 	CloseWay enums.CloseWay `json:"close_way"`
 	// 用戶关闭任务时间
@@ -345,7 +347,7 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldMissionKindID, mission.FieldKeyPairID, mission.FieldUserID, mission.FieldMissionBatchID, mission.FieldUnitCep, mission.FieldRespStatusCode, mission.FieldWarningTimes, mission.FieldOldMissionID, mission.FieldGpuNum:
 			values[i] = new(sql.NullInt64)
-		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword, mission.FieldCloseWay, mission.FieldRemark:
+		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword, mission.FieldCreateWay, mission.FieldCloseWay, mission.FieldRemark:
 			values[i] = new(sql.NullString)
 		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt, mission.FieldStartedAt, mission.FieldFinishedAt, mission.FieldExpiredAt, mission.FieldFreeAt, mission.FieldClosedAt, mission.FieldTimedShutdown:
 			values[i] = new(sql.NullTime)
@@ -603,6 +605,12 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field free_at", values[i])
 			} else if value.Valid {
 				m.FreeAt = value.Time
+			}
+		case mission.FieldCreateWay:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field create_way", values[i])
+			} else if value.Valid {
+				m.CreateWay = enums.CreateWay(value.String)
 			}
 		case mission.FieldCloseWay:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -893,6 +901,9 @@ func (m *Mission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("free_at=")
 	builder.WriteString(m.FreeAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("create_way=")
+	builder.WriteString(fmt.Sprintf("%v", m.CreateWay))
 	builder.WriteString(", ")
 	builder.WriteString("close_way=")
 	builder.WriteString(fmt.Sprintf("%v", m.CloseWay))

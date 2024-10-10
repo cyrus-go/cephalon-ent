@@ -523,6 +523,20 @@ func (mc *MissionCreate) SetNillableFreeAt(t *time.Time) *MissionCreate {
 	return mc
 }
 
+// SetCreateWay sets the "create_way" field.
+func (mc *MissionCreate) SetCreateWay(ew enums.CreateWay) *MissionCreate {
+	mc.mutation.SetCreateWay(ew)
+	return mc
+}
+
+// SetNillableCreateWay sets the "create_way" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableCreateWay(ew *enums.CreateWay) *MissionCreate {
+	if ew != nil {
+		mc.SetCreateWay(*ew)
+	}
+	return mc
+}
+
 // SetCloseWay sets the "close_way" field.
 func (mc *MissionCreate) SetCloseWay(ew enums.CloseWay) *MissionCreate {
 	mc.mutation.SetCloseWay(ew)
@@ -1010,6 +1024,10 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultFreeAt
 		mc.mutation.SetFreeAt(v)
 	}
+	if _, ok := mc.mutation.CreateWay(); !ok {
+		v := mission.DefaultCreateWay
+		mc.mutation.SetCreateWay(v)
+	}
 	if _, ok := mc.mutation.CloseWay(); !ok {
 		v := mission.DefaultCloseWay
 		mc.mutation.SetCloseWay(v)
@@ -1166,6 +1184,14 @@ func (mc *MissionCreate) check() error {
 	}
 	if _, ok := mc.mutation.FreeAt(); !ok {
 		return &ValidationError{Name: "free_at", err: errors.New(`cep_ent: missing required field "Mission.free_at"`)}
+	}
+	if _, ok := mc.mutation.CreateWay(); !ok {
+		return &ValidationError{Name: "create_way", err: errors.New(`cep_ent: missing required field "Mission.create_way"`)}
+	}
+	if v, ok := mc.mutation.CreateWay(); ok {
+		if err := mission.CreateWayValidator(v); err != nil {
+			return &ValidationError{Name: "create_way", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.create_way": %w`, err)}
+		}
 	}
 	if _, ok := mc.mutation.CloseWay(); !ok {
 		return &ValidationError{Name: "close_way", err: errors.New(`cep_ent: missing required field "Mission.close_way"`)}
@@ -1380,6 +1406,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 	if value, ok := mc.mutation.FreeAt(); ok {
 		_spec.SetField(mission.FieldFreeAt, field.TypeTime, value)
 		_node.FreeAt = value
+	}
+	if value, ok := mc.mutation.CreateWay(); ok {
+		_spec.SetField(mission.FieldCreateWay, field.TypeEnum, value)
+		_node.CreateWay = value
 	}
 	if value, ok := mc.mutation.CloseWay(); ok {
 		_spec.SetField(mission.FieldCloseWay, field.TypeEnum, value)
@@ -2226,6 +2256,18 @@ func (u *MissionUpsert) UpdateFreeAt() *MissionUpsert {
 	return u
 }
 
+// SetCreateWay sets the "create_way" field.
+func (u *MissionUpsert) SetCreateWay(v enums.CreateWay) *MissionUpsert {
+	u.Set(mission.FieldCreateWay, v)
+	return u
+}
+
+// UpdateCreateWay sets the "create_way" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateCreateWay() *MissionUpsert {
+	u.SetExcluded(mission.FieldCreateWay)
+	return u
+}
+
 // SetCloseWay sets the "close_way" field.
 func (u *MissionUpsert) SetCloseWay(v enums.CloseWay) *MissionUpsert {
 	u.Set(mission.FieldCloseWay, v)
@@ -2982,6 +3024,20 @@ func (u *MissionUpsertOne) SetFreeAt(v time.Time) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdateFreeAt() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateFreeAt()
+	})
+}
+
+// SetCreateWay sets the "create_way" field.
+func (u *MissionUpsertOne) SetCreateWay(v enums.CreateWay) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetCreateWay(v)
+	})
+}
+
+// UpdateCreateWay sets the "create_way" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateCreateWay() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateCreateWay()
 	})
 }
 
@@ -3930,6 +3986,20 @@ func (u *MissionUpsertBulk) SetFreeAt(v time.Time) *MissionUpsertBulk {
 func (u *MissionUpsertBulk) UpdateFreeAt() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateFreeAt()
+	})
+}
+
+// SetCreateWay sets the "create_way" field.
+func (u *MissionUpsertBulk) SetCreateWay(v enums.CreateWay) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetCreateWay(v)
+	})
+}
+
+// UpdateCreateWay sets the "create_way" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateCreateWay() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateCreateWay()
 	})
 }
 

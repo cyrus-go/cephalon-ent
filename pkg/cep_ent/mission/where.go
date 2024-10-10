@@ -1831,6 +1831,36 @@ func FreeAtLTE(v time.Time) predicate.Mission {
 	return predicate.Mission(sql.FieldLTE(FieldFreeAt, v))
 }
 
+// CreateWayEQ applies the EQ predicate on the "create_way" field.
+func CreateWayEQ(v enums.CreateWay) predicate.Mission {
+	vc := v
+	return predicate.Mission(sql.FieldEQ(FieldCreateWay, vc))
+}
+
+// CreateWayNEQ applies the NEQ predicate on the "create_way" field.
+func CreateWayNEQ(v enums.CreateWay) predicate.Mission {
+	vc := v
+	return predicate.Mission(sql.FieldNEQ(FieldCreateWay, vc))
+}
+
+// CreateWayIn applies the In predicate on the "create_way" field.
+func CreateWayIn(vs ...enums.CreateWay) predicate.Mission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Mission(sql.FieldIn(FieldCreateWay, v...))
+}
+
+// CreateWayNotIn applies the NotIn predicate on the "create_way" field.
+func CreateWayNotIn(vs ...enums.CreateWay) predicate.Mission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Mission(sql.FieldNotIn(FieldCreateWay, v...))
+}
+
 // CloseWayEQ applies the EQ predicate on the "close_way" field.
 func CloseWayEQ(v enums.CloseWay) predicate.Mission {
 	vc := v
