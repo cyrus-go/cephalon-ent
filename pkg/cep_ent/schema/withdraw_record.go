@@ -41,6 +41,7 @@ func (WithdrawRecord) Edges() []ent.Edge {
 		edge.From("user", User.Type).Ref("withdraw_records").Field("user_id").Unique().Required(),
 		edge.From("operate_user", User.Type).Ref("operate_withdraw_records").Field("operate_user_id").Unique().Required(),
 		edge.From("transfer_order", TransferOrder.Type).Ref("withdraw_record").Field("transfer_order_id").Unique().Required(),
+		edge.From("symbol", Symbol.Type).Ref("withdraw_records").Field("symbol_id").Unique().Required(),
 	}
 }
 

@@ -1667,6 +1667,10 @@ func init() {
 	incomemanageDescApproveUserID := incomemanageFields[9].Descriptor()
 	// incomemanage.DefaultApproveUserID holds the default value on creation for the approve_user_id field.
 	incomemanage.DefaultApproveUserID = incomemanageDescApproveUserID.Default.(int64)
+	// incomemanageDescSymbolID is the schema descriptor for symbol_id field.
+	incomemanageDescSymbolID := incomemanageFields[10].Descriptor()
+	// incomemanage.DefaultSymbolID holds the default value on creation for the symbol_id field.
+	incomemanage.DefaultSymbolID = incomemanageDescSymbolID.Default.(int64)
 	// incomemanageDescID is the schema descriptor for id field.
 	incomemanageDescID := incomemanageMixinFields0[0].Descriptor()
 	// incomemanage.DefaultID holds the default value on creation for the id field.

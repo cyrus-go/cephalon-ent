@@ -121,6 +121,11 @@ func ApproveUserID(v int64) predicate.IncomeManage {
 	return predicate.IncomeManage(sql.FieldEQ(FieldApproveUserID, v))
 }
 
+// SymbolID applies equality check predicate on the "symbol_id" field. It's identical to SymbolIDEQ.
+func SymbolID(v int64) predicate.IncomeManage {
+	return predicate.IncomeManage(sql.FieldEQ(FieldSymbolID, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.IncomeManage {
 	return predicate.IncomeManage(sql.FieldEQ(FieldCreatedBy, v))
@@ -736,6 +741,26 @@ func ApproveUserIDNotIn(vs ...int64) predicate.IncomeManage {
 	return predicate.IncomeManage(sql.FieldNotIn(FieldApproveUserID, vs...))
 }
 
+// SymbolIDEQ applies the EQ predicate on the "symbol_id" field.
+func SymbolIDEQ(v int64) predicate.IncomeManage {
+	return predicate.IncomeManage(sql.FieldEQ(FieldSymbolID, v))
+}
+
+// SymbolIDNEQ applies the NEQ predicate on the "symbol_id" field.
+func SymbolIDNEQ(v int64) predicate.IncomeManage {
+	return predicate.IncomeManage(sql.FieldNEQ(FieldSymbolID, v))
+}
+
+// SymbolIDIn applies the In predicate on the "symbol_id" field.
+func SymbolIDIn(vs ...int64) predicate.IncomeManage {
+	return predicate.IncomeManage(sql.FieldIn(FieldSymbolID, vs...))
+}
+
+// SymbolIDNotIn applies the NotIn predicate on the "symbol_id" field.
+func SymbolIDNotIn(vs ...int64) predicate.IncomeManage {
+	return predicate.IncomeManage(sql.FieldNotIn(FieldSymbolID, vs...))
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.IncomeManage {
 	return predicate.IncomeManage(func(s *sql.Selector) {
@@ -774,6 +799,29 @@ func HasApproveUser() predicate.IncomeManage {
 func HasApproveUserWith(preds ...predicate.User) predicate.IncomeManage {
 	return predicate.IncomeManage(func(s *sql.Selector) {
 		step := newApproveUserStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasSymbol applies the HasEdge predicate on the "symbol" edge.
+func HasSymbol() predicate.IncomeManage {
+	return predicate.IncomeManage(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, SymbolTable, SymbolColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSymbolWith applies the HasEdge predicate on the "symbol" edge with a given conditions (other predicates).
+func HasSymbolWith(preds ...predicate.Symbol) predicate.IncomeManage {
+	return predicate.IncomeManage(func(s *sql.Selector) {
+		step := newSymbolStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

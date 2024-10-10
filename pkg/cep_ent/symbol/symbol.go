@@ -38,6 +38,10 @@ const (
 	EdgeTransferOrders = "transfer_orders"
 	// EdgeExtraServiceOrder holds the string denoting the extra_service_order edge name in mutations.
 	EdgeExtraServiceOrder = "extra_service_order"
+	// EdgeWithdrawRecords holds the string denoting the withdraw_records edge name in mutations.
+	EdgeWithdrawRecords = "withdraw_records"
+	// EdgeIncomeManages holds the string denoting the income_manages edge name in mutations.
+	EdgeIncomeManages = "income_manages"
 	// Table holds the table name of the symbol in the database.
 	Table = "symbols"
 	// WalletsTable is the table that holds the wallets relation/edge.
@@ -82,6 +86,20 @@ const (
 	ExtraServiceOrderInverseTable = "extra_service_orders"
 	// ExtraServiceOrderColumn is the table column denoting the extra_service_order relation/edge.
 	ExtraServiceOrderColumn = "symbol_id"
+	// WithdrawRecordsTable is the table that holds the withdraw_records relation/edge.
+	WithdrawRecordsTable = "withdraw_records"
+	// WithdrawRecordsInverseTable is the table name for the WithdrawRecord entity.
+	// It exists in this package in order to avoid circular dependency with the "withdrawrecord" package.
+	WithdrawRecordsInverseTable = "withdraw_records"
+	// WithdrawRecordsColumn is the table column denoting the withdraw_records relation/edge.
+	WithdrawRecordsColumn = "symbol_id"
+	// IncomeManagesTable is the table that holds the income_manages relation/edge.
+	IncomeManagesTable = "income_manages"
+	// IncomeManagesInverseTable is the table name for the IncomeManage entity.
+	// It exists in this package in order to avoid circular dependency with the "incomemanage" package.
+	IncomeManagesInverseTable = "income_manages"
+	// IncomeManagesColumn is the table column denoting the income_manages relation/edge.
+	IncomeManagesColumn = "symbol_id"
 )
 
 // Columns holds all SQL columns for symbol fields.
@@ -245,6 +263,34 @@ func ByExtraServiceOrder(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption
 		sqlgraph.OrderByNeighborTerms(s, newExtraServiceOrderStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByWithdrawRecordsCount orders the results by withdraw_records count.
+func ByWithdrawRecordsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newWithdrawRecordsStep(), opts...)
+	}
+}
+
+// ByWithdrawRecords orders the results by withdraw_records terms.
+func ByWithdrawRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newWithdrawRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByIncomeManagesCount orders the results by income_manages count.
+func ByIncomeManagesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newIncomeManagesStep(), opts...)
+	}
+}
+
+// ByIncomeManages orders the results by income_manages terms.
+func ByIncomeManages(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newIncomeManagesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newWalletsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -285,5 +331,19 @@ func newExtraServiceOrderStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ExtraServiceOrderInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ExtraServiceOrderTable, ExtraServiceOrderColumn),
+	)
+}
+func newWithdrawRecordsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(WithdrawRecordsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, WithdrawRecordsTable, WithdrawRecordsColumn),
+	)
+}
+func newIncomeManagesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(IncomeManagesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, IncomeManagesTable, IncomeManagesColumn),
 	)
 }

@@ -13,10 +13,12 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
 )
 
 // SymbolCreate is the builder for creating a Symbol entity.
@@ -213,6 +215,36 @@ func (sc *SymbolCreate) AddExtraServiceOrder(e ...*ExtraServiceOrder) *SymbolCre
 		ids[i] = e[i].ID
 	}
 	return sc.AddExtraServiceOrderIDs(ids...)
+}
+
+// AddWithdrawRecordIDs adds the "withdraw_records" edge to the WithdrawRecord entity by IDs.
+func (sc *SymbolCreate) AddWithdrawRecordIDs(ids ...int64) *SymbolCreate {
+	sc.mutation.AddWithdrawRecordIDs(ids...)
+	return sc
+}
+
+// AddWithdrawRecords adds the "withdraw_records" edges to the WithdrawRecord entity.
+func (sc *SymbolCreate) AddWithdrawRecords(w ...*WithdrawRecord) *SymbolCreate {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return sc.AddWithdrawRecordIDs(ids...)
+}
+
+// AddIncomeManageIDs adds the "income_manages" edge to the IncomeManage entity by IDs.
+func (sc *SymbolCreate) AddIncomeManageIDs(ids ...int64) *SymbolCreate {
+	sc.mutation.AddIncomeManageIDs(ids...)
+	return sc
+}
+
+// AddIncomeManages adds the "income_manages" edges to the IncomeManage entity.
+func (sc *SymbolCreate) AddIncomeManages(i ...*IncomeManage) *SymbolCreate {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return sc.AddIncomeManageIDs(ids...)
 }
 
 // Mutation returns the SymbolMutation object of the builder.
@@ -446,6 +478,38 @@ func (sc *SymbolCreate) createSpec() (*Symbol, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := sc.mutation.WithdrawRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.WithdrawRecordsTable,
+			Columns: []string{symbol.WithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := sc.mutation.IncomeManagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.IncomeManagesTable,
+			Columns: []string{symbol.IncomeManagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

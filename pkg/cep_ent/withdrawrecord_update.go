@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
@@ -306,7 +307,6 @@ func (wru *WithdrawRecordUpdate) SetNillableTransferOrderID(i *int64) *WithdrawR
 
 // SetSymbolID sets the "symbol_id" field.
 func (wru *WithdrawRecordUpdate) SetSymbolID(i int64) *WithdrawRecordUpdate {
-	wru.mutation.ResetSymbolID()
 	wru.mutation.SetSymbolID(i)
 	return wru
 }
@@ -316,12 +316,6 @@ func (wru *WithdrawRecordUpdate) SetNillableSymbolID(i *int64) *WithdrawRecordUp
 	if i != nil {
 		wru.SetSymbolID(*i)
 	}
-	return wru
-}
-
-// AddSymbolID adds i to the "symbol_id" field.
-func (wru *WithdrawRecordUpdate) AddSymbolID(i int64) *WithdrawRecordUpdate {
-	wru.mutation.AddSymbolID(i)
 	return wru
 }
 
@@ -338,6 +332,11 @@ func (wru *WithdrawRecordUpdate) SetOperateUser(u *User) *WithdrawRecordUpdate {
 // SetTransferOrder sets the "transfer_order" edge to the TransferOrder entity.
 func (wru *WithdrawRecordUpdate) SetTransferOrder(t *TransferOrder) *WithdrawRecordUpdate {
 	return wru.SetTransferOrderID(t.ID)
+}
+
+// SetSymbol sets the "symbol" edge to the Symbol entity.
+func (wru *WithdrawRecordUpdate) SetSymbol(s *Symbol) *WithdrawRecordUpdate {
+	return wru.SetSymbolID(s.ID)
 }
 
 // Mutation returns the WithdrawRecordMutation object of the builder.
@@ -360,6 +359,12 @@ func (wru *WithdrawRecordUpdate) ClearOperateUser() *WithdrawRecordUpdate {
 // ClearTransferOrder clears the "transfer_order" edge to the TransferOrder entity.
 func (wru *WithdrawRecordUpdate) ClearTransferOrder() *WithdrawRecordUpdate {
 	wru.mutation.ClearTransferOrder()
+	return wru
+}
+
+// ClearSymbol clears the "symbol" edge to the Symbol entity.
+func (wru *WithdrawRecordUpdate) ClearSymbol() *WithdrawRecordUpdate {
+	wru.mutation.ClearSymbol()
 	return wru
 }
 
@@ -419,6 +424,9 @@ func (wru *WithdrawRecordUpdate) check() error {
 	}
 	if _, ok := wru.mutation.TransferOrderID(); wru.mutation.TransferOrderCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "WithdrawRecord.transfer_order"`)
+	}
+	if _, ok := wru.mutation.SymbolID(); wru.mutation.SymbolCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "WithdrawRecord.symbol"`)
 	}
 	return nil
 }
@@ -501,12 +509,6 @@ func (wru *WithdrawRecordUpdate) sqlSave(ctx context.Context) (n int, err error)
 	if value, ok := wru.mutation.RejectReason(); ok {
 		_spec.SetField(withdrawrecord.FieldRejectReason, field.TypeString, value)
 	}
-	if value, ok := wru.mutation.SymbolID(); ok {
-		_spec.SetField(withdrawrecord.FieldSymbolID, field.TypeInt64, value)
-	}
-	if value, ok := wru.mutation.AddedSymbolID(); ok {
-		_spec.AddField(withdrawrecord.FieldSymbolID, field.TypeInt64, value)
-	}
 	if wru.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -587,6 +589,35 @@ func (wru *WithdrawRecordUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if wru.mutation.SymbolCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   withdrawrecord.SymbolTable,
+			Columns: []string{withdrawrecord.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wru.mutation.SymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   withdrawrecord.SymbolTable,
+			Columns: []string{withdrawrecord.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -890,7 +921,6 @@ func (wruo *WithdrawRecordUpdateOne) SetNillableTransferOrderID(i *int64) *Withd
 
 // SetSymbolID sets the "symbol_id" field.
 func (wruo *WithdrawRecordUpdateOne) SetSymbolID(i int64) *WithdrawRecordUpdateOne {
-	wruo.mutation.ResetSymbolID()
 	wruo.mutation.SetSymbolID(i)
 	return wruo
 }
@@ -900,12 +930,6 @@ func (wruo *WithdrawRecordUpdateOne) SetNillableSymbolID(i *int64) *WithdrawReco
 	if i != nil {
 		wruo.SetSymbolID(*i)
 	}
-	return wruo
-}
-
-// AddSymbolID adds i to the "symbol_id" field.
-func (wruo *WithdrawRecordUpdateOne) AddSymbolID(i int64) *WithdrawRecordUpdateOne {
-	wruo.mutation.AddSymbolID(i)
 	return wruo
 }
 
@@ -922,6 +946,11 @@ func (wruo *WithdrawRecordUpdateOne) SetOperateUser(u *User) *WithdrawRecordUpda
 // SetTransferOrder sets the "transfer_order" edge to the TransferOrder entity.
 func (wruo *WithdrawRecordUpdateOne) SetTransferOrder(t *TransferOrder) *WithdrawRecordUpdateOne {
 	return wruo.SetTransferOrderID(t.ID)
+}
+
+// SetSymbol sets the "symbol" edge to the Symbol entity.
+func (wruo *WithdrawRecordUpdateOne) SetSymbol(s *Symbol) *WithdrawRecordUpdateOne {
+	return wruo.SetSymbolID(s.ID)
 }
 
 // Mutation returns the WithdrawRecordMutation object of the builder.
@@ -944,6 +973,12 @@ func (wruo *WithdrawRecordUpdateOne) ClearOperateUser() *WithdrawRecordUpdateOne
 // ClearTransferOrder clears the "transfer_order" edge to the TransferOrder entity.
 func (wruo *WithdrawRecordUpdateOne) ClearTransferOrder() *WithdrawRecordUpdateOne {
 	wruo.mutation.ClearTransferOrder()
+	return wruo
+}
+
+// ClearSymbol clears the "symbol" edge to the Symbol entity.
+func (wruo *WithdrawRecordUpdateOne) ClearSymbol() *WithdrawRecordUpdateOne {
+	wruo.mutation.ClearSymbol()
 	return wruo
 }
 
@@ -1016,6 +1051,9 @@ func (wruo *WithdrawRecordUpdateOne) check() error {
 	}
 	if _, ok := wruo.mutation.TransferOrderID(); wruo.mutation.TransferOrderCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "WithdrawRecord.transfer_order"`)
+	}
+	if _, ok := wruo.mutation.SymbolID(); wruo.mutation.SymbolCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "WithdrawRecord.symbol"`)
 	}
 	return nil
 }
@@ -1115,12 +1153,6 @@ func (wruo *WithdrawRecordUpdateOne) sqlSave(ctx context.Context) (_node *Withdr
 	if value, ok := wruo.mutation.RejectReason(); ok {
 		_spec.SetField(withdrawrecord.FieldRejectReason, field.TypeString, value)
 	}
-	if value, ok := wruo.mutation.SymbolID(); ok {
-		_spec.SetField(withdrawrecord.FieldSymbolID, field.TypeInt64, value)
-	}
-	if value, ok := wruo.mutation.AddedSymbolID(); ok {
-		_spec.AddField(withdrawrecord.FieldSymbolID, field.TypeInt64, value)
-	}
 	if wruo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -1201,6 +1233,35 @@ func (wruo *WithdrawRecordUpdateOne) sqlSave(ctx context.Context) (_node *Withdr
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if wruo.mutation.SymbolCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   withdrawrecord.SymbolTable,
+			Columns: []string{withdrawrecord.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wruo.mutation.SymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   withdrawrecord.SymbolTable,
+			Columns: []string{withdrawrecord.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

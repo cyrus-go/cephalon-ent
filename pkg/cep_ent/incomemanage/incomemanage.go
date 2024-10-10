@@ -46,10 +46,14 @@ const (
 	FieldStatus = "status"
 	// FieldApproveUserID holds the string denoting the approve_user_id field in the database.
 	FieldApproveUserID = "approve_user_id"
+	// FieldSymbolID holds the string denoting the symbol_id field in the database.
+	FieldSymbolID = "symbol_id"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeApproveUser holds the string denoting the approve_user edge name in mutations.
 	EdgeApproveUser = "approve_user"
+	// EdgeSymbol holds the string denoting the symbol edge name in mutations.
+	EdgeSymbol = "symbol"
 	// Table holds the table name of the incomemanage in the database.
 	Table = "income_manages"
 	// UserTable is the table that holds the user relation/edge.
@@ -66,6 +70,13 @@ const (
 	ApproveUserInverseTable = "users"
 	// ApproveUserColumn is the table column denoting the approve_user relation/edge.
 	ApproveUserColumn = "approve_user_id"
+	// SymbolTable is the table that holds the symbol relation/edge.
+	SymbolTable = "income_manages"
+	// SymbolInverseTable is the table name for the Symbol entity.
+	// It exists in this package in order to avoid circular dependency with the "symbol" package.
+	SymbolInverseTable = "symbols"
+	// SymbolColumn is the table column denoting the symbol relation/edge.
+	SymbolColumn = "symbol_id"
 )
 
 // Columns holds all SQL columns for incomemanage fields.
@@ -86,6 +97,7 @@ var Columns = []string{
 	FieldRejectReason,
 	FieldStatus,
 	FieldApproveUserID,
+	FieldSymbolID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -127,6 +139,8 @@ var (
 	DefaultRejectReason string
 	// DefaultApproveUserID holds the default value on creation for the "approve_user_id" field.
 	DefaultApproveUserID int64
+	// DefaultSymbolID holds the default value on creation for the "symbol_id" field.
+	DefaultSymbolID int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -238,6 +252,11 @@ func ByApproveUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldApproveUserID, opts...).ToFunc()
 }
 
+// BySymbolID orders the results by the symbol_id field.
+func BySymbolID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSymbolID, opts...).ToFunc()
+}
+
 // ByUserField orders the results by user field.
 func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -249,6 +268,13 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 func ByApproveUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newApproveUserStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// BySymbolField orders the results by symbol field.
+func BySymbolField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSymbolStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newUserStep() *sqlgraph.Step {
@@ -263,5 +289,12 @@ func newApproveUserStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ApproveUserInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, ApproveUserTable, ApproveUserColumn),
+	)
+}
+func newSymbolStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SymbolInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, SymbolTable, SymbolColumn),
 	)
 }

@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -247,6 +248,20 @@ func (imu *IncomeManageUpdate) SetNillableApproveUserID(i *int64) *IncomeManageU
 	return imu
 }
 
+// SetSymbolID sets the "symbol_id" field.
+func (imu *IncomeManageUpdate) SetSymbolID(i int64) *IncomeManageUpdate {
+	imu.mutation.SetSymbolID(i)
+	return imu
+}
+
+// SetNillableSymbolID sets the "symbol_id" field if the given value is not nil.
+func (imu *IncomeManageUpdate) SetNillableSymbolID(i *int64) *IncomeManageUpdate {
+	if i != nil {
+		imu.SetSymbolID(*i)
+	}
+	return imu
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (imu *IncomeManageUpdate) SetUser(u *User) *IncomeManageUpdate {
 	return imu.SetUserID(u.ID)
@@ -255,6 +270,11 @@ func (imu *IncomeManageUpdate) SetUser(u *User) *IncomeManageUpdate {
 // SetApproveUser sets the "approve_user" edge to the User entity.
 func (imu *IncomeManageUpdate) SetApproveUser(u *User) *IncomeManageUpdate {
 	return imu.SetApproveUserID(u.ID)
+}
+
+// SetSymbol sets the "symbol" edge to the Symbol entity.
+func (imu *IncomeManageUpdate) SetSymbol(s *Symbol) *IncomeManageUpdate {
+	return imu.SetSymbolID(s.ID)
 }
 
 // Mutation returns the IncomeManageMutation object of the builder.
@@ -271,6 +291,12 @@ func (imu *IncomeManageUpdate) ClearUser() *IncomeManageUpdate {
 // ClearApproveUser clears the "approve_user" edge to the User entity.
 func (imu *IncomeManageUpdate) ClearApproveUser() *IncomeManageUpdate {
 	imu.mutation.ClearApproveUser()
+	return imu
+}
+
+// ClearSymbol clears the "symbol" edge to the Symbol entity.
+func (imu *IncomeManageUpdate) ClearSymbol() *IncomeManageUpdate {
+	imu.mutation.ClearSymbol()
 	return imu
 }
 
@@ -327,6 +353,9 @@ func (imu *IncomeManageUpdate) check() error {
 	}
 	if _, ok := imu.mutation.ApproveUserID(); imu.mutation.ApproveUserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "IncomeManage.approve_user"`)
+	}
+	if _, ok := imu.mutation.SymbolID(); imu.mutation.SymbolCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "IncomeManage.symbol"`)
 	}
 	return nil
 }
@@ -448,6 +477,35 @@ func (imu *IncomeManageUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if imu.mutation.SymbolCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   incomemanage.SymbolTable,
+			Columns: []string{incomemanage.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := imu.mutation.SymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   incomemanage.SymbolTable,
+			Columns: []string{incomemanage.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -693,6 +751,20 @@ func (imuo *IncomeManageUpdateOne) SetNillableApproveUserID(i *int64) *IncomeMan
 	return imuo
 }
 
+// SetSymbolID sets the "symbol_id" field.
+func (imuo *IncomeManageUpdateOne) SetSymbolID(i int64) *IncomeManageUpdateOne {
+	imuo.mutation.SetSymbolID(i)
+	return imuo
+}
+
+// SetNillableSymbolID sets the "symbol_id" field if the given value is not nil.
+func (imuo *IncomeManageUpdateOne) SetNillableSymbolID(i *int64) *IncomeManageUpdateOne {
+	if i != nil {
+		imuo.SetSymbolID(*i)
+	}
+	return imuo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (imuo *IncomeManageUpdateOne) SetUser(u *User) *IncomeManageUpdateOne {
 	return imuo.SetUserID(u.ID)
@@ -701,6 +773,11 @@ func (imuo *IncomeManageUpdateOne) SetUser(u *User) *IncomeManageUpdateOne {
 // SetApproveUser sets the "approve_user" edge to the User entity.
 func (imuo *IncomeManageUpdateOne) SetApproveUser(u *User) *IncomeManageUpdateOne {
 	return imuo.SetApproveUserID(u.ID)
+}
+
+// SetSymbol sets the "symbol" edge to the Symbol entity.
+func (imuo *IncomeManageUpdateOne) SetSymbol(s *Symbol) *IncomeManageUpdateOne {
+	return imuo.SetSymbolID(s.ID)
 }
 
 // Mutation returns the IncomeManageMutation object of the builder.
@@ -717,6 +794,12 @@ func (imuo *IncomeManageUpdateOne) ClearUser() *IncomeManageUpdateOne {
 // ClearApproveUser clears the "approve_user" edge to the User entity.
 func (imuo *IncomeManageUpdateOne) ClearApproveUser() *IncomeManageUpdateOne {
 	imuo.mutation.ClearApproveUser()
+	return imuo
+}
+
+// ClearSymbol clears the "symbol" edge to the Symbol entity.
+func (imuo *IncomeManageUpdateOne) ClearSymbol() *IncomeManageUpdateOne {
+	imuo.mutation.ClearSymbol()
 	return imuo
 }
 
@@ -786,6 +869,9 @@ func (imuo *IncomeManageUpdateOne) check() error {
 	}
 	if _, ok := imuo.mutation.ApproveUserID(); imuo.mutation.ApproveUserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "IncomeManage.approve_user"`)
+	}
+	if _, ok := imuo.mutation.SymbolID(); imuo.mutation.SymbolCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "IncomeManage.symbol"`)
 	}
 	return nil
 }
@@ -924,6 +1010,35 @@ func (imuo *IncomeManageUpdateOne) sqlSave(ctx context.Context) (_node *IncomeMa
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if imuo.mutation.SymbolCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   incomemanage.SymbolTable,
+			Columns: []string{incomemanage.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := imuo.mutation.SymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   incomemanage.SymbolTable,
+			Columns: []string{incomemanage.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

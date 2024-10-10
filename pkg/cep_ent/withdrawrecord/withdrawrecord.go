@@ -60,6 +60,8 @@ const (
 	EdgeOperateUser = "operate_user"
 	// EdgeTransferOrder holds the string denoting the transfer_order edge name in mutations.
 	EdgeTransferOrder = "transfer_order"
+	// EdgeSymbol holds the string denoting the symbol edge name in mutations.
+	EdgeSymbol = "symbol"
 	// Table holds the table name of the withdrawrecord in the database.
 	Table = "withdraw_records"
 	// UserTable is the table that holds the user relation/edge.
@@ -83,6 +85,13 @@ const (
 	TransferOrderInverseTable = "transfer_orders"
 	// TransferOrderColumn is the table column denoting the transfer_order relation/edge.
 	TransferOrderColumn = "transfer_order_id"
+	// SymbolTable is the table that holds the symbol relation/edge.
+	SymbolTable = "withdraw_records"
+	// SymbolInverseTable is the table name for the Symbol entity.
+	// It exists in this package in order to avoid circular dependency with the "symbol" package.
+	SymbolInverseTable = "symbols"
+	// SymbolColumn is the table column denoting the symbol relation/edge.
+	SymbolColumn = "symbol_id"
 )
 
 // Columns holds all SQL columns for withdrawrecord fields.
@@ -307,6 +316,13 @@ func ByTransferOrderField(field string, opts ...sql.OrderTermOption) OrderOption
 		sqlgraph.OrderByNeighborTerms(s, newTransferOrderStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// BySymbolField orders the results by symbol field.
+func BySymbolField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSymbolStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -326,5 +342,12 @@ func newTransferOrderStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TransferOrderInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2O, true, TransferOrderTable, TransferOrderColumn),
+	)
+}
+func newSymbolStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SymbolInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, SymbolTable, SymbolColumn),
 	)
 }

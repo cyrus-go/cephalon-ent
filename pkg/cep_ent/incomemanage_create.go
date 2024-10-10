@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -234,6 +235,20 @@ func (imc *IncomeManageCreate) SetNillableApproveUserID(i *int64) *IncomeManageC
 	return imc
 }
 
+// SetSymbolID sets the "symbol_id" field.
+func (imc *IncomeManageCreate) SetSymbolID(i int64) *IncomeManageCreate {
+	imc.mutation.SetSymbolID(i)
+	return imc
+}
+
+// SetNillableSymbolID sets the "symbol_id" field if the given value is not nil.
+func (imc *IncomeManageCreate) SetNillableSymbolID(i *int64) *IncomeManageCreate {
+	if i != nil {
+		imc.SetSymbolID(*i)
+	}
+	return imc
+}
+
 // SetID sets the "id" field.
 func (imc *IncomeManageCreate) SetID(i int64) *IncomeManageCreate {
 	imc.mutation.SetID(i)
@@ -256,6 +271,11 @@ func (imc *IncomeManageCreate) SetUser(u *User) *IncomeManageCreate {
 // SetApproveUser sets the "approve_user" edge to the User entity.
 func (imc *IncomeManageCreate) SetApproveUser(u *User) *IncomeManageCreate {
 	return imc.SetApproveUserID(u.ID)
+}
+
+// SetSymbol sets the "symbol" edge to the Symbol entity.
+func (imc *IncomeManageCreate) SetSymbol(s *Symbol) *IncomeManageCreate {
+	return imc.SetSymbolID(s.ID)
 }
 
 // Mutation returns the IncomeManageMutation object of the builder.
@@ -353,6 +373,10 @@ func (imc *IncomeManageCreate) defaults() {
 		v := incomemanage.DefaultApproveUserID
 		imc.mutation.SetApproveUserID(v)
 	}
+	if _, ok := imc.mutation.SymbolID(); !ok {
+		v := incomemanage.DefaultSymbolID
+		imc.mutation.SetSymbolID(v)
+	}
 	if _, ok := imc.mutation.ID(); !ok {
 		v := incomemanage.DefaultID()
 		imc.mutation.SetID(v)
@@ -416,11 +440,17 @@ func (imc *IncomeManageCreate) check() error {
 	if _, ok := imc.mutation.ApproveUserID(); !ok {
 		return &ValidationError{Name: "approve_user_id", err: errors.New(`cep_ent: missing required field "IncomeManage.approve_user_id"`)}
 	}
+	if _, ok := imc.mutation.SymbolID(); !ok {
+		return &ValidationError{Name: "symbol_id", err: errors.New(`cep_ent: missing required field "IncomeManage.symbol_id"`)}
+	}
 	if _, ok := imc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "IncomeManage.user"`)}
 	}
 	if _, ok := imc.mutation.ApproveUserID(); !ok {
 		return &ValidationError{Name: "approve_user", err: errors.New(`cep_ent: missing required edge "IncomeManage.approve_user"`)}
+	}
+	if _, ok := imc.mutation.SymbolID(); !ok {
+		return &ValidationError{Name: "symbol", err: errors.New(`cep_ent: missing required edge "IncomeManage.symbol"`)}
 	}
 	return nil
 }
@@ -539,6 +569,23 @@ func (imc *IncomeManageCreate) createSpec() (*IncomeManage, *sqlgraph.CreateSpec
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.ApproveUserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := imc.mutation.SymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   incomemanage.SymbolTable,
+			Columns: []string{incomemanage.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.SymbolID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -782,6 +829,18 @@ func (u *IncomeManageUpsert) SetApproveUserID(v int64) *IncomeManageUpsert {
 // UpdateApproveUserID sets the "approve_user_id" field to the value that was provided on create.
 func (u *IncomeManageUpsert) UpdateApproveUserID() *IncomeManageUpsert {
 	u.SetExcluded(incomemanage.FieldApproveUserID)
+	return u
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (u *IncomeManageUpsert) SetSymbolID(v int64) *IncomeManageUpsert {
+	u.Set(incomemanage.FieldSymbolID, v)
+	return u
+}
+
+// UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
+func (u *IncomeManageUpsert) UpdateSymbolID() *IncomeManageUpsert {
+	u.SetExcluded(incomemanage.FieldSymbolID)
 	return u
 }
 
@@ -1057,6 +1116,20 @@ func (u *IncomeManageUpsertOne) SetApproveUserID(v int64) *IncomeManageUpsertOne
 func (u *IncomeManageUpsertOne) UpdateApproveUserID() *IncomeManageUpsertOne {
 	return u.Update(func(s *IncomeManageUpsert) {
 		s.UpdateApproveUserID()
+	})
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (u *IncomeManageUpsertOne) SetSymbolID(v int64) *IncomeManageUpsertOne {
+	return u.Update(func(s *IncomeManageUpsert) {
+		s.SetSymbolID(v)
+	})
+}
+
+// UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
+func (u *IncomeManageUpsertOne) UpdateSymbolID() *IncomeManageUpsertOne {
+	return u.Update(func(s *IncomeManageUpsert) {
+		s.UpdateSymbolID()
 	})
 }
 
@@ -1498,6 +1571,20 @@ func (u *IncomeManageUpsertBulk) SetApproveUserID(v int64) *IncomeManageUpsertBu
 func (u *IncomeManageUpsertBulk) UpdateApproveUserID() *IncomeManageUpsertBulk {
 	return u.Update(func(s *IncomeManageUpsert) {
 		s.UpdateApproveUserID()
+	})
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (u *IncomeManageUpsertBulk) SetSymbolID(v int64) *IncomeManageUpsertBulk {
+	return u.Update(func(s *IncomeManageUpsert) {
+		s.SetSymbolID(v)
+	})
+}
+
+// UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
+func (u *IncomeManageUpsertBulk) UpdateSymbolID() *IncomeManageUpsertBulk {
+	return u.Update(func(s *IncomeManageUpsert) {
+		s.UpdateSymbolID()
 	})
 }
 

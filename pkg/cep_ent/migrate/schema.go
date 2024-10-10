@@ -1147,6 +1147,7 @@ var (
 		{Name: "last_edited_at", Type: field.TypeTime, Comment: "审批前最后一次编辑的时间"},
 		{Name: "reject_reason", Type: field.TypeString, Comment: "拒绝此条记录原因", Default: ""},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"pending", "canceled", "succeed", "failed", "reject"}, Default: "pending"},
+		{Name: "symbol_id", Type: field.TypeInt64, Comment: "消费的外键币种 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "用戶 id", Default: 0},
 		{Name: "approve_user_id", Type: field.TypeInt64, Comment: "审批人 id", Default: 0},
 	}
@@ -1158,14 +1159,20 @@ var (
 		PrimaryKey: []*schema.Column{IncomeManagesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "income_manages_users_income_manages",
+				Symbol:     "income_manages_symbols_income_manages",
 				Columns:    []*schema.Column{IncomeManagesColumns[14]},
+				RefColumns: []*schema.Column{SymbolsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "income_manages_users_income_manages",
+				Columns:    []*schema.Column{IncomeManagesColumns[15]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "income_manages_users_approve_income_manages",
-				Columns:    []*schema.Column{IncomeManagesColumns[15]},
+				Columns:    []*schema.Column{IncomeManagesColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -1174,12 +1181,12 @@ var (
 			{
 				Name:    "incomemanage_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{IncomeManagesColumns[14]},
+				Columns: []*schema.Column{IncomeManagesColumns[15]},
 			},
 			{
 				Name:    "incomemanage_approve_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{IncomeManagesColumns[15]},
+				Columns: []*schema.Column{IncomeManagesColumns[16]},
 			},
 		},
 	}
@@ -3246,6 +3253,12 @@ var (
 		PrimaryKey: []*schema.Column{WithdrawRecordsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
+				Symbol:     "withdraw_records_symbols_withdraw_records",
+				Columns:    []*schema.Column{WithdrawRecordsColumns[16]},
+				RefColumns: []*schema.Column{SymbolsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
 				Symbol:     "withdraw_records_transfer_orders_withdraw_record",
 				Columns:    []*schema.Column{WithdrawRecordsColumns[17]},
 				RefColumns: []*schema.Column{TransferOrdersColumns[0]},
@@ -3440,8 +3453,9 @@ func init() {
 	GpusTable.Annotation = &entsql.Annotation{}
 	GpuPeaksTable.Annotation = &entsql.Annotation{}
 	HmacKeyPairsTable.Annotation = &entsql.Annotation{}
-	IncomeManagesTable.ForeignKeys[0].RefTable = UsersTable
+	IncomeManagesTable.ForeignKeys[0].RefTable = SymbolsTable
 	IncomeManagesTable.ForeignKeys[1].RefTable = UsersTable
+	IncomeManagesTable.ForeignKeys[2].RefTable = UsersTable
 	IncomeManagesTable.Annotation = &entsql.Annotation{}
 	InputLogsTable.Annotation = &entsql.Annotation{}
 	InvitesTable.ForeignKeys[0].RefTable = CampaignsTable
@@ -3571,8 +3585,9 @@ func init() {
 	WalletsTable.Annotation = &entsql.Annotation{}
 	WithdrawAccountsTable.ForeignKeys[0].RefTable = UsersTable
 	WithdrawAccountsTable.Annotation = &entsql.Annotation{}
-	WithdrawRecordsTable.ForeignKeys[0].RefTable = TransferOrdersTable
-	WithdrawRecordsTable.ForeignKeys[1].RefTable = UsersTable
+	WithdrawRecordsTable.ForeignKeys[0].RefTable = SymbolsTable
+	WithdrawRecordsTable.ForeignKeys[1].RefTable = TransferOrdersTable
 	WithdrawRecordsTable.ForeignKeys[2].RefTable = UsersTable
+	WithdrawRecordsTable.ForeignKeys[3].RefTable = UsersTable
 	WithdrawRecordsTable.Annotation = &entsql.Annotation{}
 }

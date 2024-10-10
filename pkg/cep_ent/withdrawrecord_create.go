@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
@@ -320,6 +321,11 @@ func (wrc *WithdrawRecordCreate) SetTransferOrder(t *TransferOrder) *WithdrawRec
 	return wrc.SetTransferOrderID(t.ID)
 }
 
+// SetSymbol sets the "symbol" edge to the Symbol entity.
+func (wrc *WithdrawRecordCreate) SetSymbol(s *Symbol) *WithdrawRecordCreate {
+	return wrc.SetSymbolID(s.ID)
+}
+
 // Mutation returns the WithdrawRecordMutation object of the builder.
 func (wrc *WithdrawRecordCreate) Mutation() *WithdrawRecordMutation {
 	return wrc.mutation
@@ -515,6 +521,9 @@ func (wrc *WithdrawRecordCreate) check() error {
 	if _, ok := wrc.mutation.TransferOrderID(); !ok {
 		return &ValidationError{Name: "transfer_order", err: errors.New(`cep_ent: missing required edge "WithdrawRecord.transfer_order"`)}
 	}
+	if _, ok := wrc.mutation.SymbolID(); !ok {
+		return &ValidationError{Name: "symbol", err: errors.New(`cep_ent: missing required edge "WithdrawRecord.symbol"`)}
+	}
 	return nil
 }
 
@@ -608,10 +617,6 @@ func (wrc *WithdrawRecordCreate) createSpec() (*WithdrawRecord, *sqlgraph.Create
 		_spec.SetField(withdrawrecord.FieldRejectReason, field.TypeString, value)
 		_node.RejectReason = value
 	}
-	if value, ok := wrc.mutation.SymbolID(); ok {
-		_spec.SetField(withdrawrecord.FieldSymbolID, field.TypeInt64, value)
-		_node.SymbolID = value
-	}
 	if nodes := wrc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -661,6 +666,23 @@ func (wrc *WithdrawRecordCreate) createSpec() (*WithdrawRecord, *sqlgraph.Create
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.TransferOrderID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := wrc.mutation.SymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   withdrawrecord.SymbolTable,
+			Columns: []string{withdrawrecord.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.SymbolID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -964,12 +986,6 @@ func (u *WithdrawRecordUpsert) SetSymbolID(v int64) *WithdrawRecordUpsert {
 // UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
 func (u *WithdrawRecordUpsert) UpdateSymbolID() *WithdrawRecordUpsert {
 	u.SetExcluded(withdrawrecord.FieldSymbolID)
-	return u
-}
-
-// AddSymbolID adds v to the "symbol_id" field.
-func (u *WithdrawRecordUpsert) AddSymbolID(v int64) *WithdrawRecordUpsert {
-	u.Add(withdrawrecord.FieldSymbolID, v)
 	return u
 }
 
@@ -1308,13 +1324,6 @@ func (u *WithdrawRecordUpsertOne) UpdateTransferOrderID() *WithdrawRecordUpsertO
 func (u *WithdrawRecordUpsertOne) SetSymbolID(v int64) *WithdrawRecordUpsertOne {
 	return u.Update(func(s *WithdrawRecordUpsert) {
 		s.SetSymbolID(v)
-	})
-}
-
-// AddSymbolID adds v to the "symbol_id" field.
-func (u *WithdrawRecordUpsertOne) AddSymbolID(v int64) *WithdrawRecordUpsertOne {
-	return u.Update(func(s *WithdrawRecordUpsert) {
-		s.AddSymbolID(v)
 	})
 }
 
@@ -1826,13 +1835,6 @@ func (u *WithdrawRecordUpsertBulk) UpdateTransferOrderID() *WithdrawRecordUpsert
 func (u *WithdrawRecordUpsertBulk) SetSymbolID(v int64) *WithdrawRecordUpsertBulk {
 	return u.Update(func(s *WithdrawRecordUpsert) {
 		s.SetSymbolID(v)
-	})
-}
-
-// AddSymbolID adds v to the "symbol_id" field.
-func (u *WithdrawRecordUpsertBulk) AddSymbolID(v int64) *WithdrawRecordUpsertBulk {
-	return u.Update(func(s *WithdrawRecordUpsert) {
-		s.AddSymbolID(v)
 	})
 }
 

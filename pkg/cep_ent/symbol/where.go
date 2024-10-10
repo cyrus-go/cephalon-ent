@@ -488,6 +488,52 @@ func HasExtraServiceOrderWith(preds ...predicate.ExtraServiceOrder) predicate.Sy
 	})
 }
 
+// HasWithdrawRecords applies the HasEdge predicate on the "withdraw_records" edge.
+func HasWithdrawRecords() predicate.Symbol {
+	return predicate.Symbol(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, WithdrawRecordsTable, WithdrawRecordsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasWithdrawRecordsWith applies the HasEdge predicate on the "withdraw_records" edge with a given conditions (other predicates).
+func HasWithdrawRecordsWith(preds ...predicate.WithdrawRecord) predicate.Symbol {
+	return predicate.Symbol(func(s *sql.Selector) {
+		step := newWithdrawRecordsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasIncomeManages applies the HasEdge predicate on the "income_manages" edge.
+func HasIncomeManages() predicate.Symbol {
+	return predicate.Symbol(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, IncomeManagesTable, IncomeManagesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasIncomeManagesWith applies the HasEdge predicate on the "income_manages" edge with a given conditions (other predicates).
+func HasIncomeManagesWith(preds ...predicate.IncomeManage) predicate.Symbol {
+	return predicate.Symbol(func(s *sql.Selector) {
+		step := newIncomeManagesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Symbol) predicate.Symbol {
 	return predicate.Symbol(sql.AndPredicates(predicates...))

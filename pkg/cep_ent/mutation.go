@@ -35065,6 +35065,8 @@ type IncomeManageMutation struct {
 	cleareduser         bool
 	approve_user        *int64
 	clearedapprove_user bool
+	symbol              *int64
+	clearedsymbol       bool
 	done                bool
 	oldValue            func(context.Context) (*IncomeManage, error)
 	predicates          []predicate.IncomeManage
@@ -35794,6 +35796,42 @@ func (m *IncomeManageMutation) ResetApproveUserID() {
 	m.approve_user = nil
 }
 
+// SetSymbolID sets the "symbol_id" field.
+func (m *IncomeManageMutation) SetSymbolID(i int64) {
+	m.symbol = &i
+}
+
+// SymbolID returns the value of the "symbol_id" field in the mutation.
+func (m *IncomeManageMutation) SymbolID() (r int64, exists bool) {
+	v := m.symbol
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSymbolID returns the old "symbol_id" field's value of the IncomeManage entity.
+// If the IncomeManage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IncomeManageMutation) OldSymbolID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSymbolID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSymbolID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSymbolID: %w", err)
+	}
+	return oldValue.SymbolID, nil
+}
+
+// ResetSymbolID resets all changes to the "symbol_id" field.
+func (m *IncomeManageMutation) ResetSymbolID() {
+	m.symbol = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *IncomeManageMutation) ClearUser() {
 	m.cleareduser = true
@@ -35848,6 +35886,33 @@ func (m *IncomeManageMutation) ResetApproveUser() {
 	m.clearedapprove_user = false
 }
 
+// ClearSymbol clears the "symbol" edge to the Symbol entity.
+func (m *IncomeManageMutation) ClearSymbol() {
+	m.clearedsymbol = true
+	m.clearedFields[incomemanage.FieldSymbolID] = struct{}{}
+}
+
+// SymbolCleared reports if the "symbol" edge to the Symbol entity was cleared.
+func (m *IncomeManageMutation) SymbolCleared() bool {
+	return m.clearedsymbol
+}
+
+// SymbolIDs returns the "symbol" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// SymbolID instead. It exists only for internal usage by the builders.
+func (m *IncomeManageMutation) SymbolIDs() (ids []int64) {
+	if id := m.symbol; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetSymbol resets all changes to the "symbol" edge.
+func (m *IncomeManageMutation) ResetSymbol() {
+	m.symbol = nil
+	m.clearedsymbol = false
+}
+
 // Where appends a list predicates to the IncomeManageMutation builder.
 func (m *IncomeManageMutation) Where(ps ...predicate.IncomeManage) {
 	m.predicates = append(m.predicates, ps...)
@@ -35882,7 +35947,7 @@ func (m *IncomeManageMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *IncomeManageMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, incomemanage.FieldCreatedBy)
 	}
@@ -35928,6 +35993,9 @@ func (m *IncomeManageMutation) Fields() []string {
 	if m.approve_user != nil {
 		fields = append(fields, incomemanage.FieldApproveUserID)
 	}
+	if m.symbol != nil {
+		fields = append(fields, incomemanage.FieldSymbolID)
+	}
 	return fields
 }
 
@@ -35966,6 +36034,8 @@ func (m *IncomeManageMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case incomemanage.FieldApproveUserID:
 		return m.ApproveUserID()
+	case incomemanage.FieldSymbolID:
+		return m.SymbolID()
 	}
 	return nil, false
 }
@@ -36005,6 +36075,8 @@ func (m *IncomeManageMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldStatus(ctx)
 	case incomemanage.FieldApproveUserID:
 		return m.OldApproveUserID(ctx)
+	case incomemanage.FieldSymbolID:
+		return m.OldSymbolID(ctx)
 	}
 	return nil, fmt.Errorf("unknown IncomeManage field %s", name)
 }
@@ -36118,6 +36190,13 @@ func (m *IncomeManageMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetApproveUserID(v)
+		return nil
+	case incomemanage.FieldSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSymbolID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown IncomeManage field %s", name)
@@ -36264,18 +36343,24 @@ func (m *IncomeManageMutation) ResetField(name string) error {
 	case incomemanage.FieldApproveUserID:
 		m.ResetApproveUserID()
 		return nil
+	case incomemanage.FieldSymbolID:
+		m.ResetSymbolID()
+		return nil
 	}
 	return fmt.Errorf("unknown IncomeManage field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *IncomeManageMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.user != nil {
 		edges = append(edges, incomemanage.EdgeUser)
 	}
 	if m.approve_user != nil {
 		edges = append(edges, incomemanage.EdgeApproveUser)
+	}
+	if m.symbol != nil {
+		edges = append(edges, incomemanage.EdgeSymbol)
 	}
 	return edges
 }
@@ -36292,13 +36377,17 @@ func (m *IncomeManageMutation) AddedIDs(name string) []ent.Value {
 		if id := m.approve_user; id != nil {
 			return []ent.Value{*id}
 		}
+	case incomemanage.EdgeSymbol:
+		if id := m.symbol; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *IncomeManageMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	return edges
 }
 
@@ -36310,12 +36399,15 @@ func (m *IncomeManageMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *IncomeManageMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.cleareduser {
 		edges = append(edges, incomemanage.EdgeUser)
 	}
 	if m.clearedapprove_user {
 		edges = append(edges, incomemanage.EdgeApproveUser)
+	}
+	if m.clearedsymbol {
+		edges = append(edges, incomemanage.EdgeSymbol)
 	}
 	return edges
 }
@@ -36328,6 +36420,8 @@ func (m *IncomeManageMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case incomemanage.EdgeApproveUser:
 		return m.clearedapprove_user
+	case incomemanage.EdgeSymbol:
+		return m.clearedsymbol
 	}
 	return false
 }
@@ -36342,6 +36436,9 @@ func (m *IncomeManageMutation) ClearEdge(name string) error {
 	case incomemanage.EdgeApproveUser:
 		m.ClearApproveUser()
 		return nil
+	case incomemanage.EdgeSymbol:
+		m.ClearSymbol()
+		return nil
 	}
 	return fmt.Errorf("unknown IncomeManage unique edge %s", name)
 }
@@ -36355,6 +36452,9 @@ func (m *IncomeManageMutation) ResetEdge(name string) error {
 		return nil
 	case incomemanage.EdgeApproveUser:
 		m.ResetApproveUser()
+		return nil
+	case incomemanage.EdgeSymbol:
+		m.ResetSymbol()
 		return nil
 	}
 	return fmt.Errorf("unknown IncomeManage edge %s", name)
@@ -86118,6 +86218,12 @@ type SymbolMutation struct {
 	extra_service_order        map[int64]struct{}
 	removedextra_service_order map[int64]struct{}
 	clearedextra_service_order bool
+	withdraw_records           map[int64]struct{}
+	removedwithdraw_records    map[int64]struct{}
+	clearedwithdraw_records    bool
+	income_manages             map[int64]struct{}
+	removedincome_manages      map[int64]struct{}
+	clearedincome_manages      bool
 	done                       bool
 	oldValue                   func(context.Context) (*Symbol, error)
 	predicates                 []predicate.Symbol
@@ -86807,6 +86913,114 @@ func (m *SymbolMutation) ResetExtraServiceOrder() {
 	m.removedextra_service_order = nil
 }
 
+// AddWithdrawRecordIDs adds the "withdraw_records" edge to the WithdrawRecord entity by ids.
+func (m *SymbolMutation) AddWithdrawRecordIDs(ids ...int64) {
+	if m.withdraw_records == nil {
+		m.withdraw_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.withdraw_records[ids[i]] = struct{}{}
+	}
+}
+
+// ClearWithdrawRecords clears the "withdraw_records" edge to the WithdrawRecord entity.
+func (m *SymbolMutation) ClearWithdrawRecords() {
+	m.clearedwithdraw_records = true
+}
+
+// WithdrawRecordsCleared reports if the "withdraw_records" edge to the WithdrawRecord entity was cleared.
+func (m *SymbolMutation) WithdrawRecordsCleared() bool {
+	return m.clearedwithdraw_records
+}
+
+// RemoveWithdrawRecordIDs removes the "withdraw_records" edge to the WithdrawRecord entity by IDs.
+func (m *SymbolMutation) RemoveWithdrawRecordIDs(ids ...int64) {
+	if m.removedwithdraw_records == nil {
+		m.removedwithdraw_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.withdraw_records, ids[i])
+		m.removedwithdraw_records[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedWithdrawRecords returns the removed IDs of the "withdraw_records" edge to the WithdrawRecord entity.
+func (m *SymbolMutation) RemovedWithdrawRecordsIDs() (ids []int64) {
+	for id := range m.removedwithdraw_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// WithdrawRecordsIDs returns the "withdraw_records" edge IDs in the mutation.
+func (m *SymbolMutation) WithdrawRecordsIDs() (ids []int64) {
+	for id := range m.withdraw_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetWithdrawRecords resets all changes to the "withdraw_records" edge.
+func (m *SymbolMutation) ResetWithdrawRecords() {
+	m.withdraw_records = nil
+	m.clearedwithdraw_records = false
+	m.removedwithdraw_records = nil
+}
+
+// AddIncomeManageIDs adds the "income_manages" edge to the IncomeManage entity by ids.
+func (m *SymbolMutation) AddIncomeManageIDs(ids ...int64) {
+	if m.income_manages == nil {
+		m.income_manages = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.income_manages[ids[i]] = struct{}{}
+	}
+}
+
+// ClearIncomeManages clears the "income_manages" edge to the IncomeManage entity.
+func (m *SymbolMutation) ClearIncomeManages() {
+	m.clearedincome_manages = true
+}
+
+// IncomeManagesCleared reports if the "income_manages" edge to the IncomeManage entity was cleared.
+func (m *SymbolMutation) IncomeManagesCleared() bool {
+	return m.clearedincome_manages
+}
+
+// RemoveIncomeManageIDs removes the "income_manages" edge to the IncomeManage entity by IDs.
+func (m *SymbolMutation) RemoveIncomeManageIDs(ids ...int64) {
+	if m.removedincome_manages == nil {
+		m.removedincome_manages = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.income_manages, ids[i])
+		m.removedincome_manages[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedIncomeManages returns the removed IDs of the "income_manages" edge to the IncomeManage entity.
+func (m *SymbolMutation) RemovedIncomeManagesIDs() (ids []int64) {
+	for id := range m.removedincome_manages {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// IncomeManagesIDs returns the "income_manages" edge IDs in the mutation.
+func (m *SymbolMutation) IncomeManagesIDs() (ids []int64) {
+	for id := range m.income_manages {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetIncomeManages resets all changes to the "income_manages" edge.
+func (m *SymbolMutation) ResetIncomeManages() {
+	m.income_manages = nil
+	m.clearedincome_manages = false
+	m.removedincome_manages = nil
+}
+
 // Where appends a list predicates to the SymbolMutation builder.
 func (m *SymbolMutation) Where(ps ...predicate.Symbol) {
 	m.predicates = append(m.predicates, ps...)
@@ -87052,7 +87266,7 @@ func (m *SymbolMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *SymbolMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 8)
 	if m.wallets != nil {
 		edges = append(edges, symbol.EdgeWallets)
 	}
@@ -87070,6 +87284,12 @@ func (m *SymbolMutation) AddedEdges() []string {
 	}
 	if m.extra_service_order != nil {
 		edges = append(edges, symbol.EdgeExtraServiceOrder)
+	}
+	if m.withdraw_records != nil {
+		edges = append(edges, symbol.EdgeWithdrawRecords)
+	}
+	if m.income_manages != nil {
+		edges = append(edges, symbol.EdgeIncomeManages)
 	}
 	return edges
 }
@@ -87114,13 +87334,25 @@ func (m *SymbolMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case symbol.EdgeWithdrawRecords:
+		ids := make([]ent.Value, 0, len(m.withdraw_records))
+		for id := range m.withdraw_records {
+			ids = append(ids, id)
+		}
+		return ids
+	case symbol.EdgeIncomeManages:
+		ids := make([]ent.Value, 0, len(m.income_manages))
+		for id := range m.income_manages {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *SymbolMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 8)
 	if m.removedwallets != nil {
 		edges = append(edges, symbol.EdgeWallets)
 	}
@@ -87138,6 +87370,12 @@ func (m *SymbolMutation) RemovedEdges() []string {
 	}
 	if m.removedextra_service_order != nil {
 		edges = append(edges, symbol.EdgeExtraServiceOrder)
+	}
+	if m.removedwithdraw_records != nil {
+		edges = append(edges, symbol.EdgeWithdrawRecords)
+	}
+	if m.removedincome_manages != nil {
+		edges = append(edges, symbol.EdgeIncomeManages)
 	}
 	return edges
 }
@@ -87182,13 +87420,25 @@ func (m *SymbolMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case symbol.EdgeWithdrawRecords:
+		ids := make([]ent.Value, 0, len(m.removedwithdraw_records))
+		for id := range m.removedwithdraw_records {
+			ids = append(ids, id)
+		}
+		return ids
+	case symbol.EdgeIncomeManages:
+		ids := make([]ent.Value, 0, len(m.removedincome_manages))
+		for id := range m.removedincome_manages {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *SymbolMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 8)
 	if m.clearedwallets {
 		edges = append(edges, symbol.EdgeWallets)
 	}
@@ -87206,6 +87456,12 @@ func (m *SymbolMutation) ClearedEdges() []string {
 	}
 	if m.clearedextra_service_order {
 		edges = append(edges, symbol.EdgeExtraServiceOrder)
+	}
+	if m.clearedwithdraw_records {
+		edges = append(edges, symbol.EdgeWithdrawRecords)
+	}
+	if m.clearedincome_manages {
+		edges = append(edges, symbol.EdgeIncomeManages)
 	}
 	return edges
 }
@@ -87226,6 +87482,10 @@ func (m *SymbolMutation) EdgeCleared(name string) bool {
 		return m.clearedtransfer_orders
 	case symbol.EdgeExtraServiceOrder:
 		return m.clearedextra_service_order
+	case symbol.EdgeWithdrawRecords:
+		return m.clearedwithdraw_records
+	case symbol.EdgeIncomeManages:
+		return m.clearedincome_manages
 	}
 	return false
 }
@@ -87259,6 +87519,12 @@ func (m *SymbolMutation) ResetEdge(name string) error {
 		return nil
 	case symbol.EdgeExtraServiceOrder:
 		m.ResetExtraServiceOrder()
+		return nil
+	case symbol.EdgeWithdrawRecords:
+		m.ResetWithdrawRecords()
+		return nil
+	case symbol.EdgeIncomeManages:
+		m.ResetIncomeManages()
 		return nil
 	}
 	return fmt.Errorf("unknown Symbol edge %s", name)
@@ -103004,8 +103270,6 @@ type WithdrawRecordMutation struct {
 	addreal_amount        *int64
 	status                *enums.WithdrawStatus
 	reject_reason         *string
-	symbol_id             *int64
-	addsymbol_id          *int64
 	clearedFields         map[string]struct{}
 	user                  *int64
 	cleareduser           bool
@@ -103013,6 +103277,8 @@ type WithdrawRecordMutation struct {
 	clearedoperate_user   bool
 	transfer_order        *int64
 	clearedtransfer_order bool
+	symbol                *int64
+	clearedsymbol         bool
 	done                  bool
 	oldValue              func(context.Context) (*WithdrawRecord, error)
 	predicates            []predicate.WithdrawRecord
@@ -103892,13 +104158,12 @@ func (m *WithdrawRecordMutation) ResetTransferOrderID() {
 
 // SetSymbolID sets the "symbol_id" field.
 func (m *WithdrawRecordMutation) SetSymbolID(i int64) {
-	m.symbol_id = &i
-	m.addsymbol_id = nil
+	m.symbol = &i
 }
 
 // SymbolID returns the value of the "symbol_id" field in the mutation.
 func (m *WithdrawRecordMutation) SymbolID() (r int64, exists bool) {
-	v := m.symbol_id
+	v := m.symbol
 	if v == nil {
 		return
 	}
@@ -103922,28 +104187,9 @@ func (m *WithdrawRecordMutation) OldSymbolID(ctx context.Context) (v int64, err 
 	return oldValue.SymbolID, nil
 }
 
-// AddSymbolID adds i to the "symbol_id" field.
-func (m *WithdrawRecordMutation) AddSymbolID(i int64) {
-	if m.addsymbol_id != nil {
-		*m.addsymbol_id += i
-	} else {
-		m.addsymbol_id = &i
-	}
-}
-
-// AddedSymbolID returns the value that was added to the "symbol_id" field in this mutation.
-func (m *WithdrawRecordMutation) AddedSymbolID() (r int64, exists bool) {
-	v := m.addsymbol_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetSymbolID resets all changes to the "symbol_id" field.
 func (m *WithdrawRecordMutation) ResetSymbolID() {
-	m.symbol_id = nil
-	m.addsymbol_id = nil
+	m.symbol = nil
 }
 
 // ClearUser clears the "user" edge to the User entity.
@@ -104025,6 +104271,33 @@ func (m *WithdrawRecordMutation) TransferOrderIDs() (ids []int64) {
 func (m *WithdrawRecordMutation) ResetTransferOrder() {
 	m.transfer_order = nil
 	m.clearedtransfer_order = false
+}
+
+// ClearSymbol clears the "symbol" edge to the Symbol entity.
+func (m *WithdrawRecordMutation) ClearSymbol() {
+	m.clearedsymbol = true
+	m.clearedFields[withdrawrecord.FieldSymbolID] = struct{}{}
+}
+
+// SymbolCleared reports if the "symbol" edge to the Symbol entity was cleared.
+func (m *WithdrawRecordMutation) SymbolCleared() bool {
+	return m.clearedsymbol
+}
+
+// SymbolIDs returns the "symbol" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// SymbolID instead. It exists only for internal usage by the builders.
+func (m *WithdrawRecordMutation) SymbolIDs() (ids []int64) {
+	if id := m.symbol; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetSymbol resets all changes to the "symbol" edge.
+func (m *WithdrawRecordMutation) ResetSymbol() {
+	m.symbol = nil
+	m.clearedsymbol = false
 }
 
 // Where appends a list predicates to the WithdrawRecordMutation builder.
@@ -104116,7 +104389,7 @@ func (m *WithdrawRecordMutation) Fields() []string {
 	if m.transfer_order != nil {
 		fields = append(fields, withdrawrecord.FieldTransferOrderID)
 	}
-	if m.symbol_id != nil {
+	if m.symbol != nil {
 		fields = append(fields, withdrawrecord.FieldSymbolID)
 	}
 	return fields
@@ -104380,9 +104653,6 @@ func (m *WithdrawRecordMutation) AddedFields() []string {
 	if m.addreal_amount != nil {
 		fields = append(fields, withdrawrecord.FieldRealAmount)
 	}
-	if m.addsymbol_id != nil {
-		fields = append(fields, withdrawrecord.FieldSymbolID)
-	}
 	return fields
 }
 
@@ -104403,8 +104673,6 @@ func (m *WithdrawRecordMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedRate()
 	case withdrawrecord.FieldRealAmount:
 		return m.AddedRealAmount()
-	case withdrawrecord.FieldSymbolID:
-		return m.AddedSymbolID()
 	}
 	return nil, false
 }
@@ -104455,13 +104723,6 @@ func (m *WithdrawRecordMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddRealAmount(v)
-		return nil
-	case withdrawrecord.FieldSymbolID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddSymbolID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown WithdrawRecord numeric field %s", name)
@@ -104553,7 +104814,7 @@ func (m *WithdrawRecordMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *WithdrawRecordMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.user != nil {
 		edges = append(edges, withdrawrecord.EdgeUser)
 	}
@@ -104562,6 +104823,9 @@ func (m *WithdrawRecordMutation) AddedEdges() []string {
 	}
 	if m.transfer_order != nil {
 		edges = append(edges, withdrawrecord.EdgeTransferOrder)
+	}
+	if m.symbol != nil {
+		edges = append(edges, withdrawrecord.EdgeSymbol)
 	}
 	return edges
 }
@@ -104582,13 +104846,17 @@ func (m *WithdrawRecordMutation) AddedIDs(name string) []ent.Value {
 		if id := m.transfer_order; id != nil {
 			return []ent.Value{*id}
 		}
+	case withdrawrecord.EdgeSymbol:
+		if id := m.symbol; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *WithdrawRecordMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	return edges
 }
 
@@ -104600,7 +104868,7 @@ func (m *WithdrawRecordMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *WithdrawRecordMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.cleareduser {
 		edges = append(edges, withdrawrecord.EdgeUser)
 	}
@@ -104609,6 +104877,9 @@ func (m *WithdrawRecordMutation) ClearedEdges() []string {
 	}
 	if m.clearedtransfer_order {
 		edges = append(edges, withdrawrecord.EdgeTransferOrder)
+	}
+	if m.clearedsymbol {
+		edges = append(edges, withdrawrecord.EdgeSymbol)
 	}
 	return edges
 }
@@ -104623,6 +104894,8 @@ func (m *WithdrawRecordMutation) EdgeCleared(name string) bool {
 		return m.clearedoperate_user
 	case withdrawrecord.EdgeTransferOrder:
 		return m.clearedtransfer_order
+	case withdrawrecord.EdgeSymbol:
+		return m.clearedsymbol
 	}
 	return false
 }
@@ -104640,6 +104913,9 @@ func (m *WithdrawRecordMutation) ClearEdge(name string) error {
 	case withdrawrecord.EdgeTransferOrder:
 		m.ClearTransferOrder()
 		return nil
+	case withdrawrecord.EdgeSymbol:
+		m.ClearSymbol()
+		return nil
 	}
 	return fmt.Errorf("unknown WithdrawRecord unique edge %s", name)
 }
@@ -104656,6 +104932,9 @@ func (m *WithdrawRecordMutation) ResetEdge(name string) error {
 		return nil
 	case withdrawrecord.EdgeTransferOrder:
 		m.ResetTransferOrder()
+		return nil
+	case withdrawrecord.EdgeSymbol:
+		m.ResetSymbol()
 		return nil
 	}
 	return fmt.Errorf("unknown WithdrawRecord edge %s", name)

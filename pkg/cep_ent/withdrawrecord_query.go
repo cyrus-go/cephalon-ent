@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
@@ -26,6 +27,7 @@ type WithdrawRecordQuery struct {
 	withUser          *UserQuery
 	withOperateUser   *UserQuery
 	withTransferOrder *TransferOrderQuery
+	withSymbol        *SymbolQuery
 	modifiers         []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -122,6 +124,28 @@ func (wrq *WithdrawRecordQuery) QueryTransferOrder() *TransferOrderQuery {
 			sqlgraph.From(withdrawrecord.Table, withdrawrecord.FieldID, selector),
 			sqlgraph.To(transferorder.Table, transferorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, withdrawrecord.TransferOrderTable, withdrawrecord.TransferOrderColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(wrq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySymbol chains the current query on the "symbol" edge.
+func (wrq *WithdrawRecordQuery) QuerySymbol() *SymbolQuery {
+	query := (&SymbolClient{config: wrq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := wrq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := wrq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(withdrawrecord.Table, withdrawrecord.FieldID, selector),
+			sqlgraph.To(symbol.Table, symbol.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, withdrawrecord.SymbolTable, withdrawrecord.SymbolColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(wrq.driver.Dialect(), step)
 		return fromU, nil
@@ -324,6 +348,7 @@ func (wrq *WithdrawRecordQuery) Clone() *WithdrawRecordQuery {
 		withUser:          wrq.withUser.Clone(),
 		withOperateUser:   wrq.withOperateUser.Clone(),
 		withTransferOrder: wrq.withTransferOrder.Clone(),
+		withSymbol:        wrq.withSymbol.Clone(),
 		// clone intermediate query.
 		sql:  wrq.sql.Clone(),
 		path: wrq.path,
@@ -360,6 +385,17 @@ func (wrq *WithdrawRecordQuery) WithTransferOrder(opts ...func(*TransferOrderQue
 		opt(query)
 	}
 	wrq.withTransferOrder = query
+	return wrq
+}
+
+// WithSymbol tells the query-builder to eager-load the nodes that are connected to
+// the "symbol" edge. The optional arguments are used to configure the query builder of the edge.
+func (wrq *WithdrawRecordQuery) WithSymbol(opts ...func(*SymbolQuery)) *WithdrawRecordQuery {
+	query := (&SymbolClient{config: wrq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	wrq.withSymbol = query
 	return wrq
 }
 
@@ -441,10 +477,11 @@ func (wrq *WithdrawRecordQuery) sqlAll(ctx context.Context, hooks ...queryHook) 
 	var (
 		nodes       = []*WithdrawRecord{}
 		_spec       = wrq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			wrq.withUser != nil,
 			wrq.withOperateUser != nil,
 			wrq.withTransferOrder != nil,
+			wrq.withSymbol != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -483,6 +520,12 @@ func (wrq *WithdrawRecordQuery) sqlAll(ctx context.Context, hooks ...queryHook) 
 	if query := wrq.withTransferOrder; query != nil {
 		if err := wrq.loadTransferOrder(ctx, query, nodes, nil,
 			func(n *WithdrawRecord, e *TransferOrder) { n.Edges.TransferOrder = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := wrq.withSymbol; query != nil {
+		if err := wrq.loadSymbol(ctx, query, nodes, nil,
+			func(n *WithdrawRecord, e *Symbol) { n.Edges.Symbol = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -576,6 +619,35 @@ func (wrq *WithdrawRecordQuery) loadTransferOrder(ctx context.Context, query *Tr
 	}
 	return nil
 }
+func (wrq *WithdrawRecordQuery) loadSymbol(ctx context.Context, query *SymbolQuery, nodes []*WithdrawRecord, init func(*WithdrawRecord), assign func(*WithdrawRecord, *Symbol)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*WithdrawRecord)
+	for i := range nodes {
+		fk := nodes[i].SymbolID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(symbol.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "symbol_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 
 func (wrq *WithdrawRecordQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := wrq.querySpec()
@@ -613,6 +685,9 @@ func (wrq *WithdrawRecordQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if wrq.withTransferOrder != nil {
 			_spec.Node.AddColumnOnce(withdrawrecord.FieldTransferOrderID)
+		}
+		if wrq.withSymbol != nil {
+			_spec.Node.AddColumnOnce(withdrawrecord.FieldSymbolID)
 		}
 	}
 	if ps := wrq.predicates; len(ps) > 0 {

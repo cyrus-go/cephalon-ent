@@ -13,11 +13,13 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
 )
 
 // SymbolQuery is the builder for querying Symbol entities.
@@ -33,6 +35,8 @@ type SymbolQuery struct {
 	withMissionOrders     *MissionOrderQuery
 	withTransferOrders    *TransferOrderQuery
 	withExtraServiceOrder *ExtraServiceOrderQuery
+	withWithdrawRecords   *WithdrawRecordQuery
+	withIncomeManages     *IncomeManageQuery
 	modifiers             []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -195,6 +199,50 @@ func (sq *SymbolQuery) QueryExtraServiceOrder() *ExtraServiceOrderQuery {
 			sqlgraph.From(symbol.Table, symbol.FieldID, selector),
 			sqlgraph.To(extraserviceorder.Table, extraserviceorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, symbol.ExtraServiceOrderTable, symbol.ExtraServiceOrderColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(sq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryWithdrawRecords chains the current query on the "withdraw_records" edge.
+func (sq *SymbolQuery) QueryWithdrawRecords() *WithdrawRecordQuery {
+	query := (&WithdrawRecordClient{config: sq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := sq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := sq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(symbol.Table, symbol.FieldID, selector),
+			sqlgraph.To(withdrawrecord.Table, withdrawrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, symbol.WithdrawRecordsTable, symbol.WithdrawRecordsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(sq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryIncomeManages chains the current query on the "income_manages" edge.
+func (sq *SymbolQuery) QueryIncomeManages() *IncomeManageQuery {
+	query := (&IncomeManageClient{config: sq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := sq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := sq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(symbol.Table, symbol.FieldID, selector),
+			sqlgraph.To(incomemanage.Table, incomemanage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, symbol.IncomeManagesTable, symbol.IncomeManagesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(sq.driver.Dialect(), step)
 		return fromU, nil
@@ -400,6 +448,8 @@ func (sq *SymbolQuery) Clone() *SymbolQuery {
 		withMissionOrders:     sq.withMissionOrders.Clone(),
 		withTransferOrders:    sq.withTransferOrders.Clone(),
 		withExtraServiceOrder: sq.withExtraServiceOrder.Clone(),
+		withWithdrawRecords:   sq.withWithdrawRecords.Clone(),
+		withIncomeManages:     sq.withIncomeManages.Clone(),
 		// clone intermediate query.
 		sql:  sq.sql.Clone(),
 		path: sq.path,
@@ -469,6 +519,28 @@ func (sq *SymbolQuery) WithExtraServiceOrder(opts ...func(*ExtraServiceOrderQuer
 		opt(query)
 	}
 	sq.withExtraServiceOrder = query
+	return sq
+}
+
+// WithWithdrawRecords tells the query-builder to eager-load the nodes that are connected to
+// the "withdraw_records" edge. The optional arguments are used to configure the query builder of the edge.
+func (sq *SymbolQuery) WithWithdrawRecords(opts ...func(*WithdrawRecordQuery)) *SymbolQuery {
+	query := (&WithdrawRecordClient{config: sq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	sq.withWithdrawRecords = query
+	return sq
+}
+
+// WithIncomeManages tells the query-builder to eager-load the nodes that are connected to
+// the "income_manages" edge. The optional arguments are used to configure the query builder of the edge.
+func (sq *SymbolQuery) WithIncomeManages(opts ...func(*IncomeManageQuery)) *SymbolQuery {
+	query := (&IncomeManageClient{config: sq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	sq.withIncomeManages = query
 	return sq
 }
 
@@ -550,13 +622,15 @@ func (sq *SymbolQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Symbo
 	var (
 		nodes       = []*Symbol{}
 		_spec       = sq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [8]bool{
 			sq.withWallets != nil,
 			sq.withBills != nil,
 			sq.withIncomeBills != nil,
 			sq.withMissionOrders != nil,
 			sq.withTransferOrders != nil,
 			sq.withExtraServiceOrder != nil,
+			sq.withWithdrawRecords != nil,
+			sq.withIncomeManages != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -621,6 +695,20 @@ func (sq *SymbolQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Symbo
 			func(n *Symbol, e *ExtraServiceOrder) {
 				n.Edges.ExtraServiceOrder = append(n.Edges.ExtraServiceOrder, e)
 			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := sq.withWithdrawRecords; query != nil {
+		if err := sq.loadWithdrawRecords(ctx, query, nodes,
+			func(n *Symbol) { n.Edges.WithdrawRecords = []*WithdrawRecord{} },
+			func(n *Symbol, e *WithdrawRecord) { n.Edges.WithdrawRecords = append(n.Edges.WithdrawRecords, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := sq.withIncomeManages; query != nil {
+		if err := sq.loadIncomeManages(ctx, query, nodes,
+			func(n *Symbol) { n.Edges.IncomeManages = []*IncomeManage{} },
+			func(n *Symbol, e *IncomeManage) { n.Edges.IncomeManages = append(n.Edges.IncomeManages, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -792,6 +880,66 @@ func (sq *SymbolQuery) loadExtraServiceOrder(ctx context.Context, query *ExtraSe
 	}
 	query.Where(predicate.ExtraServiceOrder(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(symbol.ExtraServiceOrderColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.SymbolID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "symbol_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (sq *SymbolQuery) loadWithdrawRecords(ctx context.Context, query *WithdrawRecordQuery, nodes []*Symbol, init func(*Symbol), assign func(*Symbol, *WithdrawRecord)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Symbol)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(withdrawrecord.FieldSymbolID)
+	}
+	query.Where(predicate.WithdrawRecord(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(symbol.WithdrawRecordsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.SymbolID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "symbol_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (sq *SymbolQuery) loadIncomeManages(ctx context.Context, query *IncomeManageQuery, nodes []*Symbol, init func(*Symbol), assign func(*Symbol, *IncomeManage)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Symbol)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(incomemanage.FieldSymbolID)
+	}
+	query.Where(predicate.IncomeManage(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(symbol.IncomeManagesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

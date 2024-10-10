@@ -5834,6 +5834,22 @@ func (c *IncomeManageClient) QueryApproveUser(im *IncomeManage) *UserQuery {
 	return query
 }
 
+// QuerySymbol queries the symbol edge of a IncomeManage.
+func (c *IncomeManageClient) QuerySymbol(im *IncomeManage) *SymbolQuery {
+	query := (&SymbolClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := im.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(incomemanage.Table, incomemanage.FieldID, id),
+			sqlgraph.To(symbol.Table, symbol.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, incomemanage.SymbolTable, incomemanage.SymbolColumn),
+		)
+		fromV = sqlgraph.Neighbors(im.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *IncomeManageClient) Hooks() []Hook {
 	return c.hooks.IncomeManage
@@ -12717,6 +12733,38 @@ func (c *SymbolClient) QueryExtraServiceOrder(s *Symbol) *ExtraServiceOrderQuery
 	return query
 }
 
+// QueryWithdrawRecords queries the withdraw_records edge of a Symbol.
+func (c *SymbolClient) QueryWithdrawRecords(s *Symbol) *WithdrawRecordQuery {
+	query := (&WithdrawRecordClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := s.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(symbol.Table, symbol.FieldID, id),
+			sqlgraph.To(withdrawrecord.Table, withdrawrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, symbol.WithdrawRecordsTable, symbol.WithdrawRecordsColumn),
+		)
+		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryIncomeManages queries the income_manages edge of a Symbol.
+func (c *SymbolClient) QueryIncomeManages(s *Symbol) *IncomeManageQuery {
+	query := (&IncomeManageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := s.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(symbol.Table, symbol.FieldID, id),
+			sqlgraph.To(incomemanage.Table, incomemanage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, symbol.IncomeManagesTable, symbol.IncomeManagesColumn),
+		)
+		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *SymbolClient) Hooks() []Hook {
 	return c.hooks.Symbol
@@ -15208,6 +15256,22 @@ func (c *WithdrawRecordClient) QueryTransferOrder(wr *WithdrawRecord) *TransferO
 			sqlgraph.From(withdrawrecord.Table, withdrawrecord.FieldID, id),
 			sqlgraph.To(transferorder.Table, transferorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, withdrawrecord.TransferOrderTable, withdrawrecord.TransferOrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(wr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySymbol queries the symbol edge of a WithdrawRecord.
+func (c *WithdrawRecordClient) QuerySymbol(wr *WithdrawRecord) *SymbolQuery {
+	query := (&SymbolClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := wr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(withdrawrecord.Table, withdrawrecord.FieldID, id),
+			sqlgraph.To(symbol.Table, symbol.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, withdrawrecord.SymbolTable, withdrawrecord.SymbolColumn),
 		)
 		fromV = sqlgraph.Neighbors(wr.driver.Dialect(), step)
 		return fromV, nil

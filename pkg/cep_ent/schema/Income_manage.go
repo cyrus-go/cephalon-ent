@@ -28,6 +28,7 @@ func (IncomeManage) Fields() []ent.Field {
 		field.String("reject_reason").StructTag(`json:"reject_reason"`).Default("").Comment("拒绝此条记录原因"),
 		field.Enum("status").GoType(enums.IncomeManageStatusPending).Default(string(enums.IncomeManageStatusPending)).StructTag(`json:"status"`).Comment("状态"),
 		field.Int64("approve_user_id").StructTag(`json:"approve_user_id,string"`).Default(0).Comment("审批人 id"),
+		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id,string"`).Comment("消费的外键币种 id"),
 	}
 }
 
@@ -37,6 +38,7 @@ func (IncomeManage) Edges() []ent.Edge {
 		// 逻辑外键
 		edge.From("user", User.Type).Ref("income_manages").Field("user_id").Unique().Required(),
 		edge.From("approve_user", User.Type).Ref("approve_income_manages").Field("approve_user_id").Unique().Required(),
+		edge.From("symbol", Symbol.Type).Ref("income_manages").Field("symbol_id").Unique().Required(),
 	}
 }
 

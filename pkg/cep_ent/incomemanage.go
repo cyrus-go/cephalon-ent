@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -50,6 +51,8 @@ type IncomeManage struct {
 	Status enums.IncomeManageStatus `json:"status"`
 	// 审批人 id
 	ApproveUserID int64 `json:"approve_user_id,string"`
+	// 消费的外键币种 id
+	SymbolID int64 `json:"symbol_id,string"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the IncomeManageQuery when eager-loading is set.
 	Edges        IncomeManageEdges `json:"edges"`
@@ -62,9 +65,11 @@ type IncomeManageEdges struct {
 	User *User `json:"user,omitempty"`
 	// ApproveUser holds the value of the approve_user edge.
 	ApproveUser *User `json:"approve_user,omitempty"`
+	// Symbol holds the value of the symbol edge.
+	Symbol *Symbol `json:"symbol,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -93,12 +98,25 @@ func (e IncomeManageEdges) ApproveUserOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "approve_user"}
 }
 
+// SymbolOrErr returns the Symbol value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e IncomeManageEdges) SymbolOrErr() (*Symbol, error) {
+	if e.loadedTypes[2] {
+		if e.Symbol == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: symbol.Label}
+		}
+		return e.Symbol, nil
+	}
+	return nil, &NotLoadedError{edge: "symbol"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*IncomeManage) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case incomemanage.FieldID, incomemanage.FieldCreatedBy, incomemanage.FieldUpdatedBy, incomemanage.FieldUserID, incomemanage.FieldAmount, incomemanage.FieldCurrentBalance, incomemanage.FieldApproveUserID:
+		case incomemanage.FieldID, incomemanage.FieldCreatedBy, incomemanage.FieldUpdatedBy, incomemanage.FieldUserID, incomemanage.FieldAmount, incomemanage.FieldCurrentBalance, incomemanage.FieldApproveUserID, incomemanage.FieldSymbolID:
 			values[i] = new(sql.NullInt64)
 		case incomemanage.FieldPhone, incomemanage.FieldType, incomemanage.FieldReason, incomemanage.FieldRejectReason, incomemanage.FieldStatus:
 			values[i] = new(sql.NullString)
@@ -215,6 +233,12 @@ func (im *IncomeManage) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				im.ApproveUserID = value.Int64
 			}
+		case incomemanage.FieldSymbolID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field symbol_id", values[i])
+			} else if value.Valid {
+				im.SymbolID = value.Int64
+			}
 		default:
 			im.selectValues.Set(columns[i], values[i])
 		}
@@ -236,6 +260,11 @@ func (im *IncomeManage) QueryUser() *UserQuery {
 // QueryApproveUser queries the "approve_user" edge of the IncomeManage entity.
 func (im *IncomeManage) QueryApproveUser() *UserQuery {
 	return NewIncomeManageClient(im.config).QueryApproveUser(im)
+}
+
+// QuerySymbol queries the "symbol" edge of the IncomeManage entity.
+func (im *IncomeManage) QuerySymbol() *SymbolQuery {
+	return NewIncomeManageClient(im.config).QuerySymbol(im)
 }
 
 // Update returns a builder for updating this IncomeManage.
@@ -305,6 +334,9 @@ func (im *IncomeManage) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("approve_user_id=")
 	builder.WriteString(fmt.Sprintf("%v", im.ApproveUserID))
+	builder.WriteString(", ")
+	builder.WriteString("symbol_id=")
+	builder.WriteString(fmt.Sprintf("%v", im.SymbolID))
 	builder.WriteByte(')')
 	return builder.String()
 }

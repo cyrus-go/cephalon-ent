@@ -30,6 +30,8 @@ func (Symbol) Edges() []ent.Edge {
 		edge.To("mission_orders", MissionOrder.Type),
 		edge.To("transfer_orders", TransferOrder.Type),
 		edge.To("extra_service_order", ExtraServiceOrder.Type),
+		edge.To("withdraw_records", WithdrawRecord.Type),
+		edge.To("income_manages", IncomeManage.Type),
 	}
 }
 

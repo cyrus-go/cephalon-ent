@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
@@ -73,9 +74,11 @@ type WithdrawRecordEdges struct {
 	OperateUser *User `json:"operate_user,omitempty"`
 	// TransferOrder holds the value of the transfer_order edge.
 	TransferOrder *TransferOrder `json:"transfer_order,omitempty"`
+	// Symbol holds the value of the symbol edge.
+	Symbol *Symbol `json:"symbol,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -115,6 +118,19 @@ func (e WithdrawRecordEdges) TransferOrderOrErr() (*TransferOrder, error) {
 		return e.TransferOrder, nil
 	}
 	return nil, &NotLoadedError{edge: "transfer_order"}
+}
+
+// SymbolOrErr returns the Symbol value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e WithdrawRecordEdges) SymbolOrErr() (*Symbol, error) {
+	if e.loadedTypes[3] {
+		if e.Symbol == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: symbol.Label}
+		}
+		return e.Symbol, nil
+	}
+	return nil, &NotLoadedError{edge: "symbol"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -289,6 +305,11 @@ func (wr *WithdrawRecord) QueryOperateUser() *UserQuery {
 // QueryTransferOrder queries the "transfer_order" edge of the WithdrawRecord entity.
 func (wr *WithdrawRecord) QueryTransferOrder() *TransferOrderQuery {
 	return NewWithdrawRecordClient(wr.config).QueryTransferOrder(wr)
+}
+
+// QuerySymbol queries the "symbol" edge of the WithdrawRecord entity.
+func (wr *WithdrawRecord) QuerySymbol() *SymbolQuery {
+	return NewWithdrawRecordClient(wr.config).QuerySymbol(wr)
 }
 
 // Update returns a builder for updating this WithdrawRecord.

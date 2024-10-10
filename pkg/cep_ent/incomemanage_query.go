@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
@@ -24,6 +25,7 @@ type IncomeManageQuery struct {
 	predicates      []predicate.IncomeManage
 	withUser        *UserQuery
 	withApproveUser *UserQuery
+	withSymbol      *SymbolQuery
 	modifiers       []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -98,6 +100,28 @@ func (imq *IncomeManageQuery) QueryApproveUser() *UserQuery {
 			sqlgraph.From(incomemanage.Table, incomemanage.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, incomemanage.ApproveUserTable, incomemanage.ApproveUserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(imq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySymbol chains the current query on the "symbol" edge.
+func (imq *IncomeManageQuery) QuerySymbol() *SymbolQuery {
+	query := (&SymbolClient{config: imq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := imq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := imq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(incomemanage.Table, incomemanage.FieldID, selector),
+			sqlgraph.To(symbol.Table, symbol.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, incomemanage.SymbolTable, incomemanage.SymbolColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(imq.driver.Dialect(), step)
 		return fromU, nil
@@ -299,6 +323,7 @@ func (imq *IncomeManageQuery) Clone() *IncomeManageQuery {
 		predicates:      append([]predicate.IncomeManage{}, imq.predicates...),
 		withUser:        imq.withUser.Clone(),
 		withApproveUser: imq.withApproveUser.Clone(),
+		withSymbol:      imq.withSymbol.Clone(),
 		// clone intermediate query.
 		sql:  imq.sql.Clone(),
 		path: imq.path,
@@ -324,6 +349,17 @@ func (imq *IncomeManageQuery) WithApproveUser(opts ...func(*UserQuery)) *IncomeM
 		opt(query)
 	}
 	imq.withApproveUser = query
+	return imq
+}
+
+// WithSymbol tells the query-builder to eager-load the nodes that are connected to
+// the "symbol" edge. The optional arguments are used to configure the query builder of the edge.
+func (imq *IncomeManageQuery) WithSymbol(opts ...func(*SymbolQuery)) *IncomeManageQuery {
+	query := (&SymbolClient{config: imq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	imq.withSymbol = query
 	return imq
 }
 
@@ -405,9 +441,10 @@ func (imq *IncomeManageQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	var (
 		nodes       = []*IncomeManage{}
 		_spec       = imq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			imq.withUser != nil,
 			imq.withApproveUser != nil,
+			imq.withSymbol != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -440,6 +477,12 @@ func (imq *IncomeManageQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	if query := imq.withApproveUser; query != nil {
 		if err := imq.loadApproveUser(ctx, query, nodes, nil,
 			func(n *IncomeManage, e *User) { n.Edges.ApproveUser = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := imq.withSymbol; query != nil {
+		if err := imq.loadSymbol(ctx, query, nodes, nil,
+			func(n *IncomeManage, e *Symbol) { n.Edges.Symbol = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -504,6 +547,35 @@ func (imq *IncomeManageQuery) loadApproveUser(ctx context.Context, query *UserQu
 	}
 	return nil
 }
+func (imq *IncomeManageQuery) loadSymbol(ctx context.Context, query *SymbolQuery, nodes []*IncomeManage, init func(*IncomeManage), assign func(*IncomeManage, *Symbol)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*IncomeManage)
+	for i := range nodes {
+		fk := nodes[i].SymbolID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(symbol.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "symbol_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 
 func (imq *IncomeManageQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := imq.querySpec()
@@ -538,6 +610,9 @@ func (imq *IncomeManageQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if imq.withApproveUser != nil {
 			_spec.Node.AddColumnOnce(incomemanage.FieldApproveUserID)
+		}
+		if imq.withSymbol != nil {
+			_spec.Node.AddColumnOnce(incomemanage.FieldSymbolID)
 		}
 	}
 	if ps := imq.predicates; len(ps) > 0 {

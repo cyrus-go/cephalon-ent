@@ -50,9 +50,13 @@ type SymbolEdges struct {
 	TransferOrders []*TransferOrder `json:"transfer_orders,omitempty"`
 	// ExtraServiceOrder holds the value of the extra_service_order edge.
 	ExtraServiceOrder []*ExtraServiceOrder `json:"extra_service_order,omitempty"`
+	// WithdrawRecords holds the value of the withdraw_records edge.
+	WithdrawRecords []*WithdrawRecord `json:"withdraw_records,omitempty"`
+	// IncomeManages holds the value of the income_manages edge.
+	IncomeManages []*IncomeManage `json:"income_manages,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [8]bool
 }
 
 // WalletsOrErr returns the Wallets value or an error if the edge
@@ -107,6 +111,24 @@ func (e SymbolEdges) ExtraServiceOrderOrErr() ([]*ExtraServiceOrder, error) {
 		return e.ExtraServiceOrder, nil
 	}
 	return nil, &NotLoadedError{edge: "extra_service_order"}
+}
+
+// WithdrawRecordsOrErr returns the WithdrawRecords value or an error if the edge
+// was not loaded in eager-loading.
+func (e SymbolEdges) WithdrawRecordsOrErr() ([]*WithdrawRecord, error) {
+	if e.loadedTypes[6] {
+		return e.WithdrawRecords, nil
+	}
+	return nil, &NotLoadedError{edge: "withdraw_records"}
+}
+
+// IncomeManagesOrErr returns the IncomeManages value or an error if the edge
+// was not loaded in eager-loading.
+func (e SymbolEdges) IncomeManagesOrErr() ([]*IncomeManage, error) {
+	if e.loadedTypes[7] {
+		return e.IncomeManages, nil
+	}
+	return nil, &NotLoadedError{edge: "income_manages"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -218,6 +240,16 @@ func (s *Symbol) QueryTransferOrders() *TransferOrderQuery {
 // QueryExtraServiceOrder queries the "extra_service_order" edge of the Symbol entity.
 func (s *Symbol) QueryExtraServiceOrder() *ExtraServiceOrderQuery {
 	return NewSymbolClient(s.config).QueryExtraServiceOrder(s)
+}
+
+// QueryWithdrawRecords queries the "withdraw_records" edge of the Symbol entity.
+func (s *Symbol) QueryWithdrawRecords() *WithdrawRecordQuery {
+	return NewSymbolClient(s.config).QueryWithdrawRecords(s)
+}
+
+// QueryIncomeManages queries the "income_manages" edge of the Symbol entity.
+func (s *Symbol) QueryIncomeManages() *IncomeManageQuery {
+	return NewSymbolClient(s.config).QueryIncomeManages(s)
 }
 
 // Update returns a builder for updating this Symbol.

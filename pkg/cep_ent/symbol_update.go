@@ -13,11 +13,13 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
 )
 
 // SymbolUpdate is the builder for updating Symbol entities.
@@ -200,6 +202,36 @@ func (su *SymbolUpdate) AddExtraServiceOrder(e ...*ExtraServiceOrder) *SymbolUpd
 	return su.AddExtraServiceOrderIDs(ids...)
 }
 
+// AddWithdrawRecordIDs adds the "withdraw_records" edge to the WithdrawRecord entity by IDs.
+func (su *SymbolUpdate) AddWithdrawRecordIDs(ids ...int64) *SymbolUpdate {
+	su.mutation.AddWithdrawRecordIDs(ids...)
+	return su
+}
+
+// AddWithdrawRecords adds the "withdraw_records" edges to the WithdrawRecord entity.
+func (su *SymbolUpdate) AddWithdrawRecords(w ...*WithdrawRecord) *SymbolUpdate {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return su.AddWithdrawRecordIDs(ids...)
+}
+
+// AddIncomeManageIDs adds the "income_manages" edge to the IncomeManage entity by IDs.
+func (su *SymbolUpdate) AddIncomeManageIDs(ids ...int64) *SymbolUpdate {
+	su.mutation.AddIncomeManageIDs(ids...)
+	return su
+}
+
+// AddIncomeManages adds the "income_manages" edges to the IncomeManage entity.
+func (su *SymbolUpdate) AddIncomeManages(i ...*IncomeManage) *SymbolUpdate {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return su.AddIncomeManageIDs(ids...)
+}
+
 // Mutation returns the SymbolMutation object of the builder.
 func (su *SymbolUpdate) Mutation() *SymbolMutation {
 	return su.mutation
@@ -329,6 +361,48 @@ func (su *SymbolUpdate) RemoveExtraServiceOrder(e ...*ExtraServiceOrder) *Symbol
 		ids[i] = e[i].ID
 	}
 	return su.RemoveExtraServiceOrderIDs(ids...)
+}
+
+// ClearWithdrawRecords clears all "withdraw_records" edges to the WithdrawRecord entity.
+func (su *SymbolUpdate) ClearWithdrawRecords() *SymbolUpdate {
+	su.mutation.ClearWithdrawRecords()
+	return su
+}
+
+// RemoveWithdrawRecordIDs removes the "withdraw_records" edge to WithdrawRecord entities by IDs.
+func (su *SymbolUpdate) RemoveWithdrawRecordIDs(ids ...int64) *SymbolUpdate {
+	su.mutation.RemoveWithdrawRecordIDs(ids...)
+	return su
+}
+
+// RemoveWithdrawRecords removes "withdraw_records" edges to WithdrawRecord entities.
+func (su *SymbolUpdate) RemoveWithdrawRecords(w ...*WithdrawRecord) *SymbolUpdate {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return su.RemoveWithdrawRecordIDs(ids...)
+}
+
+// ClearIncomeManages clears all "income_manages" edges to the IncomeManage entity.
+func (su *SymbolUpdate) ClearIncomeManages() *SymbolUpdate {
+	su.mutation.ClearIncomeManages()
+	return su
+}
+
+// RemoveIncomeManageIDs removes the "income_manages" edge to IncomeManage entities by IDs.
+func (su *SymbolUpdate) RemoveIncomeManageIDs(ids ...int64) *SymbolUpdate {
+	su.mutation.RemoveIncomeManageIDs(ids...)
+	return su
+}
+
+// RemoveIncomeManages removes "income_manages" edges to IncomeManage entities.
+func (su *SymbolUpdate) RemoveIncomeManages(i ...*IncomeManage) *SymbolUpdate {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return su.RemoveIncomeManageIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -673,6 +747,96 @@ func (su *SymbolUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if su.mutation.WithdrawRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.WithdrawRecordsTable,
+			Columns: []string{symbol.WithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedWithdrawRecordsIDs(); len(nodes) > 0 && !su.mutation.WithdrawRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.WithdrawRecordsTable,
+			Columns: []string{symbol.WithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.WithdrawRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.WithdrawRecordsTable,
+			Columns: []string{symbol.WithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if su.mutation.IncomeManagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.IncomeManagesTable,
+			Columns: []string{symbol.IncomeManagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedIncomeManagesIDs(); len(nodes) > 0 && !su.mutation.IncomeManagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.IncomeManagesTable,
+			Columns: []string{symbol.IncomeManagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.IncomeManagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.IncomeManagesTable,
+			Columns: []string{symbol.IncomeManagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(su.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -861,6 +1025,36 @@ func (suo *SymbolUpdateOne) AddExtraServiceOrder(e ...*ExtraServiceOrder) *Symbo
 	return suo.AddExtraServiceOrderIDs(ids...)
 }
 
+// AddWithdrawRecordIDs adds the "withdraw_records" edge to the WithdrawRecord entity by IDs.
+func (suo *SymbolUpdateOne) AddWithdrawRecordIDs(ids ...int64) *SymbolUpdateOne {
+	suo.mutation.AddWithdrawRecordIDs(ids...)
+	return suo
+}
+
+// AddWithdrawRecords adds the "withdraw_records" edges to the WithdrawRecord entity.
+func (suo *SymbolUpdateOne) AddWithdrawRecords(w ...*WithdrawRecord) *SymbolUpdateOne {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return suo.AddWithdrawRecordIDs(ids...)
+}
+
+// AddIncomeManageIDs adds the "income_manages" edge to the IncomeManage entity by IDs.
+func (suo *SymbolUpdateOne) AddIncomeManageIDs(ids ...int64) *SymbolUpdateOne {
+	suo.mutation.AddIncomeManageIDs(ids...)
+	return suo
+}
+
+// AddIncomeManages adds the "income_manages" edges to the IncomeManage entity.
+func (suo *SymbolUpdateOne) AddIncomeManages(i ...*IncomeManage) *SymbolUpdateOne {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return suo.AddIncomeManageIDs(ids...)
+}
+
 // Mutation returns the SymbolMutation object of the builder.
 func (suo *SymbolUpdateOne) Mutation() *SymbolMutation {
 	return suo.mutation
@@ -990,6 +1184,48 @@ func (suo *SymbolUpdateOne) RemoveExtraServiceOrder(e ...*ExtraServiceOrder) *Sy
 		ids[i] = e[i].ID
 	}
 	return suo.RemoveExtraServiceOrderIDs(ids...)
+}
+
+// ClearWithdrawRecords clears all "withdraw_records" edges to the WithdrawRecord entity.
+func (suo *SymbolUpdateOne) ClearWithdrawRecords() *SymbolUpdateOne {
+	suo.mutation.ClearWithdrawRecords()
+	return suo
+}
+
+// RemoveWithdrawRecordIDs removes the "withdraw_records" edge to WithdrawRecord entities by IDs.
+func (suo *SymbolUpdateOne) RemoveWithdrawRecordIDs(ids ...int64) *SymbolUpdateOne {
+	suo.mutation.RemoveWithdrawRecordIDs(ids...)
+	return suo
+}
+
+// RemoveWithdrawRecords removes "withdraw_records" edges to WithdrawRecord entities.
+func (suo *SymbolUpdateOne) RemoveWithdrawRecords(w ...*WithdrawRecord) *SymbolUpdateOne {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return suo.RemoveWithdrawRecordIDs(ids...)
+}
+
+// ClearIncomeManages clears all "income_manages" edges to the IncomeManage entity.
+func (suo *SymbolUpdateOne) ClearIncomeManages() *SymbolUpdateOne {
+	suo.mutation.ClearIncomeManages()
+	return suo
+}
+
+// RemoveIncomeManageIDs removes the "income_manages" edge to IncomeManage entities by IDs.
+func (suo *SymbolUpdateOne) RemoveIncomeManageIDs(ids ...int64) *SymbolUpdateOne {
+	suo.mutation.RemoveIncomeManageIDs(ids...)
+	return suo
+}
+
+// RemoveIncomeManages removes "income_manages" edges to IncomeManage entities.
+func (suo *SymbolUpdateOne) RemoveIncomeManages(i ...*IncomeManage) *SymbolUpdateOne {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return suo.RemoveIncomeManageIDs(ids...)
 }
 
 // Where appends a list predicates to the SymbolUpdate builder.
@@ -1357,6 +1593,96 @@ func (suo *SymbolUpdateOne) sqlSave(ctx context.Context) (_node *Symbol, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if suo.mutation.WithdrawRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.WithdrawRecordsTable,
+			Columns: []string{symbol.WithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedWithdrawRecordsIDs(); len(nodes) > 0 && !suo.mutation.WithdrawRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.WithdrawRecordsTable,
+			Columns: []string{symbol.WithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.WithdrawRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.WithdrawRecordsTable,
+			Columns: []string{symbol.WithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if suo.mutation.IncomeManagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.IncomeManagesTable,
+			Columns: []string{symbol.IncomeManagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedIncomeManagesIDs(); len(nodes) > 0 && !suo.mutation.IncomeManagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.IncomeManagesTable,
+			Columns: []string{symbol.IncomeManagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.IncomeManagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.IncomeManagesTable,
+			Columns: []string{symbol.IncomeManagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
