@@ -253,6 +253,20 @@ func (mlbc *MissionLoadBalanceCreate) SetNillableMissionBatchNumber(s *string) *
 	return mlbc
 }
 
+// SetCloseWay sets the "close_way" field.
+func (mlbc *MissionLoadBalanceCreate) SetCloseWay(ew enums.CloseWay) *MissionLoadBalanceCreate {
+	mlbc.mutation.SetCloseWay(ew)
+	return mlbc
+}
+
+// SetNillableCloseWay sets the "close_way" field if the given value is not nil.
+func (mlbc *MissionLoadBalanceCreate) SetNillableCloseWay(ew *enums.CloseWay) *MissionLoadBalanceCreate {
+	if ew != nil {
+		mlbc.SetCloseWay(*ew)
+	}
+	return mlbc
+}
+
 // SetID sets the "id" field.
 func (mlbc *MissionLoadBalanceCreate) SetID(i int64) *MissionLoadBalanceCreate {
 	mlbc.mutation.SetID(i)
@@ -366,6 +380,10 @@ func (mlbc *MissionLoadBalanceCreate) defaults() {
 		v := missionloadbalance.DefaultMissionBatchNumber
 		mlbc.mutation.SetMissionBatchNumber(v)
 	}
+	if _, ok := mlbc.mutation.CloseWay(); !ok {
+		v := missionloadbalance.DefaultCloseWay
+		mlbc.mutation.SetCloseWay(v)
+	}
 	if _, ok := mlbc.mutation.ID(); !ok {
 		v := missionloadbalance.DefaultID()
 		mlbc.mutation.SetID(v)
@@ -439,6 +457,14 @@ func (mlbc *MissionLoadBalanceCreate) check() error {
 	}
 	if _, ok := mlbc.mutation.MissionBatchNumber(); !ok {
 		return &ValidationError{Name: "mission_batch_number", err: errors.New(`cep_ent: missing required field "MissionLoadBalance.mission_batch_number"`)}
+	}
+	if _, ok := mlbc.mutation.CloseWay(); !ok {
+		return &ValidationError{Name: "close_way", err: errors.New(`cep_ent: missing required field "MissionLoadBalance.close_way"`)}
+	}
+	if v, ok := mlbc.mutation.CloseWay(); ok {
+		if err := missionloadbalance.CloseWayValidator(v); err != nil {
+			return &ValidationError{Name: "close_way", err: fmt.Errorf(`cep_ent: validator failed for field "MissionLoadBalance.close_way": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -540,6 +566,10 @@ func (mlbc *MissionLoadBalanceCreate) createSpec() (*MissionLoadBalance, *sqlgra
 	if value, ok := mlbc.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(missionloadbalance.FieldMissionBatchNumber, field.TypeString, value)
 		_node.MissionBatchNumber = value
+	}
+	if value, ok := mlbc.mutation.CloseWay(); ok {
+		_spec.SetField(missionloadbalance.FieldCloseWay, field.TypeEnum, value)
+		_node.CloseWay = value
 	}
 	return _node, _spec
 }
@@ -830,6 +860,18 @@ func (u *MissionLoadBalanceUpsert) SetMissionBatchNumber(v string) *MissionLoadB
 // UpdateMissionBatchNumber sets the "mission_batch_number" field to the value that was provided on create.
 func (u *MissionLoadBalanceUpsert) UpdateMissionBatchNumber() *MissionLoadBalanceUpsert {
 	u.SetExcluded(missionloadbalance.FieldMissionBatchNumber)
+	return u
+}
+
+// SetCloseWay sets the "close_way" field.
+func (u *MissionLoadBalanceUpsert) SetCloseWay(v enums.CloseWay) *MissionLoadBalanceUpsert {
+	u.Set(missionloadbalance.FieldCloseWay, v)
+	return u
+}
+
+// UpdateCloseWay sets the "close_way" field to the value that was provided on create.
+func (u *MissionLoadBalanceUpsert) UpdateCloseWay() *MissionLoadBalanceUpsert {
+	u.SetExcluded(missionloadbalance.FieldCloseWay)
 	return u
 }
 
@@ -1161,6 +1203,20 @@ func (u *MissionLoadBalanceUpsertOne) SetMissionBatchNumber(v string) *MissionLo
 func (u *MissionLoadBalanceUpsertOne) UpdateMissionBatchNumber() *MissionLoadBalanceUpsertOne {
 	return u.Update(func(s *MissionLoadBalanceUpsert) {
 		s.UpdateMissionBatchNumber()
+	})
+}
+
+// SetCloseWay sets the "close_way" field.
+func (u *MissionLoadBalanceUpsertOne) SetCloseWay(v enums.CloseWay) *MissionLoadBalanceUpsertOne {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.SetCloseWay(v)
+	})
+}
+
+// UpdateCloseWay sets the "close_way" field to the value that was provided on create.
+func (u *MissionLoadBalanceUpsertOne) UpdateCloseWay() *MissionLoadBalanceUpsertOne {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.UpdateCloseWay()
 	})
 }
 
@@ -1658,6 +1714,20 @@ func (u *MissionLoadBalanceUpsertBulk) SetMissionBatchNumber(v string) *MissionL
 func (u *MissionLoadBalanceUpsertBulk) UpdateMissionBatchNumber() *MissionLoadBalanceUpsertBulk {
 	return u.Update(func(s *MissionLoadBalanceUpsert) {
 		s.UpdateMissionBatchNumber()
+	})
+}
+
+// SetCloseWay sets the "close_way" field.
+func (u *MissionLoadBalanceUpsertBulk) SetCloseWay(v enums.CloseWay) *MissionLoadBalanceUpsertBulk {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.SetCloseWay(v)
+	})
+}
+
+// UpdateCloseWay sets the "close_way" field to the value that was provided on create.
+func (u *MissionLoadBalanceUpsertBulk) UpdateCloseWay() *MissionLoadBalanceUpsertBulk {
+	return u.Update(func(s *MissionLoadBalanceUpsert) {
+		s.UpdateCloseWay()
 	})
 }
 

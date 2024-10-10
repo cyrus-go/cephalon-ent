@@ -53,7 +53,9 @@ type MissionLoadBalance struct {
 	MissionBatchID int64 `json:"mission_batch_id,string"`
 	// 任务批次号
 	MissionBatchNumber string `json:"mission_batch_number"`
-	selectValues       sql.SelectValues
+	// 任务关闭方式，user：用户自己关闭，balance_not_enough：余额不足自动关闭
+	CloseWay     enums.CloseWay `json:"close_way"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -63,7 +65,7 @@ func (*MissionLoadBalance) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case missionloadbalance.FieldID, missionloadbalance.FieldCreatedBy, missionloadbalance.FieldUpdatedBy, missionloadbalance.FieldUserID, missionloadbalance.FieldGpuNum, missionloadbalance.FieldMaxMissionCount, missionloadbalance.FieldMinMissionCount, missionloadbalance.FieldCurrentMissionCount, missionloadbalance.FieldMissionBatchID:
 			values[i] = new(sql.NullInt64)
-		case missionloadbalance.FieldMissionType, missionloadbalance.FieldState, missionloadbalance.FieldGpuVersion, missionloadbalance.FieldMissionBatchNumber:
+		case missionloadbalance.FieldMissionType, missionloadbalance.FieldState, missionloadbalance.FieldGpuVersion, missionloadbalance.FieldMissionBatchNumber, missionloadbalance.FieldCloseWay:
 			values[i] = new(sql.NullString)
 		case missionloadbalance.FieldCreatedAt, missionloadbalance.FieldUpdatedAt, missionloadbalance.FieldDeletedAt, missionloadbalance.FieldStartedAt, missionloadbalance.FieldFinishedAt:
 			values[i] = new(sql.NullTime)
@@ -190,6 +192,12 @@ func (mlb *MissionLoadBalance) assignValues(columns []string, values []any) erro
 			} else if value.Valid {
 				mlb.MissionBatchNumber = value.String
 			}
+		case missionloadbalance.FieldCloseWay:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field close_way", values[i])
+			} else if value.Valid {
+				mlb.CloseWay = enums.CloseWay(value.String)
+			}
 		default:
 			mlb.selectValues.Set(columns[i], values[i])
 		}
@@ -276,6 +284,9 @@ func (mlb *MissionLoadBalance) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mission_batch_number=")
 	builder.WriteString(mlb.MissionBatchNumber)
+	builder.WriteString(", ")
+	builder.WriteString("close_way=")
+	builder.WriteString(fmt.Sprintf("%v", mlb.CloseWay))
 	builder.WriteByte(')')
 	return builder.String()
 }

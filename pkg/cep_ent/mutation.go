@@ -59983,6 +59983,7 @@ type MissionLoadBalanceMutation struct {
 	mission_batch_id         *int64
 	addmission_batch_id      *int64
 	mission_batch_number     *string
+	close_way                *enums.CloseWay
 	clearedFields            map[string]struct{}
 	done                     bool
 	oldValue                 func(context.Context) (*MissionLoadBalance, error)
@@ -60865,6 +60866,42 @@ func (m *MissionLoadBalanceMutation) ResetMissionBatchNumber() {
 	m.mission_batch_number = nil
 }
 
+// SetCloseWay sets the "close_way" field.
+func (m *MissionLoadBalanceMutation) SetCloseWay(ew enums.CloseWay) {
+	m.close_way = &ew
+}
+
+// CloseWay returns the value of the "close_way" field in the mutation.
+func (m *MissionLoadBalanceMutation) CloseWay() (r enums.CloseWay, exists bool) {
+	v := m.close_way
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCloseWay returns the old "close_way" field's value of the MissionLoadBalance entity.
+// If the MissionLoadBalance object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionLoadBalanceMutation) OldCloseWay(ctx context.Context) (v enums.CloseWay, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCloseWay is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCloseWay requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCloseWay: %w", err)
+	}
+	return oldValue.CloseWay, nil
+}
+
+// ResetCloseWay resets all changes to the "close_way" field.
+func (m *MissionLoadBalanceMutation) ResetCloseWay() {
+	m.close_way = nil
+}
+
 // Where appends a list predicates to the MissionLoadBalanceMutation builder.
 func (m *MissionLoadBalanceMutation) Where(ps ...predicate.MissionLoadBalance) {
 	m.predicates = append(m.predicates, ps...)
@@ -60899,7 +60936,7 @@ func (m *MissionLoadBalanceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionLoadBalanceMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.created_by != nil {
 		fields = append(fields, missionloadbalance.FieldCreatedBy)
 	}
@@ -60951,6 +60988,9 @@ func (m *MissionLoadBalanceMutation) Fields() []string {
 	if m.mission_batch_number != nil {
 		fields = append(fields, missionloadbalance.FieldMissionBatchNumber)
 	}
+	if m.close_way != nil {
+		fields = append(fields, missionloadbalance.FieldCloseWay)
+	}
 	return fields
 }
 
@@ -60993,6 +61033,8 @@ func (m *MissionLoadBalanceMutation) Field(name string) (ent.Value, bool) {
 		return m.MissionBatchID()
 	case missionloadbalance.FieldMissionBatchNumber:
 		return m.MissionBatchNumber()
+	case missionloadbalance.FieldCloseWay:
+		return m.CloseWay()
 	}
 	return nil, false
 }
@@ -61036,6 +61078,8 @@ func (m *MissionLoadBalanceMutation) OldField(ctx context.Context, name string) 
 		return m.OldMissionBatchID(ctx)
 	case missionloadbalance.FieldMissionBatchNumber:
 		return m.OldMissionBatchNumber(ctx)
+	case missionloadbalance.FieldCloseWay:
+		return m.OldCloseWay(ctx)
 	}
 	return nil, fmt.Errorf("unknown MissionLoadBalance field %s", name)
 }
@@ -61163,6 +61207,13 @@ func (m *MissionLoadBalanceMutation) SetField(name string, value ent.Value) erro
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMissionBatchNumber(v)
+		return nil
+	case missionloadbalance.FieldCloseWay:
+		v, ok := value.(enums.CloseWay)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCloseWay(v)
 		return nil
 	}
 	return fmt.Errorf("unknown MissionLoadBalance field %s", name)
@@ -61362,6 +61413,9 @@ func (m *MissionLoadBalanceMutation) ResetField(name string) error {
 		return nil
 	case missionloadbalance.FieldMissionBatchNumber:
 		m.ResetMissionBatchNumber()
+		return nil
+	case missionloadbalance.FieldCloseWay:
+		m.ResetCloseWay()
 		return nil
 	}
 	return fmt.Errorf("unknown MissionLoadBalance field %s", name)

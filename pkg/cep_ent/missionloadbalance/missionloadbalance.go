@@ -49,6 +49,8 @@ const (
 	FieldMissionBatchID = "mission_batch_id"
 	// FieldMissionBatchNumber holds the string denoting the mission_batch_number field in the database.
 	FieldMissionBatchNumber = "mission_batch_number"
+	// FieldCloseWay holds the string denoting the close_way field in the database.
+	FieldCloseWay = "close_way"
 	// Table holds the table name of the missionloadbalance in the database.
 	Table = "mission_load_balances"
 )
@@ -73,6 +75,7 @@ var Columns = []string{
 	FieldCurrentMissionCount,
 	FieldMissionBatchID,
 	FieldMissionBatchNumber,
+	FieldCloseWay,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -151,6 +154,18 @@ func GpuVersionValidator(gv enums.GpuVersion) error {
 		return nil
 	default:
 		return fmt.Errorf("missionloadbalance: invalid enum value for gpu_version field: %q", gv)
+	}
+}
+
+const DefaultCloseWay enums.CloseWay = "unknown"
+
+// CloseWayValidator is a validator for the "close_way" field enum values. It is called by the builders before save.
+func CloseWayValidator(cw enums.CloseWay) error {
+	switch cw {
+	case "unknown", "user", "balance_not_enough", "expired", "admin", "system_monitor", "timed_shutdown":
+		return nil
+	default:
+		return fmt.Errorf("missionloadbalance: invalid enum value for close_way field: %q", cw)
 	}
 }
 
@@ -245,4 +260,9 @@ func ByMissionBatchID(opts ...sql.OrderTermOption) OrderOption {
 // ByMissionBatchNumber orders the results by the mission_batch_number field.
 func ByMissionBatchNumber(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionBatchNumber, opts...).ToFunc()
+}
+
+// ByCloseWay orders the results by the close_way field.
+func ByCloseWay(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCloseWay, opts...).ToFunc()
 }

@@ -800,6 +800,36 @@ func MissionBatchNumberContainsFold(v string) predicate.MissionLoadBalance {
 	return predicate.MissionLoadBalance(sql.FieldContainsFold(FieldMissionBatchNumber, v))
 }
 
+// CloseWayEQ applies the EQ predicate on the "close_way" field.
+func CloseWayEQ(v enums.CloseWay) predicate.MissionLoadBalance {
+	vc := v
+	return predicate.MissionLoadBalance(sql.FieldEQ(FieldCloseWay, vc))
+}
+
+// CloseWayNEQ applies the NEQ predicate on the "close_way" field.
+func CloseWayNEQ(v enums.CloseWay) predicate.MissionLoadBalance {
+	vc := v
+	return predicate.MissionLoadBalance(sql.FieldNEQ(FieldCloseWay, vc))
+}
+
+// CloseWayIn applies the In predicate on the "close_way" field.
+func CloseWayIn(vs ...enums.CloseWay) predicate.MissionLoadBalance {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionLoadBalance(sql.FieldIn(FieldCloseWay, v...))
+}
+
+// CloseWayNotIn applies the NotIn predicate on the "close_way" field.
+func CloseWayNotIn(vs ...enums.CloseWay) predicate.MissionLoadBalance {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionLoadBalance(sql.FieldNotIn(FieldCloseWay, v...))
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.MissionLoadBalance) predicate.MissionLoadBalance {
 	return predicate.MissionLoadBalance(sql.AndPredicates(predicates...))

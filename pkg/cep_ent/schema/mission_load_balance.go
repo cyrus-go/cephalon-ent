@@ -29,6 +29,7 @@ func (MissionLoadBalance) Fields() []ent.Field {
 		field.Int8("current_mission_count").Default(1).StructTag(`json:"current_mission_count"`).Comment("当前应用数（调整中的以此为依据）"),
 		field.Int64("mission_batch_id").Default(0).StructTag(`json:"mission_batch_id,string"`).Comment("外键关联任务批次"),
 		field.String("mission_batch_number").Default("").StructTag(`json:"mission_batch_number"`).Comment("任务批次号"),
+		field.Enum("close_way").GoType(enums.CloseWayUser).Default(string(enums.CloseWayUnknown)).StructTag(`json:"close_way"`).Comment("任务关闭方式，user：用户自己关闭，balance_not_enough：余额不足自动关闭"),
 	}
 }
 

@@ -294,6 +294,20 @@ func (mlbu *MissionLoadBalanceUpdate) SetNillableMissionBatchNumber(s *string) *
 	return mlbu
 }
 
+// SetCloseWay sets the "close_way" field.
+func (mlbu *MissionLoadBalanceUpdate) SetCloseWay(ew enums.CloseWay) *MissionLoadBalanceUpdate {
+	mlbu.mutation.SetCloseWay(ew)
+	return mlbu
+}
+
+// SetNillableCloseWay sets the "close_way" field if the given value is not nil.
+func (mlbu *MissionLoadBalanceUpdate) SetNillableCloseWay(ew *enums.CloseWay) *MissionLoadBalanceUpdate {
+	if ew != nil {
+		mlbu.SetCloseWay(*ew)
+	}
+	return mlbu
+}
+
 // Mutation returns the MissionLoadBalanceMutation object of the builder.
 func (mlbu *MissionLoadBalanceUpdate) Mutation() *MissionLoadBalanceMutation {
 	return mlbu.mutation
@@ -350,6 +364,11 @@ func (mlbu *MissionLoadBalanceUpdate) check() error {
 	if v, ok := mlbu.mutation.GpuVersion(); ok {
 		if err := missionloadbalance.GpuVersionValidator(v); err != nil {
 			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "MissionLoadBalance.gpu_version": %w`, err)}
+		}
+	}
+	if v, ok := mlbu.mutation.CloseWay(); ok {
+		if err := missionloadbalance.CloseWayValidator(v); err != nil {
+			return &ValidationError{Name: "close_way", err: fmt.Errorf(`cep_ent: validator failed for field "MissionLoadBalance.close_way": %w`, err)}
 		}
 	}
 	return nil
@@ -444,6 +463,9 @@ func (mlbu *MissionLoadBalanceUpdate) sqlSave(ctx context.Context) (n int, err e
 	}
 	if value, ok := mlbu.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(missionloadbalance.FieldMissionBatchNumber, field.TypeString, value)
+	}
+	if value, ok := mlbu.mutation.CloseWay(); ok {
+		_spec.SetField(missionloadbalance.FieldCloseWay, field.TypeEnum, value)
 	}
 	_spec.AddModifiers(mlbu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, mlbu.driver, _spec); err != nil {
@@ -731,6 +753,20 @@ func (mlbuo *MissionLoadBalanceUpdateOne) SetNillableMissionBatchNumber(s *strin
 	return mlbuo
 }
 
+// SetCloseWay sets the "close_way" field.
+func (mlbuo *MissionLoadBalanceUpdateOne) SetCloseWay(ew enums.CloseWay) *MissionLoadBalanceUpdateOne {
+	mlbuo.mutation.SetCloseWay(ew)
+	return mlbuo
+}
+
+// SetNillableCloseWay sets the "close_way" field if the given value is not nil.
+func (mlbuo *MissionLoadBalanceUpdateOne) SetNillableCloseWay(ew *enums.CloseWay) *MissionLoadBalanceUpdateOne {
+	if ew != nil {
+		mlbuo.SetCloseWay(*ew)
+	}
+	return mlbuo
+}
+
 // Mutation returns the MissionLoadBalanceMutation object of the builder.
 func (mlbuo *MissionLoadBalanceUpdateOne) Mutation() *MissionLoadBalanceMutation {
 	return mlbuo.mutation
@@ -800,6 +836,11 @@ func (mlbuo *MissionLoadBalanceUpdateOne) check() error {
 	if v, ok := mlbuo.mutation.GpuVersion(); ok {
 		if err := missionloadbalance.GpuVersionValidator(v); err != nil {
 			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "MissionLoadBalance.gpu_version": %w`, err)}
+		}
+	}
+	if v, ok := mlbuo.mutation.CloseWay(); ok {
+		if err := missionloadbalance.CloseWayValidator(v); err != nil {
+			return &ValidationError{Name: "close_way", err: fmt.Errorf(`cep_ent: validator failed for field "MissionLoadBalance.close_way": %w`, err)}
 		}
 	}
 	return nil
@@ -911,6 +952,9 @@ func (mlbuo *MissionLoadBalanceUpdateOne) sqlSave(ctx context.Context) (_node *M
 	}
 	if value, ok := mlbuo.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(missionloadbalance.FieldMissionBatchNumber, field.TypeString, value)
+	}
+	if value, ok := mlbuo.mutation.CloseWay(); ok {
+		_spec.SetField(missionloadbalance.FieldCloseWay, field.TypeEnum, value)
 	}
 	_spec.AddModifiers(mlbuo.modifiers...)
 	_node = &MissionLoadBalance{config: mlbuo.config}

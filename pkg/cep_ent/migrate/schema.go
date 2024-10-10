@@ -1953,6 +1953,7 @@ var (
 		{Name: "current_mission_count", Type: field.TypeInt8, Comment: "当前应用数（调整中的以此为依据）", Default: 1},
 		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "外键关联任务批次", Default: 0},
 		{Name: "mission_batch_number", Type: field.TypeString, Comment: "任务批次号", Default: ""},
+		{Name: "close_way", Type: field.TypeEnum, Comment: "任务关闭方式，user：用户自己关闭，balance_not_enough：余额不足自动关闭", Enums: []string{"unknown", "user", "balance_not_enough", "expired", "admin", "system_monitor", "timed_shutdown"}, Default: "unknown"},
 	}
 	// MissionLoadBalancesTable holds the schema information for the "mission_load_balances" table.
 	MissionLoadBalancesTable = &schema.Table{
