@@ -19,6 +19,7 @@ const (
 	BillWayActiveShare                    BillWay = "active_share"
 	BillWayActiveBind                     BillWay = "active_bind"
 	BillWayActiveInviteRecharge           BillWay = "active_invite_recharge"
+	BillWayActiveChannelRecharge          BillWay = "active_channel_recharge" // 渠道充值赠送
 	BillWaySpecialChannelRecharge         BillWay = "special_channel_recharge"
 	BillWayActiveRecharge                 BillWay = "active_recharge"
 	BillWayTransferManual                 BillWay = "transfer_manual"
@@ -82,6 +83,7 @@ func (BillWay) Values() []string {
 		string(BillWayExtraServiceHold),
 		string(BillWayExtraServiceVolume),
 		string(BillWayActiveInviteRecharge),
+		string(BillWayActiveChannelRecharge),
 		string(BillWayExtraServiceTime),
 		string(BillWayCdkExchange),
 		string(BillWayLottoPrize),
