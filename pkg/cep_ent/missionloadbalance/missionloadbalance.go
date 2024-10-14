@@ -138,7 +138,7 @@ const DefaultState enums.MissionLoadBalanceState = "unknown"
 // StateValidator is a validator for the "state" field enum values. It is called by the builders before save.
 func StateValidator(s enums.MissionLoadBalanceState) error {
 	switch s {
-	case "unknown", "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed", "paused", "resuming", "contracting", "expanding":
+	case "unknown", "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed", "paused", "resuming", "contracting", "expanding", "recovering":
 		return nil
 	default:
 		return fmt.Errorf("missionloadbalance: invalid enum value for state field: %q", s)

@@ -33,6 +33,7 @@ func (obj MissionLoadBalanceState) Values() []string {
 		string(MissionLoadBalanceStateResuming),
 		string(MissionLoadBalanceStateContracting),
 		string(MissionLoadBalanceStateExpanding),
+		string(MissionLoadBalanceStateRecovering),
 	}
 }
 
