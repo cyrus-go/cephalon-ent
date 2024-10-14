@@ -15,6 +15,7 @@ const (
 	MissionLoadBalanceStateResuming    MissionLoadBalanceState = "resuming"
 	MissionLoadBalanceStateContracting MissionLoadBalanceState = "contracting" // 收缩中
 	MissionLoadBalanceStateExpanding   MissionLoadBalanceState = "expanding"   // 扩展中
+	MissionLoadBalanceStateRecovering  MissionLoadBalanceState = "recovering"  // 故障恢复中
 
 )
 
