@@ -9,6 +9,7 @@ const (
 	MissionCategoryWT             MissionCategory = "WT"
 	MissionCategoryJPDK           MissionCategory = "JP_DK"
 	MissionCategorySSH            MissionCategory = "SSH"
+	MissionCategorySglang         MissionCategory = "SGLANG"
 	MissionCategorySDTOMATO       MissionCategory = "SD_TOMATO"
 	MissionCategorySDCMD          MissionCategory = "SD_CMD"
 	MissionCategorySDTian         MissionCategory = "SD_TIAN"
@@ -62,6 +63,7 @@ func (obj MissionCategory) Values() []string {
 		string(MissionCategoryWT),
 		string(MissionCategoryJPDK),
 		string(MissionCategorySSH),
+		string(MissionCategorySglang),
 		string(MissionCategorySDTOMATO),
 		string(MissionCategorySDCMD),
 		string(MissionCategorySDTian),
