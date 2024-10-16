@@ -456,13 +456,13 @@ func (uc *UserCreate) SetNillableChannel(ect *enums.UserChannelType) *UserCreate
 }
 
 // SetMissionTag sets the "mission_tag" field.
-func (uc *UserCreate) SetMissionTag(emt enums.DeviceMissionTag) *UserCreate {
+func (uc *UserCreate) SetMissionTag(emt enums.UserMissionTag) *UserCreate {
 	uc.mutation.SetMissionTag(emt)
 	return uc
 }
 
 // SetNillableMissionTag sets the "mission_tag" field if the given value is not nil.
-func (uc *UserCreate) SetNillableMissionTag(emt *enums.DeviceMissionTag) *UserCreate {
+func (uc *UserCreate) SetNillableMissionTag(emt *enums.UserMissionTag) *UserCreate {
 	if emt != nil {
 		uc.SetMissionTag(*emt)
 	}
@@ -2869,7 +2869,7 @@ func (u *UserUpsert) UpdateChannel() *UserUpsert {
 }
 
 // SetMissionTag sets the "mission_tag" field.
-func (u *UserUpsert) SetMissionTag(v enums.DeviceMissionTag) *UserUpsert {
+func (u *UserUpsert) SetMissionTag(v enums.UserMissionTag) *UserUpsert {
 	u.Set(user.FieldMissionTag, v)
 	return u
 }
@@ -3338,7 +3338,7 @@ func (u *UserUpsertOne) UpdateChannel() *UserUpsertOne {
 }
 
 // SetMissionTag sets the "mission_tag" field.
-func (u *UserUpsertOne) SetMissionTag(v enums.DeviceMissionTag) *UserUpsertOne {
+func (u *UserUpsertOne) SetMissionTag(v enums.UserMissionTag) *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.SetMissionTag(v)
 	})
@@ -3975,7 +3975,7 @@ func (u *UserUpsertBulk) UpdateChannel() *UserUpsertBulk {
 }
 
 // SetMissionTag sets the "mission_tag" field.
-func (u *UserUpsertBulk) SetMissionTag(v enums.DeviceMissionTag) *UserUpsertBulk {
+func (u *UserUpsertBulk) SetMissionTag(v enums.UserMissionTag) *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.SetMissionTag(v)
 	})

@@ -1532,19 +1532,19 @@ func ChannelNotIn(vs ...enums.UserChannelType) predicate.User {
 }
 
 // MissionTagEQ applies the EQ predicate on the "mission_tag" field.
-func MissionTagEQ(v enums.DeviceMissionTag) predicate.User {
+func MissionTagEQ(v enums.UserMissionTag) predicate.User {
 	vc := v
 	return predicate.User(sql.FieldEQ(FieldMissionTag, vc))
 }
 
 // MissionTagNEQ applies the NEQ predicate on the "mission_tag" field.
-func MissionTagNEQ(v enums.DeviceMissionTag) predicate.User {
+func MissionTagNEQ(v enums.UserMissionTag) predicate.User {
 	vc := v
 	return predicate.User(sql.FieldNEQ(FieldMissionTag, vc))
 }
 
 // MissionTagIn applies the In predicate on the "mission_tag" field.
-func MissionTagIn(vs ...enums.DeviceMissionTag) predicate.User {
+func MissionTagIn(vs ...enums.UserMissionTag) predicate.User {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1553,7 +1553,7 @@ func MissionTagIn(vs ...enums.DeviceMissionTag) predicate.User {
 }
 
 // MissionTagNotIn applies the NotIn predicate on the "mission_tag" field.
-func MissionTagNotIn(vs ...enums.DeviceMissionTag) predicate.User {
+func MissionTagNotIn(vs ...enums.UserMissionTag) predicate.User {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]

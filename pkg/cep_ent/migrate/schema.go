@@ -2952,7 +2952,7 @@ var (
 		{Name: "bound_at", Type: field.TypeTime, Nullable: true, Comment: "用户绑定邀请码的时间"},
 		{Name: "user_status", Type: field.TypeEnum, Comment: "用户状态", Enums: []string{"normal", "frozen", "closed"}, Default: "normal"},
 		{Name: "channel", Type: field.TypeEnum, Comment: "渠道身份，默认为非渠道用户", Enums: []string{"no_channel", "normal_channel"}, Default: "no_channel"},
-		{Name: "mission_tag", Type: field.TypeEnum, Comment: "可跳过验证启动特殊任务类型标签", Enums: []string{"no", "aleo"}, Default: "no"},
+		{Name: "mission_tag", Type: field.TypeEnum, Comment: "可跳过验证启动特殊任务类型标签", Enums: []string{"no", "mining"}, Default: "no"},
 		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "邀请人用户 id", Default: 0},
 		{Name: "applet_parent_id", Type: field.TypeInt64, Nullable: true, Comment: "小程序邀请人用户 id", Default: 0},
 	}

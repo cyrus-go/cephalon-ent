@@ -91707,7 +91707,7 @@ type UserMutation struct {
 	bound_at                        *time.Time
 	user_status                     *enums.UserStatus
 	channel                         *enums.UserChannelType
-	mission_tag                     *enums.DeviceMissionTag
+	mission_tag                     *enums.UserMissionTag
 	clearedFields                   map[string]struct{}
 	vx_accounts                     map[int64]struct{}
 	removedvx_accounts              map[int64]struct{}
@@ -93048,12 +93048,12 @@ func (m *UserMutation) ResetChannel() {
 }
 
 // SetMissionTag sets the "mission_tag" field.
-func (m *UserMutation) SetMissionTag(emt enums.DeviceMissionTag) {
+func (m *UserMutation) SetMissionTag(emt enums.UserMissionTag) {
 	m.mission_tag = &emt
 }
 
 // MissionTag returns the value of the "mission_tag" field in the mutation.
-func (m *UserMutation) MissionTag() (r enums.DeviceMissionTag, exists bool) {
+func (m *UserMutation) MissionTag() (r enums.UserMissionTag, exists bool) {
 	v := m.mission_tag
 	if v == nil {
 		return
@@ -93064,7 +93064,7 @@ func (m *UserMutation) MissionTag() (r enums.DeviceMissionTag, exists bool) {
 // OldMissionTag returns the old "mission_tag" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldMissionTag(ctx context.Context) (v enums.DeviceMissionTag, err error) {
+func (m *UserMutation) OldMissionTag(ctx context.Context) (v enums.UserMissionTag, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldMissionTag is only allowed on UpdateOne operations")
 	}
@@ -96199,7 +96199,7 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		m.SetChannel(v)
 		return nil
 	case user.FieldMissionTag:
-		v, ok := value.(enums.DeviceMissionTag)
+		v, ok := value.(enums.UserMissionTag)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

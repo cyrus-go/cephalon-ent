@@ -42,7 +42,7 @@ func (User) Fields() []ent.Field {
 		field.Enum("user_status").GoType(enums.UserStatusNormal).Default(string(enums.UserStatusNormal)).StructTag(`json:"user_status"`).Comment("用户状态"),
 		field.Enum("channel").GoType(enums.UserChannelTypeNoChannel).Default(string(enums.UserChannelTypeNoChannel)).StructTag(`json:"channel"`).Comment("渠道身份，默认为非渠道用户"),
 		//field.Int64("channel_ratio").StructTag(`json:"channel_ratio"`).Default(0).Comment("渠道分成比例"),
-		field.Enum("mission_tag").GoType(enums.DeviceMissionTagNo).Default(string(enums.DeviceMissionTagNo)).StructTag(`json:"mission_tag"`).Comment("可跳过验证启动特殊任务类型标签"),
+		field.Enum("mission_tag").GoType(enums.UserMissionTagNo).Default(string(enums.UserMissionTagNo)).StructTag(`json:"mission_tag"`).Comment("可跳过验证启动特殊任务类型标签"),
 	}
 }
 

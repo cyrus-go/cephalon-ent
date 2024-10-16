@@ -662,12 +662,12 @@ func ChannelValidator(c enums.UserChannelType) error {
 	}
 }
 
-const DefaultMissionTag enums.DeviceMissionTag = "no"
+const DefaultMissionTag enums.UserMissionTag = "no"
 
 // MissionTagValidator is a validator for the "mission_tag" field enum values. It is called by the builders before save.
-func MissionTagValidator(mt enums.DeviceMissionTag) error {
+func MissionTagValidator(mt enums.UserMissionTag) error {
 	switch mt {
-	case "no", "aleo":
+	case "no", "mining":
 		return nil
 	default:
 		return fmt.Errorf("user: invalid enum value for mission_tag field: %q", mt)

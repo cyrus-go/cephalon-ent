@@ -79,7 +79,7 @@ type User struct {
 	// 渠道身份，默认为非渠道用户
 	Channel enums.UserChannelType `json:"channel"`
 	// 可跳过验证启动特殊任务类型标签
-	MissionTag enums.DeviceMissionTag `json:"mission_tag"`
+	MissionTag enums.UserMissionTag `json:"mission_tag"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -881,7 +881,7 @@ func (u *User) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field mission_tag", values[i])
 			} else if value.Valid {
-				u.MissionTag = enums.DeviceMissionTag(value.String)
+				u.MissionTag = enums.UserMissionTag(value.String)
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])

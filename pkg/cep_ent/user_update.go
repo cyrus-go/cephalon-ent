@@ -468,13 +468,13 @@ func (uu *UserUpdate) SetNillableChannel(ect *enums.UserChannelType) *UserUpdate
 }
 
 // SetMissionTag sets the "mission_tag" field.
-func (uu *UserUpdate) SetMissionTag(emt enums.DeviceMissionTag) *UserUpdate {
+func (uu *UserUpdate) SetMissionTag(emt enums.UserMissionTag) *UserUpdate {
 	uu.mutation.SetMissionTag(emt)
 	return uu
 }
 
 // SetNillableMissionTag sets the "mission_tag" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableMissionTag(emt *enums.DeviceMissionTag) *UserUpdate {
+func (uu *UserUpdate) SetNillableMissionTag(emt *enums.UserMissionTag) *UserUpdate {
 	if emt != nil {
 		uu.SetMissionTag(*emt)
 	}
@@ -5049,13 +5049,13 @@ func (uuo *UserUpdateOne) SetNillableChannel(ect *enums.UserChannelType) *UserUp
 }
 
 // SetMissionTag sets the "mission_tag" field.
-func (uuo *UserUpdateOne) SetMissionTag(emt enums.DeviceMissionTag) *UserUpdateOne {
+func (uuo *UserUpdateOne) SetMissionTag(emt enums.UserMissionTag) *UserUpdateOne {
 	uuo.mutation.SetMissionTag(emt)
 	return uuo
 }
 
 // SetNillableMissionTag sets the "mission_tag" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableMissionTag(emt *enums.DeviceMissionTag) *UserUpdateOne {
+func (uuo *UserUpdateOne) SetNillableMissionTag(emt *enums.UserMissionTag) *UserUpdateOne {
 	if emt != nil {
 		uuo.SetMissionTag(*emt)
 	}
