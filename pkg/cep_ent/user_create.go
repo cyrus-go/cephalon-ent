@@ -455,6 +455,20 @@ func (uc *UserCreate) SetNillableChannel(ect *enums.UserChannelType) *UserCreate
 	return uc
 }
 
+// SetMissionTag sets the "mission_tag" field.
+func (uc *UserCreate) SetMissionTag(emt enums.DeviceMissionTag) *UserCreate {
+	uc.mutation.SetMissionTag(emt)
+	return uc
+}
+
+// SetNillableMissionTag sets the "mission_tag" field if the given value is not nil.
+func (uc *UserCreate) SetNillableMissionTag(emt *enums.DeviceMissionTag) *UserCreate {
+	if emt != nil {
+		uc.SetMissionTag(*emt)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(i int64) *UserCreate {
 	uc.mutation.SetID(i)
@@ -1373,6 +1387,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultChannel
 		uc.mutation.SetChannel(v)
 	}
+	if _, ok := uc.mutation.MissionTag(); !ok {
+		v := user.DefaultMissionTag
+		uc.mutation.SetMissionTag(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
 		uc.mutation.SetID(v)
@@ -1475,6 +1493,14 @@ func (uc *UserCreate) check() error {
 	if v, ok := uc.mutation.Channel(); ok {
 		if err := user.ChannelValidator(v); err != nil {
 			return &ValidationError{Name: "channel", err: fmt.Errorf(`cep_ent: validator failed for field "User.channel": %w`, err)}
+		}
+	}
+	if _, ok := uc.mutation.MissionTag(); !ok {
+		return &ValidationError{Name: "mission_tag", err: errors.New(`cep_ent: missing required field "User.mission_tag"`)}
+	}
+	if v, ok := uc.mutation.MissionTag(); ok {
+		if err := user.MissionTagValidator(v); err != nil {
+			return &ValidationError{Name: "mission_tag", err: fmt.Errorf(`cep_ent: validator failed for field "User.mission_tag": %w`, err)}
 		}
 	}
 	if _, ok := uc.mutation.ParentID(); !ok {
@@ -1619,6 +1645,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Channel(); ok {
 		_spec.SetField(user.FieldChannel, field.TypeEnum, value)
 		_node.Channel = value
+	}
+	if value, ok := uc.mutation.MissionTag(); ok {
+		_spec.SetField(user.FieldMissionTag, field.TypeEnum, value)
+		_node.MissionTag = value
 	}
 	if nodes := uc.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -2838,6 +2868,18 @@ func (u *UserUpsert) UpdateChannel() *UserUpsert {
 	return u
 }
 
+// SetMissionTag sets the "mission_tag" field.
+func (u *UserUpsert) SetMissionTag(v enums.DeviceMissionTag) *UserUpsert {
+	u.Set(user.FieldMissionTag, v)
+	return u
+}
+
+// UpdateMissionTag sets the "mission_tag" field to the value that was provided on create.
+func (u *UserUpsert) UpdateMissionTag() *UserUpsert {
+	u.SetExcluded(user.FieldMissionTag)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -3292,6 +3334,20 @@ func (u *UserUpsertOne) SetChannel(v enums.UserChannelType) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateChannel() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateChannel()
+	})
+}
+
+// SetMissionTag sets the "mission_tag" field.
+func (u *UserUpsertOne) SetMissionTag(v enums.DeviceMissionTag) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetMissionTag(v)
+	})
+}
+
+// UpdateMissionTag sets the "mission_tag" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateMissionTag() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateMissionTag()
 	})
 }
 
@@ -3915,6 +3971,20 @@ func (u *UserUpsertBulk) SetChannel(v enums.UserChannelType) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateChannel() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateChannel()
+	})
+}
+
+// SetMissionTag sets the "mission_tag" field.
+func (u *UserUpsertBulk) SetMissionTag(v enums.DeviceMissionTag) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetMissionTag(v)
+	})
+}
+
+// UpdateMissionTag sets the "mission_tag" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateMissionTag() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateMissionTag()
 	})
 }
 

@@ -19,6 +19,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/clientversion"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cloudfile"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
@@ -157,6 +158,7 @@ func checkColumn(table, column string) error {
 			cdkinfo.Table:                     cdkinfo.ValidColumn,
 			campaign.Table:                    campaign.ValidColumn,
 			campaignorder.Table:               campaignorder.ValidColumn,
+			clientversion.Table:               clientversion.ValidColumn,
 			cloudfile.Table:                   cloudfile.ValidColumn,
 			collect.Table:                     collect.ValidColumn,
 			costaccount.Table:                 costaccount.ValidColumn,

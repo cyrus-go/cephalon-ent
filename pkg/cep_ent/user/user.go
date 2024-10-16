@@ -72,6 +72,8 @@ const (
 	FieldUserStatus = "user_status"
 	// FieldChannel holds the string denoting the channel field in the database.
 	FieldChannel = "channel"
+	// FieldMissionTag holds the string denoting the mission_tag field in the database.
+	FieldMissionTag = "mission_tag"
 	// EdgeVxAccounts holds the string denoting the vx_accounts edge name in mutations.
 	EdgeVxAccounts = "vx_accounts"
 	// EdgeCollects holds the string denoting the collects edge name in mutations.
@@ -554,6 +556,7 @@ var Columns = []string{
 	FieldBoundAt,
 	FieldUserStatus,
 	FieldChannel,
+	FieldMissionTag,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -656,6 +659,18 @@ func ChannelValidator(c enums.UserChannelType) error {
 		return nil
 	default:
 		return fmt.Errorf("user: invalid enum value for channel field: %q", c)
+	}
+}
+
+const DefaultMissionTag enums.DeviceMissionTag = "no"
+
+// MissionTagValidator is a validator for the "mission_tag" field enum values. It is called by the builders before save.
+func MissionTagValidator(mt enums.DeviceMissionTag) error {
+	switch mt {
+	case "no", "aleo":
+		return nil
+	default:
+		return fmt.Errorf("user: invalid enum value for mission_tag field: %q", mt)
 	}
 }
 
@@ -805,6 +820,11 @@ func ByUserStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByChannel orders the results by the channel field.
 func ByChannel(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldChannel, opts...).ToFunc()
+}
+
+// ByMissionTag orders the results by the mission_tag field.
+func ByMissionTag(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMissionTag, opts...).ToFunc()
 }
 
 // ByVxAccountsCount orders the results by vx_accounts count.

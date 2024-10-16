@@ -22,6 +22,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/clientversion"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cloudfile"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
@@ -114,6 +115,8 @@ type Client struct {
 	Campaign *CampaignClient
 	// CampaignOrder is the client for interacting with the CampaignOrder builders.
 	CampaignOrder *CampaignOrderClient
+	// ClientVersion is the client for interacting with the ClientVersion builders.
+	ClientVersion *ClientVersionClient
 	// CloudFile is the client for interacting with the CloudFile builders.
 	CloudFile *CloudFileClient
 	// Collect is the client for interacting with the Collect builders.
@@ -276,6 +279,7 @@ func (c *Client) init() {
 	c.CDKInfo = NewCDKInfoClient(c.config)
 	c.Campaign = NewCampaignClient(c.config)
 	c.CampaignOrder = NewCampaignOrderClient(c.config)
+	c.ClientVersion = NewClientVersionClient(c.config)
 	c.CloudFile = NewCloudFileClient(c.config)
 	c.Collect = NewCollectClient(c.config)
 	c.CostAccount = NewCostAccountClient(c.config)
@@ -439,6 +443,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CDKInfo:                     NewCDKInfoClient(cfg),
 		Campaign:                    NewCampaignClient(cfg),
 		CampaignOrder:               NewCampaignOrderClient(cfg),
+		ClientVersion:               NewClientVersionClient(cfg),
 		CloudFile:                   NewCloudFileClient(cfg),
 		Collect:                     NewCollectClient(cfg),
 		CostAccount:                 NewCostAccountClient(cfg),
@@ -536,6 +541,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CDKInfo:                     NewCDKInfoClient(cfg),
 		Campaign:                    NewCampaignClient(cfg),
 		CampaignOrder:               NewCampaignOrderClient(cfg),
+		ClientVersion:               NewClientVersionClient(cfg),
 		CloudFile:                   NewCloudFileClient(cfg),
 		Collect:                     NewCollectClient(cfg),
 		CostAccount:                 NewCostAccountClient(cfg),
@@ -637,13 +643,13 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.ApiToken, c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign,
-		c.CampaignOrder, c.CloudFile, c.Collect, c.CostAccount, c.CostBill, c.Device,
-		c.DeviceGpuMission, c.DeviceOfflineRecord, c.DeviceRebootTime, c.DeviceState,
-		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.ExtraService,
-		c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo,
-		c.GiftMissionConfig, c.Gpu, c.GpuPeak, c.HmacKeyPair, c.IncomeManage,
-		c.InputLog, c.Invite, c.InvokeModelOrder, c.LoginRecord, c.Lotto,
-		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
+		c.CampaignOrder, c.ClientVersion, c.CloudFile, c.Collect, c.CostAccount,
+		c.CostBill, c.Device, c.DeviceGpuMission, c.DeviceOfflineRecord,
+		c.DeviceRebootTime, c.DeviceState, c.EarnBill, c.EnumCondition,
+		c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice,
+		c.FrpcInfo, c.FrpsInfo, c.GiftMissionConfig, c.Gpu, c.GpuPeak, c.HmacKeyPair,
+		c.IncomeManage, c.InputLog, c.Invite, c.InvokeModelOrder, c.LoginRecord,
+		c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
 		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
 		c.MissionKeyPair, c.MissionKind, c.MissionLoadBalance,
@@ -664,13 +670,13 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.ApiToken, c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign,
-		c.CampaignOrder, c.CloudFile, c.Collect, c.CostAccount, c.CostBill, c.Device,
-		c.DeviceGpuMission, c.DeviceOfflineRecord, c.DeviceRebootTime, c.DeviceState,
-		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.ExtraService,
-		c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo,
-		c.GiftMissionConfig, c.Gpu, c.GpuPeak, c.HmacKeyPair, c.IncomeManage,
-		c.InputLog, c.Invite, c.InvokeModelOrder, c.LoginRecord, c.Lotto,
-		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
+		c.CampaignOrder, c.ClientVersion, c.CloudFile, c.Collect, c.CostAccount,
+		c.CostBill, c.Device, c.DeviceGpuMission, c.DeviceOfflineRecord,
+		c.DeviceRebootTime, c.DeviceState, c.EarnBill, c.EnumCondition,
+		c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice,
+		c.FrpcInfo, c.FrpsInfo, c.GiftMissionConfig, c.Gpu, c.GpuPeak, c.HmacKeyPair,
+		c.IncomeManage, c.InputLog, c.Invite, c.InvokeModelOrder, c.LoginRecord,
+		c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
 		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
 		c.MissionKeyPair, c.MissionKind, c.MissionLoadBalance,
@@ -703,6 +709,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Campaign.mutate(ctx, m)
 	case *CampaignOrderMutation:
 		return c.CampaignOrder.mutate(ctx, m)
+	case *ClientVersionMutation:
+		return c.ClientVersion.mutate(ctx, m)
 	case *CloudFileMutation:
 		return c.CloudFile.mutate(ctx, m)
 	case *CollectMutation:
@@ -2130,6 +2138,139 @@ func (c *CampaignOrderClient) mutate(ctx context.Context, m *CampaignOrderMutati
 		return (&CampaignOrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown CampaignOrder mutation op: %q", m.Op())
+	}
+}
+
+// ClientVersionClient is a client for the ClientVersion schema.
+type ClientVersionClient struct {
+	config
+}
+
+// NewClientVersionClient returns a client for the ClientVersion from the given config.
+func NewClientVersionClient(c config) *ClientVersionClient {
+	return &ClientVersionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `clientversion.Hooks(f(g(h())))`.
+func (c *ClientVersionClient) Use(hooks ...Hook) {
+	c.hooks.ClientVersion = append(c.hooks.ClientVersion, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `clientversion.Intercept(f(g(h())))`.
+func (c *ClientVersionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ClientVersion = append(c.inters.ClientVersion, interceptors...)
+}
+
+// Create returns a builder for creating a ClientVersion entity.
+func (c *ClientVersionClient) Create() *ClientVersionCreate {
+	mutation := newClientVersionMutation(c.config, OpCreate)
+	return &ClientVersionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ClientVersion entities.
+func (c *ClientVersionClient) CreateBulk(builders ...*ClientVersionCreate) *ClientVersionCreateBulk {
+	return &ClientVersionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ClientVersionClient) MapCreateBulk(slice any, setFunc func(*ClientVersionCreate, int)) *ClientVersionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ClientVersionCreateBulk{err: fmt.Errorf("calling to ClientVersionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ClientVersionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ClientVersionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ClientVersion.
+func (c *ClientVersionClient) Update() *ClientVersionUpdate {
+	mutation := newClientVersionMutation(c.config, OpUpdate)
+	return &ClientVersionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ClientVersionClient) UpdateOne(cv *ClientVersion) *ClientVersionUpdateOne {
+	mutation := newClientVersionMutation(c.config, OpUpdateOne, withClientVersion(cv))
+	return &ClientVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ClientVersionClient) UpdateOneID(id int64) *ClientVersionUpdateOne {
+	mutation := newClientVersionMutation(c.config, OpUpdateOne, withClientVersionID(id))
+	return &ClientVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ClientVersion.
+func (c *ClientVersionClient) Delete() *ClientVersionDelete {
+	mutation := newClientVersionMutation(c.config, OpDelete)
+	return &ClientVersionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ClientVersionClient) DeleteOne(cv *ClientVersion) *ClientVersionDeleteOne {
+	return c.DeleteOneID(cv.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ClientVersionClient) DeleteOneID(id int64) *ClientVersionDeleteOne {
+	builder := c.Delete().Where(clientversion.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ClientVersionDeleteOne{builder}
+}
+
+// Query returns a query builder for ClientVersion.
+func (c *ClientVersionClient) Query() *ClientVersionQuery {
+	return &ClientVersionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeClientVersion},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ClientVersion entity by its id.
+func (c *ClientVersionClient) Get(ctx context.Context, id int64) (*ClientVersion, error) {
+	return c.Query().Where(clientversion.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ClientVersionClient) GetX(ctx context.Context, id int64) *ClientVersion {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ClientVersionClient) Hooks() []Hook {
+	return c.hooks.ClientVersion
+}
+
+// Interceptors returns the client interceptors.
+func (c *ClientVersionClient) Interceptors() []Interceptor {
+	return c.inters.ClientVersion
+}
+
+func (c *ClientVersionClient) mutate(ctx context.Context, m *ClientVersionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ClientVersionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ClientVersionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ClientVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ClientVersionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown ClientVersion mutation op: %q", m.Op())
 	}
 }
 
@@ -15308,38 +15449,38 @@ func (c *WithdrawRecordClient) mutate(ctx context.Context, m *WithdrawRecordMuta
 type (
 	hooks struct {
 		ApiToken, Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder,
-		CloudFile, Collect, CostAccount, CostBill, Device, DeviceGpuMission,
-		DeviceOfflineRecord, DeviceRebootTime, DeviceState, EarnBill, EnumCondition,
-		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
-		FrpcInfo, FrpsInfo, GiftMissionConfig, Gpu, GpuPeak, HmacKeyPair, IncomeManage,
-		InputLog, Invite, InvokeModelOrder, LoginRecord, Lotto, LottoChanceRule,
-		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
-		MissionBatch, MissionCategory, MissionConsumeOrder, MissionExtraService,
-		MissionFailedFeedback, MissionKeyPair, MissionKind, MissionLoadBalance,
-		MissionLoadBalanceAccess, MissionOrder, MissionProduceOrder, MissionProduction,
-		Model, ModelPrice, OutputLog, PlatformAccount, Price, ProfitAccount,
-		ProfitSetting, RechargeCampaignRule, RechargeCampaignRuleOversea,
-		RechargeOrder, RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion,
-		SurveyResponse, Symbol, TransferOrder, TroubleDeduct, User, UserDevice,
-		UserModel, VXAccount, VXSocial, Wallet, WithdrawAccount,
-		WithdrawRecord []ent.Hook
+		ClientVersion, CloudFile, Collect, CostAccount, CostBill, Device,
+		DeviceGpuMission, DeviceOfflineRecord, DeviceRebootTime, DeviceState, EarnBill,
+		EnumCondition, EnumMissionStatus, ExtraService, ExtraServiceOrder,
+		ExtraServicePrice, FrpcInfo, FrpsInfo, GiftMissionConfig, Gpu, GpuPeak,
+		HmacKeyPair, IncomeManage, InputLog, Invite, InvokeModelOrder, LoginRecord,
+		Lotto, LottoChanceRule, LottoGetCountRecord, LottoPrize, LottoRecord,
+		LottoUserCount, Mission, MissionBatch, MissionCategory, MissionConsumeOrder,
+		MissionExtraService, MissionFailedFeedback, MissionKeyPair, MissionKind,
+		MissionLoadBalance, MissionLoadBalanceAccess, MissionOrder,
+		MissionProduceOrder, MissionProduction, Model, ModelPrice, OutputLog,
+		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
+		RechargeCampaignRuleOversea, RechargeOrder, RenewalAgreement, Survey,
+		SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol, TransferOrder,
+		TroubleDeduct, User, UserDevice, UserModel, VXAccount, VXSocial, Wallet,
+		WithdrawAccount, WithdrawRecord []ent.Hook
 	}
 	inters struct {
 		ApiToken, Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder,
-		CloudFile, Collect, CostAccount, CostBill, Device, DeviceGpuMission,
-		DeviceOfflineRecord, DeviceRebootTime, DeviceState, EarnBill, EnumCondition,
-		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
-		FrpcInfo, FrpsInfo, GiftMissionConfig, Gpu, GpuPeak, HmacKeyPair, IncomeManage,
-		InputLog, Invite, InvokeModelOrder, LoginRecord, Lotto, LottoChanceRule,
-		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
-		MissionBatch, MissionCategory, MissionConsumeOrder, MissionExtraService,
-		MissionFailedFeedback, MissionKeyPair, MissionKind, MissionLoadBalance,
-		MissionLoadBalanceAccess, MissionOrder, MissionProduceOrder, MissionProduction,
-		Model, ModelPrice, OutputLog, PlatformAccount, Price, ProfitAccount,
-		ProfitSetting, RechargeCampaignRule, RechargeCampaignRuleOversea,
-		RechargeOrder, RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion,
-		SurveyResponse, Symbol, TransferOrder, TroubleDeduct, User, UserDevice,
-		UserModel, VXAccount, VXSocial, Wallet, WithdrawAccount,
-		WithdrawRecord []ent.Interceptor
+		ClientVersion, CloudFile, Collect, CostAccount, CostBill, Device,
+		DeviceGpuMission, DeviceOfflineRecord, DeviceRebootTime, DeviceState, EarnBill,
+		EnumCondition, EnumMissionStatus, ExtraService, ExtraServiceOrder,
+		ExtraServicePrice, FrpcInfo, FrpsInfo, GiftMissionConfig, Gpu, GpuPeak,
+		HmacKeyPair, IncomeManage, InputLog, Invite, InvokeModelOrder, LoginRecord,
+		Lotto, LottoChanceRule, LottoGetCountRecord, LottoPrize, LottoRecord,
+		LottoUserCount, Mission, MissionBatch, MissionCategory, MissionConsumeOrder,
+		MissionExtraService, MissionFailedFeedback, MissionKeyPair, MissionKind,
+		MissionLoadBalance, MissionLoadBalanceAccess, MissionOrder,
+		MissionProduceOrder, MissionProduction, Model, ModelPrice, OutputLog,
+		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
+		RechargeCampaignRuleOversea, RechargeOrder, RenewalAgreement, Survey,
+		SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol, TransferOrder,
+		TroubleDeduct, User, UserDevice, UserModel, VXAccount, VXSocial, Wallet,
+		WithdrawAccount, WithdrawRecord []ent.Interceptor
 	}
 )

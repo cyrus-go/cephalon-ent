@@ -13,6 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/clientversion"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cloudfile"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
@@ -456,6 +457,45 @@ func init() {
 	campaignorderDescID := campaignorderMixinFields0[0].Descriptor()
 	// campaignorder.DefaultID holds the default value on creation for the id field.
 	campaignorder.DefaultID = campaignorderDescID.Default.(func() int64)
+	clientversionMixin := schema.ClientVersion{}.Mixin()
+	clientversionMixinFields0 := clientversionMixin[0].Fields()
+	_ = clientversionMixinFields0
+	clientversionFields := schema.ClientVersion{}.Fields()
+	_ = clientversionFields
+	// clientversionDescCreatedBy is the schema descriptor for created_by field.
+	clientversionDescCreatedBy := clientversionMixinFields0[1].Descriptor()
+	// clientversion.DefaultCreatedBy holds the default value on creation for the created_by field.
+	clientversion.DefaultCreatedBy = clientversionDescCreatedBy.Default.(int64)
+	// clientversionDescUpdatedBy is the schema descriptor for updated_by field.
+	clientversionDescUpdatedBy := clientversionMixinFields0[2].Descriptor()
+	// clientversion.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	clientversion.DefaultUpdatedBy = clientversionDescUpdatedBy.Default.(int64)
+	// clientversionDescCreatedAt is the schema descriptor for created_at field.
+	clientversionDescCreatedAt := clientversionMixinFields0[3].Descriptor()
+	// clientversion.DefaultCreatedAt holds the default value on creation for the created_at field.
+	clientversion.DefaultCreatedAt = clientversionDescCreatedAt.Default.(func() time.Time)
+	// clientversionDescUpdatedAt is the schema descriptor for updated_at field.
+	clientversionDescUpdatedAt := clientversionMixinFields0[4].Descriptor()
+	// clientversion.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	clientversion.DefaultUpdatedAt = clientversionDescUpdatedAt.Default.(func() time.Time)
+	// clientversion.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	clientversion.UpdateDefaultUpdatedAt = clientversionDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// clientversionDescDeletedAt is the schema descriptor for deleted_at field.
+	clientversionDescDeletedAt := clientversionMixinFields0[5].Descriptor()
+	// clientversion.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	clientversion.DefaultDeletedAt = clientversionDescDeletedAt.Default.(time.Time)
+	// clientversionDescClientURL is the schema descriptor for client_url field.
+	clientversionDescClientURL := clientversionFields[0].Descriptor()
+	// clientversion.DefaultClientURL holds the default value on creation for the client_url field.
+	clientversion.DefaultClientURL = clientversionDescClientURL.Default.(string)
+	// clientversionDescConfigURL is the schema descriptor for config_url field.
+	clientversionDescConfigURL := clientversionFields[1].Descriptor()
+	// clientversion.DefaultConfigURL holds the default value on creation for the config_url field.
+	clientversion.DefaultConfigURL = clientversionDescConfigURL.Default.(string)
+	// clientversionDescID is the schema descriptor for id field.
+	clientversionDescID := clientversionMixinFields0[0].Descriptor()
+	// clientversion.DefaultID holds the default value on creation for the id field.
+	clientversion.DefaultID = clientversionDescID.Default.(func() int64)
 	cloudfileMixin := schema.CloudFile{}.Mixin()
 	cloudfileMixinFields0 := cloudfileMixin[0].Fields()
 	_ = cloudfileMixinFields0

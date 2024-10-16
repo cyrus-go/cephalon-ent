@@ -337,6 +337,33 @@ var (
 			},
 		},
 	}
+	// ClientVersionsColumns holds the columns for the "client_versions" table.
+	ClientVersionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "client_url", Type: field.TypeString, Comment: "客户端文件地址", Default: ""},
+		{Name: "config_url", Type: field.TypeString, Comment: "主配置文件地址", Default: ""},
+		{Name: "version", Type: field.TypeString, Unique: true, Comment: "版本号"},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态：只允许有一条数据的状态为启用（可被自动更新的版本）", Enums: []string{"disable", "enable"}, Default: "disable"},
+	}
+	// ClientVersionsTable holds the schema information for the "client_versions" table.
+	ClientVersionsTable = &schema.Table{
+		Name:       "client_versions",
+		Comment:    "客户端版本，OTA 服务端功能支持",
+		Columns:    ClientVersionsColumns,
+		PrimaryKey: []*schema.Column{ClientVersionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "clientversion_status",
+				Unique:  false,
+				Columns: []*schema.Column{ClientVersionsColumns[9]},
+			},
+		},
+	}
 	// CloudFilesColumns holds the columns for the "cloud_files" table.
 	CloudFilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2925,6 +2952,7 @@ var (
 		{Name: "bound_at", Type: field.TypeTime, Nullable: true, Comment: "用户绑定邀请码的时间"},
 		{Name: "user_status", Type: field.TypeEnum, Comment: "用户状态", Enums: []string{"normal", "frozen", "closed"}, Default: "normal"},
 		{Name: "channel", Type: field.TypeEnum, Comment: "渠道身份，默认为非渠道用户", Enums: []string{"no_channel", "normal_channel"}, Default: "no_channel"},
+		{Name: "mission_tag", Type: field.TypeEnum, Comment: "可跳过验证启动特殊任务类型标签", Enums: []string{"no", "aleo"}, Default: "no"},
 		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "邀请人用户 id", Default: 0},
 		{Name: "applet_parent_id", Type: field.TypeInt64, Nullable: true, Comment: "小程序邀请人用户 id", Default: 0},
 	}
@@ -2937,13 +2965,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_users_children",
-				Columns:    []*schema.Column{UsersColumns[27]},
+				Columns:    []*schema.Column{UsersColumns[28]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "users_users_applet_children",
-				Columns:    []*schema.Column{UsersColumns[28]},
+				Columns:    []*schema.Column{UsersColumns[29]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2962,12 +2990,12 @@ var (
 			{
 				Name:    "user_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[27]},
+				Columns: []*schema.Column{UsersColumns[28]},
 			},
 			{
 				Name:    "user_applet_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[28]},
+				Columns: []*schema.Column{UsersColumns[29]},
 			},
 			{
 				Name:    "user_channel",
@@ -3307,6 +3335,7 @@ var (
 		CdkInfosTable,
 		CampaignsTable,
 		CampaignOrdersTable,
+		ClientVersionsTable,
 		CloudFilesTable,
 		CollectsTable,
 		CostAccountsTable,
@@ -3407,6 +3436,7 @@ func init() {
 	CampaignOrdersTable.ForeignKeys[0].RefTable = CampaignsTable
 	CampaignOrdersTable.ForeignKeys[1].RefTable = UsersTable
 	CampaignOrdersTable.Annotation = &entsql.Annotation{}
+	ClientVersionsTable.Annotation = &entsql.Annotation{}
 	CloudFilesTable.ForeignKeys[0].RefTable = UsersTable
 	CloudFilesTable.Annotation = &entsql.Annotation{}
 	CollectsTable.ForeignKeys[0].RefTable = UsersTable

@@ -78,6 +78,8 @@ type User struct {
 	UserStatus enums.UserStatus `json:"user_status"`
 	// 渠道身份，默认为非渠道用户
 	Channel enums.UserChannelType `json:"channel"`
+	// 可跳过验证启动特殊任务类型标签
+	MissionTag enums.DeviceMissionTag `json:"mission_tag"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -681,7 +683,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID, user.FieldAppletParentID, user.FieldCloudSpace:
 			values[i] = new(sql.NullInt64)
-		case user.FieldName, user.FieldNickName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion, user.FieldAreaCode, user.FieldEmail, user.FieldGithubID, user.FieldGoogleID, user.FieldBaiduAccessToken, user.FieldBaiduRefreshToken, user.FieldUserStatus, user.FieldChannel:
+		case user.FieldName, user.FieldNickName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion, user.FieldAreaCode, user.FieldEmail, user.FieldGithubID, user.FieldGoogleID, user.FieldBaiduAccessToken, user.FieldBaiduRefreshToken, user.FieldUserStatus, user.FieldChannel, user.FieldMissionTag:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldBoundAt:
 			values[i] = new(sql.NullTime)
@@ -874,6 +876,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field channel", values[i])
 			} else if value.Valid {
 				u.Channel = enums.UserChannelType(value.String)
+			}
+		case user.FieldMissionTag:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mission_tag", values[i])
+			} else if value.Valid {
+				u.MissionTag = enums.DeviceMissionTag(value.String)
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -1247,6 +1255,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("channel=")
 	builder.WriteString(fmt.Sprintf("%v", u.Channel))
+	builder.WriteString(", ")
+	builder.WriteString("mission_tag=")
+	builder.WriteString(fmt.Sprintf("%v", u.MissionTag))
 	builder.WriteByte(')')
 	return builder.String()
 }

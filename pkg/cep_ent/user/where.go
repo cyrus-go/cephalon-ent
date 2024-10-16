@@ -1531,6 +1531,36 @@ func ChannelNotIn(vs ...enums.UserChannelType) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldChannel, v...))
 }
 
+// MissionTagEQ applies the EQ predicate on the "mission_tag" field.
+func MissionTagEQ(v enums.DeviceMissionTag) predicate.User {
+	vc := v
+	return predicate.User(sql.FieldEQ(FieldMissionTag, vc))
+}
+
+// MissionTagNEQ applies the NEQ predicate on the "mission_tag" field.
+func MissionTagNEQ(v enums.DeviceMissionTag) predicate.User {
+	vc := v
+	return predicate.User(sql.FieldNEQ(FieldMissionTag, vc))
+}
+
+// MissionTagIn applies the In predicate on the "mission_tag" field.
+func MissionTagIn(vs ...enums.DeviceMissionTag) predicate.User {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(sql.FieldIn(FieldMissionTag, v...))
+}
+
+// MissionTagNotIn applies the NotIn predicate on the "mission_tag" field.
+func MissionTagNotIn(vs ...enums.DeviceMissionTag) predicate.User {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(sql.FieldNotIn(FieldMissionTag, v...))
+}
+
 // HasVxAccounts applies the HasEdge predicate on the "vx_accounts" edge.
 func HasVxAccounts() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

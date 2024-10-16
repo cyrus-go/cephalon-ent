@@ -18,6 +18,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/clientversion"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cloudfile"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
@@ -109,6 +110,7 @@ const (
 	TypeCDKInfo                     = "CDKInfo"
 	TypeCampaign                    = "Campaign"
 	TypeCampaignOrder               = "CampaignOrder"
+	TypeClientVersion               = "ClientVersion"
 	TypeCloudFile                   = "CloudFile"
 	TypeCollect                     = "Collect"
 	TypeCostAccount                 = "CostAccount"
@@ -8616,6 +8618,839 @@ func (m *CampaignOrderMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown CampaignOrder edge %s", name)
+}
+
+// ClientVersionMutation represents an operation that mutates the ClientVersion nodes in the graph.
+type ClientVersionMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int64
+	created_by    *int64
+	addcreated_by *int64
+	updated_by    *int64
+	addupdated_by *int64
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	client_url    *string
+	config_url    *string
+	version       *string
+	status        *enums.ClientStatus
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ClientVersion, error)
+	predicates    []predicate.ClientVersion
+}
+
+var _ ent.Mutation = (*ClientVersionMutation)(nil)
+
+// clientversionOption allows management of the mutation configuration using functional options.
+type clientversionOption func(*ClientVersionMutation)
+
+// newClientVersionMutation creates new mutation for the ClientVersion entity.
+func newClientVersionMutation(c config, op Op, opts ...clientversionOption) *ClientVersionMutation {
+	m := &ClientVersionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeClientVersion,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withClientVersionID sets the ID field of the mutation.
+func withClientVersionID(id int64) clientversionOption {
+	return func(m *ClientVersionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ClientVersion
+		)
+		m.oldValue = func(ctx context.Context) (*ClientVersion, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ClientVersion.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withClientVersion sets the old ClientVersion of the mutation.
+func withClientVersion(node *ClientVersion) clientversionOption {
+	return func(m *ClientVersionMutation) {
+		m.oldValue = func(context.Context) (*ClientVersion, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ClientVersionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ClientVersionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ClientVersion entities.
+func (m *ClientVersionMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ClientVersionMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ClientVersionMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ClientVersion.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *ClientVersionMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *ClientVersionMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the ClientVersion entity.
+// If the ClientVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClientVersionMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *ClientVersionMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *ClientVersionMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *ClientVersionMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *ClientVersionMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *ClientVersionMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the ClientVersion entity.
+// If the ClientVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClientVersionMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *ClientVersionMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *ClientVersionMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *ClientVersionMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ClientVersionMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ClientVersionMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ClientVersion entity.
+// If the ClientVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClientVersionMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ClientVersionMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ClientVersionMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ClientVersionMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ClientVersion entity.
+// If the ClientVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClientVersionMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ClientVersionMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *ClientVersionMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *ClientVersionMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the ClientVersion entity.
+// If the ClientVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClientVersionMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *ClientVersionMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetClientURL sets the "client_url" field.
+func (m *ClientVersionMutation) SetClientURL(s string) {
+	m.client_url = &s
+}
+
+// ClientURL returns the value of the "client_url" field in the mutation.
+func (m *ClientVersionMutation) ClientURL() (r string, exists bool) {
+	v := m.client_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClientURL returns the old "client_url" field's value of the ClientVersion entity.
+// If the ClientVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClientVersionMutation) OldClientURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldClientURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldClientURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClientURL: %w", err)
+	}
+	return oldValue.ClientURL, nil
+}
+
+// ResetClientURL resets all changes to the "client_url" field.
+func (m *ClientVersionMutation) ResetClientURL() {
+	m.client_url = nil
+}
+
+// SetConfigURL sets the "config_url" field.
+func (m *ClientVersionMutation) SetConfigURL(s string) {
+	m.config_url = &s
+}
+
+// ConfigURL returns the value of the "config_url" field in the mutation.
+func (m *ClientVersionMutation) ConfigURL() (r string, exists bool) {
+	v := m.config_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldConfigURL returns the old "config_url" field's value of the ClientVersion entity.
+// If the ClientVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClientVersionMutation) OldConfigURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldConfigURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldConfigURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldConfigURL: %w", err)
+	}
+	return oldValue.ConfigURL, nil
+}
+
+// ResetConfigURL resets all changes to the "config_url" field.
+func (m *ClientVersionMutation) ResetConfigURL() {
+	m.config_url = nil
+}
+
+// SetVersion sets the "version" field.
+func (m *ClientVersionMutation) SetVersion(s string) {
+	m.version = &s
+}
+
+// Version returns the value of the "version" field in the mutation.
+func (m *ClientVersionMutation) Version() (r string, exists bool) {
+	v := m.version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersion returns the old "version" field's value of the ClientVersion entity.
+// If the ClientVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClientVersionMutation) OldVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+	}
+	return oldValue.Version, nil
+}
+
+// ResetVersion resets all changes to the "version" field.
+func (m *ClientVersionMutation) ResetVersion() {
+	m.version = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *ClientVersionMutation) SetStatus(es enums.ClientStatus) {
+	m.status = &es
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *ClientVersionMutation) Status() (r enums.ClientStatus, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the ClientVersion entity.
+// If the ClientVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ClientVersionMutation) OldStatus(ctx context.Context) (v enums.ClientStatus, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *ClientVersionMutation) ResetStatus() {
+	m.status = nil
+}
+
+// Where appends a list predicates to the ClientVersionMutation builder.
+func (m *ClientVersionMutation) Where(ps ...predicate.ClientVersion) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ClientVersionMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ClientVersionMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ClientVersion, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ClientVersionMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ClientVersionMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ClientVersion).
+func (m *ClientVersionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ClientVersionMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.created_by != nil {
+		fields = append(fields, clientversion.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, clientversion.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, clientversion.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, clientversion.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, clientversion.FieldDeletedAt)
+	}
+	if m.client_url != nil {
+		fields = append(fields, clientversion.FieldClientURL)
+	}
+	if m.config_url != nil {
+		fields = append(fields, clientversion.FieldConfigURL)
+	}
+	if m.version != nil {
+		fields = append(fields, clientversion.FieldVersion)
+	}
+	if m.status != nil {
+		fields = append(fields, clientversion.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ClientVersionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case clientversion.FieldCreatedBy:
+		return m.CreatedBy()
+	case clientversion.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case clientversion.FieldCreatedAt:
+		return m.CreatedAt()
+	case clientversion.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case clientversion.FieldDeletedAt:
+		return m.DeletedAt()
+	case clientversion.FieldClientURL:
+		return m.ClientURL()
+	case clientversion.FieldConfigURL:
+		return m.ConfigURL()
+	case clientversion.FieldVersion:
+		return m.Version()
+	case clientversion.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ClientVersionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case clientversion.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case clientversion.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case clientversion.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case clientversion.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case clientversion.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case clientversion.FieldClientURL:
+		return m.OldClientURL(ctx)
+	case clientversion.FieldConfigURL:
+		return m.OldConfigURL(ctx)
+	case clientversion.FieldVersion:
+		return m.OldVersion(ctx)
+	case clientversion.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown ClientVersion field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ClientVersionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case clientversion.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case clientversion.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case clientversion.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case clientversion.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case clientversion.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case clientversion.FieldClientURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClientURL(v)
+		return nil
+	case clientversion.FieldConfigURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetConfigURL(v)
+		return nil
+	case clientversion.FieldVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersion(v)
+		return nil
+	case clientversion.FieldStatus:
+		v, ok := value.(enums.ClientStatus)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ClientVersion field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ClientVersionMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, clientversion.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, clientversion.FieldUpdatedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ClientVersionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case clientversion.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case clientversion.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ClientVersionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case clientversion.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case clientversion.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ClientVersion numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ClientVersionMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ClientVersionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ClientVersionMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ClientVersion nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ClientVersionMutation) ResetField(name string) error {
+	switch name {
+	case clientversion.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case clientversion.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case clientversion.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case clientversion.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case clientversion.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case clientversion.FieldClientURL:
+		m.ResetClientURL()
+		return nil
+	case clientversion.FieldConfigURL:
+		m.ResetConfigURL()
+		return nil
+	case clientversion.FieldVersion:
+		m.ResetVersion()
+		return nil
+	case clientversion.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown ClientVersion field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ClientVersionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ClientVersionMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ClientVersionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ClientVersionMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ClientVersionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ClientVersionMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ClientVersionMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ClientVersion unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ClientVersionMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ClientVersion edge %s", name)
 }
 
 // CloudFileMutation represents an operation that mutates the CloudFile nodes in the graph.
@@ -90872,6 +91707,7 @@ type UserMutation struct {
 	bound_at                        *time.Time
 	user_status                     *enums.UserStatus
 	channel                         *enums.UserChannelType
+	mission_tag                     *enums.DeviceMissionTag
 	clearedFields                   map[string]struct{}
 	vx_accounts                     map[int64]struct{}
 	removedvx_accounts              map[int64]struct{}
@@ -92209,6 +93045,42 @@ func (m *UserMutation) OldChannel(ctx context.Context) (v enums.UserChannelType,
 // ResetChannel resets all changes to the "channel" field.
 func (m *UserMutation) ResetChannel() {
 	m.channel = nil
+}
+
+// SetMissionTag sets the "mission_tag" field.
+func (m *UserMutation) SetMissionTag(emt enums.DeviceMissionTag) {
+	m.mission_tag = &emt
+}
+
+// MissionTag returns the value of the "mission_tag" field in the mutation.
+func (m *UserMutation) MissionTag() (r enums.DeviceMissionTag, exists bool) {
+	v := m.mission_tag
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionTag returns the old "mission_tag" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldMissionTag(ctx context.Context) (v enums.DeviceMissionTag, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionTag is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionTag requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionTag: %w", err)
+	}
+	return oldValue.MissionTag, nil
+}
+
+// ResetMissionTag resets all changes to the "mission_tag" field.
+func (m *UserMutation) ResetMissionTag() {
+	m.mission_tag = nil
 }
 
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by ids.
@@ -94900,7 +95772,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 28)
+	fields := make([]string, 0, 29)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -94985,6 +95857,9 @@ func (m *UserMutation) Fields() []string {
 	if m.channel != nil {
 		fields = append(fields, user.FieldChannel)
 	}
+	if m.mission_tag != nil {
+		fields = append(fields, user.FieldMissionTag)
+	}
 	return fields
 }
 
@@ -95049,6 +95924,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.UserStatus()
 	case user.FieldChannel:
 		return m.Channel()
+	case user.FieldMissionTag:
+		return m.MissionTag()
 	}
 	return nil, false
 }
@@ -95114,6 +95991,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldUserStatus(ctx)
 	case user.FieldChannel:
 		return m.OldChannel(ctx)
+	case user.FieldMissionTag:
+		return m.OldMissionTag(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -95319,6 +96198,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetChannel(v)
 		return nil
+	case user.FieldMissionTag:
+		v, ok := value.(enums.DeviceMissionTag)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionTag(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -95499,6 +96385,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldChannel:
 		m.ResetChannel()
+		return nil
+	case user.FieldMissionTag:
+		m.ResetMissionTag()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

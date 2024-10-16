@@ -27,6 +27,9 @@ type Campaign func(*sql.Selector)
 // CampaignOrder is the predicate function for campaignorder builders.
 type CampaignOrder func(*sql.Selector)
 
+// ClientVersion is the predicate function for clientversion builders.
+type ClientVersion func(*sql.Selector)
+
 // CloudFile is the predicate function for cloudfile builders.
 type CloudFile func(*sql.Selector)
 
