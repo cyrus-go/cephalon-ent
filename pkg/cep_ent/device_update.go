@@ -569,6 +569,20 @@ func (du *DeviceUpdate) SetNillableHostingType(eht *enums.DeviceHostingType) *De
 	return du
 }
 
+// SetMissionTag sets the "mission_tag" field.
+func (du *DeviceUpdate) SetMissionTag(emt enums.DeviceMissionTag) *DeviceUpdate {
+	du.mutation.SetMissionTag(emt)
+	return du
+}
+
+// SetNillableMissionTag sets the "mission_tag" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableMissionTag(emt *enums.DeviceMissionTag) *DeviceUpdate {
+	if emt != nil {
+		du.SetMissionTag(*emt)
+	}
+	return du
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (du *DeviceUpdate) SetUser(u *User) *DeviceUpdate {
 	return du.SetUserID(u.ID)
@@ -1070,6 +1084,11 @@ func (du *DeviceUpdate) check() error {
 			return &ValidationError{Name: "hosting_type", err: fmt.Errorf(`cep_ent: validator failed for field "Device.hosting_type": %w`, err)}
 		}
 	}
+	if v, ok := du.mutation.MissionTag(); ok {
+		if err := device.MissionTagValidator(v); err != nil {
+			return &ValidationError{Name: "mission_tag", err: fmt.Errorf(`cep_ent: validator failed for field "Device.mission_tag": %w`, err)}
+		}
+	}
 	if _, ok := du.mutation.UserID(); du.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Device.user"`)
 	}
@@ -1232,6 +1251,9 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.HostingType(); ok {
 		_spec.SetField(device.FieldHostingType, field.TypeEnum, value)
+	}
+	if value, ok := du.mutation.MissionTag(); ok {
+		_spec.SetField(device.FieldMissionTag, field.TypeEnum, value)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2334,6 +2356,20 @@ func (duo *DeviceUpdateOne) SetNillableHostingType(eht *enums.DeviceHostingType)
 	return duo
 }
 
+// SetMissionTag sets the "mission_tag" field.
+func (duo *DeviceUpdateOne) SetMissionTag(emt enums.DeviceMissionTag) *DeviceUpdateOne {
+	duo.mutation.SetMissionTag(emt)
+	return duo
+}
+
+// SetNillableMissionTag sets the "mission_tag" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableMissionTag(emt *enums.DeviceMissionTag) *DeviceUpdateOne {
+	if emt != nil {
+		duo.SetMissionTag(*emt)
+	}
+	return duo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (duo *DeviceUpdateOne) SetUser(u *User) *DeviceUpdateOne {
 	return duo.SetUserID(u.ID)
@@ -2848,6 +2884,11 @@ func (duo *DeviceUpdateOne) check() error {
 			return &ValidationError{Name: "hosting_type", err: fmt.Errorf(`cep_ent: validator failed for field "Device.hosting_type": %w`, err)}
 		}
 	}
+	if v, ok := duo.mutation.MissionTag(); ok {
+		if err := device.MissionTagValidator(v); err != nil {
+			return &ValidationError{Name: "mission_tag", err: fmt.Errorf(`cep_ent: validator failed for field "Device.mission_tag": %w`, err)}
+		}
+	}
 	if _, ok := duo.mutation.UserID(); duo.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Device.user"`)
 	}
@@ -3027,6 +3068,9 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if value, ok := duo.mutation.HostingType(); ok {
 		_spec.SetField(device.FieldHostingType, field.TypeEnum, value)
+	}
+	if value, ok := duo.mutation.MissionTag(); ok {
+		_spec.SetField(device.FieldMissionTag, field.TypeEnum, value)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

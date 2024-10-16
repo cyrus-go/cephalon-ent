@@ -490,6 +490,20 @@ func (dc *DeviceCreate) SetNillableHostingType(eht *enums.DeviceHostingType) *De
 	return dc
 }
 
+// SetMissionTag sets the "mission_tag" field.
+func (dc *DeviceCreate) SetMissionTag(emt enums.DeviceMissionTag) *DeviceCreate {
+	dc.mutation.SetMissionTag(emt)
+	return dc
+}
+
+// SetNillableMissionTag sets the "mission_tag" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableMissionTag(emt *enums.DeviceMissionTag) *DeviceCreate {
+	if emt != nil {
+		dc.SetMissionTag(*emt)
+	}
+	return dc
+}
+
 // SetID sets the "id" field.
 func (dc *DeviceCreate) SetID(i int64) *DeviceCreate {
 	dc.mutation.SetID(i)
@@ -842,6 +856,10 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultHostingType
 		dc.mutation.SetHostingType(v)
 	}
+	if _, ok := dc.mutation.MissionTag(); !ok {
+		v := device.DefaultMissionTag
+		dc.mutation.SetMissionTag(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := device.DefaultID()
 		dc.mutation.SetID(v)
@@ -975,6 +993,14 @@ func (dc *DeviceCreate) check() error {
 	if v, ok := dc.mutation.HostingType(); ok {
 		if err := device.HostingTypeValidator(v); err != nil {
 			return &ValidationError{Name: "hosting_type", err: fmt.Errorf(`cep_ent: validator failed for field "Device.hosting_type": %w`, err)}
+		}
+	}
+	if _, ok := dc.mutation.MissionTag(); !ok {
+		return &ValidationError{Name: "mission_tag", err: errors.New(`cep_ent: missing required field "Device.mission_tag"`)}
+	}
+	if v, ok := dc.mutation.MissionTag(); ok {
+		if err := device.MissionTagValidator(v); err != nil {
+			return &ValidationError{Name: "mission_tag", err: fmt.Errorf(`cep_ent: validator failed for field "Device.mission_tag": %w`, err)}
 		}
 	}
 	if _, ok := dc.mutation.UserID(); !ok {
@@ -1146,6 +1172,10 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	if value, ok := dc.mutation.HostingType(); ok {
 		_spec.SetField(device.FieldHostingType, field.TypeEnum, value)
 		_node.HostingType = value
+	}
+	if value, ok := dc.mutation.MissionTag(); ok {
+		_spec.SetField(device.FieldMissionTag, field.TypeEnum, value)
+		_node.MissionTag = value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1877,6 +1907,18 @@ func (u *DeviceUpsert) UpdateHostingType() *DeviceUpsert {
 	return u
 }
 
+// SetMissionTag sets the "mission_tag" field.
+func (u *DeviceUpsert) SetMissionTag(v enums.DeviceMissionTag) *DeviceUpsert {
+	u.Set(device.FieldMissionTag, v)
+	return u
+}
+
+// UpdateMissionTag sets the "mission_tag" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateMissionTag() *DeviceUpsert {
+	u.SetExcluded(device.FieldMissionTag)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2471,6 +2513,20 @@ func (u *DeviceUpsertOne) SetHostingType(v enums.DeviceHostingType) *DeviceUpser
 func (u *DeviceUpsertOne) UpdateHostingType() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateHostingType()
+	})
+}
+
+// SetMissionTag sets the "mission_tag" field.
+func (u *DeviceUpsertOne) SetMissionTag(v enums.DeviceMissionTag) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetMissionTag(v)
+	})
+}
+
+// UpdateMissionTag sets the "mission_tag" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateMissionTag() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateMissionTag()
 	})
 }
 
@@ -3237,6 +3293,20 @@ func (u *DeviceUpsertBulk) SetHostingType(v enums.DeviceHostingType) *DeviceUpse
 func (u *DeviceUpsertBulk) UpdateHostingType() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateHostingType()
+	})
+}
+
+// SetMissionTag sets the "mission_tag" field.
+func (u *DeviceUpsertBulk) SetMissionTag(v enums.DeviceMissionTag) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetMissionTag(v)
+	})
+}
+
+// UpdateMissionTag sets the "mission_tag" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateMissionTag() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateMissionTag()
 	})
 }
 

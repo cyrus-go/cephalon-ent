@@ -83,6 +83,8 @@ const (
 	FieldHighTemperatureAt = "high_temperature_at"
 	// FieldHostingType holds the string denoting the hosting_type field in the database.
 	FieldHostingType = "hosting_type"
+	// FieldMissionTag holds the string denoting the mission_tag field in the database.
+	FieldMissionTag = "mission_tag"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeGiftMissionConfig holds the string denoting the gift_mission_config edge name in mutations.
@@ -240,6 +242,7 @@ var Columns = []string{
 	FieldStabilityAt,
 	FieldHighTemperatureAt,
 	FieldHostingType,
+	FieldMissionTag,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -422,6 +425,18 @@ func HostingTypeValidator(ht enums.DeviceHostingType) error {
 	}
 }
 
+const DefaultMissionTag enums.DeviceMissionTag = "no"
+
+// MissionTagValidator is a validator for the "mission_tag" field enum values. It is called by the builders before save.
+func MissionTagValidator(mt enums.DeviceMissionTag) error {
+	switch mt {
+	case "no", "aleo":
+		return nil
+	default:
+		return fmt.Errorf("device: invalid enum value for mission_tag field: %q", mt)
+	}
+}
+
 // OrderOption defines the ordering options for the Device queries.
 type OrderOption func(*sql.Selector)
 
@@ -593,6 +608,11 @@ func ByHighTemperatureAt(opts ...sql.OrderTermOption) OrderOption {
 // ByHostingType orders the results by the hosting_type field.
 func ByHostingType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldHostingType, opts...).ToFunc()
+}
+
+// ByMissionTag orders the results by the mission_tag field.
+func ByMissionTag(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMissionTag, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

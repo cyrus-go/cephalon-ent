@@ -1461,6 +1461,36 @@ func HostingTypeNotIn(vs ...enums.DeviceHostingType) predicate.Device {
 	return predicate.Device(sql.FieldNotIn(FieldHostingType, v...))
 }
 
+// MissionTagEQ applies the EQ predicate on the "mission_tag" field.
+func MissionTagEQ(v enums.DeviceMissionTag) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldEQ(FieldMissionTag, vc))
+}
+
+// MissionTagNEQ applies the NEQ predicate on the "mission_tag" field.
+func MissionTagNEQ(v enums.DeviceMissionTag) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldNEQ(FieldMissionTag, vc))
+}
+
+// MissionTagIn applies the In predicate on the "mission_tag" field.
+func MissionTagIn(vs ...enums.DeviceMissionTag) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldIn(FieldMissionTag, v...))
+}
+
+// MissionTagNotIn applies the NotIn predicate on the "mission_tag" field.
+func MissionTagNotIn(vs ...enums.DeviceMissionTag) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldNotIn(FieldMissionTag, v...))
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {

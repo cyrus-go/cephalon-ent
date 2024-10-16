@@ -87,6 +87,8 @@ type Device struct {
 	HighTemperatureAt *time.Time `json:"high_temperature_at"`
 	// 托管类型，非托管/半托管/全托管等
 	HostingType enums.DeviceHostingType `json:"hosting_type"`
+	// 可接特殊任务类型标签
+	MissionTag enums.DeviceMissionTag `json:"mission_tag"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges        DeviceEdges `json:"edges"`
@@ -262,7 +264,7 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldGiftMissionConfigID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory, device.FieldFreeGpuNum:
 			values[i] = new(sql.NullInt64)
-		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability, device.FieldVersion, device.FieldFault, device.FieldRank, device.FieldHostingType:
+		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability, device.FieldVersion, device.FieldFault, device.FieldRank, device.FieldHostingType, device.FieldMissionTag:
 			values[i] = new(sql.NullString)
 		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt, device.FieldRankAt, device.FieldStabilityAt, device.FieldHighTemperatureAt:
 			values[i] = new(sql.NullTime)
@@ -490,6 +492,12 @@ func (d *Device) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				d.HostingType = enums.DeviceHostingType(value.String)
 			}
+		case device.FieldMissionTag:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mission_tag", values[i])
+			} else if value.Valid {
+				d.MissionTag = enums.DeviceMissionTag(value.String)
+			}
 		default:
 			d.selectValues.Set(columns[i], values[i])
 		}
@@ -695,6 +703,9 @@ func (d *Device) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("hosting_type=")
 	builder.WriteString(fmt.Sprintf("%v", d.HostingType))
+	builder.WriteString(", ")
+	builder.WriteString("mission_tag=")
+	builder.WriteString(fmt.Sprintf("%v", d.MissionTag))
 	builder.WriteByte(')')
 	return builder.String()
 }

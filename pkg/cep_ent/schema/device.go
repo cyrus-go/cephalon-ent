@@ -46,6 +46,7 @@ func (Device) Fields() []ent.Field {
 		field.Time("stability_at").Default(time.Now).Optional().Nillable().StructTag(`json:"stability_at"`).Comment("判定稳定性的时刻，带时区"),
 		field.Time("high_temperature_at").Default(time.Now).Optional().Nillable().StructTag(`json:"high_temperature_at"`).Comment("温度超标的时刻，带时区"),
 		field.Enum("hosting_type").GoType(enums.DeviceHostingTypeNo).Default(string(enums.DeviceHostingTypeNo)).StructTag(`json:"hosting_type"`).Comment("托管类型，非托管/半托管/全托管等"),
+		field.Enum("mission_tag").GoType(enums.DeviceMissionTagNo).Default(string(enums.DeviceMissionTagNo)).StructTag(`json:"mission_tag"`).Comment("可接特殊任务类型标签"),
 	}
 }
 

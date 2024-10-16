@@ -540,6 +540,7 @@ var (
 		{Name: "stability_at", Type: field.TypeTime, Nullable: true, Comment: "判定稳定性的时刻，带时区"},
 		{Name: "high_temperature_at", Type: field.TypeTime, Nullable: true, Comment: "温度超标的时刻，带时区"},
 		{Name: "hosting_type", Type: field.TypeEnum, Comment: "托管类型，非托管/半托管/全托管等", Enums: []string{"no", "half", "full"}, Default: "no"},
+		{Name: "mission_tag", Type: field.TypeEnum, Comment: "可接特殊任务类型标签", Enums: []string{"no", "aleo"}, Default: "no"},
 		{Name: "gift_mission_config_id", Type: field.TypeInt64, Comment: "外键补贴任务配置 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
@@ -552,13 +553,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "devices_gift_mission_configs_devices",
-				Columns:    []*schema.Column{DevicesColumns[32]},
+				Columns:    []*schema.Column{DevicesColumns[33]},
 				RefColumns: []*schema.Column{GiftMissionConfigsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "devices_users_devices",
-				Columns:    []*schema.Column{DevicesColumns[33]},
+				Columns:    []*schema.Column{DevicesColumns[34]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -567,7 +568,7 @@ var (
 			{
 				Name:    "device_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{DevicesColumns[33]},
+				Columns: []*schema.Column{DevicesColumns[34]},
 			},
 		},
 	}

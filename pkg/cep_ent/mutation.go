@@ -13775,6 +13775,7 @@ type DeviceMutation struct {
 	stability_at                    *time.Time
 	high_temperature_at             *time.Time
 	hosting_type                    *enums.DeviceHostingType
+	mission_tag                     *enums.DeviceMissionTag
 	clearedFields                   map[string]struct{}
 	user                            *int64
 	cleareduser                     bool
@@ -15362,6 +15363,42 @@ func (m *DeviceMutation) ResetHostingType() {
 	m.hosting_type = nil
 }
 
+// SetMissionTag sets the "mission_tag" field.
+func (m *DeviceMutation) SetMissionTag(emt enums.DeviceMissionTag) {
+	m.mission_tag = &emt
+}
+
+// MissionTag returns the value of the "mission_tag" field in the mutation.
+func (m *DeviceMutation) MissionTag() (r enums.DeviceMissionTag, exists bool) {
+	v := m.mission_tag
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionTag returns the old "mission_tag" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldMissionTag(ctx context.Context) (v enums.DeviceMissionTag, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionTag is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionTag requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionTag: %w", err)
+	}
+	return oldValue.MissionTag, nil
+}
+
+// ResetMissionTag resets all changes to the "mission_tag" field.
+func (m *DeviceMutation) ResetMissionTag() {
+	m.mission_tag = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *DeviceMutation) ClearUser() {
 	m.cleareduser = true
@@ -16044,7 +16081,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 33)
+	fields := make([]string, 0, 34)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -16144,6 +16181,9 @@ func (m *DeviceMutation) Fields() []string {
 	if m.hosting_type != nil {
 		fields = append(fields, device.FieldHostingType)
 	}
+	if m.mission_tag != nil {
+		fields = append(fields, device.FieldMissionTag)
+	}
 	return fields
 }
 
@@ -16218,6 +16258,8 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.HighTemperatureAt()
 	case device.FieldHostingType:
 		return m.HostingType()
+	case device.FieldMissionTag:
+		return m.MissionTag()
 	}
 	return nil, false
 }
@@ -16293,6 +16335,8 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldHighTemperatureAt(ctx)
 	case device.FieldHostingType:
 		return m.OldHostingType(ctx)
+	case device.FieldMissionTag:
+		return m.OldMissionTag(ctx)
 	}
 	return nil, fmt.Errorf("unknown Device field %s", name)
 }
@@ -16532,6 +16576,13 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetHostingType(v)
+		return nil
+	case device.FieldMissionTag:
+		v, ok := value.(enums.DeviceMissionTag)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionTag(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
@@ -16830,6 +16881,9 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldHostingType:
 		m.ResetHostingType()
+		return nil
+	case device.FieldMissionTag:
+		m.ResetMissionTag()
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
