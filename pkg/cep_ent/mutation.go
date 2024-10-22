@@ -14611,6 +14611,7 @@ type DeviceMutation struct {
 	high_temperature_at             *time.Time
 	hosting_type                    *enums.DeviceHostingType
 	mission_tag                     *enums.DeviceMissionTag
+	last_abnormal_at                *time.Time
 	clearedFields                   map[string]struct{}
 	user                            *int64
 	cleareduser                     bool
@@ -16234,6 +16235,55 @@ func (m *DeviceMutation) ResetMissionTag() {
 	m.mission_tag = nil
 }
 
+// SetLastAbnormalAt sets the "last_abnormal_at" field.
+func (m *DeviceMutation) SetLastAbnormalAt(t time.Time) {
+	m.last_abnormal_at = &t
+}
+
+// LastAbnormalAt returns the value of the "last_abnormal_at" field in the mutation.
+func (m *DeviceMutation) LastAbnormalAt() (r time.Time, exists bool) {
+	v := m.last_abnormal_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastAbnormalAt returns the old "last_abnormal_at" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldLastAbnormalAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastAbnormalAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastAbnormalAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastAbnormalAt: %w", err)
+	}
+	return oldValue.LastAbnormalAt, nil
+}
+
+// ClearLastAbnormalAt clears the value of the "last_abnormal_at" field.
+func (m *DeviceMutation) ClearLastAbnormalAt() {
+	m.last_abnormal_at = nil
+	m.clearedFields[device.FieldLastAbnormalAt] = struct{}{}
+}
+
+// LastAbnormalAtCleared returns if the "last_abnormal_at" field was cleared in this mutation.
+func (m *DeviceMutation) LastAbnormalAtCleared() bool {
+	_, ok := m.clearedFields[device.FieldLastAbnormalAt]
+	return ok
+}
+
+// ResetLastAbnormalAt resets all changes to the "last_abnormal_at" field.
+func (m *DeviceMutation) ResetLastAbnormalAt() {
+	m.last_abnormal_at = nil
+	delete(m.clearedFields, device.FieldLastAbnormalAt)
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *DeviceMutation) ClearUser() {
 	m.cleareduser = true
@@ -16916,7 +16966,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 34)
+	fields := make([]string, 0, 35)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -17019,6 +17069,9 @@ func (m *DeviceMutation) Fields() []string {
 	if m.mission_tag != nil {
 		fields = append(fields, device.FieldMissionTag)
 	}
+	if m.last_abnormal_at != nil {
+		fields = append(fields, device.FieldLastAbnormalAt)
+	}
 	return fields
 }
 
@@ -17095,6 +17148,8 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.HostingType()
 	case device.FieldMissionTag:
 		return m.MissionTag()
+	case device.FieldLastAbnormalAt:
+		return m.LastAbnormalAt()
 	}
 	return nil, false
 }
@@ -17172,6 +17227,8 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldHostingType(ctx)
 	case device.FieldMissionTag:
 		return m.OldMissionTag(ctx)
+	case device.FieldLastAbnormalAt:
+		return m.OldLastAbnormalAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Device field %s", name)
 }
@@ -17419,6 +17476,13 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetMissionTag(v)
 		return nil
+	case device.FieldLastAbnormalAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastAbnormalAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
 }
@@ -17584,6 +17648,9 @@ func (m *DeviceMutation) ClearedFields() []string {
 	if m.FieldCleared(device.FieldHighTemperatureAt) {
 		fields = append(fields, device.FieldHighTemperatureAt)
 	}
+	if m.FieldCleared(device.FieldLastAbnormalAt) {
+		fields = append(fields, device.FieldLastAbnormalAt)
+	}
 	return fields
 }
 
@@ -17609,6 +17676,9 @@ func (m *DeviceMutation) ClearField(name string) error {
 		return nil
 	case device.FieldHighTemperatureAt:
 		m.ClearHighTemperatureAt()
+		return nil
+	case device.FieldLastAbnormalAt:
+		m.ClearLastAbnormalAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Device nullable field %s", name)
@@ -17719,6 +17789,9 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldMissionTag:
 		m.ResetMissionTag()
+		return nil
+	case device.FieldLastAbnormalAt:
+		m.ResetLastAbnormalAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)

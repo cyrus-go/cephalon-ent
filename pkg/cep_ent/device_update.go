@@ -583,6 +583,26 @@ func (du *DeviceUpdate) SetNillableMissionTag(emt *enums.DeviceMissionTag) *Devi
 	return du
 }
 
+// SetLastAbnormalAt sets the "last_abnormal_at" field.
+func (du *DeviceUpdate) SetLastAbnormalAt(t time.Time) *DeviceUpdate {
+	du.mutation.SetLastAbnormalAt(t)
+	return du
+}
+
+// SetNillableLastAbnormalAt sets the "last_abnormal_at" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableLastAbnormalAt(t *time.Time) *DeviceUpdate {
+	if t != nil {
+		du.SetLastAbnormalAt(*t)
+	}
+	return du
+}
+
+// ClearLastAbnormalAt clears the value of the "last_abnormal_at" field.
+func (du *DeviceUpdate) ClearLastAbnormalAt() *DeviceUpdate {
+	du.mutation.ClearLastAbnormalAt()
+	return du
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (du *DeviceUpdate) SetUser(u *User) *DeviceUpdate {
 	return du.SetUserID(u.ID)
@@ -1254,6 +1274,12 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.MissionTag(); ok {
 		_spec.SetField(device.FieldMissionTag, field.TypeEnum, value)
+	}
+	if value, ok := du.mutation.LastAbnormalAt(); ok {
+		_spec.SetField(device.FieldLastAbnormalAt, field.TypeTime, value)
+	}
+	if du.mutation.LastAbnormalAtCleared() {
+		_spec.ClearField(device.FieldLastAbnormalAt, field.TypeTime)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2370,6 +2396,26 @@ func (duo *DeviceUpdateOne) SetNillableMissionTag(emt *enums.DeviceMissionTag) *
 	return duo
 }
 
+// SetLastAbnormalAt sets the "last_abnormal_at" field.
+func (duo *DeviceUpdateOne) SetLastAbnormalAt(t time.Time) *DeviceUpdateOne {
+	duo.mutation.SetLastAbnormalAt(t)
+	return duo
+}
+
+// SetNillableLastAbnormalAt sets the "last_abnormal_at" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableLastAbnormalAt(t *time.Time) *DeviceUpdateOne {
+	if t != nil {
+		duo.SetLastAbnormalAt(*t)
+	}
+	return duo
+}
+
+// ClearLastAbnormalAt clears the value of the "last_abnormal_at" field.
+func (duo *DeviceUpdateOne) ClearLastAbnormalAt() *DeviceUpdateOne {
+	duo.mutation.ClearLastAbnormalAt()
+	return duo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (duo *DeviceUpdateOne) SetUser(u *User) *DeviceUpdateOne {
 	return duo.SetUserID(u.ID)
@@ -3071,6 +3117,12 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if value, ok := duo.mutation.MissionTag(); ok {
 		_spec.SetField(device.FieldMissionTag, field.TypeEnum, value)
+	}
+	if value, ok := duo.mutation.LastAbnormalAt(); ok {
+		_spec.SetField(device.FieldLastAbnormalAt, field.TypeTime, value)
+	}
+	if duo.mutation.LastAbnormalAtCleared() {
+		_spec.ClearField(device.FieldLastAbnormalAt, field.TypeTime)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

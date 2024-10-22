@@ -89,6 +89,8 @@ type Device struct {
 	HostingType enums.DeviceHostingType `json:"hosting_type"`
 	// 可接特殊任务类型标签
 	MissionTag enums.DeviceMissionTag `json:"mission_tag"`
+	// 最后一次异常时刻，带时区（用于设备稳定性升级）
+	LastAbnormalAt *time.Time `json:"last_abnormal_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges        DeviceEdges `json:"edges"`
@@ -266,7 +268,7 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability, device.FieldVersion, device.FieldFault, device.FieldRank, device.FieldHostingType, device.FieldMissionTag:
 			values[i] = new(sql.NullString)
-		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt, device.FieldRankAt, device.FieldStabilityAt, device.FieldHighTemperatureAt:
+		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt, device.FieldRankAt, device.FieldStabilityAt, device.FieldHighTemperatureAt, device.FieldLastAbnormalAt:
 			values[i] = new(sql.NullTime)
 		case device.FieldCpus:
 			values[i] = device.ValueScanner.Cpus.ScanValue()
@@ -498,6 +500,13 @@ func (d *Device) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				d.MissionTag = enums.DeviceMissionTag(value.String)
 			}
+		case device.FieldLastAbnormalAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_abnormal_at", values[i])
+			} else if value.Valid {
+				d.LastAbnormalAt = new(time.Time)
+				*d.LastAbnormalAt = value.Time
+			}
 		default:
 			d.selectValues.Set(columns[i], values[i])
 		}
@@ -706,6 +715,11 @@ func (d *Device) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mission_tag=")
 	builder.WriteString(fmt.Sprintf("%v", d.MissionTag))
+	builder.WriteString(", ")
+	if v := d.LastAbnormalAt; v != nil {
+		builder.WriteString("last_abnormal_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }
