@@ -176,6 +176,11 @@ func HighTemperatureAt(v time.Time) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldHighTemperatureAt, v))
 }
 
+// LastAbnormalAt applies equality check predicate on the "last_abnormal_at" field. It's identical to LastAbnormalAtEQ.
+func LastAbnormalAt(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldLastAbnormalAt, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldCreatedBy, v))
@@ -1489,6 +1494,56 @@ func MissionTagNotIn(vs ...enums.DeviceMissionTag) predicate.Device {
 		v[i] = vs[i]
 	}
 	return predicate.Device(sql.FieldNotIn(FieldMissionTag, v...))
+}
+
+// LastAbnormalAtEQ applies the EQ predicate on the "last_abnormal_at" field.
+func LastAbnormalAtEQ(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldLastAbnormalAt, v))
+}
+
+// LastAbnormalAtNEQ applies the NEQ predicate on the "last_abnormal_at" field.
+func LastAbnormalAtNEQ(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldLastAbnormalAt, v))
+}
+
+// LastAbnormalAtIn applies the In predicate on the "last_abnormal_at" field.
+func LastAbnormalAtIn(vs ...time.Time) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldLastAbnormalAt, vs...))
+}
+
+// LastAbnormalAtNotIn applies the NotIn predicate on the "last_abnormal_at" field.
+func LastAbnormalAtNotIn(vs ...time.Time) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldLastAbnormalAt, vs...))
+}
+
+// LastAbnormalAtGT applies the GT predicate on the "last_abnormal_at" field.
+func LastAbnormalAtGT(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldLastAbnormalAt, v))
+}
+
+// LastAbnormalAtGTE applies the GTE predicate on the "last_abnormal_at" field.
+func LastAbnormalAtGTE(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldLastAbnormalAt, v))
+}
+
+// LastAbnormalAtLT applies the LT predicate on the "last_abnormal_at" field.
+func LastAbnormalAtLT(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldLastAbnormalAt, v))
+}
+
+// LastAbnormalAtLTE applies the LTE predicate on the "last_abnormal_at" field.
+func LastAbnormalAtLTE(v time.Time) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldLastAbnormalAt, v))
+}
+
+// LastAbnormalAtIsNil applies the IsNil predicate on the "last_abnormal_at" field.
+func LastAbnormalAtIsNil() predicate.Device {
+	return predicate.Device(sql.FieldIsNull(FieldLastAbnormalAt))
+}
+
+// LastAbnormalAtNotNil applies the NotNil predicate on the "last_abnormal_at" field.
+func LastAbnormalAtNotNil() predicate.Device {
+	return predicate.Device(sql.FieldNotNull(FieldLastAbnormalAt))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

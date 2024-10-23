@@ -504,6 +504,20 @@ func (dc *DeviceCreate) SetNillableMissionTag(emt *enums.DeviceMissionTag) *Devi
 	return dc
 }
 
+// SetLastAbnormalAt sets the "last_abnormal_at" field.
+func (dc *DeviceCreate) SetLastAbnormalAt(t time.Time) *DeviceCreate {
+	dc.mutation.SetLastAbnormalAt(t)
+	return dc
+}
+
+// SetNillableLastAbnormalAt sets the "last_abnormal_at" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableLastAbnormalAt(t *time.Time) *DeviceCreate {
+	if t != nil {
+		dc.SetLastAbnormalAt(*t)
+	}
+	return dc
+}
+
 // SetID sets the "id" field.
 func (dc *DeviceCreate) SetID(i int64) *DeviceCreate {
 	dc.mutation.SetID(i)
@@ -860,6 +874,10 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultMissionTag
 		dc.mutation.SetMissionTag(v)
 	}
+	if _, ok := dc.mutation.LastAbnormalAt(); !ok {
+		v := device.DefaultLastAbnormalAt()
+		dc.mutation.SetLastAbnormalAt(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := device.DefaultID()
 		dc.mutation.SetID(v)
@@ -1176,6 +1194,10 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	if value, ok := dc.mutation.MissionTag(); ok {
 		_spec.SetField(device.FieldMissionTag, field.TypeEnum, value)
 		_node.MissionTag = value
+	}
+	if value, ok := dc.mutation.LastAbnormalAt(); ok {
+		_spec.SetField(device.FieldLastAbnormalAt, field.TypeTime, value)
+		_node.LastAbnormalAt = &value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1919,6 +1941,24 @@ func (u *DeviceUpsert) UpdateMissionTag() *DeviceUpsert {
 	return u
 }
 
+// SetLastAbnormalAt sets the "last_abnormal_at" field.
+func (u *DeviceUpsert) SetLastAbnormalAt(v time.Time) *DeviceUpsert {
+	u.Set(device.FieldLastAbnormalAt, v)
+	return u
+}
+
+// UpdateLastAbnormalAt sets the "last_abnormal_at" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateLastAbnormalAt() *DeviceUpsert {
+	u.SetExcluded(device.FieldLastAbnormalAt)
+	return u
+}
+
+// ClearLastAbnormalAt clears the value of the "last_abnormal_at" field.
+func (u *DeviceUpsert) ClearLastAbnormalAt() *DeviceUpsert {
+	u.SetNull(device.FieldLastAbnormalAt)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2527,6 +2567,27 @@ func (u *DeviceUpsertOne) SetMissionTag(v enums.DeviceMissionTag) *DeviceUpsertO
 func (u *DeviceUpsertOne) UpdateMissionTag() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateMissionTag()
+	})
+}
+
+// SetLastAbnormalAt sets the "last_abnormal_at" field.
+func (u *DeviceUpsertOne) SetLastAbnormalAt(v time.Time) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetLastAbnormalAt(v)
+	})
+}
+
+// UpdateLastAbnormalAt sets the "last_abnormal_at" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateLastAbnormalAt() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateLastAbnormalAt()
+	})
+}
+
+// ClearLastAbnormalAt clears the value of the "last_abnormal_at" field.
+func (u *DeviceUpsertOne) ClearLastAbnormalAt() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.ClearLastAbnormalAt()
 	})
 }
 
@@ -3307,6 +3368,27 @@ func (u *DeviceUpsertBulk) SetMissionTag(v enums.DeviceMissionTag) *DeviceUpsert
 func (u *DeviceUpsertBulk) UpdateMissionTag() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateMissionTag()
+	})
+}
+
+// SetLastAbnormalAt sets the "last_abnormal_at" field.
+func (u *DeviceUpsertBulk) SetLastAbnormalAt(v time.Time) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetLastAbnormalAt(v)
+	})
+}
+
+// UpdateLastAbnormalAt sets the "last_abnormal_at" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateLastAbnormalAt() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateLastAbnormalAt()
+	})
+}
+
+// ClearLastAbnormalAt clears the value of the "last_abnormal_at" field.
+func (u *DeviceUpsertBulk) ClearLastAbnormalAt() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.ClearLastAbnormalAt()
 	})
 }
 

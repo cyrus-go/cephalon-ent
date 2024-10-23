@@ -85,6 +85,8 @@ const (
 	FieldHostingType = "hosting_type"
 	// FieldMissionTag holds the string denoting the mission_tag field in the database.
 	FieldMissionTag = "mission_tag"
+	// FieldLastAbnormalAt holds the string denoting the last_abnormal_at field in the database.
+	FieldLastAbnormalAt = "last_abnormal_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeGiftMissionConfig holds the string denoting the gift_mission_config edge name in mutations.
@@ -243,6 +245,7 @@ var Columns = []string{
 	FieldHighTemperatureAt,
 	FieldHostingType,
 	FieldMissionTag,
+	FieldLastAbnormalAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -306,6 +309,8 @@ var (
 	DefaultStabilityAt func() time.Time
 	// DefaultHighTemperatureAt holds the default value on creation for the "high_temperature_at" field.
 	DefaultHighTemperatureAt func() time.Time
+	// DefaultLastAbnormalAt holds the default value on creation for the "last_abnormal_at" field.
+	DefaultLastAbnormalAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Device fields.
@@ -613,6 +618,11 @@ func ByHostingType(opts ...sql.OrderTermOption) OrderOption {
 // ByMissionTag orders the results by the mission_tag field.
 func ByMissionTag(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionTag, opts...).ToFunc()
+}
+
+// ByLastAbnormalAt orders the results by the last_abnormal_at field.
+func ByLastAbnormalAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastAbnormalAt, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.
