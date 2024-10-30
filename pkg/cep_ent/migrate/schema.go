@@ -546,7 +546,7 @@ var (
 		{Name: "sum_cep", Type: field.TypeInt64, Comment: "该设备总获得利润", Default: 0},
 		{Name: "linking", Type: field.TypeBool, Comment: "设备是否正在对接中", Default: false},
 		{Name: "binding_status", Type: field.TypeEnum, Comment: "设备的绑定状态", Enums: []string{"init", "bound", "unbound", "rebinding"}, Default: "init"},
-		{Name: "status", Type: field.TypeEnum, Comment: "设备状态", Enums: []string{"online", "offline", "busy", "free", "exit"}, Default: "offline"},
+		{Name: "status", Type: field.TypeEnum, Comment: "设备状态", Enums: []string{"online", "offline", "busy", "free", "exit", "available"}, Default: "offline"},
 		{Name: "name", Type: field.TypeString, Comment: "设备名称", Default: "默认设备名称"},
 		{Name: "manage_name", Type: field.TypeString, Comment: "运维管理设备名称", Default: "默认管理设备名称"},
 		{Name: "type", Type: field.TypeEnum, Comment: "设备类型", Enums: []string{"official", "ordinary"}, Default: "ordinary"},

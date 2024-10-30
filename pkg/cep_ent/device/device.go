@@ -363,7 +363,7 @@ const DefaultStatus enums.DeviceStatus = "offline"
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s enums.DeviceStatus) error {
 	switch s {
-	case "online", "offline", "busy", "free", "exit":
+	case "online", "offline", "busy", "free", "exit", "available":
 		return nil
 	default:
 		return fmt.Errorf("device: invalid enum value for status field: %q", s)

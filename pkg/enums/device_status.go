@@ -3,11 +3,12 @@ package enums
 type DeviceStatus string
 
 const (
-	DeviceStatusOnline  DeviceStatus = "online"
-	DeviceStatusOffline DeviceStatus = "offline"
-	DeviceStatusBusy    DeviceStatus = "busy"
-	DeviceStatusFree    DeviceStatus = "free"
-	DeviceStatusExit    DeviceStatus = "exit" // 退出节点
+	DeviceStatusOnline    DeviceStatus = "online"
+	DeviceStatusOffline   DeviceStatus = "offline"
+	DeviceStatusBusy      DeviceStatus = "busy"      // 任务已接满
+	DeviceStatusAvailable DeviceStatus = "available" // 可以接任务
+	DeviceStatusFree      DeviceStatus = "free"      // 空闲
+	DeviceStatusExit      DeviceStatus = "exit"      // 退出节点
 )
 
 func (DeviceStatus) Values() []string {
@@ -17,6 +18,7 @@ func (DeviceStatus) Values() []string {
 		string(DeviceStatusBusy),
 		string(DeviceStatusFree),
 		string(DeviceStatusExit),
+		string(DeviceStatusAvailable),
 	}
 }
 
