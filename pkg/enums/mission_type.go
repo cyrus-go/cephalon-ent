@@ -9,6 +9,7 @@ const (
 	MissionTypeSdTxt2Img          MissionType = "txt2img"
 	MissionTypeSdImg2Img          MissionType = "img2img"
 	MissionTypeJpTime             MissionType = "jp_time"
+	MissionTypeJpQinglongTime     MissionType = "jp_qinglong_time"
 	MissionTypeWtTime             MissionType = "wt_time"
 	MissionTypeSdExtraSingleImage MissionType = "extra-single-image"
 	MissionTypeSdApi              MissionType = "sd_api"
@@ -70,6 +71,7 @@ const (
 	MissionTypeSdProTimePlan          MissionType = "sd_pro_time_plan"
 	MissionTypeWtTimePlan             MissionType = "wt_time_plan"
 	MissionTypeJpTimePlan             MissionType = "jp_time_plan"
+	MissionTypeJpQinglongTimePlan     MissionType = "jp_qinglong_time_plan"
 	MissionTypeJpDkTimePlan           MissionType = "jp_dk_time_plan"
 	MissionTypeSshTimePlan            MissionType = "ssh_time_plan"
 	MissionTypeSglangTimePlan         MissionType = "sglang_time_plan"
@@ -132,6 +134,8 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeSdTxt2Img),
 		string(MissionTypeSdImg2Img),
 		string(MissionTypeJpTime),
+		string(MissionTypeJpQinglongTime),
+		string(MissionTypeJpQinglongTimePlan),
 		string(MissionTypeWtTime),
 		string(MissionTypeSdExtraSingleImage),
 		string(MissionTypeSdApi),
